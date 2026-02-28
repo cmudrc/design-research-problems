@@ -38,7 +38,7 @@ check-uv:
 
 dev:
 	$(PIP) install --upgrade pip
-	$(PIP) install -e ".[dev]"
+	$(PIP) install -e ".[dev,opt]"
 
 install-dev: dev
 
