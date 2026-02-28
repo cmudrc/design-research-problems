@@ -1,0 +1,113 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  latest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: make dev
+      - name: Run checks
+        run: make ci
+
+  lowest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Create virtual environment
+        run: uv venv --python 3.12 .venv
+      - name: Install lowest direct dependencies
+        run: uv pip install --python .venv/bin/python --resolution lowest-direct -e ".[dev]"
+      - name: Run tests
+        run: .venv/bin/python -m pytest -q
+
+  locked:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            repro-python: "3.12.12"
+            repro-extras: "dev opt"
+          - os: macos-latest
+            repro-python: "3.12"
+            repro-extras: "dev opt"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.repro-python }}
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Reproducible frozen install
+        run: make repro REPRO_PYTHON="${{ matrix.repro-python }}" REPRO_EXTRAS="${{ matrix.repro-extras }}"
+      - name: Run tests
+        run: make test
+
+  coverage-badge:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [latest, lowest, locked]
+    runs-on: ubuntu-latest
+    concurrency:
+      group: coverage-badge-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: make dev
+      - name: Generate coverage artifacts
+        run: make coverage
+      - name: Generate coverage badge
+        run: python3 scripts/generate_coverage_badge.py
+      - name: Generate example badges
+        run: make examples-metrics
+      - name: Commit and push badges if changed
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+          if ! git status --porcelain -- .github/badges/coverage.svg .github/badges/examples-passing.svg .github/badges/examples-api-coverage.svg | grep -q .; then
+            echo "Badges unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/badges/coverage.svg .github/badges/examples-passing.svg .github/badges/examples-api-coverage.svg
+          git commit -m "chore: update coverage and examples badges [skip ci]"
+          git push origin "HEAD:${BRANCH_NAME}"

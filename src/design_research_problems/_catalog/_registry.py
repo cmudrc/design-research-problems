@@ -1,0 +1,162 @@
+"""Problem registry facade."""
+
+from __future__ import annotations
+
+from collections.abc import Callable
+from importlib import import_module
+from typing import cast
+
+from design_research_problems._catalog._loader import load_problem_manifests, load_statement_text
+from design_research_problems._catalog._manifest import ProblemManifest
+from design_research_problems._exceptions import ProblemEvaluationError
+from design_research_problems.problems import GrammarProblem, OptimizationProblem, ProblemKind, TextProblem
+from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._metadata import ProblemMetadata
+
+
+def _resolve_object(import_path: str) -> object:
+    """Import one ``module:attribute`` object reference.
+
+    Args:
+        import_path: Import target in ``module:attribute`` form.
+
+    Returns:
+        Imported Python object.
+
+    Raises:
+        design_research_problems.ProblemEvaluationError: If the import path is malformed.
+    """
+    module_path, _, attr_name = import_path.partition(":")
+    if not module_path or not attr_name:
+        raise ProblemEvaluationError(f"Invalid implementation path: {import_path!r}")
+    return getattr(import_module(module_path), attr_name)
+
+
+ProblemInstance = TextProblem | OptimizationProblem | GrammarProblem
+
+
+class ProblemRegistry:
+    """Lazy-loading registry for the packaged problem catalog."""
+
+    def __init__(self) -> None:
+        """Initialize an empty lazy registry cache."""
+        self._manifests: dict[str, ProblemManifest] | None = None
+
+    def _catalog(self) -> dict[str, ProblemManifest]:
+        """Return the cached manifest catalog.
+
+        Returns:
+            Mapping of problem IDs to parsed manifests.
+        """
+        if self._manifests is None:
+            self._manifests = load_problem_manifests()
+        return self._manifests
+
+    def list(self) -> tuple[ProblemMetadata, ...]:
+        """Return all problem metadata in ID-sorted order.
+
+        Returns:
+            Metadata entries sorted by problem ID.
+        """
+        return tuple(self._catalog()[problem_id].metadata for problem_id in sorted(self._catalog()))
+
+    def by_kind(self, kind: ProblemKind) -> tuple[ProblemMetadata, ...]:
+        """Return metadata entries with the requested kind.
+
+        Args:
+            kind: Problem family to filter for.
+
+        Returns:
+            Matching metadata entries.
+        """
+        return tuple(metadata for metadata in self.list() if metadata.kind is kind)
+
+    def search(self, tags: tuple[str, ...] = (), text: str = "") -> tuple[ProblemMetadata, ...]:
+        """Search metadata by tags and free text.
+
+        Args:
+            tags: Tags that must all be present on a matching entry.
+            text: Case-insensitive free-text search term.
+
+        Returns:
+            Matching metadata entries.
+        """
+        tag_set = {tag.lower() for tag in tags}
+        text_query = text.strip().lower()
+        matches: list[ProblemMetadata] = []
+        for metadata in self.list():
+            if tag_set and not tag_set.issubset({tag.lower() for tag in metadata.taxonomy.tags}):
+                continue
+            haystack = " ".join(
+                (metadata.problem_id, metadata.title, metadata.summary, *metadata.taxonomy.tags)
+            ).lower()
+            if text_query and text_query not in haystack:
+                continue
+            matches.append(metadata)
+        return tuple(matches)
+
+    def get(self, problem_id: str) -> ProblemInstance:
+        """Instantiate one problem by ID.
+
+        Args:
+            problem_id: Stable catalog identifier.
+
+        Returns:
+            Loaded problem instance.
+
+        Raises:
+            KeyError: If the ID is unknown.
+            design_research_problems.ProblemEvaluationError: If the packaged implementation metadata is invalid.
+        """
+        manifest = self._catalog().get(problem_id)
+        if manifest is None:
+            raise KeyError(f"Unknown problem id: {problem_id}")
+
+        statement_markdown = load_statement_text(manifest)
+        if manifest.metadata.kind is ProblemKind.TEXT:
+            return TextProblem(
+                metadata=manifest.metadata,
+                statement_markdown=statement_markdown,
+                assets=manifest.metadata.assets,
+                resource_bundle=PackageResourceBundle("design_research_problems", manifest.resource_dir),
+            )
+
+        implementation = manifest.metadata.implementation
+        if implementation is None:
+            raise ProblemEvaluationError(f"Problem {problem_id!r} is missing an implementation path.")
+
+        target = _resolve_object(implementation)
+        factory = getattr(target, "from_manifest", None)
+        if callable(factory):
+            manifest_factory = cast(Callable[[ProblemManifest, str], ProblemInstance], factory)
+            return manifest_factory(manifest, statement_markdown)
+
+        if callable(target):
+            direct_factory = cast(Callable[[object, str], ProblemInstance], target)
+            return direct_factory(manifest.metadata, statement_markdown)
+
+        raise ProblemEvaluationError(f"Problem implementation for {problem_id!r} is not callable.")
+
+
+_DEFAULT_REGISTRY = ProblemRegistry()
+
+
+def list_problems() -> tuple[str, ...]:
+    """Return all packaged problem IDs.
+
+    Returns:
+        Stable problem IDs in sorted order.
+    """
+    return tuple(metadata.problem_id for metadata in _DEFAULT_REGISTRY.list())
+
+
+def get_problem(problem_id: str) -> TextProblem | OptimizationProblem | GrammarProblem:
+    """Return one problem instance by ID.
+
+    Args:
+        problem_id: Stable catalog identifier.
+
+    Returns:
+        Loaded problem instance.
+    """
+    return _DEFAULT_REGISTRY.get(problem_id)

@@ -1,0 +1,23 @@
+problem_id = "planar_truss_span"
+title = "Planar truss span grammar problem"
+summary = "A discrete topology grammar for adding and removing joints and members in a planar truss."
+kind = "grammar"
+statement_file = "statement.md"
+implementation = "design_research_problems.problems.grammar._planar_truss:PlanarTrussSpanProblem"
+
+[parameters]
+span = 10.0
+max_height = 5.0
+load_magnitude = 1000.0
+
+[taxonomy]
+formulation = "discrete_grammar"
+convexity = "not_applicable"
+design_variable_type = "discrete"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.25
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "planar topology over a fixed span and height envelope"
+tags = ["grammar", "truss", "discrete", "topology"]

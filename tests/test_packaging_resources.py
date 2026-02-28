@@ -1,0 +1,99 @@
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+import sys
+import zipfile
+from pathlib import Path
+
+import pytest
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+RESOURCE_FILES = (
+    "design_research_problems/_assets/catalog/peanut_sheller_fu2010/problem.toml",
+    "design_research_problems/_assets/catalog/peanut_sheller_fu2010/statement.md",
+    "design_research_problems/_assets/catalog/peanut_sheller_fu2010/citation.bib",
+    "design_research_problems/_assets/catalog/pill_capsule_min_area/problem.toml",
+    "design_research_problems/_assets/catalog/planar_truss_span/problem.toml",
+)
+
+
+def _build_wheel(tmp_path: Path) -> Path:
+    probe = subprocess.run(
+        [sys.executable, "-m", "pip", "--version"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if probe.returncode != 0:
+        pytest.skip("pip is unavailable in this environment.")
+
+    backend_probe = subprocess.run(
+        [sys.executable, "-c", "import setuptools.build_meta"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if backend_probe.returncode != 0:
+        pytest.skip("setuptools.build_meta is unavailable in this environment.")
+
+    wheel_dir = tmp_path / "wheelhouse"
+    wheel_dir.mkdir(parents=True, exist_ok=True)
+    completed = subprocess.run(
+        [sys.executable, "-m", "pip", "wheel", ".", "--no-build-isolation", "--no-deps", "-w", str(wheel_dir)],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
+    wheels = sorted(wheel_dir.glob("design_research_problems-*.whl"))
+    assert wheels
+    return wheels[0]
+
+
+def test_wheel_includes_packaged_resources(tmp_path: Path) -> None:
+    wheel_path = _build_wheel(tmp_path)
+    with zipfile.ZipFile(wheel_path) as archive:
+        names = set(archive.namelist())
+    missing = sorted(resource for resource in RESOURCE_FILES if resource not in names)
+    assert not missing
+
+
+def test_installed_wheel_loads_registry(tmp_path: Path) -> None:
+    wheel_path = _build_wheel(tmp_path)
+    install_dir = tmp_path / "install"
+    install_dir.mkdir(parents=True, exist_ok=True)
+    completed = subprocess.run(
+        [sys.executable, "-m", "pip", "install", "--no-deps", "--target", str(install_dir), str(wheel_path)],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
+    env = dict(os.environ)
+    env["PYTHONPATH"] = str(install_dir)
+    probe = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            ("import json;from design_research_problems import list_problems;print(json.dumps(list(list_problems())))"),
+        ],
+        cwd=REPO_ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert probe.returncode == 0, probe.stderr
+    payload = json.loads(probe.stdout.strip())
+    assert payload == [
+        "peanut_sheller_fu2010",
+        "pill_capsule_min_area",
+        "planar_truss_span",
+    ]

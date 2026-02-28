@@ -1,0 +1,82 @@
+design-research-problems
+========================
+
+A compact library and compendium of canonical design research problems.
+
+Use it to:
+
+- load reusable human-subjects design prompts,
+- run small canonical optimization benchmarks, and
+- explore discrete design grammars with optional domain-specific evaluators.
+
+Highlights
+----------
+
+- A packaged catalog of reusable design research prompts and benchmark problems.
+- Three initial problem families: text, optimization, and grammar.
+- Lazy optional integrations for SciPy and ``trussme`` so the base install stays light.
+- Typed metadata and a deliberately small public API.
+- Runnable examples and generated docs that stay in sync with the codebase.
+
+Start Here
+----------
+
+If you want a five-minute start, copy this:
+
+.. code-block:: python
+
+   from design_research_problems import get_problem, list_problems
+
+   print(list_problems())
+   peanut = get_problem("peanut_sheller_fu2010")
+   print(peanut.render_packet(include_citation=False))
+
+That gives you the catalog IDs and a ready-to-use text prompt packet.
+
+Problem Families
+----------------
+
+``Text``
+   Prompt packets, citations, and optional assets for human-subjects studies.
+
+``Optimization``
+   Structured numerical problems with bounds, constraints, and optional SciPy solving.
+
+``Grammar``
+   Discrete state-and-action problems for constructive design exploration.
+
+Common Paths
+------------
+
+Choose the path that matches what you want to do next:
+
+- Read :doc:`quickstart` to load the catalog and inspect each problem family.
+- Read :doc:`problems/index` to understand the three problem types.
+- Read :doc:`dependencies_and_extras` before enabling SciPy or local ``trussme`` support.
+- Read :doc:`examples/index` for runnable scripts you can execute immediately.
+- Read :doc:`api` if you want the public surface contract first.
+
+What Is In The Initial Catalog?
+-------------------------------
+
+- ``peanut_sheller_fu2010``: a human-subjects-ready design prompt about a low-cost peanut sheller.
+- ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
+- ``planar_truss_span``: a discrete planar truss topology grammar with a lazy ``trussme`` adapter.
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Guides
+   :hidden:
+
+   quickstart
+   dependencies_and_extras
+   problems/index
+   examples/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
+   :hidden:
+
+   api
+   reference/index

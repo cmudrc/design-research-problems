@@ -1,0 +1,116 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "design-research-problems"
+version = "0.1.0"
+description = "A compendium of canonical design research problems"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [{ name = "The Design Research Collective" }]
+maintainers = [{ name = "Christopher C. McComb", email = "ccm@cmu.edu" }]
+keywords = ["design", "research", "optimization", "benchmark", "problems"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+]
+dependencies = [
+  "numpy>=1.26,<3",
+]
+
+[project.urls]
+Homepage = "https://cmudrc.github.io/design-research-problems/"
+Documentation = "https://cmudrc.github.io/design-research-problems/"
+Repository = "https://github.com/cmudrc/design-research-problems"
+Issues = "https://github.com/cmudrc/design-research-problems/issues"
+
+[project.optional-dependencies]
+opt = ["scipy>=1.11,<2"]
+dev = [
+  "build>=1.2,<2",
+  "mypy>=1.10,<2",
+  "pre-commit>=3.7,<5",
+  "pytest>=8.2,<9",
+  "pytest-cov>=7.0,<8",
+  "ruff>=0.6.0,<1",
+  "scipy>=1.11,<2",
+  "sphinx>=7.4,<9",
+  "sphinx-rtd-theme>=2.0,<4",
+  "sphinxcontrib-mermaid>=1.0,<2",
+  "twine>=5.1,<7",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+design_research_problems = [
+  "py.typed",
+  "_assets/catalog/*/*.toml",
+  "_assets/catalog/*/*.md",
+  "_assets/catalog/*/*.bib",
+]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+markers = [
+  "examples_full: deterministic example execution suite",
+  "examples_smoke: lightweight example smoke checks",
+  "trussme_real: tests that require the local TrussMe checkout",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+src = ["src", "tests", "examples", "scripts"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["D"]
+"examples/**/*.py" = ["D"]
+"scripts/*.py" = ["D"]
+
+[tool.mypy]
+packages = ["design_research_problems"]
+python_version = "3.12"
+warn_unused_configs = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+  "scipy",
+  "scipy.*",
+]
+ignore_missing_imports = true

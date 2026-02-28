@@ -1,0 +1,20 @@
+problem_id = "peanut_sheller_fu2010"
+title = "Design Problem - Device to shell peanuts"
+summary = "A text-based design prompt about a low-cost peanut sheller for small-scale farmers."
+kind = "text"
+statement_file = "statement.md"
+citation_file = "citation.bib"
+citation_key = "fu2010design"
+citation_kind = "bibtex"
+
+[taxonomy]
+formulation = "textual_prompt"
+convexity = "not_applicable"
+design_variable_type = "not_applicable"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 1.0
+objective_mode = "qualitative"
+constraint_nature = "informal"
+bounds_summary = "not_applicable"
+tags = ["text", "human-subjects", "agriculture", "mechanical-design"]
