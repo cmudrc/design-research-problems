@@ -49,7 +49,7 @@ def _import_scipy_optimize() -> Any:
         import scipy.optimize as optimize
     except ImportError as exc:
         raise MissingOptionalDependencyError(
-            'SciPy is required for solve(). Install it with: pip install -e ".[opt]"'
+            "SciPy is required for solve(). Install it with: pip install design-research-problems[opt]"
         ) from exc
     return optimize
 

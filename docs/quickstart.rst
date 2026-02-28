@@ -1,13 +1,16 @@
 Quickstart
 ==========
 
-Load the package, list the seed problems, and fetch the catalog entries:
+Load the package, list the seed problems, inspect feature flags, and fetch the
+catalog entries:
 
 .. code-block:: python
 
-   from design_research_problems import get_problem, list_problems
+   from design_research_problems import ProblemRegistry, get_problem, list_problems
 
+   registry = ProblemRegistry()
    print(list_problems())
+   print(registry.kind_feature_flags())
    peanut = get_problem("peanut_sheller_fu2010")
    print(peanut.render_packet(include_citation=False))
 

@@ -120,6 +120,23 @@ def _parse_assets(raw_assets: list[dict[str, Any]]) -> tuple[ProblemAsset, ...]:
     )
 
 
+def _parse_feature_flags(raw_flags: list[object]) -> tuple[str, ...]:
+    """Build a normalized, deterministic feature-flag tuple.
+
+    Args:
+        raw_flags: Raw feature-flag values from the manifest.
+
+    Returns:
+        Sorted unique normalized feature flags.
+    """
+    normalized: set[str] = set()
+    for raw_flag in raw_flags:
+        flag = str(raw_flag).strip().lower().replace(" ", "-")
+        if flag:
+            normalized.add(flag)
+    return tuple(sorted(normalized))
+
+
 def _parse_taxonomy(raw_taxonomy: dict[str, Any]) -> ProblemTaxonomy:
     """Build the shared taxonomy object from raw manifest data.
 
@@ -163,6 +180,7 @@ def _load_single_manifest(entry: Any) -> ProblemManifest:
         taxonomy=_parse_taxonomy(cast(dict[str, Any], raw_data.get("taxonomy", {}))),
         citations=_parse_citations(raw_data, resource_dir),
         assets=_parse_assets(cast(list[dict[str, Any]], raw_data.get("assets", []))),
+        feature_flags=_parse_feature_flags(cast(list[object], raw_data.get("feature_flags", []))),
         implementation=cast(str | None, raw_data.get("implementation")),
     )
     statement_resource = str(raw_data.get("statement_file", "statement.md"))

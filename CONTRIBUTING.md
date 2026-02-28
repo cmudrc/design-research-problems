@@ -8,10 +8,12 @@ source .venv/bin/activate
 make dev
 ```
 
-For the optional local `TrussMe` integration:
+For the optional `trussme` integration:
 
 ```bash
-make install-trussme-local
+pip install -e ".[grammar]"
+# or
+make install-trussme
 ```
 
 ## Common Commands

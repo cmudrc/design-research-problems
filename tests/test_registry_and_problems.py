@@ -25,6 +25,39 @@ def test_registry_entries_filter_by_kind() -> None:
     registry = ProblemRegistry()
     kinds = registry.by_kind(ProblemKind.TEXT)
     assert [entry.problem_id for entry in kinds] == ["peanut_sheller_fu2010"]
+    assert registry.feature_flags("peanut_sheller_fu2010") == (
+        "citation-backed",
+        "human-subjects-ready",
+        "prompt-packet",
+        "statement-markdown",
+    )
+
+
+def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
+    from design_research_problems import ProblemRegistry
+
+    registry = ProblemRegistry()
+    grouped = registry.kind_feature_flags()
+    assert grouped[ProblemKind.TEXT] == (
+        "citation-backed",
+        "human-subjects-ready",
+        "prompt-packet",
+        "statement-markdown",
+    )
+    assert grouped[ProblemKind.OPTIMIZATION] == (
+        "bounded-variables",
+        "equality-constraint",
+        "optional-solver",
+        "seeded-data-generation",
+        "statement-markdown",
+    )
+    assert grouped[ProblemKind.GRAMMAR] == (
+        "discrete-actions",
+        "external-adapter",
+        "optional-evaluator",
+        "serializable-state",
+        "statement-markdown",
+    )
 
 
 def test_text_problem_renders_statement_and_citation() -> None:
@@ -33,6 +66,15 @@ def test_text_problem_renders_statement_and_citation() -> None:
     assert "Design Problem - Device to shell peanuts" in packet
     assert "fu2010design" in packet
     assert "Must remove the shell with minimal damage to the peanuts." in packet
+    assert problem.metadata.has_feature("human subjects ready") is True
+
+
+def test_registry_search_filters_by_feature_flags() -> None:
+    from design_research_problems import ProblemRegistry
+
+    registry = ProblemRegistry()
+    matches = registry.search(feature_flags=("seeded data generation",))
+    assert [entry.problem_id for entry in matches] == ["pill_capsule_min_area"]
 
 
 def test_pill_helpers_return_expected_positive_values() -> None:
@@ -80,10 +122,11 @@ def test_planar_truss_state_and_actions_are_validated() -> None:
     assert len(state.members) == 2
 
 
-def test_planar_truss_reports_missing_dependency() -> None:
+def test_planar_truss_reports_missing_dependency(monkeypatch: pytest.MonkeyPatch) -> None:
     problem = get_problem("planar_truss_span")
     state = problem.initial_state()
     state = problem.apply_action(state, AddMember(start_joint_id=0, end_joint_id=2))
+    monkeypatch.setitem(sys.modules, "trussme", None)
     with pytest.raises(MissingOptionalDependencyError):
         problem.evaluate(state)
 

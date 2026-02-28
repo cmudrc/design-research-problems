@@ -119,13 +119,14 @@ def _import_trussme() -> Any:
         Imported ``trussme`` module.
 
     Raises:
-        MissingOptionalDependencyError: If the local dependency is not installed.
+        MissingOptionalDependencyError: If the optional dependency is not installed.
     """
     try:
-        import trussme  # type: ignore[import-not-found]
+        import trussme
     except ImportError as exc:
         raise MissingOptionalDependencyError(
-            "trussme is required for grammar evaluation. Install the local checkout with: make install-trussme-local"
+            "trussme is required for grammar evaluation. Install it with: pip install "
+            "design-research-problems[grammar] or run: make install-trussme"
         ) from exc
     return trussme
 

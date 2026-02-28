@@ -71,21 +71,58 @@ class ProblemRegistry:
         """
         return tuple(metadata for metadata in self.list() if metadata.kind is kind)
 
-    def search(self, tags: tuple[str, ...] = (), text: str = "") -> tuple[ProblemMetadata, ...]:
+    def feature_flags(self, problem_id: str) -> tuple[str, ...]:
+        """Return the feature flags for one problem ID.
+
+        Args:
+            problem_id: Stable catalog identifier.
+
+        Returns:
+            Feature flags in deterministic sorted order.
+
+        Raises:
+            KeyError: If the ID is unknown.
+        """
+        manifest = self._catalog().get(problem_id)
+        if manifest is None:
+            raise KeyError(f"Unknown problem id: {problem_id}")
+        return manifest.metadata.feature_flags
+
+    def kind_feature_flags(self) -> dict[ProblemKind, tuple[str, ...]]:
+        """Return aggregated feature flags for each problem family.
+
+        Returns:
+            Mapping of problem kinds to the union of feature flags across that family.
+        """
+        grouped: dict[ProblemKind, set[str]] = {kind: set() for kind in ProblemKind}
+        for metadata in self.list():
+            grouped[metadata.kind].update(metadata.feature_flags)
+        return {kind: tuple(sorted(grouped[kind])) for kind in ProblemKind}
+
+    def search(
+        self,
+        tags: tuple[str, ...] = (),
+        text: str = "",
+        feature_flags: tuple[str, ...] = (),
+    ) -> tuple[ProblemMetadata, ...]:
         """Search metadata by tags and free text.
 
         Args:
             tags: Tags that must all be present on a matching entry.
             text: Case-insensitive free-text search term.
+            feature_flags: Feature flags that must all be present on a matching entry.
 
         Returns:
             Matching metadata entries.
         """
         tag_set = {tag.lower() for tag in tags}
+        feature_flag_set = {flag.strip().lower().replace(" ", "-") for flag in feature_flags}
         text_query = text.strip().lower()
         matches: list[ProblemMetadata] = []
         for metadata in self.list():
             if tag_set and not tag_set.issubset({tag.lower() for tag in metadata.taxonomy.tags}):
+                continue
+            if feature_flag_set and not feature_flag_set.issubset(set(metadata.feature_flags)):
                 continue
             haystack = " ".join(
                 (metadata.problem_id, metadata.title, metadata.summary, *metadata.taxonomy.tags)

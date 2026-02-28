@@ -48,6 +48,6 @@ def test_optimization_example_runs() -> None:
 @pytest.mark.trussme_real
 def test_grammar_example_runs_when_trussme_is_installed() -> None:
     completed = _run_example("examples/grammar/planar_truss_span.py")
-    if "make install-trussme-local" in completed.stdout:
-        pytest.skip("Local TrussMe checkout is not installed in this environment.")
+    if "trussme is required for grammar evaluation" in completed.stdout:
+        pytest.skip("trussme is not installed in this environment.")
     assert completed.returncode == 0, completed.stderr

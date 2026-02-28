@@ -1,8 +1,8 @@
 # design-research-problems
 [![CI](https://github.com/cmudrc/design-research-problems/actions/workflows/ci.yml/badge.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/ci.yml)
-[![Coverage](.github/badges/coverage.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/ci.yml)
-[![Examples Passing](.github/badges/examples-passing.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/ci.yml)
-[![Public API In Examples](.github/badges/examples-api-coverage.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/ci.yml)
+[![Coverage](https://raw.githubusercontent.com/cmudrc/design-research-problems/main/.github/badges/coverage.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/ci.yml)
+[![Examples Passing](https://raw.githubusercontent.com/cmudrc/design-research-problems/main/.github/badges/examples-passing.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/ci.yml)
+[![Public API In Examples](https://raw.githubusercontent.com/cmudrc/design-research-problems/main/.github/badges/examples-api-coverage.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/ci.yml)
 [![Docs](https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml/badge.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml)
 
 `design-research-problems` is a compact library and compendium of design research
@@ -26,31 +26,44 @@ The first catalog includes:
 ## Quickstart
 
 Requires Python 3.12+.
-Reproducible installs are pinned to Python `3.12.12` in `.python-version`.
+Install from PyPI with:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-make dev
-make test
-PYTHONPATH=src python3 examples/catalog/list_and_load.py
+pip install design-research-problems
 ```
 
 Install the optional optimization solver support with:
 
 ```bash
-pip install -e ".[opt]"
+pip install "design-research-problems[opt]"
 ```
 
-Install the local `TrussMe` checkout for real grammar evaluation with:
+Install the optional `trussme` grammar support with:
 
 ```bash
-make install-trussme-local
+pip install "design-research-problems[grammar]"
+```
+
+Then inspect the catalog directly from the installed package:
+
+```bash
+python3 -c "from design_research_problems import list_problems; print(list_problems())"
+```
+
+For local development, reproducible installs are pinned to Python `3.12.12` in
+`.python-version`:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+make dev
+make ci
 ```
 
 ## Docs
 
-See [`docs/index.rst`](docs/index.rst) for the guide and reference layout.
+See the [published documentation](https://cmudrc.github.io/design-research-problems/)
+for the guide and reference layout.
 Build them locally with:
 
 ```bash
@@ -59,4 +72,5 @@ make docs
 
 ## Contributing
 
-Contribution guidelines live in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Contribution guidelines live in
+[CONTRIBUTING.md](https://github.com/cmudrc/design-research-problems/blob/main/CONTRIBUTING.md).

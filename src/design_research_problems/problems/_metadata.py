@@ -86,5 +86,19 @@ class ProblemMetadata:
     """Canonical source citations."""
     assets: tuple[ProblemAsset, ...]
     """Packaged non-code assets associated with the problem."""
+    feature_flags: tuple[str, ...]
+    """Machine-readable capability flags for this specific problem entry."""
     implementation: str | None = None
     """Optional ``module:attribute`` import path for executable problem types."""
+
+    def has_feature(self, feature_flag: str) -> bool:
+        """Return whether this problem advertises one feature flag.
+
+        Args:
+            feature_flag: Feature flag name to test.
+
+        Returns:
+            ``True`` when the normalized feature flag is present.
+        """
+        normalized = feature_flag.strip().lower().replace(" ", "-")
+        return normalized in self.feature_flags

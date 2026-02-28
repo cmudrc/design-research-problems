@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=69", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,17 +8,17 @@ version = "0.1.0"
 description = "A compendium of canonical design research problems"
 readme = "README.md"
 requires-python = ">=3.12"
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "The Design Research Collective" }]
 maintainers = [{ name = "Christopher C. McComb", email = "ccm@cmu.edu" }]
 keywords = ["design", "research", "optimization", "benchmark", "problems"]
 classifiers = [
-  "Development Status :: 2 - Pre-Alpha",
+  "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.12",
-  "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Topic :: Scientific/Engineering",
   "Topic :: Software Development :: Libraries :: Python Modules",
@@ -35,6 +35,7 @@ Repository = "https://github.com/cmudrc/design-research-problems"
 Issues = "https://github.com/cmudrc/design-research-problems/issues"
 
 [project.optional-dependencies]
+grammar = ["trussme>=0.1.0"]
 opt = ["scipy>=1.11,<2"]
 dev = [
   "build>=1.2,<2",
@@ -71,7 +72,7 @@ testpaths = ["tests"]
 markers = [
   "examples_full: deterministic example execution suite",
   "examples_smoke: lightweight example smoke checks",
-  "trussme_real: tests that require the local TrussMe checkout",
+  "trussme_real: tests that require an installed trussme package",
 ]
 
 [tool.ruff]
@@ -112,5 +113,7 @@ strict_equality = true
 module = [
   "scipy",
   "scipy.*",
+  "trussme",
+  "trussme.*",
 ]
 ignore_missing_imports = true

@@ -6,6 +6,12 @@ statement_file = "statement.md"
 citation_file = "citation.bib"
 citation_key = "fu2010design"
 citation_kind = "bibtex"
+feature_flags = [
+  "statement-markdown",
+  "citation-backed",
+  "prompt-packet",
+  "human-subjects-ready",
+]
 
 [taxonomy]
 formulation = "textual_prompt"

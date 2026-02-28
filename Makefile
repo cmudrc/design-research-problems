@@ -4,25 +4,29 @@ PYTEST ?= $(PYTHON) -m pytest
 RUFF ?= $(PYTHON) -m ruff
 MYPY ?= $(PYTHON) -m mypy
 SPHINX ?= $(PYTHON) -m sphinx
+BUILD ?= $(PYTHON) -m build
+TWINE ?= $(PYTHON) -m twine
 UV ?= $(if $(wildcard .venv/bin/uv),.venv/bin/uv,uv)
 REPRO_PYTHON ?= $(shell cat .python-version 2>/dev/null || echo 3.12.12)
 REPRO_EXTRAS ?= dev opt
-TRUSSME_PATH ?= /Users/work/PycharmProjects/TrussMe
+TRUSSME_SPEC ?= trussme>=0.1.0
 
 .PHONY: help check-python check-uv dev install-dev repro lock \
-	lint fmt fmt-check type test qa coverage \
+	lint fmt fmt-check type test qa coverage release-check \
 	docstrings-check \
 	examples-smoke examples-test examples-metrics \
 	docs docs-build docs-check docs-linkcheck \
-	install-trussme-local dev-truss test-trussme \
+	install-trussme dev-truss test-trussme \
 	ci clean
 
 help:
 	@echo "Common targets:"
 	@echo "  dev                  Install project in editable mode with dev dependencies."
-	@echo "  dev-truss            Install dev dependencies plus the local TrussMe checkout."
+	@echo "  install-trussme      Install the optional trussme grammar dependency."
+	@echo "  dev-truss            Install dev dependencies plus trussme."
 	@echo "  test                 Run the default pytest suite."
-	@echo "  test-trussme         Run tests that require the real local TrussMe checkout."
+	@echo "  test-trussme         Run tests that require an installed trussme package."
+	@echo "  release-check        Build sdist/wheel and run twine metadata checks."
 	@echo "  docstrings-check     Enforce Google-style docstring policy."
 	@echo "  ci                   Run the main local CI checks."
 
@@ -69,6 +73,11 @@ coverage: check-python
 	PYTHONPATH=src $(PYTEST) -m "not trussme_real" --cov=src/design_research_problems --cov-report=term --cov-report=json:artifacts/coverage/coverage.json -q
 	$(PYTHON) scripts/check_coverage_thresholds.py --coverage-json artifacts/coverage/coverage.json
 
+release-check: check-python
+	rm -rf dist
+	$(BUILD)
+	$(TWINE) check dist/*
+
 examples-smoke: check-python
 	PYTHONPATH=src $(PYTEST) -m examples_smoke -q
 
@@ -92,15 +101,15 @@ docs-linkcheck: check-python
 
 docs: docs-build
 
-install-trussme-local:
-	$(PIP) install -e "$(TRUSSME_PATH)"
+install-trussme:
+	$(PIP) install "$(TRUSSME_SPEC)"
 
-dev-truss: dev install-trussme-local
+dev-truss: dev install-trussme
 
 test-trussme: check-python
 	PYTHONPATH=src $(PYTEST) -m trussme_real -q
 
-ci: qa coverage docstrings-check docs-check examples-smoke
+ci: qa coverage docstrings-check docs-check examples-smoke release-check
 
 clean:
 	rm -rf .coverage .mypy_cache .pytest_cache .ruff_cache artifacts build dist docs/_build src/design_research_problems.egg-info
