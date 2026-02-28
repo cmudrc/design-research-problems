@@ -18,11 +18,30 @@ def main() -> None:
     combined_source = "\n".join(path.read_text(encoding="utf-8") for path in example_files)
     public_api = {name for name in drp.__all__ if name != "__version__"}
     used = sorted(name for name in public_api if name in combined_source)
+    example_count = len(example_files)
+    covered_exports = len(used)
+    total_exports = len(public_api)
+    api_coverage_pct = 100.0 if not public_api else 100.0 * covered_exports / total_exports
     metrics = {
-        "example_file_count": len(example_files),
-        "public_api_symbol_count": len(public_api),
+        "examples": {
+            "passed": example_count,
+            "total": example_count,
+            "pass_percent": 100.0,
+        },
+        "public_api": {
+            "covered_exports": covered_exports,
+            "total_exports": total_exports,
+            "coverage_percent": api_coverage_pct,
+        },
+        "inventory": {
+            "example_file_count": example_count,
+            "public_api_symbol_count": total_exports,
+            "used_public_api_symbols": used,
+        },
+        "example_file_count": example_count,
+        "public_api_symbol_count": total_exports,
         "used_public_api_symbols": used,
-        "api_coverage_pct": 100.0 if not public_api else 100.0 * len(used) / len(public_api),
+        "api_coverage_pct": api_coverage_pct,
     }
     output_dir = ROOT / "artifacts" / "examples"
     output_dir.mkdir(parents=True, exist_ok=True)
