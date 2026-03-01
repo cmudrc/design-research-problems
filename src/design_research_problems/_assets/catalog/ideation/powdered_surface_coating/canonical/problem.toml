@@ -1,0 +1,34 @@
+problem_id = "ideation_powdered_surface_coating"
+title = "Ideation Prompt - Powdered Surface Coating Device"
+summary = "A canonical one-line ideation brief about dispersing a powdered substance over a surface."
+kind = "text"
+statement = '''
+# Ideation Prompt - Powdered Surface Coating Device
+
+Design a device that disperses a light coating of a powdered substance over a surface.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "manufacturing", "mechanisms"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "linsey_2008_powder"
+kind = "inline"
+authors = ["Julie Linsey", "et al."]
+title = "A device that disperses a light coating of a powdered substance over a surface"
+year = 2008
+venue = "Attributed source for the canonical prompt."
+formatted_text = "Linsey et al. (2008). A device that disperses a light coating of a powdered substance over a surface."
+raw_text = "Linsey et al. (2008). A device that disperses a light coating of a powdered substance over a surface."
+provisional = true

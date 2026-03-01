@@ -102,13 +102,29 @@ provisional = true
 
 [[citations]]
 key = "goldschmidt_smolkov_2006"
-kind = "inline"
-authors = ["Gabriela Goldschmidt", "Moran Smolkov"]
-title = "A way to make drinking fountains accessible for all people"
+kind = "bibtex"
+authors = ["Gabriela Goldschmidt", "Maria Smolkov"]
+title = "Variances in the impact of visual stimuli on design problem solving performance"
 year = 2006
-formatted_text = "Goldschmidt and Smolkov (2006). A way to make drinking fountains accessible for all people."
-raw_text = "Goldschmidt and Smolkov (2006). A way to make drinking fountains accessible for all people."
-provisional = true
+venue = "Design Studies, 27(5), 549-569"
+doi = "10.1016/j.destud.2006.01.002"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X06000172"
+formatted_text = "Goldschmidt and Smolkov (2006). Variances in the impact of visual stimuli on design problem solving performance. Design Studies, 27(5), 549-569."
+raw_text = '''
+@article{GOLDSCHMIDT2006549,
+title = {Variances in the impact of visual stimuli on design problem solving performance},
+journal = {Design Studies},
+volume = {27},
+number = {5},
+pages = {549-569},
+year = {2006},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2006.01.002},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X06000172},
+author = {Gabriela Goldschmidt and Maria Smolkov}
+}
+'''
+provisional = false
 
 [[citations]]
 key = "jansson_smith_1991"
@@ -201,9 +217,9 @@ family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
 group = "consumer-household"
 external_aliases = ["CAT-A"]
-canonical_prompt_ids = []
-tags = ["packaging", "consumer", "family-stub"]
-notes = "Catalog family from the secondary prompt-family synthesis."
+canonical_prompt_ids = ["prompt_chocolate_packaging"]
+tags = ["packaging", "consumer"]
+notes = "Primary task framing now packaged from Goldschmidt and Smolkov (2006)."
 
 [[families]]
 family_id = "family_drinking_fountain"
@@ -514,11 +530,11 @@ variant_ids = ["variant_small_towel_folding"]
 prompt_id = "prompt_accessible_drinking_fountain"
 problem_id = "ideation_accessible_drinking_fountain"
 family_id = "family_drinking_fountain"
-canonical_brief = "A way to make drinking fountains accessible for all people."
-evidence_tier = "secondary_canonical"
-source_citation_keys = ["goucher_lambert_cagan_2019", "goldschmidt_smolkov_2006"]
-tags = ["accessibility", "infrastructure", "ideation"]
-status = "needs_primary_fill"
+canonical_brief = "Subjects were asked to design a drinking fountain for a picnic area in a public park. Subjects were requested to take into account the different heights of adults and children who use the fountain, and to make sure that excess water is collected and not spilled around the fountain."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goldschmidt_smolkov_2006"]
+tags = ["human-factors", "infrastructure", "ideation"]
+status = "complete"
 variant_ids = ["variant_accessible_drinking_fountain"]
 
 [[prompts]]
@@ -586,6 +602,17 @@ source_citation_keys = ["jablokow_teerlink_yilmaz_daly_silk_wehr_2015"]
 tags = ["assistive", "variety", "intervention", "asme"]
 status = "complete"
 variant_ids = ["variant_one_handed_lidded_container_opening"]
+
+[[prompts]]
+prompt_id = "prompt_chocolate_packaging"
+problem_id = "ideation_chocolate_packaging"
+family_id = "family_chocolate_packaging"
+canonical_brief = "Subjects were asked to design packaging for fancy chocolate candies, sold by the unit. The individual candy is round, 2 cm in diameter, and wrapped in foil. The packaging must accommodate any desired number of candies between three and 50."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goldschmidt_smolkov_2006"]
+tags = ["packaging", "consumer", "ideation"]
+status = "complete"
+variant_ids = ["variant_chocolate_packaging"]
 
 [[variants]]
 variant_id = "variant_travel_exercise_device"
@@ -679,12 +706,12 @@ status = "needs_primary_fill"
 variant_id = "variant_accessible_drinking_fountain"
 prompt_id = "prompt_accessible_drinking_fountain"
 problem_id = "ideation_accessible_drinking_fountain"
-label = "Canonical one-line brief"
-statement_type = "canonical"
-evidence_tier = "secondary_canonical"
-source_citation_keys = ["goucher_lambert_cagan_2019", "goldschmidt_smolkov_2006"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
-status = "needs_primary_fill"
+label = "Goldschmidt and Smolkov (2006) task framing"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goldschmidt_smolkov_2006"]
+notes = "Verbatim task framing from Section 3.2.2 of the Design Studies paper."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_measuring_cup_for_blind_users"
@@ -761,6 +788,17 @@ statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["jablokow_teerlink_yilmaz_daly_silk_wehr_2015"]
 notes = "Explicitly stated in the accessible paper text."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_chocolate_packaging"
+prompt_id = "prompt_chocolate_packaging"
+problem_id = "ideation_chocolate_packaging"
+label = "Goldschmidt and Smolkov (2006) task framing"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goldschmidt_smolkov_2006"]
+notes = "Verbatim task framing from Section 3.2.1 of the Design Studies paper."
 status = "complete"
 
 [[studies]]

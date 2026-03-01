@@ -7,6 +7,7 @@ supporting assets for design studies.
 The catalog now includes an ideation-focused text corpus:
 
 - 12 canonical one-line ideation prompts,
+- 2 primary task framings from Goldschmidt and Smolkov (2006),
 - 3 ASME study-specific prompts, and
 - the detailed legacy ``peanut_sheller_fu2010`` packet.
 

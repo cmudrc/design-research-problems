@@ -39,7 +39,7 @@ def validate_catalog() -> CatalogValidationReport:
         try:
             statement = load_statement_text(manifest)
         except Exception as exc:
-            errors.append(f"{problem_id}: could not read statement file {manifest.statement_resource!r}: {exc}")
+            errors.append(f"{problem_id}: could not load embedded statement text: {exc}")
             continue
         heading = _leading_h1(statement)
         if heading is not None and heading != metadata.title:

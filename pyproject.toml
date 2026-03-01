@@ -62,8 +62,11 @@ where = ["src"]
 design_research_problems = [
   "py.typed",
   "_assets/catalog/*/*.toml",
-  "_assets/catalog/*/*.md",
   "_assets/catalog/*/*.bib",
+  "_assets/catalog/*/*/*.toml",
+  "_assets/catalog/*/*/*.bib",
+  "_assets/catalog/*/*/*/*.toml",
+  "_assets/catalog/*/*/*/*.bib",
   "_assets/ideation/*.toml",
 ]
 

@@ -176,18 +176,19 @@ def _parse_taxonomy(raw_taxonomy: dict[str, Any]) -> ProblemTaxonomy:
     )
 
 
-def _load_single_manifest(entry: Any) -> ProblemManifest:
+def _load_single_manifest(entry: Traversable, resource_dir: str) -> ProblemManifest:
     """Load one problem manifest directory.
 
     Args:
         entry: Traversable directory representing one problem entry.
+        resource_dir: Package-relative resource directory for the entry.
 
     Returns:
         Parsed problem manifest object.
     """
     raw_text = entry.joinpath("problem.toml").read_text(encoding="utf-8")
     raw_data = tomllib.loads(raw_text)
-    resource_dir = f"{_CATALOG_DIR}/{entry.name}"
+    statement_markdown = str(raw_data["statement"])
     metadata = ProblemMetadata(
         problem_id=str(raw_data["problem_id"]),
         title=str(raw_data["title"]),
@@ -206,14 +207,30 @@ def _load_single_manifest(entry: Any) -> ProblemManifest:
         ),
         implementation=cast(str | None, raw_data.get("implementation")),
     )
-    statement_resource = str(raw_data.get("statement_file", "statement.md"))
     parameters = cast(dict[str, object], raw_data.get("parameters", {}))
     return ProblemManifest(
         metadata=metadata,
         resource_dir=resource_dir,
-        statement_resource=statement_resource,
+        statement_markdown=statement_markdown,
         parameters=parameters,
     )
+
+
+def _iter_manifest_directories(
+    root: Traversable,
+    resource_dir: str = _CATALOG_DIR,
+) -> tuple[tuple[Traversable, str], ...]:
+    """Return all catalog problem directories, including nested ones."""
+    entries: list[tuple[Traversable, str]] = []
+    for entry in sorted(root.iterdir(), key=lambda item: item.name):
+        if not entry.is_dir():
+            continue
+        entry_resource_dir = f"{resource_dir}/{entry.name}"
+        if entry.joinpath("problem.toml").is_file():
+            entries.append((entry, entry_resource_dir))
+            continue
+        entries.extend(_iter_manifest_directories(entry, entry_resource_dir))
+    return tuple(entries)
 
 
 def load_problem_manifests() -> dict[str, ProblemManifest]:
@@ -223,10 +240,8 @@ def load_problem_manifests() -> dict[str, ProblemManifest]:
         Mapping of problem IDs to parsed manifests.
     """
     manifests: dict[str, ProblemManifest] = {}
-    for entry in sorted(_catalog_root().iterdir(), key=lambda item: item.name):
-        if not entry.is_dir():
-            continue
-        manifest = _load_single_manifest(entry)
+    for entry, resource_dir in _iter_manifest_directories(_catalog_root()):
+        manifest = _load_single_manifest(entry, resource_dir)
         manifests[manifest.metadata.problem_id] = manifest
     return manifests
 
@@ -240,4 +255,4 @@ def load_statement_text(manifest: ProblemManifest) -> str:
     Returns:
         UTF-8 Markdown statement text.
     """
-    return _resource_root(manifest.resource_dir).joinpath(manifest.statement_resource).read_text(encoding="utf-8")
+    return manifest.statement_markdown

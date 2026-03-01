@@ -1,0 +1,52 @@
+problem_id = "ideation_chocolate_packaging"
+title = "Ideation Prompt - Chocolate Packaging for Fancy Candies"
+summary = "A primary-source ideation brief about packaging round foil-wrapped chocolates sold individually in quantities from three to 50."
+kind = "text"
+statement = '''
+# Ideation Prompt - Chocolate Packaging for Fancy Candies
+
+Subjects were asked to design packaging for fancy chocolate candies, sold by the
+unit. The individual candy is round, 2 cm in diameter, and wrapped in
+foil. The packaging must accommodate any desired number of candies
+between three and 50.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "packaging", "consumer"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goldschmidt_smolkov_2006"
+kind = "bibtex"
+authors = ["Gabriela Goldschmidt", "Maria Smolkov"]
+title = "Variances in the impact of visual stimuli on design problem solving performance"
+year = 2006
+venue = "Design Studies, 27(5), 549-569"
+doi = "10.1016/j.destud.2006.01.002"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X06000172"
+formatted_text = "Goldschmidt and Smolkov (2006). Variances in the impact of visual stimuli on design problem solving performance. Design Studies, 27(5), 549-569."
+raw_text = '''
+@article{GOLDSCHMIDT2006549,
+title = {Variances in the impact of visual stimuli on design problem solving performance},
+journal = {Design Studies},
+volume = {27},
+number = {5},
+pages = {549-569},
+year = {2006},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2006.01.002},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X06000172},
+author = {Gabriela Goldschmidt and Maria Smolkov}
+}
+'''
+provisional = false

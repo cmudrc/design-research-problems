@@ -92,6 +92,7 @@ def test_installed_wheel_loads_registry(tmp_path: Path) -> None:
     payload = json.loads(probe.stdout.strip())
     assert payload == [
         "ideation_accessible_drinking_fountain",
+        "ideation_chocolate_packaging",
         "ideation_human_motion_energy_harvesting",
         "ideation_injured_athlete_campus_mobility",
         "ideation_joint_immobilization_device",

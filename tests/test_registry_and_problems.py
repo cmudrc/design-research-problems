@@ -14,6 +14,7 @@ from design_research_problems.problems.optimization._pill import _pill_area, _pi
 def test_list_problems_returns_seed_problem_ids() -> None:
     assert list_problems() == (
         "ideation_accessible_drinking_fountain",
+        "ideation_chocolate_packaging",
         "ideation_human_motion_energy_harvesting",
         "ideation_injured_athlete_campus_mobility",
         "ideation_joint_immobilization_device",
@@ -41,6 +42,7 @@ def test_registry_entries_filter_by_kind() -> None:
     kinds = registry.by_kind(ProblemKind.TEXT)
     assert [entry.problem_id for entry in kinds] == [
         "ideation_accessible_drinking_fountain",
+        "ideation_chocolate_packaging",
         "ideation_human_motion_energy_harvesting",
         "ideation_injured_athlete_campus_mobility",
         "ideation_joint_immobilization_device",
