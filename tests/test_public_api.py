@@ -15,8 +15,15 @@ EXPECTED_PUBLIC_API = [
     "ProblemRegistry",
     "MissingOptionalDependencyError",
     "ProblemEvaluationError",
+    "EvidenceTier",
+    "IdeationPromptRecord",
+    "IdeationPromptVariant",
+    "IdeationPromptFamily",
+    "IdeationStudy",
+    "IdeationCatalog",
     "get_problem",
     "list_problems",
+    "get_ideation_catalog",
 ]
 
 

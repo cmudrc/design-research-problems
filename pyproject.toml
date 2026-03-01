@@ -37,6 +37,7 @@ Issues = "https://github.com/cmudrc/design-research-problems/issues"
 [project.optional-dependencies]
 grammar = ["trussme>=0.1.0"]
 opt = ["scipy>=1.11,<2"]
+pandas = ["pandas>=2.2,<3"]
 dev = [
   "build>=1.2,<2",
   "mypy>=1.10,<2",
@@ -63,6 +64,7 @@ design_research_problems = [
   "_assets/catalog/*/*.toml",
   "_assets/catalog/*/*.md",
   "_assets/catalog/*/*.bib",
+  "_assets/ideation/*.toml",
 ]
 
 [tool.pytest.ini_options]

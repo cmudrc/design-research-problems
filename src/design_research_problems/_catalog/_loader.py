@@ -9,6 +9,8 @@ from typing import Any, cast
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._metadata import (
+    KNOWN_PROBLEM_CAPABILITIES,
+    KNOWN_STUDY_SUITABILITY,
     Citation,
     ProblemAsset,
     ProblemKind,
@@ -74,26 +76,29 @@ def _parse_citations(raw_data: dict[str, Any], resource_dir: str) -> tuple[Citat
         Parsed citations in manifest order.
     """
     citations: list[Citation] = []
-    citation_file = raw_data.get("citation_file")
-    if isinstance(citation_file, str):
-        resource = _resource_root(resource_dir).joinpath(citation_file)
-        raw_text = resource.read_text(encoding="utf-8")
-        citations.append(
-            Citation(
-                key=str(raw_data.get("citation_key", "")),
-                kind=str(raw_data.get("citation_kind", "bibtex")),
-                raw_text=raw_text,
-                url=cast(str | None, raw_data.get("citation_url")),
-            )
-        )
-
     for entry in cast(list[dict[str, Any]], raw_data.get("citations", [])):
+        raw_text = str(entry.get("raw_text", "")).strip()
+        raw_text_file = cast(str | None, entry.get("raw_text_file"))
+        if raw_text_file:
+            raw_text = _resource_root(resource_dir).joinpath(raw_text_file).read_text(encoding="utf-8")
+        authors = tuple(
+            str(author).strip()
+            for author in cast(list[object], entry.get("authors", []))
+            if str(author).strip()
+        )
         citations.append(
             Citation(
                 key=str(entry["key"]),
                 kind=str(entry.get("kind", "inline")),
-                raw_text=str(entry["raw_text"]),
+                authors=authors,
+                title=str(entry.get("title", "")),
+                year=int(entry["year"]) if "year" in entry else None,
+                venue=cast(str | None, entry.get("venue")),
+                doi=cast(str | None, entry.get("doi")),
+                formatted_text=cast(str | None, entry.get("formatted_text")),
+                raw_text=raw_text,
                 url=cast(str | None, entry.get("url")),
+                provisional=bool(entry.get("provisional", False)),
             )
         )
 
@@ -120,20 +125,27 @@ def _parse_assets(raw_assets: list[dict[str, Any]]) -> tuple[ProblemAsset, ...]:
     )
 
 
-def _parse_feature_flags(raw_flags: list[object]) -> tuple[str, ...]:
-    """Build a normalized, deterministic feature-flag tuple.
+def _normalize_vocab_values(raw_values: list[object], known_values: frozenset[str]) -> tuple[str, ...]:
+    """Build a normalized, deterministic vocabulary tuple.
 
     Args:
-        raw_flags: Raw feature-flag values from the manifest.
+        raw_values: Raw manifest values.
+        known_values: Allowed normalized values.
 
     Returns:
-        Sorted unique normalized feature flags.
+        Sorted unique normalized values.
+
+    Raises:
+        ValueError: If an unsupported value is encountered.
     """
     normalized: set[str] = set()
-    for raw_flag in raw_flags:
-        flag = str(raw_flag).strip().lower().replace(" ", "-")
-        if flag:
-            normalized.add(flag)
+    for raw_value in raw_values:
+        value = str(raw_value).strip().lower().replace(" ", "-")
+        if not value:
+            continue
+        if value not in known_values:
+            raise ValueError(f"Unsupported catalog value: {value!r}")
+        normalized.add(value)
     return tuple(sorted(normalized))
 
 
@@ -147,16 +159,20 @@ def _parse_taxonomy(raw_taxonomy: dict[str, Any]) -> ProblemTaxonomy:
         Parsed taxonomy object.
     """
     return ProblemTaxonomy(
-        formulation=str(raw_taxonomy.get("formulation", "unspecified")),
-        convexity=str(raw_taxonomy.get("convexity", "unknown")),
-        design_variable_type=str(raw_taxonomy.get("design_variable_type", "unknown")),
+        formulation=cast(str | None, raw_taxonomy.get("formulation")),
+        convexity=cast(str | None, raw_taxonomy.get("convexity")),
+        design_variable_type=cast(str | None, raw_taxonomy.get("design_variable_type")),
         is_dynamic=bool(raw_taxonomy.get("is_dynamic", False)),
-        orientation=str(raw_taxonomy.get("orientation", "unknown")),
+        orientation=cast(str | None, raw_taxonomy.get("orientation")),
         feasibility_ratio_hint=raw_taxonomy.get("feasibility_ratio_hint"),
-        objective_mode=str(raw_taxonomy.get("objective_mode", "single")),
-        constraint_nature=str(raw_taxonomy.get("constraint_nature", "unspecified")),
-        bounds_summary=str(raw_taxonomy.get("bounds_summary", "unspecified")),
+        objective_mode=cast(str | None, raw_taxonomy.get("objective_mode")),
+        constraint_nature=cast(str | None, raw_taxonomy.get("constraint_nature")),
+        bounds_summary=cast(str | None, raw_taxonomy.get("bounds_summary")),
         tags=tuple(str(tag) for tag in raw_taxonomy.get("tags", [])),
+        deliverable_type=cast(str | None, raw_taxonomy.get("deliverable_type")),
+        timebox_hint_minutes=cast(int | None, raw_taxonomy.get("timebox_hint_minutes")),
+        participants=cast(str | None, raw_taxonomy.get("participants")),
+        evaluation_mode=cast(str | None, raw_taxonomy.get("evaluation_mode")),
     )
 
 
@@ -180,7 +196,14 @@ def _load_single_manifest(entry: Any) -> ProblemManifest:
         taxonomy=_parse_taxonomy(cast(dict[str, Any], raw_data.get("taxonomy", {}))),
         citations=_parse_citations(raw_data, resource_dir),
         assets=_parse_assets(cast(list[dict[str, Any]], raw_data.get("assets", []))),
-        feature_flags=_parse_feature_flags(cast(list[object], raw_data.get("feature_flags", []))),
+        capabilities=_normalize_vocab_values(
+            cast(list[object], raw_data.get("capabilities", [])),
+            KNOWN_PROBLEM_CAPABILITIES,
+        ),
+        study_suitability=_normalize_vocab_values(
+            cast(list[object], raw_data.get("study_suitability", [])),
+            KNOWN_STUDY_SUITABILITY,
+        ),
         implementation=cast(str | None, raw_data.get("implementation")),
     )
     statement_resource = str(raw_data.get("statement_file", "statement.md"))

@@ -10,13 +10,11 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-
-RESOURCE_FILES = (
-    "design_research_problems/_assets/catalog/peanut_sheller_fu2010/problem.toml",
-    "design_research_problems/_assets/catalog/peanut_sheller_fu2010/statement.md",
-    "design_research_problems/_assets/catalog/peanut_sheller_fu2010/citation.bib",
-    "design_research_problems/_assets/catalog/pill_capsule_min_area/problem.toml",
-    "design_research_problems/_assets/catalog/planar_truss_span/problem.toml",
+PACKAGE_ASSETS_ROOT = REPO_ROOT / "src" / "design_research_problems" / "_assets"
+RESOURCE_FILES = tuple(
+    str(path.relative_to(REPO_ROOT / "src")).replace(os.sep, "/")
+    for path in sorted(PACKAGE_ASSETS_ROOT.rglob("*"))
+    if path.is_file()
 )
 
 
@@ -93,6 +91,21 @@ def test_installed_wheel_loads_registry(tmp_path: Path) -> None:
     assert probe.returncode == 0, probe.stderr
     payload = json.loads(probe.stdout.strip())
     assert payload == [
+        "ideation_accessible_drinking_fountain",
+        "ideation_human_motion_energy_harvesting",
+        "ideation_injured_athlete_campus_mobility",
+        "ideation_joint_immobilization_device",
+        "ideation_measure_passage_of_time",
+        "ideation_measuring_cup_for_blind_users",
+        "ideation_milk_frothing_product",
+        "ideation_one_handed_lidded_container_opening",
+        "ideation_out_of_reach_book_retrieval",
+        "ideation_peanut_shelling",
+        "ideation_powdered_surface_coating",
+        "ideation_small_towel_folding",
+        "ideation_travel_exercise_device",
+        "ideation_walking_texting_accident_reduction",
+        "ideation_wheelchair_peach_picking",
         "peanut_sheller_fu2010",
         "pill_capsule_min_area",
         "planar_truss_span",

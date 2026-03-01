@@ -3,24 +3,36 @@ title = "Design Problem - Device to shell peanuts"
 summary = "A text-based design prompt about a low-cost peanut sheller for small-scale farmers."
 kind = "text"
 statement_file = "statement.md"
-citation_file = "citation.bib"
-citation_key = "fu2010design"
-citation_kind = "bibtex"
-feature_flags = [
+capabilities = [
   "statement-markdown",
   "citation-backed",
   "prompt-packet",
+]
+study_suitability = [
   "human-subjects-ready",
+  "ideation-friendly",
 ]
 
 [taxonomy]
 formulation = "textual_prompt"
-convexity = "not_applicable"
-design_variable_type = "not_applicable"
 is_dynamic = false
 orientation = "engineering_practical"
 feasibility_ratio_hint = 1.0
 objective_mode = "qualitative"
 constraint_nature = "informal"
-bounds_summary = "not_applicable"
 tags = ["text", "human-subjects", "agriculture", "mechanical-design"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "fu2010design"
+kind = "bibtex"
+authors = ["Katherine Fu", "Jonathan Cagan", "Kenneth Kotovsky"]
+title = "Design team convergence: the influence of example solution quality"
+year = 2010
+venue = "Research source for the packaged peanut sheller prompt."
+formatted_text = "Fu, Cagan, and Kotovsky (2010). Design team convergence: the influence of example solution quality."
+raw_text_file = "citation.bib"
+provisional = true

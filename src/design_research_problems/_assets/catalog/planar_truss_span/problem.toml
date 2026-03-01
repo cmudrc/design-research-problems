@@ -4,13 +4,14 @@ summary = "A discrete topology grammar for adding and removing joints and member
 kind = "grammar"
 statement_file = "statement.md"
 implementation = "design_research_problems.problems.grammar._planar_truss:PlanarTrussSpanProblem"
-feature_flags = [
+capabilities = [
   "statement-markdown",
   "serializable-state",
   "discrete-actions",
   "optional-evaluator",
   "external-adapter",
 ]
+study_suitability = []
 
 [parameters]
 span = 10.0

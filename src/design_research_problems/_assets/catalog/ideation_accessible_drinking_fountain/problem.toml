@@ -1,0 +1,30 @@
+problem_id = "ideation_accessible_drinking_fountain"
+title = "Ideation Prompt - Accessible Drinking Fountain"
+summary = "A canonical one-line ideation brief about making drinking fountains accessible for all people."
+kind = "text"
+statement_file = "statement.md"
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "informal"
+tags = ["text", "human-subjects", "ideation", "accessibility", "infrastructure"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goldschmidt_smolkov_2006"
+kind = "inline"
+authors = ["Gabriela Goldschmidt", "Moran Smolkov"]
+title = "A way to make drinking fountains accessible for all people"
+year = 2006
+venue = "Attributed source for the canonical prompt."
+formatted_text = "Goldschmidt and Smolkov (2006). A way to make drinking fountains accessible for all people."
+raw_text = "Goldschmidt and Smolkov (2006). A way to make drinking fountains accessible for all people."
+provisional = true

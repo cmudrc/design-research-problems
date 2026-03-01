@@ -1,0 +1,30 @@
+problem_id = "ideation_human_motion_energy_harvesting"
+title = "Ideation Prompt - Energy from Human Motion"
+summary = "A canonical one-line ideation brief about collecting energy from human motion."
+kind = "text"
+statement_file = "statement.md"
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "informal"
+tags = ["text", "human-subjects", "ideation", "energy", "wearables"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "fu_chan_cagan_2013"
+kind = "inline"
+authors = ["Katherine Fu", "Jeffrey Chan", "Jonathan Cagan"]
+title = "A device that can collect energy from human motion"
+year = 2013
+venue = "Attributed source for the canonical prompt."
+formatted_text = "Fu, Chan, Cagan, et al. (2013). A device that can collect energy from human motion."
+raw_text = "Fu, Chan, Cagan, et al. (2013). A device that can collect energy from human motion."
+provisional = true

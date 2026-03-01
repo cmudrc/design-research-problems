@@ -1,0 +1,41 @@
+problem_id = "ideation_measuring_cup_for_blind_users"
+title = "Ideation Prompt - Measuring Cup for Blind Users"
+summary = "A canonical one-line ideation brief about a measuring cup for blind users."
+kind = "text"
+statement_file = "statement.md"
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "informal"
+tags = ["text", "human-subjects", "ideation", "accessibility", "consumer"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "jansson_smith_1991"
+kind = "inline"
+authors = ["David Jansson", "Steven Smith"]
+title = "A measuring cup for the blind"
+year = 1991
+venue = "Attributed source for the canonical prompt."
+formatted_text = "Jansson and Smith (1991). A measuring cup for the blind."
+raw_text = "Jansson and Smith (1991). A measuring cup for the blind."
+provisional = true
+
+[[citations]]
+key = "purcell_williams_gero_colbron_1993"
+kind = "inline"
+authors = ["A. T. Purcell", "P. Williams", "John Gero", "Brenda Colbron"]
+title = "A measuring cup for the blind"
+year = 1993
+venue = "Attributed source for the canonical prompt."
+formatted_text = "Purcell, Williams, Gero, and Colbron (1993). A measuring cup for the blind."
+raw_text = "Purcell, Williams, Gero, and Colbron (1993). A measuring cup for the blind."
+provisional = true

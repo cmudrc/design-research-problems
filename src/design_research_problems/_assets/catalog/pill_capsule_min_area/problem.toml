@@ -4,13 +4,14 @@ summary = "A two-variable constrained optimization problem that minimizes capsul
 kind = "optimization"
 statement_file = "statement.md"
 implementation = "design_research_problems.problems.optimization._pill:PillCapsuleMinArea"
-feature_flags = [
+capabilities = [
   "statement-markdown",
   "bounded-variables",
   "equality-constraint",
   "seeded-data-generation",
   "optional-solver",
 ]
+study_suitability = []
 
 [parameters]
 required_volume = 1e-6
