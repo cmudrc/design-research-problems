@@ -9,7 +9,7 @@ research:
 - prompt families and lineage notes, and
 - study summaries for reusable ASME-style protocols.
 
-Use :func:`design_research_problems.get_ideation_catalog` to inspect the
+Use ``get_ideation_catalog()`` to inspect the
 machine-readable catalog, search prompts, and export JSON, CSV, or optional
 ``pandas`` DataFrames.
 
