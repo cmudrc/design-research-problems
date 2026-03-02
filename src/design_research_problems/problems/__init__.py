@@ -1,6 +1,8 @@
 """Public problem-family exports."""
 
 from ._decision import (
+    DecisionChoiceBenchmark,
+    DecisionChoiceEvaluation,
     DecisionConstraintSpec,
     DecisionFactor,
     DecisionObjectiveSpec,
@@ -17,6 +19,8 @@ from ._text import TextProblem
 
 __all__ = [
     "Citation",
+    "DecisionChoiceBenchmark",
+    "DecisionChoiceEvaluation",
     "DecisionConstraintSpec",
     "DecisionFactor",
     "DecisionObjectiveSpec",

@@ -1,0 +1,73 @@
+response_count = 67
+
+[[choices]]
+key = "steel"
+label = "Steel"
+top_choice_share = 0.007048
+mean_rating = 3.283582
+median_rating = 3.0
+std_rating = 2.557259
+
+[[choices]]
+key = "aluminium"
+label = "Aluminium"
+top_choice_share = 0.170481
+mean_rating = 7.149254
+median_rating = 8.0
+std_rating = 2.297916
+
+[[choices]]
+key = "titanium"
+label = "Titanium"
+top_choice_share = 0.268242
+mean_rating = 6.776119
+median_rating = 7.0
+std_rating = 2.911945
+
+[[choices]]
+key = "glass"
+label = "Glass"
+top_choice_share = 0.006302
+mean_rating = 2.164179
+median_rating = 1.0
+std_rating = 2.326377
+
+[[choices]]
+key = "wood"
+label = "Wood"
+top_choice_share = 0.006302
+mean_rating = 2.313433
+median_rating = 1.0
+std_rating = 2.565558
+
+[[choices]]
+key = "thermoplastic"
+label = "Thermoplastic"
+top_choice_share = 0.092123
+mean_rating = 4.641791
+median_rating = 5.0
+std_rating = 3.194225
+
+[[choices]]
+key = "elastomer"
+label = "Elastomer"
+top_choice_share = 0.025705
+mean_rating = 3.462687
+median_rating = 3.0
+std_rating = 2.814079
+
+[[choices]]
+key = "thermoset"
+label = "Thermoset"
+top_choice_share = 0.017496
+mean_rating = 4.343284
+median_rating = 4.0
+std_rating = 2.771895
+
+[[choices]]
+key = "composite"
+label = "Composite"
+top_choice_share = 0.406302
+mean_rating = 7.865672
+median_rating = 9.0
+std_rating = 2.295553

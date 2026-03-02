@@ -204,6 +204,20 @@ class ProblemRegistry:
             raise KeyError(f"Unknown problem id: {problem_id}")
 
         statement_markdown = load_statement_text(manifest)
+        implementation = manifest.metadata.implementation
+        if implementation is not None:
+            target = _resolve_object(implementation)
+            factory = getattr(target, "from_manifest", None)
+            if callable(factory):
+                manifest_factory = cast(Callable[[ProblemManifest, str], ProblemInstance], factory)
+                return manifest_factory(manifest, statement_markdown)
+
+            if callable(target):
+                direct_factory = cast(Callable[[object, str], ProblemInstance], target)
+                return direct_factory(manifest.metadata, statement_markdown)
+
+            raise ProblemEvaluationError(f"Problem implementation for {problem_id!r} is not callable.")
+
         if manifest.metadata.kind is ProblemKind.TEXT:
             return TextProblem(
                 metadata=manifest.metadata,
@@ -219,22 +233,7 @@ class ProblemRegistry:
                 resource_bundle=PackageResourceBundle("design_research_problems", manifest.resource_dir),
                 parameters=manifest.parameters,
             )
-
-        implementation = manifest.metadata.implementation
-        if implementation is None:
-            raise ProblemEvaluationError(f"Problem {problem_id!r} is missing an implementation path.")
-
-        target = _resolve_object(implementation)
-        factory = getattr(target, "from_manifest", None)
-        if callable(factory):
-            manifest_factory = cast(Callable[[ProblemManifest, str], ProblemInstance], factory)
-            return manifest_factory(manifest, statement_markdown)
-
-        if callable(target):
-            direct_factory = cast(Callable[[object, str], ProblemInstance], target)
-            return direct_factory(manifest.metadata, statement_markdown)
-
-        raise ProblemEvaluationError(f"Problem implementation for {problem_id!r} is not callable.")
+        raise ProblemEvaluationError(f"Problem {problem_id!r} is missing an implementation path.")
 
 
 _DEFAULT_REGISTRY = ProblemRegistry()

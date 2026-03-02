@@ -13,6 +13,16 @@ from design_research_problems._exceptions import ProblemEvaluationError
 from design_research_problems.problems._text import TextProblem
 
 _DISCRETE_MARKET_SIZE = 1_600_000.0
+_CHOICE_METRIC_TOP_CHOICE_SHARE = "top-choice-share"
+_CHOICE_METRIC_MEAN_RATING = "mean-rating"
+_CHOICE_METRIC_MEDIAN_RATING = "median-rating"
+_SUPPORTED_CHOICE_METRICS = frozenset(
+    {
+        _CHOICE_METRIC_TOP_CHOICE_SHARE,
+        _CHOICE_METRIC_MEAN_RATING,
+        _CHOICE_METRIC_MEDIAN_RATING,
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -253,6 +263,93 @@ class DecisionOptionEvaluation:
 
 
 @dataclass(frozen=True)
+class DecisionChoiceBenchmark:
+    """One empirical categorical choice benchmark entry."""
+
+    key: str
+    """Stable option key used for evaluation."""
+    label: str
+    """Human-readable option label."""
+    top_choice_share: float
+    """Tie-adjusted fraction of experts whose top score includes this choice."""
+    mean_rating: float
+    """Mean 0-10 source rating for this choice."""
+    median_rating: float
+    """Median 0-10 source rating for this choice."""
+    std_rating: float
+    """Sample standard deviation of the source ratings."""
+
+    def __post_init__(self) -> None:
+        """Normalize and validate the benchmark entry."""
+        key = self.key.strip().lower()
+        if not key:
+            raise ValueError("DecisionChoiceBenchmark requires a non-empty key.")
+        label = self.label.strip()
+        if not label:
+            raise ValueError(f"DecisionChoiceBenchmark {key!r} requires a non-empty label.")
+        top_choice_share = float(self.top_choice_share)
+        if not 0.0 <= top_choice_share <= 1.0:
+            raise ValueError(f"DecisionChoiceBenchmark {key!r} top_choice_share must be in [0, 1].")
+        std_rating = float(self.std_rating)
+        if std_rating < 0.0:
+            raise ValueError(f"DecisionChoiceBenchmark {key!r} std_rating must be non-negative.")
+        object.__setattr__(self, "key", key)
+        object.__setattr__(self, "label", label)
+        object.__setattr__(self, "top_choice_share", top_choice_share)
+        object.__setattr__(self, "mean_rating", float(self.mean_rating))
+        object.__setattr__(self, "median_rating", float(self.median_rating))
+        object.__setattr__(self, "std_rating", std_rating)
+
+
+@dataclass(frozen=True)
+class DecisionChoiceEvaluation:
+    """Evaluation result for one empirical categorical choice."""
+
+    choice_key: str
+    """Canonical option key used for the evaluation."""
+    choice_label: str
+    """Human-readable option label."""
+    top_choice_share: float
+    """Tie-adjusted fraction of expert top matches."""
+    mean_rating: float
+    """Mean 0-10 source rating for the choice."""
+    median_rating: float
+    """Median 0-10 source rating for the choice."""
+    std_rating: float
+    """Sample standard deviation of the source ratings."""
+    response_count: int
+    """Number of valid respondents included in the aggregate."""
+    objective_value: float
+    """Metric-specific scalar value used for ranking."""
+    objective_metric: str
+    """Name of the metric used to populate ``objective_value``."""
+
+    def __post_init__(self) -> None:
+        """Normalize numeric outputs and the metric identifier."""
+        choice_key = self.choice_key.strip().lower()
+        if not choice_key:
+            raise ValueError("DecisionChoiceEvaluation requires a non-empty choice_key.")
+        choice_label = self.choice_label.strip()
+        if not choice_label:
+            raise ValueError(f"DecisionChoiceEvaluation {choice_key!r} requires a non-empty choice_label.")
+        response_count = int(self.response_count)
+        if response_count < 0:
+            raise ValueError("DecisionChoiceEvaluation response_count must be non-negative.")
+        objective_metric = self.objective_metric.strip().lower()
+        if objective_metric not in _SUPPORTED_CHOICE_METRICS:
+            raise ValueError(f"Unsupported choice metric: {objective_metric!r}")
+        object.__setattr__(self, "choice_key", choice_key)
+        object.__setattr__(self, "choice_label", choice_label)
+        object.__setattr__(self, "top_choice_share", float(self.top_choice_share))
+        object.__setattr__(self, "mean_rating", float(self.mean_rating))
+        object.__setattr__(self, "median_rating", float(self.median_rating))
+        object.__setattr__(self, "std_rating", float(self.std_rating))
+        object.__setattr__(self, "response_count", response_count)
+        object.__setattr__(self, "objective_value", float(self.objective_value))
+        object.__setattr__(self, "objective_metric", objective_metric)
+
+
+@dataclass(frozen=True)
 class _ParsedDecisionPayload:
     """Internal parsed representation of structured decision fields."""
 
@@ -260,12 +357,18 @@ class _ParsedDecisionPayload:
     """Parsed engineering variable specs."""
     option_factors: tuple[DecisionFactor, ...]
     """Parsed discrete conjoint factors."""
+    choice_benchmarks: tuple[DecisionChoiceBenchmark, ...]
+    """Parsed empirical categorical choice benchmarks."""
     competitor_profiles: tuple[DecisionProfile, ...]
     """Parsed observed competitor profiles."""
     objective_specs: tuple[DecisionObjectiveSpec, ...]
     """Parsed objective descriptors."""
     constraint_specs: tuple[DecisionConstraintSpec, ...]
     """Parsed constraint descriptors."""
+    default_choice_metric: str
+    """Default metric for empirical choice ranking."""
+    response_count: int
+    """Number of valid respondents represented by the aggregates."""
 
 
 @dataclass(frozen=True)
@@ -404,35 +507,55 @@ def parse_structured_decision_payload(parameters: Mapping[str, object]) -> _Pars
     """
     decision_variable_specs = _parse_decision_variable_specs(parameters)
     option_factors = _parse_option_factors(parameters)
+    choice_benchmarks = _parse_choice_benchmarks(parameters)
     competitor_profiles = _parse_competitor_profiles(parameters)
     objective_specs = _parse_objective_specs(parameters)
     constraint_specs = _parse_constraint_specs(parameters)
+    default_choice_metric = _parse_default_choice_metric(parameters, has_choice_benchmarks=bool(choice_benchmarks))
+    response_count = _parse_response_count(parameters, has_choice_benchmarks=bool(choice_benchmarks))
 
     variable_symbols = {spec.symbol for spec in decision_variable_specs}
     factor_keys = {factor.key for factor in option_factors}
+    choice_keys = {benchmark.key for benchmark in choice_benchmarks}
+    symbolic_names = variable_symbols | factor_keys
+    if choice_benchmarks:
+        symbolic_names.add("material")
     objective_keys = set[str]()
     for objective in objective_specs:
         if objective.key in objective_keys:
             raise ValueError(f"Duplicate decision objective key: {objective.key!r}")
         objective_keys.add(objective.key)
         if objective.executable:
-            if objective.domain != "discrete-option":
-                raise ValueError(f"Executable decision objective {objective.key!r} must use domain 'discrete-option'.")
             if objective.sense != "maximize":
                 raise ValueError(f"Executable decision objective {objective.key!r} must use sense 'maximize'.")
-            if not option_factors:
-                raise ValueError(f"Executable decision objective {objective.key!r} requires option_factors.")
-            if not competitor_profiles:
-                raise ValueError(f"Executable decision objective {objective.key!r} requires competitor_profiles.")
-            if any(not factor.part_worths for factor in option_factors):
-                raise ValueError(f"Executable decision objective {objective.key!r} requires factor part_worths.")
-            unknown = [name for name in objective.variables if name not in factor_keys]
-            if unknown:
-                raise ValueError(
-                    f"Executable decision objective {objective.key!r} references unknown factor keys: {unknown!r}"
-                )
+            if objective.domain == "discrete-option":
+                if not option_factors:
+                    raise ValueError(f"Executable decision objective {objective.key!r} requires option_factors.")
+                if not competitor_profiles:
+                    raise ValueError(f"Executable decision objective {objective.key!r} requires competitor_profiles.")
+                if any(not factor.part_worths for factor in option_factors):
+                    raise ValueError(f"Executable decision objective {objective.key!r} requires factor part_worths.")
+                unknown = [name for name in objective.variables if name not in factor_keys]
+                if unknown:
+                    raise ValueError(
+                        f"Executable decision objective {objective.key!r} references unknown factor keys: {unknown!r}"
+                    )
+                continue
+            if objective.domain == "empirical-choice":
+                if not choice_benchmarks:
+                    raise ValueError(f"Executable decision objective {objective.key!r} requires choice_options.")
+                unknown = [name for name in objective.variables if name != "material"]
+                if unknown:
+                    raise ValueError(
+                        f"Executable decision objective {objective.key!r} references unknown variables: {unknown!r}"
+                    )
+                continue
+            raise ValueError(
+                f"Executable decision objective {objective.key!r} must use domain 'discrete-option' or "
+                f"'empirical-choice'."
+            )
         else:
-            unknown = [name for name in objective.variables if name not in (variable_symbols | factor_keys)]
+            unknown = [name for name in objective.variables if name not in symbolic_names]
             if unknown:
                 raise ValueError(f"Decision objective {objective.key!r} references unknown variables: {unknown!r}")
 
@@ -452,13 +575,20 @@ def parse_structured_decision_payload(parameters: Mapping[str, object]) -> _Pars
     for profile in competitor_profiles:
         if set(profile.values) != factor_key_set or len(profile.values) != len(ordered_factor_keys):
             raise ValueError(f"Decision profile {profile.name!r} must include exactly the option factor keys.")
+    if choice_benchmarks and response_count <= 0:
+        raise ValueError("choice_options require a positive response_count.")
+    if len(choice_keys) != len(choice_benchmarks):
+        raise ValueError("choice_options contain duplicate keys.")
 
     return _ParsedDecisionPayload(
         decision_variable_specs=decision_variable_specs,
         option_factors=option_factors,
+        choice_benchmarks=choice_benchmarks,
         competitor_profiles=competitor_profiles,
         objective_specs=objective_specs,
         constraint_specs=constraint_specs,
+        default_choice_metric=default_choice_metric,
+        response_count=response_count,
     )
 
 
@@ -472,12 +602,20 @@ class DecisionProblem(TextProblem):
     """Cached typed engineering variable specs."""
     _option_factors: tuple[DecisionFactor, ...] = field(init=False, repr=False)
     """Cached typed discrete conjoint factors."""
+    _choice_benchmarks: tuple[DecisionChoiceBenchmark, ...] = field(init=False, repr=False)
+    """Cached empirical categorical choice benchmarks."""
+    _choice_lookup: Mapping[str, DecisionChoiceBenchmark] = field(init=False, repr=False)
+    """Cached case-insensitive choice-key and label lookup."""
     _competitor_profiles: tuple[DecisionProfile, ...] = field(init=False, repr=False)
     """Cached observed competitor profiles."""
     _objective_specs: tuple[DecisionObjectiveSpec, ...] = field(init=False, repr=False)
     """Cached typed objective descriptors."""
     _constraint_specs: tuple[DecisionConstraintSpec, ...] = field(init=False, repr=False)
     """Cached typed constraint descriptors."""
+    _default_choice_metric: str = field(init=False, repr=False)
+    """Cached default empirical choice metric."""
+    _response_count: int = field(init=False, repr=False)
+    """Cached empirical response count."""
     _factor_splines: Mapping[str, _NaturalCubicSpline] = field(init=False, repr=False)
     """Cached spline evaluators keyed by factor."""
 
@@ -488,14 +626,22 @@ class DecisionProblem(TextProblem):
         payload = parse_structured_decision_payload(frozen_parameters)
         object.__setattr__(self, "_decision_variable_specs", payload.decision_variable_specs)
         object.__setattr__(self, "_option_factors", payload.option_factors)
+        object.__setattr__(self, "_choice_benchmarks", payload.choice_benchmarks)
         object.__setattr__(self, "_competitor_profiles", payload.competitor_profiles)
         object.__setattr__(self, "_objective_specs", payload.objective_specs)
         object.__setattr__(self, "_constraint_specs", payload.constraint_specs)
+        object.__setattr__(self, "_default_choice_metric", payload.default_choice_metric)
+        object.__setattr__(self, "_response_count", payload.response_count)
         splines = {
             factor.key: _NaturalCubicSpline.from_points(factor.levels, factor.part_worths)
             for factor in payload.option_factors
             if factor.part_worths
         }
+        choice_lookup: dict[str, DecisionChoiceBenchmark] = {}
+        for benchmark in payload.choice_benchmarks:
+            choice_lookup[benchmark.key.lower()] = benchmark
+            choice_lookup[benchmark.label.lower()] = benchmark
+        object.__setattr__(self, "_choice_lookup", MappingProxyType(choice_lookup))
         object.__setattr__(self, "_factor_splines", MappingProxyType(splines))
 
     @property
@@ -571,6 +717,33 @@ class DecisionProblem(TextProblem):
         return self._option_factors
 
     @property
+    def choice_benchmarks(self) -> tuple[DecisionChoiceBenchmark, ...]:
+        """Return the empirical categorical choice benchmarks.
+
+        Returns:
+            Parsed empirical choice benchmarks in source order.
+        """
+        return self._choice_benchmarks
+
+    @property
+    def choice_options(self) -> tuple[str, ...]:
+        """Return the canonical empirical choice keys in source order.
+
+        Returns:
+            Choice keys in source order.
+        """
+        return tuple(benchmark.key for benchmark in self.choice_benchmarks)
+
+    @property
+    def default_choice_metric(self) -> str:
+        """Return the default metric used for empirical choice ranking.
+
+        Returns:
+            Supported metric name.
+        """
+        return self._default_choice_metric
+
+    @property
     def competitor_profiles(self) -> tuple[DecisionProfile, ...]:
         """Return the observed competitor profiles.
 
@@ -617,6 +790,10 @@ class DecisionProblem(TextProblem):
             ProblemEvaluationError: If the problem has no executable discrete objective.
         """
         objective = self._executable_objective()
+        if objective.domain == "empirical-choice":
+            raise ProblemEvaluationError(
+                "evaluate_option() is unavailable for empirical-choice objectives; use evaluate_choice() instead."
+            )
         if objective.domain != "discrete-option":
             raise ProblemEvaluationError("evaluate_option() only supports executable discrete-option objectives.")
 
@@ -660,6 +837,102 @@ class DecisionProblem(TextProblem):
         if best is None:
             raise ProblemEvaluationError("No discrete option space is available to evaluate.")
         return best
+
+    def evaluate_choice(
+        self,
+        choice: str,
+        metric: Literal["top-choice-share", "mean-rating", "median-rating"] | None = None,
+    ) -> DecisionChoiceEvaluation:
+        """Evaluate one empirical categorical choice option.
+
+        Args:
+            choice: Canonical key or display label for the option.
+            metric: Optional ranking metric override.
+
+        Returns:
+            Typed evaluation result backed by the stored empirical aggregate.
+
+        Raises:
+            ValueError: If the requested choice name is unknown.
+            ProblemEvaluationError: If the problem has no empirical choice benchmark data.
+        """
+        benchmark = self._coerce_choice(choice)
+        selected_metric = self._normalize_choice_metric(metric)
+        return DecisionChoiceEvaluation(
+            choice_key=benchmark.key,
+            choice_label=benchmark.label,
+            top_choice_share=benchmark.top_choice_share,
+            mean_rating=benchmark.mean_rating,
+            median_rating=benchmark.median_rating,
+            std_rating=benchmark.std_rating,
+            response_count=self._response_count,
+            objective_value=self._choice_metric_value(benchmark, selected_metric),
+            objective_metric=selected_metric,
+        )
+
+    def rank_choices(
+        self,
+        metric: Literal["top-choice-share", "mean-rating", "median-rating"] | None = None,
+    ) -> tuple[DecisionChoiceEvaluation, ...]:
+        """Return all empirical choices ranked by one metric.
+
+        Args:
+            metric: Optional ranking metric override.
+
+        Returns:
+            Ranked evaluations in deterministic order.
+
+        Raises:
+            ProblemEvaluationError: If the problem has no empirical choice benchmark data.
+        """
+        selected_metric = self._normalize_choice_metric(metric)
+        if not self.choice_benchmarks:
+            raise ProblemEvaluationError("Decision problem does not define empirical choice benchmarks.")
+        ranked = [
+            (
+                index,
+                DecisionChoiceEvaluation(
+                    choice_key=benchmark.key,
+                    choice_label=benchmark.label,
+                    top_choice_share=benchmark.top_choice_share,
+                    mean_rating=benchmark.mean_rating,
+                    median_rating=benchmark.median_rating,
+                    std_rating=benchmark.std_rating,
+                    response_count=self._response_count,
+                    objective_value=self._choice_metric_value(benchmark, selected_metric),
+                    objective_metric=selected_metric,
+                ),
+            )
+            for index, benchmark in enumerate(self.choice_benchmarks)
+        ]
+        ranked.sort(
+            key=lambda item: (
+                -item[1].objective_value,
+                -item[1].mean_rating,
+                item[0],
+            )
+        )
+        return tuple(evaluation for _, evaluation in ranked)
+
+    def best_choice(
+        self,
+        metric: Literal["top-choice-share", "mean-rating", "median-rating"] | None = None,
+    ) -> DecisionChoiceEvaluation:
+        """Return the best-scoring empirical categorical choice.
+
+        Args:
+            metric: Optional ranking metric override.
+
+        Returns:
+            Highest-ranking empirical choice evaluation.
+
+        Raises:
+            ProblemEvaluationError: If the problem has no empirical choice benchmark data.
+        """
+        ranked = self.rank_choices(metric=metric)
+        if not ranked:
+            raise ProblemEvaluationError("Decision problem does not define empirical choice benchmarks.")
+        return ranked[0]
 
     def render_brief(
         self,
@@ -712,6 +985,12 @@ class DecisionProblem(TextProblem):
             sections.append("## Option Space")
             sections.append(self._render_option_space())
 
+        if self.choice_benchmarks:
+            sections.append("## Choices")
+            sections.append(self._render_choice_options())
+            sections.append("## Empirical Benchmark")
+            sections.append(self._render_empirical_benchmark())
+
         if include_citation and self.metadata.citations:
             if citation_mode in {"summary", "summary+raw"}:
                 sections.append("## Sources")
@@ -763,6 +1042,67 @@ class DecisionProblem(TextProblem):
             if objective.executable:
                 return objective
         raise ProblemEvaluationError("Decision problem does not define an executable objective.")
+
+    def _coerce_choice(self, choice: str) -> DecisionChoiceBenchmark:
+        """Normalize one caller-supplied empirical choice identifier.
+
+        Args:
+            choice: Canonical key or display label to resolve.
+
+        Returns:
+            Matching empirical choice benchmark.
+
+        Raises:
+            ValueError: If the requested choice name is unknown.
+            ProblemEvaluationError: If the problem has no empirical choice benchmark data.
+        """
+        if not self.choice_benchmarks:
+            raise ProblemEvaluationError("Decision problem does not define empirical choice benchmarks.")
+        key = choice.strip().lower()
+        if not key:
+            raise ValueError("Choice must be a non-empty string.")
+        benchmark = self._choice_lookup.get(key)
+        if benchmark is None:
+            raise ValueError(f"Unknown choice: {choice!r}")
+        return benchmark
+
+    def _normalize_choice_metric(
+        self,
+        metric: Literal["top-choice-share", "mean-rating", "median-rating"] | None,
+    ) -> str:
+        """Return one supported empirical choice metric name.
+
+        Args:
+            metric: Optional user-provided metric override.
+
+        Returns:
+            Supported metric name.
+
+        Raises:
+            ValueError: If the provided metric is unsupported.
+        """
+        normalized = self.default_choice_metric if metric is None else metric.strip().lower()
+        if normalized not in _SUPPORTED_CHOICE_METRICS:
+            raise ValueError(f"Unsupported choice metric: {metric!r}")
+        return normalized
+
+    def _choice_metric_value(self, benchmark: DecisionChoiceBenchmark, metric: str) -> float:
+        """Return one benchmark value keyed by metric name.
+
+        Args:
+            benchmark: Choice benchmark to read.
+            metric: Supported metric name.
+
+        Returns:
+            Numeric benchmark value.
+        """
+        if metric == _CHOICE_METRIC_TOP_CHOICE_SHARE:
+            return benchmark.top_choice_share
+        if metric == _CHOICE_METRIC_MEAN_RATING:
+            return benchmark.mean_rating
+        if metric == _CHOICE_METRIC_MEDIAN_RATING:
+            return benchmark.median_rating
+        raise ValueError(f"Unsupported choice metric: {metric!r}")
 
     def _factor_part_worth(self, factor: DecisionFactor, value: float) -> float:
         """Return the exact discrete part-worth coefficient for one level.
@@ -844,6 +1184,37 @@ class DecisionProblem(TextProblem):
             levels_text = ", ".join(_format_number(value) for value in factor.levels)
             lines.append(f"- {factor.label} (`{factor.key}`{unit_suffix}): [{levels_text}]")
         lines.append(f"- Total discrete options: {self.option_count:,}")
+        return "\n".join(lines)
+
+    def _render_choice_options(self) -> str:
+        """Render the empirical choice labels in source order.
+
+        Returns:
+            Markdown bullet list of the categorical options.
+        """
+        return "\n".join(f"- {benchmark.label} (`{benchmark.key}`)" for benchmark in self.choice_benchmarks)
+
+    def _render_empirical_benchmark(self) -> str:
+        """Render the empirical benchmark as a Markdown table.
+
+        Returns:
+            Markdown table sorted by the default choice metric.
+        """
+        evaluations = self.rank_choices(metric=self.default_choice_metric)
+        lines = [
+            "| Choice | Key | Top Choice Share | Mean Rating | Median Rating | Std Rating |",
+            "| --- | --- | ---: | ---: | ---: | ---: |",
+        ]
+        for evaluation in evaluations:
+            lines.append(
+                "| "
+                f"{evaluation.choice_label} | "
+                f"`{evaluation.choice_key}` | "
+                f"{evaluation.top_choice_share:.6f} | "
+                f"{evaluation.mean_rating:.6f} | "
+                f"{evaluation.median_rating:.6f} | "
+                f"{evaluation.std_rating:.6f} |"
+            )
         return "\n".join(lines)
 
     def _string_value(self, key: str) -> str | None:
@@ -1007,6 +1378,85 @@ def _parse_option_factors(parameters: Mapping[str, object]) -> tuple[DecisionFac
         seen_keys.add(factor.key)
         factors.append(factor)
     return tuple(factors)
+
+
+def _parse_choice_benchmarks(parameters: Mapping[str, object]) -> tuple[DecisionChoiceBenchmark, ...]:
+    """Parse structured empirical categorical choice benchmarks.
+
+    Args:
+        parameters: Raw manifest parameter mapping.
+
+    Returns:
+        Parsed empirical choice benchmarks.
+
+    Raises:
+        ValueError: If the structured payload is malformed.
+    """
+    raw_options = _list_of_mappings(parameters.get("choice_options"), field_name="choice_options")
+    benchmarks: list[DecisionChoiceBenchmark] = []
+    seen_keys: set[str] = set()
+    seen_labels: set[str] = set()
+    for entry in raw_options:
+        benchmark = DecisionChoiceBenchmark(
+            key=str(entry.get("key", "")),
+            label=str(entry.get("label", "")),
+            top_choice_share=_required_float(entry, "top_choice_share"),
+            mean_rating=_required_float(entry, "mean_rating"),
+            median_rating=_required_float(entry, "median_rating"),
+            std_rating=_required_float(entry, "std_rating"),
+        )
+        if benchmark.key in seen_keys:
+            raise ValueError(f"Duplicate choice option key: {benchmark.key!r}")
+        label_key = benchmark.label.lower()
+        if label_key in seen_labels:
+            raise ValueError(f"Duplicate choice option label: {benchmark.label!r}")
+        seen_keys.add(benchmark.key)
+        seen_labels.add(label_key)
+        benchmarks.append(benchmark)
+    return tuple(benchmarks)
+
+
+def _parse_default_choice_metric(parameters: Mapping[str, object], has_choice_benchmarks: bool) -> str:
+    """Parse the default empirical choice metric.
+
+    Args:
+        parameters: Raw manifest parameter mapping.
+        has_choice_benchmarks: Whether empirical choices are present.
+
+    Returns:
+        Supported metric name.
+
+    Raises:
+        ValueError: If the provided metric is unsupported.
+    """
+    raw_value = parameters.get("default_choice_metric")
+    if raw_value is None:
+        return _CHOICE_METRIC_TOP_CHOICE_SHARE if has_choice_benchmarks else _CHOICE_METRIC_TOP_CHOICE_SHARE
+    value = str(raw_value).strip().lower()
+    if value not in _SUPPORTED_CHOICE_METRICS:
+        raise ValueError(f"Unsupported default_choice_metric: {value!r}")
+    return value
+
+
+def _parse_response_count(parameters: Mapping[str, object], has_choice_benchmarks: bool) -> int:
+    """Parse the empirical response count.
+
+    Args:
+        parameters: Raw manifest parameter mapping.
+        has_choice_benchmarks: Whether empirical choices are present.
+
+    Returns:
+        Parsed integer response count.
+    """
+    raw_value = parameters.get("response_count")
+    if raw_value is None:
+        return 0
+    response_count = _coerce_int(raw_value, field_name="response_count")
+    if has_choice_benchmarks and response_count <= 0:
+        raise ValueError("response_count must be positive when choice_options are present.")
+    if response_count < 0:
+        raise ValueError("response_count must be non-negative.")
+    return response_count
 
 
 def _parse_competitor_profiles(parameters: Mapping[str, object]) -> tuple[DecisionProfile, ...]:
@@ -1190,6 +1640,25 @@ def _required_float(entry: Mapping[str, object], key: str) -> float:
     if key not in entry:
         raise ValueError(f"Missing required numeric field: {key}")
     return _coerce_float(entry[key], field_name=key)
+
+
+def _coerce_int(raw_value: object, field_name: str) -> int:
+    """Coerce one raw scalar to int with a clear validation error.
+
+    Args:
+        raw_value: Raw scalar to convert.
+        field_name: Field label for validation errors.
+
+    Returns:
+        Parsed integer value.
+
+    Raises:
+        ValueError: If the raw value is empty, non-numeric, or not integral.
+    """
+    numeric_value = _coerce_float(raw_value, field_name=field_name)
+    if not numeric_value.is_integer():
+        raise ValueError(f"{field_name} must be an integer.")
+    return int(numeric_value)
 
 
 def _coerce_float(raw_value: object, field_name: str) -> float:
