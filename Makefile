@@ -74,8 +74,8 @@ coverage: check-python
 	$(PYTHON) scripts/check_coverage_thresholds.py --coverage-json artifacts/coverage/coverage.json
 
 release-check: check-python
-	rm -rf dist
-	$(BUILD)
+	rm -rf build dist
+	$(BUILD) --no-isolation
 	$(TWINE) check dist/*
 
 examples-smoke: check-python
