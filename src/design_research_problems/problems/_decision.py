@@ -23,22 +23,38 @@ class DecisionProblem(TextProblem):
 
     @property
     def decision_variables(self) -> tuple[str, ...]:
-        """Return the curated decision-variable descriptions."""
+        """Return the curated decision-variable descriptions.
+
+        Returns:
+            Decision-variable descriptions in source order.
+        """
         return self._string_list("decision_variables")
 
     @property
     def objectives(self) -> tuple[str, ...]:
-        """Return the stated objective descriptions."""
+        """Return the stated objective descriptions.
+
+        Returns:
+            Objective descriptions in source order.
+        """
         return self._string_list("objectives")
 
     @property
     def constraints(self) -> tuple[str, ...]:
-        """Return the curated constraint descriptions."""
+        """Return the curated constraint descriptions.
+
+        Returns:
+            Constraint descriptions in source order.
+        """
         return self._string_list("constraints")
 
     @property
     def assumptions(self) -> tuple[str, ...]:
-        """Return the modeling assumptions or caveats."""
+        """Return the modeling assumptions or caveats.
+
+        Returns:
+            Assumption or caveat strings in source order.
+        """
         return self._string_list("assumptions")
 
     def render_brief(
@@ -91,7 +107,14 @@ class DecisionProblem(TextProblem):
         return "\n\n".join(sections)
 
     def _string_value(self, key: str) -> str | None:
-        """Return one non-empty string parameter when present."""
+        """Return one non-empty string parameter when present.
+
+        Args:
+            key: Parameter name to read from the structured metadata mapping.
+
+        Returns:
+            Stripped string content, or ``None`` when the parameter is missing or empty.
+        """
         raw_value = self.parameters.get(key)
         if not isinstance(raw_value, str):
             return None
@@ -99,7 +122,14 @@ class DecisionProblem(TextProblem):
         return value or None
 
     def _string_list(self, key: str) -> tuple[str, ...]:
-        """Return one normalized string-list parameter when present."""
+        """Return one normalized string-list parameter when present.
+
+        Args:
+            key: Parameter name to read from the structured metadata mapping.
+
+        Returns:
+            Non-empty string values coerced from the stored sequence, preserving order.
+        """
         raw_value = self.parameters.get(key)
         if not isinstance(raw_value, Sequence) or isinstance(raw_value, (str, bytes)):
             return ()
@@ -111,5 +141,12 @@ class DecisionProblem(TextProblem):
         return tuple(values)
 
     def _render_bullets(self, items: tuple[str, ...]) -> str:
-        """Render a tuple of strings as a Markdown bullet list."""
+        """Render a tuple of strings as a Markdown bullet list.
+
+        Args:
+            items: Bullet body text in display order.
+
+        Returns:
+            Markdown bullet list text.
+        """
         return "\n".join(f"- {item}" for item in items)
