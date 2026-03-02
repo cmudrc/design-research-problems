@@ -1,6 +1,15 @@
 """Public problem-family exports."""
 
-from ._decision import DecisionProblem
+from ._decision import (
+    DecisionConstraintSpec,
+    DecisionFactor,
+    DecisionObjectiveSpec,
+    DecisionOption,
+    DecisionOptionEvaluation,
+    DecisionProblem,
+    DecisionProfile,
+    DecisionVariableSpec,
+)
 from ._grammar import GrammarProblem
 from ._metadata import Citation, ProblemAsset, ProblemKind, ProblemMetadata, ProblemTaxonomy
 from ._optimization import OptimizationProblem
@@ -8,7 +17,14 @@ from ._text import TextProblem
 
 __all__ = [
     "Citation",
+    "DecisionConstraintSpec",
+    "DecisionFactor",
+    "DecisionObjectiveSpec",
+    "DecisionOption",
+    "DecisionOptionEvaluation",
     "DecisionProblem",
+    "DecisionProfile",
+    "DecisionVariableSpec",
     "GrammarProblem",
     "OptimizationProblem",
     "ProblemAsset",

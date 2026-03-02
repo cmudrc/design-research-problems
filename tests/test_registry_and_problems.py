@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from itertools import islice
 from types import ModuleType
 
 import numpy
@@ -190,17 +191,87 @@ def test_decision_problem_exposes_structured_brief() -> None:
     problem = get_problem("decision_laptop_design_profit_maximization")
     assert isinstance(problem, DecisionProblem)
     assert problem.decision_variables[0] == "LCD size x1 in [10, 17] inches"
-    assert problem.objectives[0] == "Maximize expected profit Pi = q * (p - cT)."
-    assert problem.constraints[-1] == "Respect all lower and upper bounds taken from observed market offerings."
+    assert (
+        problem.objectives[0]
+        == "Maximize predicted market share over the explicit conjoint option set as an equal-margin profit proxy."
+    )
+    assert (
+        problem.constraints[0]
+        == "Expose the five continuous-design constraints from Equations (8) through (12) as typed formulas."
+    )
 
     brief = problem.render_brief(citation_mode="summary+raw")
     assert "## Context" in brief
     assert "## Decision Variables" in brief
     assert "## Objectives" in brief
     assert "## Constraints" in brief
+    assert "## Objective Model" in brief
+    assert "## Constraint Equations" in brief
+    assert "## Option Space" in brief
+    assert "Total discrete options: 3,125" in brief
     assert "## Assumptions" in brief
     assert "## BibTeX" in brief
     assert "Shiau, Tseng, Heutchy, and Michalek (2007)." in brief
+
+
+def test_decision_problem_exposes_typed_option_space_and_evaluator() -> None:
+    problem = get_problem("decision_laptop_design_profit_maximization")
+    assert isinstance(problem, DecisionProblem)
+
+    assert len(problem.decision_variable_specs) == 6
+    assert problem.decision_variable_specs[0].symbol == "x1"
+    assert problem.decision_variable_specs[0].unit == "inch"
+    assert problem.decision_variable_specs[0].lower_bound == 10.0
+    assert problem.decision_variable_specs[0].upper_bound == 17.0
+    assert problem.decision_variable_specs[4].symbol == "x5"
+    assert problem.decision_variable_specs[4].unit is None
+    assert problem.decision_variable_specs[-1].symbol == "p"
+    assert problem.decision_variable_specs[-1].unit == "$100"
+
+    assert len(problem.option_factors) == 5
+    assert problem.option_factors[0].key == "z1"
+    assert problem.option_factors[0].levels == (10.4, 12.1, 14.1, 15.4, 17.0)
+    assert problem.option_factors[0].part_worths == (-1.076, -0.509, 0.231, 0.583, 0.381)
+    assert problem.option_factors[-1].key == "z5"
+    assert problem.option_factors[-1].levels == (7.5, 10.0, 12.5, 15.0, 20.0)
+    assert problem.option_factors[-1].part_worths == (0.659, 0.314, 0.279, -0.018, -1.624)
+
+    assert len(problem.competitor_profiles) == 10
+    assert problem.competitor_profiles[0].name == "U2"
+    assert tuple(problem.competitor_profiles[0].values) == ("z1", "z2", "z3", "z4", "z5")
+
+    assert len(problem.objective_specs) == 1
+    assert problem.objective_specs[0].sense == "maximize"
+    assert problem.objective_specs[0].domain == "discrete-option"
+    assert problem.objective_specs[0].executable is True
+
+    assert len(problem.constraint_specs) == 5
+    assert problem.constraint_specs[0].key == "g1"
+    assert problem.constraint_specs[0].domain == "continuous-design"
+    assert problem.constraint_specs[0].executable is False
+
+    assert problem.option_count == 3125
+
+    options_iter = problem.iter_options()
+    first_option = next(options_iter)
+    last_option = None
+    for option in problem.iter_options():
+        last_option = option
+    assert last_option is not None
+    assert first_option.values == {"z1": 10.4, "z2": 0.75, "z3": 1.0, "z4": 2.5, "z5": 7.5}
+    assert last_option.values == {"z1": 17.0, "z2": 1.75, "z3": 8.0, "z4": 10.0, "z5": 20.0}
+
+    sample_options = list(islice(problem.iter_options(), 3))
+    assert all(tuple(option.values) == ("z1", "z2", "z3", "z4", "z5") for option in sample_options)
+
+    evaluation = problem.evaluate_option(first_option)
+    assert numpy.isfinite(evaluation.utility)
+    assert 0.0 < evaluation.predicted_share < 1.0
+    assert evaluation.expected_demand_units == pytest.approx(1_600_000 * evaluation.predicted_share)
+    assert evaluation.objective_value == evaluation.predicted_share
+
+    best = problem.best_option()
+    assert best == max(problem.iter_option_evaluations(), key=lambda item: item.objective_value)
 
 
 def test_registry_search_filters_by_feature_flags() -> None:
