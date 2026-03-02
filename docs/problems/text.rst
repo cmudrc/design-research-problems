@@ -11,7 +11,8 @@ The catalog now includes an ideation-focused text corpus:
 - 2 primary task framings from Goldschmidt and Smolkov (2006),
 - 1 Goucher-Lambert derivative drinking-fountain one-liner,
 - 3 ASME study-specific prompts, and
-- the detailed legacy ``peanut_sheller_fu2010`` packet.
+- source-specific historical prompt framings, including the Fu, Cagan, and
+  Kotovsky (2010) peanut-shelling brief.
 
 Text packets suppress duplicate top-level headings automatically and render
 readable citation summaries by default.

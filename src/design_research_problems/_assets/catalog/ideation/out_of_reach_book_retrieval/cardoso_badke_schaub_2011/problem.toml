@@ -1,4 +1,4 @@
-problem_id = "ideation_out_of_reach_book_retrieval_original"
+problem_id = "ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011"
 title = "Ideation Prompt - Out-of-Reach Book Retrieval (Original)"
 summary = "The original library-shelf retrieval brief used by Cardoso and Badke-Schaub (2011)."
 kind = "text"

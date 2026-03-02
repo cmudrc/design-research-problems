@@ -1,4 +1,4 @@
-problem_id = "peanut_sheller_fu2010"
+problem_id = "ideation_peanut_shelling_fu_cagan_kotovsky_2010"
 title = "Design Problem - Device to shell peanuts"
 summary = "The full control-group peanut-sheller prompt printed by Fu, Cagan, and Kotovsky (2010), with the underlying task tracing back to the original Linsey, Green, Murphy, Wood, and Markman (2005) study."
 kind = "text"

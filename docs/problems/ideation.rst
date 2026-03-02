@@ -19,16 +19,11 @@ Evidence Tiers
 - ``primary_verbatim``: directly stated in accessible source text.
 - ``primary_reconstructed``: reconstructed from primary source descriptions.
 - ``secondary_canonical``: reusable one-line brief from a synthesis source.
-- ``family_stub``: family metadata without a packaged prompt statement.
-- ``placeholder``: reserved entry that still needs source completion.
 
 The current ideation corpus includes:
 
-- 12 derivative one-line prompts from Table 1 in Goucher-Lambert and Cagan (2019),
-- 1 original training prompt from Goucher-Lambert and Cagan (2019),
-- 3 ASME study-specific prompts,
-- 2 primary task framings from Goldschmidt and Smolkov (2006),
-- 1 derivative drinking-fountain one-liner from Goucher-Lambert and Cagan (2019),
-- the legacy detailed ``peanut_sheller_fu2010`` prompt as a linked variant,
-- 14 cataloged prompt families (CAT-A through CAT-N), and
-- additional family records needed to cover the non-overlapping canonical briefs.
+- 40 prompt records with usable packaged text,
+- 40 source-specific or derivative variants,
+- 22 prompt families, all of which now point to at least one packaged prompt,
+- 6 study summaries, and
+- no stub-only family records.

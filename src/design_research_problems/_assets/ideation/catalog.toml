@@ -519,52 +519,23 @@ family_id = "family_peanut_shelling"
 name = "Peanut Shelling"
 group = "food-agriculture"
 external_aliases = ["CAT-C"]
-canonical_prompt_ids = ["prompt_peanut_shelling", "prompt_peanut_shelling_original"]
+canonical_prompt_ids = [
+  "prompt_peanut_shelling",
+  "prompt_peanut_shelling_linsey_green_murphy_wood_markman_2005",
+  "prompt_peanut_shelling_fu_cagan_kotovsky_2010",
+]
 tags = ["agriculture", "mechanical-design"]
 notes = "Linsey et al. (2005) provides the root peanut-shelling study framing; Fu et al. (2010) and Viswanathan and Linsey (2013) reuse and elaborate the task, and Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
-
-[[families]]
-family_id = "family_corn_husking"
-name = "Corn Husking"
-group = "food-agriculture"
-external_aliases = ["CAT-D"]
-canonical_prompt_ids = []
-tags = ["agriculture", "family-stub"]
-notes = "Catalog family from the secondary prompt-family synthesis."
-
-[[families]]
-family_id = "family_coconut_harvesting"
-name = "Coconut Harvesting"
-group = "food-agriculture"
-external_aliases = ["CAT-E"]
-canonical_prompt_ids = []
-tags = ["agriculture", "family-stub"]
-notes = "Catalog family from the secondary prompt-family synthesis."
-
-[[families]]
-family_id = "family_personal_alarm_clock"
-name = "Personal Alarm Clock"
-group = "consumer-household"
-external_aliases = ["CAT-F"]
-canonical_prompt_ids = []
-tags = ["consumer", "family-stub"]
-notes = "Catalog family from the secondary prompt-family synthesis."
-
-[[families]]
-family_id = "family_bike_safety_lock"
-name = "Bike Safety Lock"
-group = "transport-infrastructure"
-external_aliases = ["CAT-G"]
-canonical_prompt_ids = []
-tags = ["security", "transport", "family-stub"]
-notes = "Catalog family from the secondary prompt-family synthesis."
 
 [[families]]
 family_id = "family_book_picking"
 name = "Book Picking"
 group = "accessibility-assistive"
 external_aliases = ["CAT-H"]
-canonical_prompt_ids = ["prompt_out_of_reach_book_retrieval", "prompt_out_of_reach_book_retrieval_original"]
+canonical_prompt_ids = [
+  "prompt_out_of_reach_book_retrieval",
+  "prompt_out_of_reach_book_retrieval_cardoso_badke_schaub_2011",
+]
 tags = ["assistive", "retrieval", "accessibility"]
 notes = "Cardoso and Badke-Schaub (2011) provides the original library-shelf retrieval brief; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing. This family is linked to peach-picking derivatives."
 
@@ -573,27 +544,12 @@ family_id = "family_blind_cup"
 name = "Blind Cup"
 group = "accessibility-assistive"
 external_aliases = ["CAT-I"]
-canonical_prompt_ids = ["prompt_measuring_cup_for_blind_users", "prompt_measuring_cup_for_blind_users_original"]
+canonical_prompt_ids = [
+  "prompt_measuring_cup_for_blind_users",
+  "prompt_measuring_cup_for_blind_users_jansson_smith_1991",
+]
 tags = ["accessibility", "consumer"]
 notes = "Jansson and Smith (1991) provides the original measuring-cup brief; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
-
-[[families]]
-family_id = "family_clothes_ironing"
-name = "Clothes Ironing"
-group = "consumer-household"
-external_aliases = ["CAT-J"]
-canonical_prompt_ids = []
-tags = ["household", "family-stub"]
-notes = "Catalog family from the secondary prompt-family synthesis."
-
-[[families]]
-family_id = "family_recycling_sorter"
-name = "Recycling Sorter"
-group = "sustainability-waste"
-external_aliases = ["CAT-K"]
-canonical_prompt_ids = []
-tags = ["sustainability", "waste", "family-stub"]
-notes = "Catalog family derived from an earlier trash-disposal-system problem."
 
 [[families]]
 family_id = "family_spill_proof_coffee_cup"
@@ -614,20 +570,11 @@ tags = ["transport", "infrastructure"]
 notes = "Jansson and Smith (1991) provides an early car-mounted bicycle-rack brief that aligns with this prompt family."
 
 [[families]]
-family_id = "family_burrito_folding"
-name = "Burrito Folding"
-group = "food-agriculture"
-external_aliases = ["CAT-N"]
-canonical_prompt_ids = []
-tags = ["food", "automation", "family-stub"]
-notes = "Catalog family from the secondary prompt-family synthesis."
-
-[[families]]
 family_id = "family_travel_exercise"
 name = "Travel Exercise Device"
 group = "consumer-household"
 external_aliases = []
-canonical_prompt_ids = ["prompt_travel_exercise_device", "prompt_travel_exercise_device_original"]
+canonical_prompt_ids = ["prompt_travel_exercise_device", "prompt_travel_exercise_device_linsey_viswanathan_2014"]
 tags = ["travel", "consumer"]
 notes = "Linsey and Viswanathan (2014) reproduces the earliest recoverable travel-exercise phrasing as a figure label; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
 
@@ -667,7 +614,7 @@ family_id = "family_milk_frothing"
 name = "Milk Frothing"
 group = "consumer-household"
 external_aliases = []
-canonical_prompt_ids = ["prompt_milk_frothing_product", "prompt_milk_frothing_product_original"]
+canonical_prompt_ids = ["prompt_milk_frothing_product", "prompt_milk_frothing_product_toh_miller_2014"]
 tags = ["consumer", "kitchen"]
 notes = "Toh and Miller (2014) provides the original milk-frothing brief; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
 
@@ -678,7 +625,7 @@ group = "transport-infrastructure"
 external_aliases = []
 canonical_prompt_ids = [
   "prompt_walking_texting_accident_reduction",
-  "prompt_walking_texting_accident_reduction_original",
+  "prompt_walking_texting_accident_reduction_miller_bailey_kirlik_2014",
 ]
 tags = ["safety", "consumer"]
 notes = "Miller, Bailey, and Kirlik (2014) provides the original campus pedestrian-safety brief; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
@@ -697,7 +644,7 @@ family_id = "family_towel_folding"
 name = "Towel Folding"
 group = "consumer-household"
 external_aliases = []
-canonical_prompt_ids = ["prompt_small_towel_folding", "prompt_small_towel_folding_original"]
+canonical_prompt_ids = ["prompt_small_towel_folding", "prompt_small_towel_folding_linsey_wood_markman_2008"]
 tags = ["automation", "household"]
 notes = "Linsey, Wood, and Markman (2008) provides the root laundry-folding case-study framing; Goucher-Lambert and Cagan (2019) later cite a shorter derivative framing attributed there to Linsey et al. (2012)."
 
@@ -786,15 +733,15 @@ status = "complete"
 variant_ids = ["variant_travel_exercise_device"]
 
 [[prompts]]
-prompt_id = "prompt_travel_exercise_device_original"
-problem_id = "ideation_travel_exercise_device_original"
+prompt_id = "prompt_travel_exercise_device_linsey_viswanathan_2014"
+problem_id = "ideation_travel_exercise_device_linsey_viswanathan_2014"
 family_id = "family_travel_exercise"
 canonical_brief = "Design problem: Lightweight travel exercise device."
 evidence_tier = "primary_reconstructed"
 source_citation_keys = ["linsey_viswanathan_2014"]
 tags = ["consumer", "travel", "ideation"]
 status = "needs_primary_fill"
-variant_ids = ["variant_travel_exercise_device_original"]
+variant_ids = ["variant_travel_exercise_device_linsey_viswanathan_2014"]
 
 [[prompts]]
 prompt_id = "prompt_human_motion_energy_harvesting"
@@ -885,15 +832,15 @@ status = "complete"
 variant_ids = ["variant_out_of_reach_book_retrieval"]
 
 [[prompts]]
-prompt_id = "prompt_out_of_reach_book_retrieval_original"
-problem_id = "ideation_out_of_reach_book_retrieval_original"
+prompt_id = "prompt_out_of_reach_book_retrieval_cardoso_badke_schaub_2011"
+problem_id = "ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011"
 family_id = "family_book_picking"
 canonical_brief = "Design a device that allows people to pickup a book from a shelf (e.g. in a library) that is out of their reach, for instance, above their head."
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["cardoso_badke_schaub_2011"]
 tags = ["assistive", "retrieval", "ideation", "library"]
 status = "complete"
-variant_ids = ["variant_out_of_reach_book_retrieval_original"]
+variant_ids = ["variant_out_of_reach_book_retrieval_cardoso_badke_schaub_2011"]
 
 [[prompts]]
 prompt_id = "prompt_milk_frothing_product"
@@ -907,15 +854,15 @@ status = "complete"
 variant_ids = ["variant_milk_frothing_product"]
 
 [[prompts]]
-prompt_id = "prompt_milk_frothing_product_original"
-problem_id = "ideation_milk_frothing_product_original"
+prompt_id = "prompt_milk_frothing_product_toh_miller_2014"
+problem_id = "ideation_milk_frothing_product_toh_miller_2014"
 family_id = "family_milk_frothing"
 canonical_brief = "Develop concepts for a new, innovative product that can froth milk in a short amount of time."
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["toh_miller_2014"]
 tags = ["consumer", "kitchen", "ideation"]
 status = "complete"
-variant_ids = ["variant_milk_frothing_product_original"]
+variant_ids = ["variant_milk_frothing_product_toh_miller_2014"]
 
 [[prompts]]
 prompt_id = "prompt_walking_texting_accident_reduction"
@@ -929,15 +876,15 @@ status = "complete"
 variant_ids = ["variant_walking_texting_accident_reduction"]
 
 [[prompts]]
-prompt_id = "prompt_walking_texting_accident_reduction_original"
-problem_id = "ideation_walking_texting_accident_reduction_original"
+prompt_id = "prompt_walking_texting_accident_reduction_miller_bailey_kirlik_2014"
+problem_id = "ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014"
 family_id = "family_pedestrian_safety"
 canonical_brief = "Develop as many solutions as possible to reduce pedestrian accidents caused by students texting, talking on cell phones, or listening to music while walking around campus."
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["miller_bailey_kirlik_2014"]
 tags = ["safety", "consumer", "ideation", "campus"]
 status = "complete"
-variant_ids = ["variant_walking_texting_accident_reduction_original"]
+variant_ids = ["variant_walking_texting_accident_reduction_miller_bailey_kirlik_2014"]
 
 [[prompts]]
 prompt_id = "prompt_small_towel_folding"
@@ -951,15 +898,15 @@ status = "complete"
 variant_ids = ["variant_small_towel_folding"]
 
 [[prompts]]
-prompt_id = "prompt_small_towel_folding_original"
-problem_id = "ideation_small_towel_folding_original"
+prompt_id = "prompt_small_towel_folding_linsey_wood_markman_2008"
+problem_id = "ideation_small_towel_folding_linsey_wood_markman_2008"
 family_id = "family_towel_folding"
 canonical_brief = "Create a laundry folding device for students with severe physical and mental disabilities, with the goal of folding wash cloths, hand towels, and small bath towels."
 evidence_tier = "primary_reconstructed"
 source_citation_keys = ["linsey_wood_markman_2008_wordtrees"]
 tags = ["automation", "household", "ideation", "assistive"]
 status = "needs_primary_fill"
-variant_ids = ["variant_small_towel_folding_original"]
+variant_ids = ["variant_small_towel_folding_linsey_wood_markman_2008"]
 
 [[prompts]]
 prompt_id = "prompt_accessible_drinking_fountain"
@@ -995,15 +942,15 @@ status = "complete"
 variant_ids = ["variant_measuring_cup_for_blind_users"]
 
 [[prompts]]
-prompt_id = "prompt_measuring_cup_for_blind_users_original"
-problem_id = "ideation_measuring_cup_for_blind_users_original"
+prompt_id = "prompt_measuring_cup_for_blind_users_jansson_smith_1991"
+problem_id = "ideation_measuring_cup_for_blind_users_jansson_smith_1991"
 family_id = "family_blind_cup"
 canonical_brief = "Design a volume-measuring device for cooking by visually impaired users."
 evidence_tier = "primary_reconstructed"
 source_citation_keys = ["jansson_smith_1991"]
 tags = ["accessibility", "consumer", "ideation"]
 status = "needs_primary_fill"
-variant_ids = ["variant_measuring_cup_for_blind_users_original"]
+variant_ids = ["variant_measuring_cup_for_blind_users_jansson_smith_1991"]
 
 [[prompts]]
 prompt_id = "prompt_joint_immobilization_device"
@@ -1036,18 +983,29 @@ evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "viswanathan_linsey_2013", "linsey_green_murphy_wood_markman_2005"]
 tags = ["agriculture", "mechanical-design", "ideation"]
 status = "complete"
-variant_ids = ["variant_peanut_shelling_canonical", "variant_peanut_sheller_fu2010_detail"]
+variant_ids = ["variant_peanut_shelling_canonical"]
 
 [[prompts]]
-prompt_id = "prompt_peanut_shelling_original"
-problem_id = "ideation_peanut_shelling_original"
+prompt_id = "prompt_peanut_shelling_linsey_green_murphy_wood_markman_2005"
+problem_id = "ideation_peanut_shelling_linsey_green_murphy_wood_markman_2005"
 family_id = "family_peanut_shelling"
 canonical_brief = "Design a device to quickly shell peanuts for use in places like Haiti and West African countries."
 evidence_tier = "primary_reconstructed"
 source_citation_keys = ["linsey_green_murphy_wood_markman_2005", "viswanathan_linsey_2013"]
 tags = ["agriculture", "mechanical-design", "ideation"]
 status = "needs_primary_fill"
-variant_ids = ["variant_peanut_shelling_original"]
+variant_ids = ["variant_peanut_shelling_linsey_green_murphy_wood_markman_2005"]
+
+[[prompts]]
+prompt_id = "prompt_peanut_shelling_fu_cagan_kotovsky_2010"
+problem_id = "ideation_peanut_shelling_fu_cagan_kotovsky_2010"
+family_id = "family_peanut_shelling"
+canonical_brief = "Design problem: Device to shell peanuts."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["fu2010design", "linsey_green_murphy_wood_markman_2005"]
+tags = ["agriculture", "mechanical-design", "ideation", "team"]
+status = "complete"
+variant_ids = ["variant_peanut_shelling_fu_cagan_kotovsky_2010"]
 
 [[prompts]]
 prompt_id = "prompt_injured_athlete_campus_mobility"
@@ -1228,9 +1186,9 @@ notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (
 status = "complete"
 
 [[variants]]
-variant_id = "variant_travel_exercise_device_original"
-prompt_id = "prompt_travel_exercise_device_original"
-problem_id = "ideation_travel_exercise_device_original"
+variant_id = "variant_travel_exercise_device_linsey_viswanathan_2014"
+prompt_id = "prompt_travel_exercise_device_linsey_viswanathan_2014"
+problem_id = "ideation_travel_exercise_device_linsey_viswanathan_2014"
 label = "Linsey and Viswanathan (2014) figure-label framing"
 statement_type = "reconstructed"
 evidence_tier = "primary_reconstructed"
@@ -1327,9 +1285,9 @@ notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (
 status = "complete"
 
 [[variants]]
-variant_id = "variant_out_of_reach_book_retrieval_original"
-prompt_id = "prompt_out_of_reach_book_retrieval_original"
-problem_id = "ideation_out_of_reach_book_retrieval_original"
+variant_id = "variant_out_of_reach_book_retrieval_cardoso_badke_schaub_2011"
+prompt_id = "prompt_out_of_reach_book_retrieval_cardoso_badke_schaub_2011"
+problem_id = "ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011"
 label = "Cardoso and Badke-Schaub (2011) original brief"
 statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
@@ -1349,9 +1307,9 @@ notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (
 status = "complete"
 
 [[variants]]
-variant_id = "variant_milk_frothing_product_original"
-prompt_id = "prompt_milk_frothing_product_original"
-problem_id = "ideation_milk_frothing_product_original"
+variant_id = "variant_milk_frothing_product_toh_miller_2014"
+prompt_id = "prompt_milk_frothing_product_toh_miller_2014"
+problem_id = "ideation_milk_frothing_product_toh_miller_2014"
 label = "Toh and Miller (2014) original brief"
 statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
@@ -1371,9 +1329,9 @@ notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (
 status = "complete"
 
 [[variants]]
-variant_id = "variant_walking_texting_accident_reduction_original"
-prompt_id = "prompt_walking_texting_accident_reduction_original"
-problem_id = "ideation_walking_texting_accident_reduction_original"
+variant_id = "variant_walking_texting_accident_reduction_miller_bailey_kirlik_2014"
+prompt_id = "prompt_walking_texting_accident_reduction_miller_bailey_kirlik_2014"
+problem_id = "ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014"
 label = "Miller, Bailey, and Kirlik (2014) original brief"
 statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
@@ -1393,9 +1351,9 @@ notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (
 status = "complete"
 
 [[variants]]
-variant_id = "variant_small_towel_folding_original"
-prompt_id = "prompt_small_towel_folding_original"
-problem_id = "ideation_small_towel_folding_original"
+variant_id = "variant_small_towel_folding_linsey_wood_markman_2008"
+prompt_id = "prompt_small_towel_folding_linsey_wood_markman_2008"
+problem_id = "ideation_small_towel_folding_linsey_wood_markman_2008"
 label = "Linsey, Wood, and Markman (2008) root case-study framing"
 statement_type = "study-specific"
 evidence_tier = "primary_reconstructed"
@@ -1437,9 +1395,9 @@ notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (
 status = "complete"
 
 [[variants]]
-variant_id = "variant_measuring_cup_for_blind_users_original"
-prompt_id = "prompt_measuring_cup_for_blind_users_original"
-problem_id = "ideation_measuring_cup_for_blind_users_original"
+variant_id = "variant_measuring_cup_for_blind_users_jansson_smith_1991"
+prompt_id = "prompt_measuring_cup_for_blind_users_jansson_smith_1991"
+problem_id = "ideation_measuring_cup_for_blind_users_jansson_smith_1991"
 label = "Jansson and Smith (1991) reconstructed brief"
 statement_type = "study-specific"
 evidence_tier = "primary_reconstructed"
@@ -1481,20 +1439,20 @@ notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (
 status = "complete"
 
 [[variants]]
-variant_id = "variant_peanut_sheller_fu2010_detail"
-prompt_id = "prompt_peanut_shelling"
-problem_id = "peanut_sheller_fu2010"
-label = "Detailed packaged peanut sheller prompt"
+variant_id = "variant_peanut_shelling_fu_cagan_kotovsky_2010"
+prompt_id = "prompt_peanut_shelling_fu_cagan_kotovsky_2010"
+problem_id = "ideation_peanut_shelling_fu_cagan_kotovsky_2010"
+label = "Fu, Cagan, and Kotovsky (2010) full brief"
 statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["fu2010design", "linsey_green_murphy_wood_markman_2005"]
-notes = "Exact control-group design-problem statement printed in Fu, Cagan, and Kotovsky (2010), retained for compatibility and linked to the canonical peanut family; the underlying task traces back to Linsey et al. (2005)."
+notes = "Exact control-group design-problem statement printed in Fu, Cagan, and Kotovsky (2010), with the underlying task tracing back to Linsey et al. (2005)."
 status = "complete"
 
 [[variants]]
-variant_id = "variant_peanut_shelling_original"
-prompt_id = "prompt_peanut_shelling_original"
-problem_id = "ideation_peanut_shelling_original"
+variant_id = "variant_peanut_shelling_linsey_green_murphy_wood_markman_2005"
+prompt_id = "prompt_peanut_shelling_linsey_green_murphy_wood_markman_2005"
+problem_id = "ideation_peanut_shelling_linsey_green_murphy_wood_markman_2005"
 label = "Linsey et al. (2005) root study framing"
 statement_type = "study-specific"
 evidence_tier = "primary_reconstructed"
@@ -1730,7 +1688,7 @@ status = "needs_primary_fill"
 study_id = "study_cardoso_badke_schaub_2011"
 title = "The Influence of Different Pictorial Representations During Idea Generation"
 citation_keys = ["cardoso_badke_schaub_2011"]
-prompt_variant_ids = ["variant_out_of_reach_book_retrieval_original"]
+prompt_variant_ids = ["variant_out_of_reach_book_retrieval_cardoso_badke_schaub_2011"]
 participant_summary = "66 fourth-year industrial design engineering master's students were recruited; the analyzed sample was reduced to N=60 after excluding outliers."
 conditions_summary = "Control brief-only group (n=19) vs line-drawing priming group (n=21) vs photo priming group (n=20), all completing one hour of individual sketching."
 time_on_task_minutes = 60
@@ -1777,7 +1735,7 @@ status = "needs_primary_fill"
 study_id = "study_miller_bailey_kirlik_2014"
 title = "Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge"
 citation_keys = ["miller_bailey_kirlik_2014"]
-prompt_variant_ids = ["variant_walking_texting_accident_reduction_original"]
+prompt_variant_ids = ["variant_walking_texting_accident_reduction_miller_bailey_kirlik_2014"]
 participant_summary = "N=71 students in an upper-level human factors engineering design course; the accessible participant section reports 27 junior-level and 43 senior-level students, ages 19-23."
 conditions_summary = "Four-week course sequence with a Bayesian Truth Serum survey, one hour of individual idea generation in week 2, peer critique in week 3, and redesign in week 4."
 time_on_task_minutes = 60

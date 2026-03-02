@@ -27,15 +27,16 @@ def test_list_problems_returns_seed_problem_ids() -> None:
         "ideation_measure_passage_of_time",
         "ideation_measure_passage_of_time_room_clock",
         "ideation_measuring_cup_for_blind_users",
-        "ideation_measuring_cup_for_blind_users_original",
+        "ideation_measuring_cup_for_blind_users_jansson_smith_1991",
         "ideation_milk_frothing_product",
-        "ideation_milk_frothing_product_original",
+        "ideation_milk_frothing_product_toh_miller_2014",
         "ideation_one_handed_lidded_container_opening",
         "ideation_one_handed_lidded_container_opening_framework",
         "ideation_out_of_reach_book_retrieval",
-        "ideation_out_of_reach_book_retrieval_original",
+        "ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011",
         "ideation_peanut_shelling",
-        "ideation_peanut_shelling_original",
+        "ideation_peanut_shelling_fu_cagan_kotovsky_2010",
+        "ideation_peanut_shelling_linsey_green_murphy_wood_markman_2005",
         "ideation_powdered_surface_coating",
         "ideation_powdered_surface_coating_domain_specific",
         "ideation_powdered_surface_coating_general",
@@ -44,15 +45,14 @@ def test_list_problems_returns_seed_problem_ids() -> None:
         "ideation_remote_village_rainwater_access",
         "ideation_remote_village_rainwater_access_framework",
         "ideation_small_towel_folding",
-        "ideation_small_towel_folding_original",
+        "ideation_small_towel_folding_linsey_wood_markman_2008",
         "ideation_snow_transport_for_novices",
         "ideation_snow_transport_for_novices_framework",
         "ideation_travel_exercise_device",
-        "ideation_travel_exercise_device_original",
+        "ideation_travel_exercise_device_linsey_viswanathan_2014",
         "ideation_walking_texting_accident_reduction",
-        "ideation_walking_texting_accident_reduction_original",
+        "ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014",
         "ideation_wheelchair_peach_picking",
-        "peanut_sheller_fu2010",
         "pill_capsule_min_area",
         "planar_truss_span",
     )
@@ -78,15 +78,16 @@ def test_registry_entries_filter_by_kind() -> None:
         "ideation_measure_passage_of_time",
         "ideation_measure_passage_of_time_room_clock",
         "ideation_measuring_cup_for_blind_users",
-        "ideation_measuring_cup_for_blind_users_original",
+        "ideation_measuring_cup_for_blind_users_jansson_smith_1991",
         "ideation_milk_frothing_product",
-        "ideation_milk_frothing_product_original",
+        "ideation_milk_frothing_product_toh_miller_2014",
         "ideation_one_handed_lidded_container_opening",
         "ideation_one_handed_lidded_container_opening_framework",
         "ideation_out_of_reach_book_retrieval",
-        "ideation_out_of_reach_book_retrieval_original",
+        "ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011",
         "ideation_peanut_shelling",
-        "ideation_peanut_shelling_original",
+        "ideation_peanut_shelling_fu_cagan_kotovsky_2010",
+        "ideation_peanut_shelling_linsey_green_murphy_wood_markman_2005",
         "ideation_powdered_surface_coating",
         "ideation_powdered_surface_coating_domain_specific",
         "ideation_powdered_surface_coating_general",
@@ -95,29 +96,28 @@ def test_registry_entries_filter_by_kind() -> None:
         "ideation_remote_village_rainwater_access",
         "ideation_remote_village_rainwater_access_framework",
         "ideation_small_towel_folding",
-        "ideation_small_towel_folding_original",
+        "ideation_small_towel_folding_linsey_wood_markman_2008",
         "ideation_snow_transport_for_novices",
         "ideation_snow_transport_for_novices_framework",
         "ideation_travel_exercise_device",
-        "ideation_travel_exercise_device_original",
+        "ideation_travel_exercise_device_linsey_viswanathan_2014",
         "ideation_walking_texting_accident_reduction",
-        "ideation_walking_texting_accident_reduction_original",
+        "ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014",
         "ideation_wheelchair_peach_picking",
-        "peanut_sheller_fu2010",
     ]
-    assert registry.feature_flags("peanut_sheller_fu2010") == (
+    assert registry.feature_flags("ideation_peanut_shelling_fu_cagan_kotovsky_2010") == (
         "citation-backed",
         "human-subjects-ready",
         "ideation-friendly",
         "prompt-packet",
         "statement-markdown",
     )
-    assert registry.capabilities("peanut_sheller_fu2010") == (
+    assert registry.capabilities("ideation_peanut_shelling_fu_cagan_kotovsky_2010") == (
         "citation-backed",
         "prompt-packet",
         "statement-markdown",
     )
-    assert registry.study_suitability("peanut_sheller_fu2010") == (
+    assert registry.study_suitability("ideation_peanut_shelling_fu_cagan_kotovsky_2010") == (
         "human-subjects-ready",
         "ideation-friendly",
     )
@@ -155,7 +155,7 @@ def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
 
 
 def test_text_problem_renders_statement_and_citation() -> None:
-    problem = get_problem("peanut_sheller_fu2010")
+    problem = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
     packet = problem.render_packet()
     assert packet.count("# Design Problem - Device to shell peanuts") == 1
     assert "Fu, Cagan, and Kotovsky (2010)." in packet
@@ -165,7 +165,7 @@ def test_text_problem_renders_statement_and_citation() -> None:
 
 
 def test_text_problem_can_render_summary_and_raw_citations() -> None:
-    problem = get_problem("peanut_sheller_fu2010")
+    problem = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
     packet = problem.render_packet(citation_mode="summary+raw")
     assert "## Sources" in packet
     assert "## BibTeX" in packet

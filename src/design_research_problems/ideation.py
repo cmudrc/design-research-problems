@@ -8,6 +8,7 @@ import json
 import tomllib
 from dataclasses import dataclass
 from enum import StrEnum
+from importlib import import_module
 from importlib.resources import files
 from typing import Any, cast
 
@@ -25,8 +26,6 @@ class EvidenceTier(StrEnum):
     PRIMARY_VERBATIM = "primary_verbatim"
     PRIMARY_RECONSTRUCTED = "primary_reconstructed"
     SECONDARY_CANONICAL = "secondary_canonical"
-    FAMILY_STUB = "family_stub"
-    PLACEHOLDER = "placeholder"
 
 
 @dataclass(frozen=True)
@@ -34,14 +33,23 @@ class IdeationPromptRecord:
     """Canonical prompt record for one reusable ideation brief."""
 
     prompt_id: str
+    """Stable prompt identifier."""
     problem_id: str | None
+    """Linked packaged problem ID when the prompt has a loadable text asset."""
     family_id: str
+    """Owning prompt-family identifier."""
     canonical_brief: str
+    """Canonical reusable prompt wording for indexing and display."""
     evidence_tier: EvidenceTier
+    """Strength of evidence supporting the stored wording."""
     source_citation_keys: tuple[str, ...]
+    """Citation keys that substantiate the prompt record."""
     tags: tuple[str, ...]
+    """Searchable descriptive tags."""
     status: str
+    """Lifecycle status such as ``complete`` or ``needs_primary_fill``."""
     variant_ids: tuple[str, ...]
+    """Linked source-specific variant identifiers."""
 
 
 @dataclass(frozen=True)
@@ -49,14 +57,23 @@ class IdeationPromptVariant:
     """Source-specific prompt wording or variant metadata."""
 
     variant_id: str
+    """Stable variant identifier."""
     prompt_id: str
+    """Parent prompt identifier."""
     problem_id: str | None
+    """Linked packaged problem ID when this variant has a loadable text asset."""
     label: str
+    """Human-readable short label for the variant."""
     statement_type: str
+    """Variant type such as ``canonical`` or ``study-specific``."""
     evidence_tier: EvidenceTier
+    """Strength of evidence supporting this wording."""
     source_citation_keys: tuple[str, ...]
+    """Citation keys that substantiate the variant."""
     notes: str
+    """Free-text provenance or interpretation notes."""
     status: str
+    """Lifecycle status such as ``complete`` or ``needs_primary_fill``."""
 
 
 @dataclass(frozen=True)
@@ -64,13 +81,21 @@ class IdeationPromptFamily:
     """Prompt family grouping and lineage metadata."""
 
     family_id: str
+    """Stable family identifier."""
     name: str
+    """Human-readable family name."""
     group: str
+    """High-level grouping bucket used for filtering and display."""
     external_aliases: tuple[str, ...]
+    """Known external aliases such as catalog labels from prior syntheses."""
     derived_from_family_id: str | None
+    """Optional lineage link to a parent family."""
     canonical_prompt_ids: tuple[str, ...]
+    """Prompt identifiers belonging to this family."""
     tags: tuple[str, ...]
+    """Searchable descriptive tags."""
     notes: str
+    """Free-text lineage or provenance notes."""
 
 
 @dataclass(frozen=True)
@@ -78,17 +103,29 @@ class IdeationStudy:
     """Human-subjects study metadata tied to prompt variants."""
 
     study_id: str
+    """Stable study identifier."""
     title: str
+    """Study title."""
     citation_keys: tuple[str, ...]
+    """Citation keys describing the study source."""
     prompt_variant_ids: tuple[str, ...]
+    """Variant identifiers exercised in the study."""
     participant_summary: str
+    """Short participant and sample summary."""
     conditions_summary: str
+    """Short description of experimental conditions."""
     time_on_task_minutes: int | None
+    """Primary timed ideation duration when known."""
     dependent_measures: tuple[str, ...]
+    """Measured outcomes or dependent variables."""
     coding_summary: str
+    """Short description of scoring or coding methods."""
     materials_summary: str
+    """Short description of supplied materials and stimuli."""
     limitations: tuple[str, ...]
+    """Known limitations extracted from the source."""
     status: str
+    """Lifecycle status such as ``complete`` or ``needs_primary_fill``."""
 
 
 @dataclass(frozen=True)
@@ -96,50 +133,111 @@ class IdeationCatalog:
     """Loaded ideation metadata tables."""
 
     citations: tuple[Citation, ...]
+    """Structured citation records used across the ideation catalog."""
     prompts: tuple[IdeationPromptRecord, ...]
+    """Canonical prompt records."""
     variants: tuple[IdeationPromptVariant, ...]
+    """Source-specific prompt variants."""
     families: tuple[IdeationPromptFamily, ...]
+    """Prompt-family records with lineage metadata."""
     studies: tuple[IdeationStudy, ...]
+    """Human-subjects study summaries."""
 
     def list_prompts(self) -> tuple[IdeationPromptRecord, ...]:
-        """Return all canonical prompt records."""
+        """Return all canonical prompt records.
+
+        Returns:
+            Canonical prompt records in packaged order.
+        """
         return self.prompts
 
     def list_variants(self) -> tuple[IdeationPromptVariant, ...]:
-        """Return all prompt variants."""
+        """Return all prompt variants.
+
+        Returns:
+            Variant records in packaged order.
+        """
         return self.variants
 
     def list_families(self) -> tuple[IdeationPromptFamily, ...]:
-        """Return all prompt families."""
+        """Return all prompt families.
+
+        Returns:
+            Family records in packaged order.
+        """
         return self.families
 
     def list_studies(self) -> tuple[IdeationStudy, ...]:
-        """Return all study records."""
+        """Return all study records.
+
+        Returns:
+            Study records in packaged order.
+        """
         return self.studies
 
     def get_prompt(self, prompt_id: str) -> IdeationPromptRecord:
-        """Return one prompt by ID."""
+        """Return one prompt by ID.
+
+        Args:
+            prompt_id: Stable prompt identifier.
+
+        Returns:
+            Matching prompt record.
+
+        Raises:
+            KeyError: If the prompt ID is unknown.
+        """
         for prompt in self.prompts:
             if prompt.prompt_id == prompt_id:
                 return prompt
         raise KeyError(f"Unknown prompt id: {prompt_id}")
 
     def get_variant(self, variant_id: str) -> IdeationPromptVariant:
-        """Return one variant by ID."""
+        """Return one variant by ID.
+
+        Args:
+            variant_id: Stable variant identifier.
+
+        Returns:
+            Matching variant record.
+
+        Raises:
+            KeyError: If the variant ID is unknown.
+        """
         for variant in self.variants:
             if variant.variant_id == variant_id:
                 return variant
         raise KeyError(f"Unknown variant id: {variant_id}")
 
     def get_family(self, family_id: str) -> IdeationPromptFamily:
-        """Return one family by ID."""
+        """Return one family by ID.
+
+        Args:
+            family_id: Stable family identifier.
+
+        Returns:
+            Matching family record.
+
+        Raises:
+            KeyError: If the family ID is unknown.
+        """
         for family in self.families:
             if family.family_id == family_id:
                 return family
         raise KeyError(f"Unknown family id: {family_id}")
 
     def get_study(self, study_id: str) -> IdeationStudy:
-        """Return one study by ID."""
+        """Return one study by ID.
+
+        Args:
+            study_id: Stable study identifier.
+
+        Returns:
+            Matching study record.
+
+        Raises:
+            KeyError: If the study ID is unknown.
+        """
         for study in self.studies:
             if study.study_id == study_id:
                 return study
@@ -155,7 +253,20 @@ class IdeationCatalog:
         max_timebox_minutes: int | None = None,
         status: str | None = None,
     ) -> tuple[IdeationPromptRecord, ...]:
-        """Search canonical prompts across ideation metadata and linked problems."""
+        """Search canonical prompts across ideation metadata and linked problems.
+
+        Args:
+            text: Optional case-insensitive substring filter.
+            tags: Tags that must all be present on a matching prompt.
+            family_ids: Optional family-ID allowlist.
+            evidence_tiers: Optional evidence-tier allowlist.
+            deliverable_type: Optional linked-problem deliverable-type filter.
+            max_timebox_minutes: Optional linked-problem timebox ceiling.
+            status: Optional exact prompt-status filter.
+
+        Returns:
+            Matching prompt records in packaged order.
+        """
         registry = ProblemRegistry()
         tag_set = {tag.lower() for tag in tags}
         family_id_set = set(family_ids)
@@ -186,7 +297,17 @@ class IdeationCatalog:
         return tuple(matches)
 
     def export_prompt_index(self, format: str = "json") -> str:
-        """Export the canonical prompt index in one of the supported formats."""
+        """Export the canonical prompt index in one of the supported formats.
+
+        Args:
+            format: Export format name, currently ``json`` or ``csv``.
+
+        Returns:
+            Serialized prompt-index payload.
+
+        Raises:
+            ValueError: If the requested export format is unsupported.
+        """
         rows = self.prompts_records()
         normalized = format.strip().lower()
         if normalized == "json":
@@ -196,7 +317,11 @@ class IdeationCatalog:
         raise ValueError(f"Unsupported export format: {format!r}")
 
     def prompts_records(self) -> list[dict[str, object]]:
-        """Return canonical prompt rows for export."""
+        """Return canonical prompt rows for export.
+
+        Returns:
+            Prompt rows with a stable column order.
+        """
         return [
             {
                 "prompt_id": prompt.prompt_id,
@@ -211,7 +336,11 @@ class IdeationCatalog:
         ]
 
     def variants_records(self) -> list[dict[str, object]]:
-        """Return prompt variant rows for export."""
+        """Return prompt variant rows for export.
+
+        Returns:
+            Variant rows with a stable column order.
+        """
         return [
             {
                 "variant_id": variant.variant_id,
@@ -227,7 +356,11 @@ class IdeationCatalog:
         ]
 
     def families_records(self) -> list[dict[str, object]]:
-        """Return family rows for export."""
+        """Return family rows for export.
+
+        Returns:
+            Family rows with a stable column order.
+        """
         return [
             {
                 "family_id": family.family_id,
@@ -242,7 +375,11 @@ class IdeationCatalog:
         ]
 
     def studies_records(self) -> list[dict[str, object]]:
-        """Return study rows for export."""
+        """Return study rows for export.
+
+        Returns:
+            Study rows with a stable column order.
+        """
         return [
             {
                 "study_id": study.study_id,
@@ -262,19 +399,35 @@ class IdeationCatalog:
         ]
 
     def prompts_dataframe(self) -> Any:
-        """Return the canonical prompt table as a pandas DataFrame."""
+        """Return the canonical prompt table as a pandas DataFrame.
+
+        Returns:
+            DataFrame built from :meth:`prompts_records`.
+        """
         return self._records_to_dataframe(self.prompts_records())
 
     def variants_dataframe(self) -> Any:
-        """Return the variant table as a pandas DataFrame."""
+        """Return the variant table as a pandas DataFrame.
+
+        Returns:
+            DataFrame built from :meth:`variants_records`.
+        """
         return self._records_to_dataframe(self.variants_records())
 
     def families_dataframe(self) -> Any:
-        """Return the family table as a pandas DataFrame."""
+        """Return the family table as a pandas DataFrame.
+
+        Returns:
+            DataFrame built from :meth:`families_records`.
+        """
         return self._records_to_dataframe(self.families_records())
 
     def studies_dataframe(self) -> Any:
-        """Return the study table as a pandas DataFrame."""
+        """Return the study table as a pandas DataFrame.
+
+        Returns:
+            DataFrame built from :meth:`studies_records`.
+        """
         return self._records_to_dataframe(self.studies_records())
 
     def _matches_problem_filters(
@@ -284,7 +437,17 @@ class IdeationCatalog:
         deliverable_type: str | None,
         max_timebox_minutes: int | None,
     ) -> bool:
-        """Return whether linked problem metadata satisfies optional filters."""
+        """Return whether linked problem metadata satisfies optional filters.
+
+        Args:
+            registry: Problem registry used to resolve linked problem metadata.
+            problem_id: Optional linked packaged problem ID.
+            deliverable_type: Optional deliverable-type filter.
+            max_timebox_minutes: Optional timebox ceiling.
+
+        Returns:
+            ``True`` when the linked problem satisfies the requested filters.
+        """
         if deliverable_type is None and max_timebox_minutes is None:
             return True
         if problem_id is None:
@@ -301,7 +464,14 @@ class IdeationCatalog:
         return metadata.taxonomy.timebox_hint_minutes is not None or max_timebox_minutes is None
 
     def _records_to_csv(self, rows: list[dict[str, object]]) -> str:
-        """Serialize rows to CSV using a stable field order."""
+        """Serialize rows to CSV using a stable field order.
+
+        Args:
+            rows: Ordered export rows to serialize.
+
+        Returns:
+            CSV text with one header row and deterministic columns.
+        """
         if not rows:
             return ""
         buffer = io.StringIO()
@@ -318,9 +488,19 @@ class IdeationCatalog:
         return buffer.getvalue()
 
     def _records_to_dataframe(self, rows: list[dict[str, object]]) -> Any:
-        """Build a pandas DataFrame from records with lazy imports."""
+        """Build a pandas DataFrame from records with lazy imports.
+
+        Args:
+            rows: Ordered export rows to convert.
+
+        Returns:
+            DataFrame constructed from the provided rows.
+
+        Raises:
+            MissingOptionalDependencyError: If pandas is not installed.
+        """
         try:
-            import pandas as pandas_module
+            pandas_module = cast(Any, import_module("pandas"))
         except ImportError as exc:
             raise MissingOptionalDependencyError(
                 "pandas support requires the optional 'design-research-problems[pandas]' extra."
@@ -329,7 +509,14 @@ class IdeationCatalog:
 
 
 def _parse_citation(entry: dict[str, Any]) -> Citation:
-    """Parse one ideation citation record."""
+    """Parse one ideation citation record.
+
+    Args:
+        entry: Raw citation mapping loaded from TOML.
+
+    Returns:
+        Parsed structured citation record.
+    """
     return Citation(
         key=str(entry["key"]),
         kind=str(entry.get("kind", "inline")),
@@ -346,13 +533,21 @@ def _parse_citation(entry: dict[str, Any]) -> Citation:
 
 
 def _load_raw_ideation_data() -> dict[str, Any]:
-    """Load and parse the packaged ideation catalog TOML."""
+    """Load and parse the packaged ideation catalog TOML.
+
+    Returns:
+        Raw TOML payload as a nested mapping.
+    """
     raw_text = files(_PACKAGE).joinpath(*_IDEATION_RESOURCE.split("/")).read_text(encoding="utf-8")
-    return cast(dict[str, Any], tomllib.loads(raw_text))
+    return tomllib.loads(raw_text)
 
 
 def load_ideation_catalog() -> IdeationCatalog:
-    """Load the packaged ideation catalog."""
+    """Load the packaged ideation catalog.
+
+    Returns:
+        Parsed ideation catalog with all linked tables.
+    """
     raw_data = _load_raw_ideation_data()
     citations = tuple(_parse_citation(entry) for entry in cast(list[dict[str, Any]], raw_data.get("citations", [])))
     prompts = tuple(
@@ -426,5 +621,9 @@ _DEFAULT_IDEATION_CATALOG = load_ideation_catalog()
 
 
 def get_ideation_catalog() -> IdeationCatalog:
-    """Return the packaged ideation catalog."""
+    """Return the packaged ideation catalog.
+
+    Returns:
+        Cached ideation catalog instance.
+    """
     return _DEFAULT_IDEATION_CATALOG

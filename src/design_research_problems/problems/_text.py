@@ -72,7 +72,14 @@ class TextProblem:
         raise KeyError(f"Unknown asset name: {name}")
 
     def _starts_with_h1(self, statement_body: str) -> bool:
-        """Return whether the statement already includes a top-level title."""
+        """Return whether the statement already includes a top-level title.
+
+        Args:
+            statement_body: Markdown statement text to inspect.
+
+        Returns:
+            ``True`` when the first non-empty line is an H1 heading.
+        """
         first_nonempty = next((line for line in statement_body.splitlines() if line.strip()), "")
         match = _LEADING_H1_PATTERN.match(first_nonempty)
         if match is None:
@@ -89,7 +96,11 @@ class TextProblem:
         return True
 
     def _render_citation_summaries(self) -> str:
-        """Render the readable citation list."""
+        """Render the readable citation list.
+
+        Returns:
+            Markdown bullet list of summary citations.
+        """
         lines: list[str] = []
         for citation in self.metadata.citations:
             summary = citation.summary_text()
@@ -102,7 +113,11 @@ class TextProblem:
         return "\n".join(lines)
 
     def _render_citation_raw_blocks(self) -> str:
-        """Render raw citation text in fenced blocks."""
+        """Render raw citation text in fenced blocks.
+
+        Returns:
+            Markdown fenced blocks containing raw citation payloads.
+        """
         blocks: list[str] = []
         for citation in self.metadata.citations:
             info = "bibtex" if citation.kind == "bibtex" else "text"

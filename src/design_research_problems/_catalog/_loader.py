@@ -218,7 +218,15 @@ def _iter_manifest_directories(
     root: Traversable,
     resource_dir: str = _CATALOG_DIR,
 ) -> tuple[tuple[Traversable, str], ...]:
-    """Return all catalog problem directories, including nested ones."""
+    """Return all catalog problem directories, including nested ones.
+
+    Args:
+        root: Traversable directory to scan recursively.
+        resource_dir: Package-relative resource path for ``root``.
+
+    Returns:
+        Tuples of manifest directories and their package-relative resource paths.
+    """
     entries: list[tuple[Traversable, str]] = []
     for entry in sorted(root.iterdir(), key=lambda item: item.name):
         if not entry.is_dir():

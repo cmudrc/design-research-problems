@@ -11,7 +11,7 @@ catalog entries:
    registry = ProblemRegistry()
    print(list_problems())
    print(registry.kind_feature_flags())
-   peanut = get_problem("peanut_sheller_fu2010")
+   peanut = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
    print(peanut.render_packet(include_citation=False))
 
 The optimization problem can be instantiated through the registry:

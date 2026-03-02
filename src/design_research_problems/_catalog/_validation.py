@@ -14,16 +14,26 @@ class CatalogValidationReport:
     """Structured validation output for the packaged catalog."""
 
     errors: tuple[str, ...]
+    """Validation failures that should block shipping or CI."""
     warnings: tuple[str, ...]
+    """Non-fatal follow-up notices for incomplete but loadable assets."""
 
     @property
     def is_valid(self) -> bool:
-        """Return whether the packaged catalog has no validation errors."""
+        """Return whether the packaged catalog has no validation errors.
+
+        Returns:
+            ``True`` when the report contains no errors.
+        """
         return not self.errors
 
 
 def validate_catalog() -> CatalogValidationReport:
-    """Validate packaged problem and ideation metadata."""
+    """Validate packaged problem and ideation metadata.
+
+    Returns:
+        Structured validation report containing errors and warnings.
+    """
     errors: list[str] = []
     warnings: list[str] = []
 
@@ -116,7 +126,7 @@ def validate_catalog() -> CatalogValidationReport:
             if prompt_id not in prompt_ids:
                 errors.append(f"{family.family_id}: references unknown prompt {prompt_id!r}")
         if not family.canonical_prompt_ids:
-            warnings.append(f"{family.family_id}: family_stub placeholder has no canonical prompts")
+            errors.append(f"{family.family_id}: family records must reference at least one prompt")
 
     for study in ideation.studies:
         for variant_id in study.prompt_variant_ids:
@@ -138,7 +148,14 @@ def validate_catalog() -> CatalogValidationReport:
 
 
 def _leading_h1(statement: str) -> str | None:
-    """Return the first H1 text when present."""
+    """Return the first H1 text when present.
+
+    Args:
+        statement: Markdown statement body to inspect.
+
+    Returns:
+        First top-level heading text, or ``None`` when no H1 is present.
+    """
     for line in statement.splitlines():
         stripped = line.strip()
         if not stripped:

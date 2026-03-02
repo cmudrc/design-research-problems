@@ -27,14 +27,14 @@ def _run_example(relative_path: str) -> subprocess.CompletedProcess[str]:
 def test_catalog_example_runs() -> None:
     completed = _run_example("examples/catalog/list_and_load.py")
     assert completed.returncode == 0, completed.stderr
-    assert "peanut_sheller_fu2010" in completed.stdout
+    assert "ideation_peanut_shelling_fu_cagan_kotovsky_2010" in completed.stdout
 
 
 @pytest.mark.examples_smoke
 def test_ideation_catalog_example_runs() -> None:
     completed = _run_example("examples/catalog/ideation_catalog.py")
     assert completed.returncode == 0, completed.stderr
-    assert "prompts 39" in completed.stdout
+    assert "prompts 40" in completed.stdout
 
 
 @pytest.mark.examples_smoke

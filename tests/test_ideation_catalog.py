@@ -11,9 +11,9 @@ from design_research_problems._catalog._validation import validate_catalog
 
 def test_ideation_catalog_exposes_expected_table_sizes() -> None:
     catalog = get_ideation_catalog()
-    assert len(catalog.list_prompts()) == 39
+    assert len(catalog.list_prompts()) == 40
     assert len(catalog.list_variants()) == 40
-    assert len(catalog.list_families()) == 29
+    assert len(catalog.list_families()) == 22
     assert len(catalog.list_studies()) == 6
 
 
@@ -103,8 +103,7 @@ def test_ideation_catalog_builds_dataframes_when_pandas_is_installed() -> None:
     assert isinstance(dataframe, pandas.DataFrame)
 
 
-def test_catalog_validation_has_no_errors_and_expected_placeholder_warnings() -> None:
+def test_catalog_validation_has_no_errors_and_expected_follow_up_warnings() -> None:
     report = validate_catalog()
     assert report.errors == ()
-    assert any("family_stub placeholder" in warning for warning in report.warnings)
     assert any("needs primary-source follow-up" in warning for warning in report.warnings)

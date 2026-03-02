@@ -30,7 +30,7 @@ If you want a five-minute start, copy this:
 
    print(list_problems())
    print(len(get_ideation_catalog().list_prompts()))
-   peanut = get_problem("peanut_sheller_fu2010")
+   peanut = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
    print(peanut.render_packet(include_citation=False))
 
 That gives you the packaged problem IDs, the ideation prompt count, and a
@@ -62,7 +62,7 @@ Choose the path that matches what you want to do next:
 What Is In The Initial Catalog?
 -------------------------------
 
-- 39 ideation-focused text prompts plus the detailed ``peanut_sheller_fu2010`` compatibility packet.
+- 40 ideation-focused text prompts.
 - ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
 - ``planar_truss_span``: a discrete planar truss topology grammar with a lazy ``trussme`` adapter.
 

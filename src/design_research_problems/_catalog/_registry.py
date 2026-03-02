@@ -89,14 +89,34 @@ class ProblemRegistry:
         return manifest.metadata.feature_flags
 
     def capabilities(self, problem_id: str) -> tuple[str, ...]:
-        """Return the normalized capability flags for one problem ID."""
+        """Return the normalized capability flags for one problem ID.
+
+        Args:
+            problem_id: Stable catalog identifier.
+
+        Returns:
+            Capability flags in deterministic sorted order.
+
+        Raises:
+            KeyError: If the ID is unknown.
+        """
         manifest = self._catalog().get(problem_id)
         if manifest is None:
             raise KeyError(f"Unknown problem id: {problem_id}")
         return manifest.metadata.capabilities
 
     def study_suitability(self, problem_id: str) -> tuple[str, ...]:
-        """Return the normalized study-suitability flags for one problem ID."""
+        """Return the normalized study-suitability flags for one problem ID.
+
+        Args:
+            problem_id: Stable catalog identifier.
+
+        Returns:
+            Study-suitability flags in deterministic sorted order.
+
+        Raises:
+            KeyError: If the ID is unknown.
+        """
         manifest = self._catalog().get(problem_id)
         if manifest is None:
             raise KeyError(f"Unknown problem id: {problem_id}")

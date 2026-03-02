@@ -20,7 +20,7 @@ The initial release centers on three problem families plus a linked ideation met
 
 The first catalog includes:
 
-- 39 ideation-focused text prompts plus `peanut_sheller_fu2010`
+- 40 ideation-focused text prompts
 - `pill_capsule_min_area` for constrained continuous optimization
 - `planar_truss_span` for a discrete topology grammar backed by `trussme`
 

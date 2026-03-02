@@ -42,7 +42,11 @@ class Citation:
     """Whether the record is intentionally incomplete and needs follow-up."""
 
     def summary_text(self) -> str:
-        """Return a short human-readable citation line."""
+        """Return a short human-readable citation line.
+
+        Returns:
+            Curated citation text when available, otherwise a synthesized summary.
+        """
         if self.formatted_text:
             return self.formatted_text
         author_text = ", ".join(self.authors) if self.authors else "Unknown author"
@@ -128,7 +132,11 @@ class ProblemMetadata:
 
     @property
     def feature_flags(self) -> tuple[str, ...]:
-        """Return the compatibility union of capabilities and study-suitability flags."""
+        """Return the compatibility union of capabilities and study-suitability flags.
+
+        Returns:
+            Sorted union of both controlled-vocabulary flag sets.
+        """
         return tuple(sorted({*self.capabilities, *self.study_suitability}))
 
     def has_feature(self, feature_flag: str) -> bool:
