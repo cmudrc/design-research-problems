@@ -1,0 +1,72 @@
+problem_id = "ideation_powdered_surface_coating"
+title = "Ideation Prompt - Powdered Surface Coating Device"
+summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), derived from the general powder-dispersion problem statement in Linsey, Wood, and Markman (2008)."
+kind = "text"
+statement = '''
+# Ideation Prompt - Powdered Surface Coating Device
+
+A device that disperses a light coating of a powdered substance over a surface.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "manufacturing", "mechanisms"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goucher_lambert_cagan_2019"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
+year = 2019
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "linsey_2008_powder"
+kind = "bibtex"
+authors = ["Julie S. Linsey", "Kristin L. Wood", "Arthur B. Markman"]
+title = "Modality and representation in analogy"
+year = 2008
+venue = "Artificial Intelligence for Engineering Design, Analysis and Manufacturing, 22(2), 85-100"
+doi = "10.1017/S0890060408000061"
+url = "https://doi.org/10.1017/S0890060408000061"
+formatted_text = "Linsey, Wood, and Markman (2008). Modality and representation in analogy. Artificial Intelligence for Engineering Design, Analysis and Manufacturing, 22(2), 85-100."
+raw_text = '''
+@article{Linsey_Wood_Markman_2008,
+title = {Modality and representation in analogy},
+volume = {22},
+doi = {10.1017/S0890060408000061},
+number = {2},
+journal = {Artificial Intelligence for Engineering Design, Analysis and Manufacturing},
+author = {Linsey, J.S. and Wood, K.L. and Markman, A.B.},
+year = {2008},
+pages = {85-100}
+}
+'''
+provisional = false

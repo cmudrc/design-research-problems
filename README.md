@@ -11,15 +11,16 @@ discrete grammar-style problems behind a small, typed Python API.
 
 ## Overview
 
-The initial release centers on three seed problem families:
+The initial release centers on three problem families plus a linked ideation metadata catalog:
 
 - Text problems for human-subjects studies and prompt packets
 - Optimization problems with typed bounds and lazy SciPy-backed solving
 - Grammar problems that describe discrete design actions and optional evaluation adapters
+- An ideation catalog with prompt records, variants, families, and study summaries
 
 The first catalog includes:
 
-- `peanut_sheller_fu2010` for text-based design research
+- 40 ideation-focused text prompts
 - `pill_capsule_min_area` for constrained continuous optimization
 - `planar_truss_span` for a discrete topology grammar backed by `trussme`
 
@@ -48,6 +49,12 @@ Then inspect the catalog directly from the installed package:
 
 ```bash
 python3 -c "from design_research_problems import list_problems; print(list_problems())"
+```
+
+And inspect the ideation corpus:
+
+```bash
+python3 -c "from design_research_problems import get_ideation_catalog; print(len(get_ideation_catalog().list_prompts()))"
 ```
 
 For local development, reproducible installs are pinned to Python `3.12.12` in

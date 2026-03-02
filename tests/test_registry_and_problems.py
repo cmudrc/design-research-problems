@@ -13,7 +13,46 @@ from design_research_problems.problems.optimization._pill import _pill_area, _pi
 
 def test_list_problems_returns_seed_problem_ids() -> None:
     assert list_problems() == (
-        "peanut_sheller_fu2010",
+        "ideation_accessible_drinking_fountain",
+        "ideation_accessible_drinking_fountain_derivative",
+        "ideation_car_mounted_bicycle_rack",
+        "ideation_chocolate_packaging",
+        "ideation_disposable_spill_proof_coffee_cup",
+        "ideation_home_energy_conservation",
+        "ideation_human_motion_energy_harvesting",
+        "ideation_human_motion_energy_harvesting_rural_communities",
+        "ideation_injured_athlete_campus_mobility",
+        "ideation_joint_immobilization_device",
+        "ideation_joint_immobilization_mountain_trek",
+        "ideation_measure_passage_of_time",
+        "ideation_measure_passage_of_time_room_clock",
+        "ideation_measuring_cup_for_blind_users",
+        "ideation_measuring_cup_for_blind_users_jansson_smith_1991",
+        "ideation_milk_frothing_product",
+        "ideation_milk_frothing_product_toh_miller_2014",
+        "ideation_one_handed_lidded_container_opening",
+        "ideation_one_handed_lidded_container_opening_framework",
+        "ideation_out_of_reach_book_retrieval",
+        "ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011",
+        "ideation_peanut_shelling",
+        "ideation_peanut_shelling_fu_cagan_kotovsky_2010",
+        "ideation_peanut_shelling_linsey_green_murphy_wood_markman_2005",
+        "ideation_powdered_surface_coating",
+        "ideation_powdered_surface_coating_domain_specific",
+        "ideation_powdered_surface_coating_general",
+        "ideation_public_belongings_security",
+        "ideation_public_place_belongings_securer",
+        "ideation_remote_village_rainwater_access",
+        "ideation_remote_village_rainwater_access_framework",
+        "ideation_small_towel_folding",
+        "ideation_small_towel_folding_linsey_wood_markman_2008",
+        "ideation_snow_transport_for_novices",
+        "ideation_snow_transport_for_novices_framework",
+        "ideation_travel_exercise_device",
+        "ideation_travel_exercise_device_linsey_viswanathan_2014",
+        "ideation_walking_texting_accident_reduction",
+        "ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014",
+        "ideation_wheelchair_peach_picking",
         "pill_capsule_min_area",
         "planar_truss_span",
     )
@@ -24,12 +63,63 @@ def test_registry_entries_filter_by_kind() -> None:
 
     registry = ProblemRegistry()
     kinds = registry.by_kind(ProblemKind.TEXT)
-    assert [entry.problem_id for entry in kinds] == ["peanut_sheller_fu2010"]
-    assert registry.feature_flags("peanut_sheller_fu2010") == (
+    assert [entry.problem_id for entry in kinds] == [
+        "ideation_accessible_drinking_fountain",
+        "ideation_accessible_drinking_fountain_derivative",
+        "ideation_car_mounted_bicycle_rack",
+        "ideation_chocolate_packaging",
+        "ideation_disposable_spill_proof_coffee_cup",
+        "ideation_home_energy_conservation",
+        "ideation_human_motion_energy_harvesting",
+        "ideation_human_motion_energy_harvesting_rural_communities",
+        "ideation_injured_athlete_campus_mobility",
+        "ideation_joint_immobilization_device",
+        "ideation_joint_immobilization_mountain_trek",
+        "ideation_measure_passage_of_time",
+        "ideation_measure_passage_of_time_room_clock",
+        "ideation_measuring_cup_for_blind_users",
+        "ideation_measuring_cup_for_blind_users_jansson_smith_1991",
+        "ideation_milk_frothing_product",
+        "ideation_milk_frothing_product_toh_miller_2014",
+        "ideation_one_handed_lidded_container_opening",
+        "ideation_one_handed_lidded_container_opening_framework",
+        "ideation_out_of_reach_book_retrieval",
+        "ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011",
+        "ideation_peanut_shelling",
+        "ideation_peanut_shelling_fu_cagan_kotovsky_2010",
+        "ideation_peanut_shelling_linsey_green_murphy_wood_markman_2005",
+        "ideation_powdered_surface_coating",
+        "ideation_powdered_surface_coating_domain_specific",
+        "ideation_powdered_surface_coating_general",
+        "ideation_public_belongings_security",
+        "ideation_public_place_belongings_securer",
+        "ideation_remote_village_rainwater_access",
+        "ideation_remote_village_rainwater_access_framework",
+        "ideation_small_towel_folding",
+        "ideation_small_towel_folding_linsey_wood_markman_2008",
+        "ideation_snow_transport_for_novices",
+        "ideation_snow_transport_for_novices_framework",
+        "ideation_travel_exercise_device",
+        "ideation_travel_exercise_device_linsey_viswanathan_2014",
+        "ideation_walking_texting_accident_reduction",
+        "ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014",
+        "ideation_wheelchair_peach_picking",
+    ]
+    assert registry.feature_flags("ideation_peanut_shelling_fu_cagan_kotovsky_2010") == (
         "citation-backed",
         "human-subjects-ready",
+        "ideation-friendly",
         "prompt-packet",
         "statement-markdown",
+    )
+    assert registry.capabilities("ideation_peanut_shelling_fu_cagan_kotovsky_2010") == (
+        "citation-backed",
+        "prompt-packet",
+        "statement-markdown",
+    )
+    assert registry.study_suitability("ideation_peanut_shelling_fu_cagan_kotovsky_2010") == (
+        "human-subjects-ready",
+        "ideation-friendly",
     )
 
 
@@ -41,8 +131,12 @@ def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
     assert grouped[ProblemKind.TEXT] == (
         "citation-backed",
         "human-subjects-ready",
+        "ideation-friendly",
+        "intervention-ready",
         "prompt-packet",
+        "requirements-study-ready",
         "statement-markdown",
+        "variety-study-ready",
     )
     assert grouped[ProblemKind.OPTIMIZATION] == (
         "bounded-variables",
@@ -61,12 +155,21 @@ def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
 
 
 def test_text_problem_renders_statement_and_citation() -> None:
-    problem = get_problem("peanut_sheller_fu2010")
+    problem = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
     packet = problem.render_packet()
-    assert "Design Problem - Device to shell peanuts" in packet
-    assert "fu2010design" in packet
+    assert packet.count("# Design Problem - Device to shell peanuts") == 1
+    assert "Fu, Cagan, and Kotovsky (2010)." in packet
     assert "Must remove the shell with minimal damage to the peanuts." in packet
+    assert "## BibTeX" not in packet
     assert problem.metadata.has_feature("human subjects ready") is True
+
+
+def test_text_problem_can_render_summary_and_raw_citations() -> None:
+    problem = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
+    packet = problem.render_packet(citation_mode="summary+raw")
+    assert "## Sources" in packet
+    assert "## BibTeX" in packet
+    assert "@article{fu2010design," in packet
 
 
 def test_registry_search_filters_by_feature_flags() -> None:
@@ -75,6 +178,18 @@ def test_registry_search_filters_by_feature_flags() -> None:
     registry = ProblemRegistry()
     matches = registry.search(feature_flags=("seeded data generation",))
     assert [entry.problem_id for entry in matches] == ["pill_capsule_min_area"]
+    text_matches = registry.search(
+        kind=ProblemKind.TEXT,
+        capabilities=("citation-backed",),
+        study_suitability=("intervention-ready",),
+    )
+    assert [entry.problem_id for entry in text_matches] == [
+        "ideation_injured_athlete_campus_mobility",
+        "ideation_one_handed_lidded_container_opening",
+        "ideation_public_belongings_security",
+        "ideation_remote_village_rainwater_access",
+        "ideation_snow_transport_for_novices",
+    ]
 
 
 def test_pill_helpers_return_expected_positive_values() -> None:

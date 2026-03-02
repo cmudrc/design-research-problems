@@ -1,0 +1,84 @@
+problem_id = "ideation_peanut_shelling"
+title = "Ideation Prompt - Peanut Shelling without Electricity"
+summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), tracing through Viswanathan and Linsey (2013) to the original peanut-shelling study in Linsey, Green, Murphy, Wood, and Markman (2005)."
+kind = "text"
+statement = '''
+# Ideation Prompt - Peanut Shelling without Electricity
+
+A device to remove the shell from a peanut in areas with no electricity.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "agriculture", "mechanical-design"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goucher_lambert_cagan_2019"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
+year = 2019
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "viswanathan_linsey_2013"
+kind = "bibtex"
+authors = ["Vimal Viswanathan", "Julie Linsey"]
+title = "Design Fixation and Its Mitigation: A Study on the Role of Expertise"
+year = 2013
+venue = "Journal of Mechanical Design, 135(5), 051008"
+doi = "10.1115/1.4024123"
+url = "https://doi.org/10.1115/1.4024123"
+formatted_text = "Viswanathan and Linsey (2013). Design Fixation and Its Mitigation: A Study on the Role of Expertise. Journal of Mechanical Design, 135(5), 051008."
+raw_text = '''
+@article{10.1115/1.4024123,
+    author = {Viswanathan, Vimal K. and Linsey, Julie S.},
+    title = {Design Fixation and Its Mitigation: A Study on the Role of Expertise},
+    journal = {Journal of Mechanical Design},
+    volume = {135},
+    number = {5},
+    pages = {051008},
+    year = {2013},
+    doi = {10.1115/1.4024123},
+    url = {https://doi.org/10.1115/1.4024123}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "linsey_green_murphy_wood_markman_2005"
+kind = "inline"
+authors = ["Julie S. Linsey", "Matthew G. Green", "J. T. Murphy", "Kristin L. Wood", "Arthur B. Markman"]
+title = "\"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques"
+year = 2005
+venue = "ASME IDETC/CIE 2005, DETC2005-85351"
+formatted_text = "Linsey, Green, Murphy, Wood, and Markman (2005). \"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques. ASME IDETC/CIE 2005, DETC2005-85351."
+raw_text = "Linsey, Green, Murphy, Wood, and Markman (2005). \"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques. Proceedings of IDETC/CIE 2005, ASME 2005 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference, DETC2005-85351."
+provisional = true

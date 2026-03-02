@@ -27,7 +27,30 @@ def _run_example(relative_path: str) -> subprocess.CompletedProcess[str]:
 def test_catalog_example_runs() -> None:
     completed = _run_example("examples/catalog/list_and_load.py")
     assert completed.returncode == 0, completed.stderr
-    assert "peanut_sheller_fu2010" in completed.stdout
+    assert "ideation_peanut_shelling_fu_cagan_kotovsky_2010" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_ideation_catalog_example_runs() -> None:
+    completed = _run_example("examples/catalog/ideation_catalog.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "prompts 40" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_ideation_export_example_runs() -> None:
+    completed = _run_example("examples/catalog/ideation_exports.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "prompt_id,problem_id,family_id,canonical_brief,evidence_tier,status,tags" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_ideation_dataframe_example_runs() -> None:
+    completed = _run_example("examples/catalog/ideation_dataframe.py")
+    assert completed.returncode == 0, completed.stderr
+    if "optional 'design-research-problems[pandas]' extra" in completed.stdout:
+        pytest.skip("pandas is not installed in this environment.")
+    assert "prompt_id" in completed.stdout
 
 
 @pytest.mark.examples_smoke

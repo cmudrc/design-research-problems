@@ -3,6 +3,9 @@ Examples
 
 The example inventory is generated from the checked-in scripts.
 
+- ``examples/catalog/ideation_catalog.py``
+- ``examples/catalog/ideation_dataframe.py``
+- ``examples/catalog/ideation_exports.py``
 - ``examples/catalog/list_and_load.py``
 - ``examples/grammar/planar_truss_span.py``
 - ``examples/optimization/pill_problem.py``

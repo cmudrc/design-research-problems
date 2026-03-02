@@ -19,8 +19,15 @@ _EXPORTS: Final[dict[str, str]] = {
     "ProblemRegistry": "design_research_problems._catalog:ProblemRegistry",
     "MissingOptionalDependencyError": "design_research_problems._exceptions:MissingOptionalDependencyError",
     "ProblemEvaluationError": "design_research_problems._exceptions:ProblemEvaluationError",
+    "EvidenceTier": "design_research_problems.ideation:EvidenceTier",
+    "IdeationPromptRecord": "design_research_problems.ideation:IdeationPromptRecord",
+    "IdeationPromptVariant": "design_research_problems.ideation:IdeationPromptVariant",
+    "IdeationPromptFamily": "design_research_problems.ideation:IdeationPromptFamily",
+    "IdeationStudy": "design_research_problems.ideation:IdeationStudy",
+    "IdeationCatalog": "design_research_problems.ideation:IdeationCatalog",
     "get_problem": "design_research_problems._catalog:get_problem",
     "list_problems": "design_research_problems._catalog:list_problems",
+    "get_ideation_catalog": "design_research_problems.ideation:get_ideation_catalog",
 }
 
 __all__ = ["__version__", *_EXPORTS.keys()]
@@ -63,6 +70,13 @@ if TYPE_CHECKING:
     from ._catalog import list_problems as list_problems
     from ._exceptions import MissingOptionalDependencyError as MissingOptionalDependencyError
     from ._exceptions import ProblemEvaluationError as ProblemEvaluationError
+    from .ideation import EvidenceTier as EvidenceTier
+    from .ideation import IdeationCatalog as IdeationCatalog
+    from .ideation import IdeationPromptFamily as IdeationPromptFamily
+    from .ideation import IdeationPromptRecord as IdeationPromptRecord
+    from .ideation import IdeationPromptVariant as IdeationPromptVariant
+    from .ideation import IdeationStudy as IdeationStudy
+    from .ideation import get_ideation_catalog as get_ideation_catalog
     from .problems import Citation as Citation
     from .problems import GrammarProblem as GrammarProblem
     from .problems import OptimizationProblem as OptimizationProblem

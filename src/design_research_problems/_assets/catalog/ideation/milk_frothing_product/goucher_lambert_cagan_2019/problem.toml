@@ -1,0 +1,76 @@
+problem_id = "ideation_milk_frothing_product"
+title = "Ideation Prompt - Milk Frothing Product"
+summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the original milk-frothing brief in Toh and Miller (2014)."
+kind = "text"
+statement = '''
+# Ideation Prompt - Milk Frothing Product
+
+An innovative product to froth milk.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "consumer", "kitchen"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goucher_lambert_cagan_2019"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
+year = 2019
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "toh_miller_2014"
+kind = "bibtex"
+authors = ["Christine A. Toh", "Scarlett R. Miller"]
+title = "The Impact of Example Modality and Physical Interactions on Design Creativity"
+year = 2014
+venue = "Journal of Mechanical Design, 136(9), 091004"
+doi = "10.1115/1.4027639"
+url = "https://doi.org/10.1115/1.4027639"
+formatted_text = "Toh and Miller (2014). The Impact of Example Modality and Physical Interactions on Design Creativity. Journal of Mechanical Design, 136(9), 091004."
+raw_text = '''
+@article{10.1115/1.4027639,
+    author = {Toh, Christine A. and Miller, Scarlett R.},
+    title = {The Impact of Example Modality and Physical Interactions on Design Creativity},
+    journal = {Journal of Mechanical Design},
+    volume = {136},
+    number = {9},
+    pages = {091004},
+    year = {2014},
+    month = {06},
+    issn = {1050-0472},
+    doi = {10.1115/1.4027639},
+    url = {https://doi.org/10.1115/1.4027639},
+    eprint = {https://asmedigitalcollection.asme.org/mechanicaldesign/article-pdf/136/9/091004/6224894/md_136_09_091004.pdf},
+}
+'''
+provisional = false

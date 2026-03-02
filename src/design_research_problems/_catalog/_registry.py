@@ -88,6 +88,40 @@ class ProblemRegistry:
             raise KeyError(f"Unknown problem id: {problem_id}")
         return manifest.metadata.feature_flags
 
+    def capabilities(self, problem_id: str) -> tuple[str, ...]:
+        """Return the normalized capability flags for one problem ID.
+
+        Args:
+            problem_id: Stable catalog identifier.
+
+        Returns:
+            Capability flags in deterministic sorted order.
+
+        Raises:
+            KeyError: If the ID is unknown.
+        """
+        manifest = self._catalog().get(problem_id)
+        if manifest is None:
+            raise KeyError(f"Unknown problem id: {problem_id}")
+        return manifest.metadata.capabilities
+
+    def study_suitability(self, problem_id: str) -> tuple[str, ...]:
+        """Return the normalized study-suitability flags for one problem ID.
+
+        Args:
+            problem_id: Stable catalog identifier.
+
+        Returns:
+            Study-suitability flags in deterministic sorted order.
+
+        Raises:
+            KeyError: If the ID is unknown.
+        """
+        manifest = self._catalog().get(problem_id)
+        if manifest is None:
+            raise KeyError(f"Unknown problem id: {problem_id}")
+        return manifest.metadata.study_suitability
+
     def kind_feature_flags(self) -> dict[ProblemKind, tuple[str, ...]]:
         """Return aggregated feature flags for each problem family.
 
@@ -104,6 +138,9 @@ class ProblemRegistry:
         tags: tuple[str, ...] = (),
         text: str = "",
         feature_flags: tuple[str, ...] = (),
+        kind: ProblemKind | None = None,
+        capabilities: tuple[str, ...] = (),
+        study_suitability: tuple[str, ...] = (),
     ) -> tuple[ProblemMetadata, ...]:
         """Search metadata by tags and free text.
 
@@ -111,18 +148,29 @@ class ProblemRegistry:
             tags: Tags that must all be present on a matching entry.
             text: Case-insensitive free-text search term.
             feature_flags: Feature flags that must all be present on a matching entry.
+            kind: Optional problem-family filter.
+            capabilities: Capability flags that must all be present.
+            study_suitability: Study-suitability flags that must all be present.
 
         Returns:
             Matching metadata entries.
         """
         tag_set = {tag.lower() for tag in tags}
         feature_flag_set = {flag.strip().lower().replace(" ", "-") for flag in feature_flags}
+        capability_set = {flag.strip().lower().replace(" ", "-") for flag in capabilities}
+        suitability_set = {flag.strip().lower().replace(" ", "-") for flag in study_suitability}
         text_query = text.strip().lower()
         matches: list[ProblemMetadata] = []
         for metadata in self.list():
+            if kind is not None and metadata.kind is not kind:
+                continue
             if tag_set and not tag_set.issubset({tag.lower() for tag in metadata.taxonomy.tags}):
                 continue
             if feature_flag_set and not feature_flag_set.issubset(set(metadata.feature_flags)):
+                continue
+            if capability_set and not capability_set.issubset(set(metadata.capabilities)):
+                continue
+            if suitability_set and not suitability_set.issubset(set(metadata.study_suitability)):
                 continue
             haystack = " ".join(
                 (metadata.problem_id, metadata.title, metadata.summary, *metadata.taxonomy.tags)

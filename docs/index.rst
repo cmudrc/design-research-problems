@@ -13,7 +13,7 @@ Highlights
 ----------
 
 - A packaged catalog of reusable design research prompts and benchmark problems.
-- Three initial problem families: text, optimization, and grammar.
+- Three problem families: text, optimization, and grammar, plus a linked ideation metadata catalog.
 - Lazy optional integrations for SciPy and ``trussme`` so the base install stays light.
 - Problem-level feature flags plus family-level aggregated feature flags for capability discovery.
 - Typed metadata and a deliberately small public API.
@@ -26,13 +26,15 @@ If you want a five-minute start, copy this:
 
 .. code-block:: python
 
-   from design_research_problems import get_problem, list_problems
+   from design_research_problems import get_ideation_catalog, get_problem, list_problems
 
    print(list_problems())
-   peanut = get_problem("peanut_sheller_fu2010")
+   print(len(get_ideation_catalog().list_prompts()))
+   peanut = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
    print(peanut.render_packet(include_citation=False))
 
-That gives you the catalog IDs and a ready-to-use text prompt packet.
+That gives you the packaged problem IDs, the ideation prompt count, and a
+ready-to-use text prompt packet.
 
 Problem Families
 ----------------
@@ -60,7 +62,7 @@ Choose the path that matches what you want to do next:
 What Is In The Initial Catalog?
 -------------------------------
 
-- ``peanut_sheller_fu2010``: a human-subjects-ready design prompt about a low-cost peanut sheller.
+- 40 ideation-focused text prompts.
 - ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
 - ``planar_truss_span``: a discrete planar truss topology grammar with a lazy ``trussme`` adapter.
 

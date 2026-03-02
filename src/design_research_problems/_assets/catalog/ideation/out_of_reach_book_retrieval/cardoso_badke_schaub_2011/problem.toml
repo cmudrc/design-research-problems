@@ -1,0 +1,62 @@
+problem_id = "ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011"
+title = "Ideation Prompt - Out-of-Reach Book Retrieval (Original)"
+summary = "The original library-shelf retrieval brief used by Cardoso and Badke-Schaub (2011)."
+kind = "text"
+statement = '''
+# Ideation Prompt - Out-of-Reach Book Retrieval (Original)
+
+Design a device that allows people to pickup a book from a shelf (e.g. in a
+library) that is out of their reach, for instance, above their head.
+
+In addition to sketches, add short written explanations if needed to complement
+the design (for instance, in terms of mechanisms, principles, materials, or
+related details).
+
+Generate solution ideas that take into account the following criteria:
+
+- Ease of use: level of usability in terms of how easy and comfortable it would
+  be for a user to retrieve a book using it.
+- Manufacture: feasibility of building such a device using existing
+  technologies.
+- Minimised book damage: likelihood of a book being damaged during retrieval.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "assistive-design"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "accessibility", "retrieval", "library"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 60
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "cardoso_badke_schaub_2011"
+kind = "bibtex"
+authors = ["Carlos Cardoso", "Petra Badke-Schaub"]
+title = "The Influence of Different Pictorial Representations During Idea Generation"
+year = 2011
+venue = "The Journal of Creative Behavior, 45(2), 130-146"
+doi = "10.1002/j.2162-6057.2011.tb01092.x"
+url = "https://onlinelibrary.wiley.com/doi/10.1002/j.2162-6057.2011.tb01092.x"
+formatted_text = "Cardoso and Badke-Schaub (2011). The Influence of Different Pictorial Representations During Idea Generation. The Journal of Creative Behavior, 45(2), 130-146."
+raw_text = '''
+@article{https://doi.org/10.1002/j.2162-6057.2011.tb01092.x,
+author = {CARDOSO, CARLOS and BADKE-SCHAUB, PETRA},
+title = {The Influence of Different Pictorial Representations During Idea Generation},
+journal = {The Journal of Creative Behavior},
+volume = {45},
+number = {2},
+pages = {130-146},
+doi = {https://doi.org/10.1002/j.2162-6057.2011.tb01092.x},
+url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/j.2162-6057.2011.tb01092.x},
+eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/j.2162-6057.2011.tb01092.x},
+year = {2011}
+}
+'''
+provisional = false

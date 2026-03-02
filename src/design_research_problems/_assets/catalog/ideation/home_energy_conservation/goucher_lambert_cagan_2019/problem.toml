@@ -1,0 +1,48 @@
+problem_id = "ideation_home_energy_conservation"
+title = "Ideation Prompt - Home Energy Conservation"
+summary = "The original training prompt introduced by Goucher-Lambert and Cagan (2019)."
+kind = "text"
+statement = '''
+# Ideation Prompt - Home Energy Conservation
+
+A device that can help a home conserve energy.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "sustainability", "energy"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goucher_lambert_cagan_2019"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
+year = 2019
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false

@@ -1,0 +1,82 @@
+problem_id = "ideation_peanut_shelling_fu_cagan_kotovsky_2010"
+title = "Design Problem - Device to shell peanuts"
+summary = "The full control-group peanut-sheller prompt printed by Fu, Cagan, and Kotovsky (2010), with the underlying task tracing back to the original Linsey, Green, Murphy, Wood, and Markman (2005) study."
+kind = "text"
+statement = '''
+# Design Problem - Device to shell peanuts
+
+In places like Haiti and certain West African countries, peanuts are a
+significant crop. Most peanut farmers shell their peanuts by hand, an
+inefficient and labor-intensive process. Our goal is to build a low-cost,
+easy to manufacture peanut sheller targeted at individuals and small
+cooperatives that will increase the productivity of the peanut farmers.
+Further, this peanut sheller should be manufacturable with materials that are
+readily available in the target communities. Our target throughput is
+approximately 50 kg (110 lbs) per hour.
+
+# Customer Needs
+
+- Must remove the shell with minimal damage to the peanuts.
+- Electrical outlets are not available as a power source.
+- A large quantity of peanuts must be quickly shelled.
+- Low cost.
+- Easy to manufacture.
+'''
+capabilities = [
+  "statement-markdown",
+  "citation-backed",
+  "prompt-packet",
+]
+study_suitability = [
+  "human-subjects-ready",
+  "ideation-friendly",
+]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 1.0
+objective_mode = "qualitative"
+constraint_nature = "informal"
+tags = ["text", "human-subjects", "agriculture", "mechanical-design"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "fu2010design"
+kind = "bibtex"
+authors = ["Katherine Fu", "Jonathan Cagan", "Kenneth Kotovsky"]
+title = "Design Team Convergence: The Influence of Example Solution Quality"
+year = 2010
+venue = "Journal of Mechanical Design, 132(11), 111005"
+doi = "10.1115/1.4002202"
+url = "https://doi.org/10.1115/1.4002202"
+formatted_text = "Fu, Cagan, and Kotovsky (2010). Design Team Convergence: The Influence of Example Solution Quality. Journal of Mechanical Design, 132(11), 111005."
+raw_text = '''
+@article{fu2010design,
+  author = {Katherine Fu and Jonathan Cagan and Kenneth Kotovsky},
+  title = {Design Team Convergence: The Influence of Example Solution Quality},
+  journal = {Journal of Mechanical Design},
+  volume = {132},
+  number = {11},
+  pages = {111005},
+  year = {2010},
+  doi = {10.1115/1.4002202},
+  url = {https://doi.org/10.1115/1.4002202}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "linsey_green_murphy_wood_markman_2005"
+kind = "inline"
+authors = ["Julie S. Linsey", "Matthew G. Green", "J. T. Murphy", "Kristin L. Wood", "Arthur B. Markman"]
+title = "\"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques"
+year = 2005
+venue = "ASME IDETC/CIE 2005, DETC2005-85351"
+formatted_text = "Linsey, Green, Murphy, Wood, and Markman (2005). \"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques. ASME IDETC/CIE 2005, DETC2005-85351."
+raw_text = "Linsey, Green, Murphy, Wood, and Markman (2005). \"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques. Proceedings of IDETC/CIE 2005, ASME 2005 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference, DETC2005-85351."
+provisional = true

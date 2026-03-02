@@ -1,0 +1,45 @@
+problem_id = "ideation_small_towel_folding_linsey_wood_markman_2008"
+title = "Ideation Prompt - Small Towel Folding (Root Case Study)"
+summary = "A reconstructed root laundry-folding brief from Linsey, Wood, and Markman (2008)."
+kind = "text"
+statement = '''
+# Ideation Prompt - Small Towel Folding (Root Case Study)
+
+Create a laundry folding device for students with severe physical and mental
+disabilities.
+
+The goal described in the case study is to fold wash cloths, hand towels, and
+small bath towels.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "consumer", "automation", "assistive"]
+deliverable_type = "concepts"
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "linsey_wood_markman_2008_wordtrees"
+kind = "inline"
+authors = ["Julie Linsey", "Kristin Wood", "Arthur Markman"]
+title = "Wordtrees: A method for design by analogy"
+year = 2008
+venue = "2008 Annual Conference & Exposition"
+formatted_text = "Linsey, Wood, and Markman (2008). Wordtrees: A method for design by analogy. 2008 Annual Conference & Exposition."
+raw_text = '''
+@inproceedings{linsey2008wordtrees,
+  title = {Wordtrees: A method for design by analogy},
+  author = {Linsey, Julie and Wood, Kristin and Markman, Arthur},
+  booktitle = {2008 Annual Conference \& Exposition},
+  pages = {13--1407},
+  year = {2008}
+}
+'''
+provisional = false

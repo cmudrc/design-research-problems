@@ -16,7 +16,7 @@ class ProblemManifest:
     """Loaded problem metadata used for registry lookups."""
     resource_dir: str
     """Package-relative directory containing the problem resources."""
-    statement_resource: str
-    """File name of the packaged Markdown statement."""
+    statement_markdown: str
+    """Canonical Markdown statement embedded directly in the manifest."""
     parameters: Mapping[str, object]
     """Implementation-specific manifest parameters."""
