@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from itertools import product
 from math import exp, prod
 from types import MappingProxyType
-from typing import Literal
+from typing import Literal, cast
 
 from design_research_problems._exceptions import ProblemEvaluationError
 from design_research_problems.problems._text import TextProblem
@@ -16,6 +16,7 @@ _DISCRETE_MARKET_SIZE = 1_600_000.0
 _CHOICE_METRIC_TOP_CHOICE_SHARE = "top-choice-share"
 _CHOICE_METRIC_MEAN_RATING = "mean-rating"
 _CHOICE_METRIC_MEDIAN_RATING = "median-rating"
+ChoiceMetric = Literal["top-choice-share", "mean-rating", "median-rating"]
 _SUPPORTED_CHOICE_METRICS = frozenset(
     {
         _CHOICE_METRIC_TOP_CHOICE_SHARE,
@@ -280,7 +281,11 @@ class DecisionChoiceBenchmark:
     """Sample standard deviation of the source ratings."""
 
     def __post_init__(self) -> None:
-        """Normalize and validate the benchmark entry."""
+        """Normalize and validate the benchmark entry.
+
+        Raises:
+            ValueError: If any required field is empty or any numeric field is invalid.
+        """
         key = self.key.strip().lower()
         if not key:
             raise ValueError("DecisionChoiceBenchmark requires a non-empty key.")
@@ -325,7 +330,11 @@ class DecisionChoiceEvaluation:
     """Name of the metric used to populate ``objective_value``."""
 
     def __post_init__(self) -> None:
-        """Normalize numeric outputs and the metric identifier."""
+        """Normalize numeric outputs and the metric identifier.
+
+        Raises:
+            ValueError: If required fields are empty or the metric payload is invalid.
+        """
         choice_key = self.choice_key.strip().lower()
         if not choice_key:
             raise ValueError("DecisionChoiceEvaluation requires a non-empty choice_key.")
@@ -612,7 +621,7 @@ class DecisionProblem(TextProblem):
     """Cached typed objective descriptors."""
     _constraint_specs: tuple[DecisionConstraintSpec, ...] = field(init=False, repr=False)
     """Cached typed constraint descriptors."""
-    _default_choice_metric: str = field(init=False, repr=False)
+    _default_choice_metric: ChoiceMetric = field(init=False, repr=False)
     """Cached default empirical choice metric."""
     _response_count: int = field(init=False, repr=False)
     """Cached empirical response count."""
@@ -735,7 +744,7 @@ class DecisionProblem(TextProblem):
         return tuple(benchmark.key for benchmark in self.choice_benchmarks)
 
     @property
-    def default_choice_metric(self) -> str:
+    def default_choice_metric(self) -> ChoiceMetric:
         """Return the default metric used for empirical choice ranking.
 
         Returns:
@@ -841,7 +850,7 @@ class DecisionProblem(TextProblem):
     def evaluate_choice(
         self,
         choice: str,
-        metric: Literal["top-choice-share", "mean-rating", "median-rating"] | None = None,
+        metric: ChoiceMetric | None = None,
     ) -> DecisionChoiceEvaluation:
         """Evaluate one empirical categorical choice option.
 
@@ -872,7 +881,7 @@ class DecisionProblem(TextProblem):
 
     def rank_choices(
         self,
-        metric: Literal["top-choice-share", "mean-rating", "median-rating"] | None = None,
+        metric: ChoiceMetric | None = None,
     ) -> tuple[DecisionChoiceEvaluation, ...]:
         """Return all empirical choices ranked by one metric.
 
@@ -916,7 +925,7 @@ class DecisionProblem(TextProblem):
 
     def best_choice(
         self,
-        metric: Literal["top-choice-share", "mean-rating", "median-rating"] | None = None,
+        metric: ChoiceMetric | None = None,
     ) -> DecisionChoiceEvaluation:
         """Return the best-scoring empirical categorical choice.
 
@@ -1068,8 +1077,8 @@ class DecisionProblem(TextProblem):
 
     def _normalize_choice_metric(
         self,
-        metric: Literal["top-choice-share", "mean-rating", "median-rating"] | None,
-    ) -> str:
+        metric: ChoiceMetric | None,
+    ) -> ChoiceMetric:
         """Return one supported empirical choice metric name.
 
         Args:
@@ -1084,7 +1093,7 @@ class DecisionProblem(TextProblem):
         normalized = self.default_choice_metric if metric is None else metric.strip().lower()
         if normalized not in _SUPPORTED_CHOICE_METRICS:
             raise ValueError(f"Unsupported choice metric: {metric!r}")
-        return normalized
+        return cast(ChoiceMetric, normalized)
 
     def _choice_metric_value(self, benchmark: DecisionChoiceBenchmark, metric: str) -> float:
         """Return one benchmark value keyed by metric name.
@@ -1095,6 +1104,9 @@ class DecisionProblem(TextProblem):
 
         Returns:
             Numeric benchmark value.
+
+        Raises:
+            ValueError: If the provided metric is unsupported.
         """
         if metric == _CHOICE_METRIC_TOP_CHOICE_SHARE:
             return benchmark.top_choice_share
@@ -1416,7 +1428,10 @@ def _parse_choice_benchmarks(parameters: Mapping[str, object]) -> tuple[Decision
     return tuple(benchmarks)
 
 
-def _parse_default_choice_metric(parameters: Mapping[str, object], has_choice_benchmarks: bool) -> str:
+def _parse_default_choice_metric(
+    parameters: Mapping[str, object],
+    has_choice_benchmarks: bool,
+) -> ChoiceMetric:
     """Parse the default empirical choice metric.
 
     Args:
@@ -1431,11 +1446,12 @@ def _parse_default_choice_metric(parameters: Mapping[str, object], has_choice_be
     """
     raw_value = parameters.get("default_choice_metric")
     if raw_value is None:
-        return _CHOICE_METRIC_TOP_CHOICE_SHARE if has_choice_benchmarks else _CHOICE_METRIC_TOP_CHOICE_SHARE
+        del has_choice_benchmarks
+        return cast(ChoiceMetric, _CHOICE_METRIC_TOP_CHOICE_SHARE)
     value = str(raw_value).strip().lower()
     if value not in _SUPPORTED_CHOICE_METRICS:
         raise ValueError(f"Unsupported default_choice_metric: {value!r}")
-    return value
+    return cast(ChoiceMetric, value)
 
 
 def _parse_response_count(parameters: Mapping[str, object], has_choice_benchmarks: bool) -> int:
@@ -1447,6 +1463,9 @@ def _parse_response_count(parameters: Mapping[str, object], has_choice_benchmark
 
     Returns:
         Parsed integer response count.
+
+    Raises:
+        ValueError: If the count is negative, non-integral, or missing when required.
     """
     raw_value = parameters.get("response_count")
     if raw_value is None:
