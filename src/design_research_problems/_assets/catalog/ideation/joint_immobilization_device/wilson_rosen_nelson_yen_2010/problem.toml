@@ -1,0 +1,64 @@
+problem_id = "ideation_joint_immobilization_mountain_trek"
+title = "Ideation Prompt - Mountain-TREK Joint Immobilization"
+summary = "The original Mountain-TREK design brief printed in Wilson, Rosen, Nelson, and Yen (2010), preceding the later one-line derivative used by Goucher-Lambert and Cagan (2019)."
+kind = "text"
+statement = '''
+# Ideation Prompt - Mountain-TREK Joint Immobilization
+
+Mountain-TREK (MTREK) is an outdoor wilderness company that organizes backpacking trips to the
+mountains throughout the year. During these trips, MTREK utilizes trip guides to lead a group of
+participants through these wilderness expeditions. For safety reasons, MTREK requires each of its
+guides to carry emergency kits containing an assortment of medical supplies. These kits contain
+items that can be used in the case of sickness, insect bites, wounds, trauma, etc. Due to the other
+items outfitted in the guides' packs, available space is limited. In extreme hiking conditions, MTREK
+has noticed a significant risk of leg and ankle dislocations and fractures.
+
+## Design challenge
+
+Due to the potential for leg injuries, MTREK is now requiring guides to carry additional supplies to
+treat these injuries. In this design challenge, MTREK has hired you to design a device that can be
+used to immobilize a joint or limb in case of an extreme injury. This device must (1) be as light and
+small as possible when stored in the guides' packs but (2) rigid enough and large enough to
+immobilize the leg of an average-sized male.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "informal"
+tags = ["text", "human-subjects", "ideation", "medical", "mechanical-design", "wilderness"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "wilson_2010"
+kind = "bibtex"
+authors = ["Jamal O. Wilson", "David Rosen", "Brent A. Nelson", "Jeannette Yen"]
+title = "The effects of biological examples in idea generation"
+year = 2010
+venue = "Design Studies, 31(2), 169-186"
+doi = "10.1016/j.destud.2009.10.003"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X0900074X"
+formatted_text = "Wilson, Rosen, Nelson, and Yen (2010). The effects of biological examples in idea generation. Design Studies, 31(2), 169-186."
+raw_text = '''
+@article{WILSON2010169,
+title = {The effects of biological examples in idea generation},
+journal = {Design Studies},
+volume = {31},
+number = {2},
+pages = {169-186},
+year = {2010},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2009.10.003},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X0900074X},
+author = {Jamal O. Wilson and David Rosen and Brent A. Nelson and Jeannette Yen},
+keywords = {innovation, design techniques, conceptual design, creative design, evaluation}
+}
+'''
+provisional = false

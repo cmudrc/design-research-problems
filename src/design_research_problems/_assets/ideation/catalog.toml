@@ -1,13 +1,27 @@
 [[citations]]
 key = "goucher_lambert_cagan_2019"
-kind = "inline"
-authors = ["Kelsie Goucher-Lambert", "Jonathan Cagan"]
-title = "A curated set of reused ideation prompts in design studies"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
 year = 2019
-venue = "Secondary synthesis used for canonical prompt reuse."
-formatted_text = "Goucher-Lambert and Cagan (2019). Secondary synthesis of recurrent ideation prompts."
-raw_text = "Goucher-Lambert and Cagan (2019). Secondary synthesis of recurrent ideation prompts."
-provisional = true
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false
 
 [[citations]]
 key = "patel_elena_summers_2019"
@@ -31,54 +45,165 @@ raw_text = "Linsey and Viswanathan (2014). A lightweight exercise device that ca
 provisional = true
 
 [[citations]]
-key = "fu_chan_cagan_2013"
-kind = "inline"
-authors = ["Katherine Fu", "Jeffrey Chan", "Jonathan Cagan"]
-title = "A device that can collect energy from human motion"
+key = "fu_chan_cagan_kotovsky_schunn_wood_2013"
+kind = "bibtex"
+authors = ["Katherine Fu", "Joel Chan", "Jonathan Cagan", "Kenneth Kotovsky", "Christian Schunn", "Kristin Wood"]
+title = "The Meaning of \"Near\" and \"Far\": The Impact of Structuring Design Databases and the Effect of Distance of Analogy on Design Output"
 year = 2013
-formatted_text = "Fu, Chan, Cagan, et al. (2013). A device that can collect energy from human motion."
-raw_text = "Fu, Chan, Cagan, et al. (2013). A device that can collect energy from human motion."
-provisional = true
+venue = "Journal of Mechanical Design, 135(2), 021007"
+doi = "10.1115/1.4023158"
+url = "https://doi.org/10.1115/1.4023158"
+formatted_text = "Fu, Chan, Cagan, Kotovsky, Schunn, and Wood (2013). The Meaning of \"Near\" and \"Far\": The Impact of Structuring Design Databases and the Effect of Distance of Analogy on Design Output. Journal of Mechanical Design, 135(2), 021007."
+raw_text = '''
+@article{10.1115/1.4023158,
+    author = {Fu, Katherine and Chan, Joel and Cagan, Jonathan and Kotovsky, Kenneth and Schunn, Christian and Wood, Kristin},
+    title = {The Meaning of “Near” and “Far”: The Impact of Structuring Design Databases and the Effect of Distance of Analogy on Design Output},
+    journal = {Journal of Mechanical Design},
+    volume = {135},
+    number = {2},
+    pages = {021007},
+    year = {2013},
+    month = {01},
+    issn = {1050-0472},
+    doi = {10.1115/1.4023158},
+    url = {https://doi.org/10.1115/1.4023158},
+    eprint = {https://asmedigitalcollection.asme.org/mechanicaldesign/article-pdf/135/2/021007/6221498/md_135_2_021007.pdf},
+}
+'''
+provisional = false
+
+[[citations]]
+key = "chan_fu_schunn_cagan_wood_kotovsky_2011"
+kind = "bibtex"
+authors = ["Joel Chan", "Katherine Fu", "Christian Schunn", "Jonathan Cagan", "Kristin Wood", "Kenneth Kotovsky"]
+title = "On the Benefits and Pitfalls of Analogies for Innovative Design: Ideation Performance Based on Analogical Distance, Commonness, and Modality of Examples"
+year = 2011
+venue = "Journal of Mechanical Design, 133(8), 081004"
+doi = "10.1115/1.4004396"
+url = "https://doi.org/10.1115/1.4004396"
+formatted_text = "Chan, Fu, Schunn, Cagan, Wood, and Kotovsky (2011). On the Benefits and Pitfalls of Analogies for Innovative Design: Ideation Performance Based on Analogical Distance, Commonness, and Modality of Examples. Journal of Mechanical Design, 133(8), 081004."
+raw_text = '''
+@article{10.1115/1.4004396,
+    author = {Chan, Joel and Fu, Katherine and Schunn, Christian and Cagan, Jonathan and Wood, Kristin and Kotovsky, Kenneth},
+    title = {On the Benefits and Pitfalls of Analogies for Innovative Design: Ideation Performance Based on Analogical Distance, Commonness, and Modality of Examples},
+    journal = {Journal of Mechanical Design},
+    volume = {133},
+    number = {8},
+    pages = {081004},
+    year = {2011},
+    month = {08},
+    issn = {1050-0472},
+    doi = {10.1115/1.4004396},
+    url = {https://doi.org/10.1115/1.4004396},
+    eprint = {https://asmedigitalcollection.asme.org/mechanicaldesign/article-pdf/133/8/081004/5926174/081004_1.pdf},
+}
+'''
+provisional = false
 
 [[citations]]
 key = "tseng_moss_cagan_kotovsky_2008"
-kind = "inline"
-authors = ["I-Ling Tseng", "Jessica Moss", "Jonathan Cagan", "Kenneth Kotovsky"]
-title = "A new way to measure the passage of time"
+kind = "bibtex"
+authors = ["Ian Tseng", "Jarrod Moss", "Jonathan Cagan", "Kenneth Kotovsky"]
+title = "The role of timing and analogical similarity in the stimulation of idea generation in design"
 year = 2008
-formatted_text = "Tseng, Moss, Cagan, and Kotovsky (2008). A new way to measure the passage of time."
-raw_text = "Tseng, Moss, Cagan, and Kotovsky (2008). A new way to measure the passage of time."
-provisional = true
+venue = "Design Studies, 29(3), 203-221"
+doi = "10.1016/j.destud.2008.01.003"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X08000197"
+formatted_text = "Tseng, Moss, Cagan, and Kotovsky (2008). The role of timing and analogical similarity in the stimulation of idea generation in design. Design Studies, 29(3), 203-221."
+raw_text = '''
+@article{TSENG2008203,
+title = {The role of timing and analogical similarity in the stimulation of idea generation in design},
+journal = {Design Studies},
+volume = {29},
+number = {3},
+pages = {203-221},
+year = {2008},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2008.01.003},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X08000197},
+author = {Ian Tseng and Jarrod Moss and Jonathan Cagan and Kenneth Kotovsky},
+keywords = {problem solving, design cognition, creativity, conceptual design}
+}
+'''
+provisional = false
 
 [[citations]]
 key = "linsey_2008_powder"
-kind = "inline"
-authors = ["Julie Linsey", "et al."]
-title = "A device that disperses a light coating of a powdered substance over a surface"
+kind = "bibtex"
+authors = ["Julie S. Linsey", "Kristin L. Wood", "Arthur B. Markman"]
+title = "Modality and representation in analogy"
 year = 2008
-formatted_text = "Linsey et al. (2008). A device that disperses a light coating of a powdered substance over a surface."
-raw_text = "Linsey et al. (2008). A device that disperses a light coating of a powdered substance over a surface."
-provisional = true
+venue = "Artificial Intelligence for Engineering Design, Analysis and Manufacturing, 22(2), 85-100"
+doi = "10.1017/S0890060408000061"
+url = "https://doi.org/10.1017/S0890060408000061"
+formatted_text = "Linsey, Wood, and Markman (2008). Modality and representation in analogy. Artificial Intelligence for Engineering Design, Analysis and Manufacturing, 22(2), 85-100."
+raw_text = '''
+@article{Linsey_Wood_Markman_2008,
+title = {Modality and representation in analogy},
+volume = {22},
+doi = {10.1017/S0890060408000061},
+number = {2},
+journal = {Artificial Intelligence for Engineering Design, Analysis and Manufacturing},
+author = {Linsey, J.S. and Wood, K.L. and Markman, A.B.},
+year = {2008},
+pages = {85-100}
+}
+'''
+provisional = false
 
 [[citations]]
 key = "cardoso_badke_schaub_2011"
-kind = "inline"
+kind = "bibtex"
 authors = ["Carlos Cardoso", "Petra Badke-Schaub"]
-title = "A device that allows people to get a book that is out of reach"
+title = "The Influence of Different Pictorial Representations During Idea Generation"
 year = 2011
-formatted_text = "Cardoso and Badke-Schaub (2011). A device that allows people to get a book that is out of reach."
-raw_text = "Cardoso and Badke-Schaub (2011). A device that allows people to get a book that is out of reach."
-provisional = true
+venue = "The Journal of Creative Behavior, 45(2), 130-146"
+doi = "10.1002/j.2162-6057.2011.tb01092.x"
+url = "https://onlinelibrary.wiley.com/doi/10.1002/j.2162-6057.2011.tb01092.x"
+formatted_text = "Cardoso and Badke-Schaub (2011). The Influence of Different Pictorial Representations During Idea Generation. The Journal of Creative Behavior, 45(2), 130-146."
+raw_text = '''
+@article{https://doi.org/10.1002/j.2162-6057.2011.tb01092.x,
+author = {CARDOSO, CARLOS and BADKE-SCHAUB, PETRA},
+title = {The Influence of Different Pictorial Representations During Idea Generation},
+journal = {The Journal of Creative Behavior},
+volume = {45},
+number = {2},
+pages = {130-146},
+doi = {https://doi.org/10.1002/j.2162-6057.2011.tb01092.x},
+url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/j.2162-6057.2011.tb01092.x},
+eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/j.2162-6057.2011.tb01092.x},
+year = {2011}
+}
+'''
+provisional = false
 
 [[citations]]
 key = "toh_miller_2014"
-kind = "inline"
-authors = ["Christine Toh", "Scott Miller"]
-title = "An innovative product to froth milk"
+kind = "bibtex"
+authors = ["Christine A. Toh", "Scarlett R. Miller"]
+title = "The Impact of Example Modality and Physical Interactions on Design Creativity"
 year = 2014
-formatted_text = "Toh and Miller (2014). An innovative product to froth milk."
-raw_text = "Toh and Miller (2014). An innovative product to froth milk."
-provisional = true
+venue = "Journal of Mechanical Design, 136(9), 091004"
+doi = "10.1115/1.4027639"
+url = "https://doi.org/10.1115/1.4027639"
+formatted_text = "Toh and Miller (2014). The Impact of Example Modality and Physical Interactions on Design Creativity. Journal of Mechanical Design, 136(9), 091004."
+raw_text = '''
+@article{10.1115/1.4027639,
+    author = {Toh, Christine A. and Miller, Scarlett R.},
+    title = {The Impact of Example Modality and Physical Interactions on Design Creativity},
+    journal = {Journal of Mechanical Design},
+    volume = {136},
+    number = {9},
+    pages = {091004},
+    year = {2014},
+    month = {06},
+    issn = {1050-0472},
+    doi = {10.1115/1.4027639},
+    url = {https://doi.org/10.1115/1.4027639},
+    eprint = {https://asmedigitalcollection.asme.org/mechanicaldesign/article-pdf/136/9/091004/6224894/md_136_09_091004.pdf},
+}
+'''
+provisional = false
 
 [[citations]]
 key = "miller_bailey_kirlik_2014"
@@ -128,13 +253,30 @@ provisional = false
 
 [[citations]]
 key = "jansson_smith_1991"
-kind = "inline"
-authors = ["David Jansson", "Steven Smith"]
-title = "A measuring cup for the blind"
+kind = "bibtex"
+authors = ["David G. Jansson", "Steven M. Smith"]
+title = "Design fixation"
 year = 1991
-formatted_text = "Jansson and Smith (1991). A measuring cup for the blind."
-raw_text = "Jansson and Smith (1991). A measuring cup for the blind."
-provisional = true
+venue = "Design Studies, 12(1), 3-11"
+doi = "10.1016/0142-694X(91)90003-F"
+url = "https://www.sciencedirect.com/science/article/pii/0142694X9190003F"
+formatted_text = "Jansson and Smith (1991). Design fixation. Design Studies, 12(1), 3-11."
+raw_text = '''
+@article{JANSSON19913,
+title = {Design fixation},
+journal = {Design Studies},
+volume = {12},
+number = {1},
+pages = {3-11},
+year = {1991},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/0142-694X(91)90003-F},
+url = {https://www.sciencedirect.com/science/article/pii/0142694X9190003F},
+author = {David G. Jansson and Steven M. Smith},
+keywords = {conceptual design, engineering design, creativity}
+}
+'''
+provisional = false
 
 [[citations]]
 key = "purcell_williams_gero_colbron_1993"
@@ -148,22 +290,65 @@ provisional = true
 
 [[citations]]
 key = "wilson_2010"
-kind = "inline"
-authors = ["Joseph Wilson", "et al."]
-title = "A device to immobilize a human joint"
+kind = "bibtex"
+authors = ["Jamal O. Wilson", "David Rosen", "Brent A. Nelson", "Jeannette Yen"]
+title = "The effects of biological examples in idea generation"
 year = 2010
-formatted_text = "Wilson et al. (2010). A device to immobilize a human joint."
-raw_text = "Wilson et al. (2010). A device to immobilize a human joint."
-provisional = true
+venue = "Design Studies, 31(2), 169-186"
+doi = "10.1016/j.destud.2009.10.003"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X0900074X"
+formatted_text = "Wilson, Rosen, Nelson, and Yen (2010). The effects of biological examples in idea generation. Design Studies, 31(2), 169-186."
+raw_text = '''
+@article{WILSON2010169,
+title = {The effects of biological examples in idea generation},
+journal = {Design Studies},
+volume = {31},
+number = {2},
+pages = {169-186},
+year = {2010},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2009.10.003},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X0900074X},
+author = {Jamal O. Wilson and David Rosen and Brent A. Nelson and Jeannette Yen},
+keywords = {innovation, design techniques, conceptual design, creative design, evaluation}
+}
+'''
+provisional = false
 
 [[citations]]
 key = "viswanathan_linsey_2013"
-kind = "inline"
+kind = "bibtex"
 authors = ["Vimal Viswanathan", "Julie Linsey"]
-title = "A device to remove the shell from a peanut in areas with no electricity"
+title = "Design Fixation and Its Mitigation: A Study on the Role of Expertise"
 year = 2013
-formatted_text = "Viswanathan and Linsey (2013). A device to remove the shell from a peanut in areas with no electricity."
-raw_text = "Viswanathan and Linsey (2013). A device to remove the shell from a peanut in areas with no electricity."
+venue = "Journal of Mechanical Design, 135(5), 051008"
+doi = "10.1115/1.4024123"
+url = "https://doi.org/10.1115/1.4024123"
+formatted_text = "Viswanathan and Linsey (2013). Design Fixation and Its Mitigation: A Study on the Role of Expertise. Journal of Mechanical Design, 135(5), 051008."
+raw_text = '''
+@article{10.1115/1.4024123,
+    author = {Viswanathan, Vimal K. and Linsey, Julie S.},
+    title = {Design Fixation and Its Mitigation: A Study on the Role of Expertise},
+    journal = {Journal of Mechanical Design},
+    volume = {135},
+    number = {5},
+    pages = {051008},
+    year = {2013},
+    doi = {10.1115/1.4024123},
+    url = {https://doi.org/10.1115/1.4024123}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "linsey_green_murphy_wood_markman_2005"
+kind = "inline"
+authors = ["Julie S. Linsey", "Matthew G. Green", "J. T. Murphy", "Kristin L. Wood", "Arthur B. Markman"]
+title = "\"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques"
+year = 2005
+venue = "ASME IDETC/CIE 2005, DETC2005-85351"
+formatted_text = "Linsey, Green, Murphy, Wood, and Markman (2005). \"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques. ASME IDETC/CIE 2005, DETC2005-85351."
+raw_text = "Linsey, Green, Murphy, Wood, and Markman (2005). \"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques. Proceedings of IDETC/CIE 2005, ASME 2005 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference, DETC2005-85351."
 provisional = true
 
 [[citations]]
@@ -212,6 +397,64 @@ url = "https://doi.org/10.1115/DETC2015-46334"
 formatted_text = "Jablokow, Teerlink, Yilmaz, Daly, Silk, and Wehr (2015). Ideation Variety in Mechanical Design: Examining the Effects of Cognitive Style and Design Heuristics."
 raw_text = "Jablokow, Teerlink, Yilmaz, Daly, Silk, and Wehr (2015). Ideation Variety in Mechanical Design: Examining the Effects of Cognitive Style and Design Heuristics."
 
+[[citations]]
+key = "silk_daly_jablokow_yilmaz_rosenberg_2014"
+kind = "inline"
+authors = ["Eli M. Silk", "Shanna R. Daly", "Kathryn Jablokow", "Seda Yilmaz", "Meisha Nicole Rosenberg"]
+title = "The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements"
+year = 2014
+venue = "ASEE Annual Conference and Exposition, Paper ID #8781"
+formatted_text = "Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014). The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements."
+raw_text = "Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014). The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements. ASEE Annual Conference and Exposition, Paper ID #8781."
+provisional = true
+
+[[citations]]
+key = "spradlin_2012"
+kind = "inline"
+authors = ["Dwayne Spradlin"]
+title = "Are You Solving the Right Problem? Asking the Right Questions Is Crucial"
+year = 2012
+venue = "Harvard Business Review, 90(9), 84-101"
+formatted_text = "Spradlin (2012). Are You Solving the Right Problem? Asking the Right Questions Is Crucial. Harvard Business Review, 90(9), 84-101."
+raw_text = "Spradlin (2012). Are You Solving the Right Problem? Asking the Right Questions Is Crucial. Harvard Business Review, 90(9), 84-101."
+provisional = false
+
+[[citations]]
+key = "chusilp_jin_2006"
+kind = "inline"
+authors = ["Pawat Chusilp", "Yan Jin"]
+title = "Impact of Mental Iteration on Concept Generation"
+year = 2006
+venue = "Journal of Mechanical Design, 128(1), 14-25"
+doi = "10.1115/1.2118707"
+formatted_text = "Chusilp and Jin (2006). Impact of Mental Iteration on Concept Generation. Journal of Mechanical Design, 128(1), 14-25."
+raw_text = "Chusilp and Jin (2006). Impact of Mental Iteration on Concept Generation. Journal of Mechanical Design, 128(1), 14-25. DOI: 10.1115/1.2118707."
+provisional = false
+
+[[citations]]
+key = "jin_chusilp_2006"
+kind = "inline"
+authors = ["Yan Jin", "Pawat Chusilp"]
+title = "Study of mental iteration in different design situations"
+year = 2006
+venue = "Design Studies, 27(1), 25-55"
+doi = "10.1016/j.destud.2005.06.003"
+formatted_text = "Jin and Chusilp (2006). Study of mental iteration in different design situations. Design Studies, 27(1), 25-55."
+raw_text = "Jin and Chusilp (2006). Study of mental iteration in different design situations. Design Studies, 27(1), 25-55. DOI: 10.1016/j.destud.2005.06.003."
+provisional = false
+
+[[citations]]
+key = "lemons_carberry_swan_jarvin_rogers_2010"
+kind = "inline"
+authors = ["Gay Lemons", "Adam Carberry", "Chris Swan", "Linda Jarvin", "Chris Rogers"]
+title = "The benefits of model building in teaching engineering design"
+year = 2010
+venue = "Design Studies, 31(3), 288-309"
+doi = "10.1016/j.destud.2010.02.001"
+formatted_text = "Lemons, Carberry, Swan, Jarvin, and Rogers (2010). The benefits of model building in teaching engineering design. Design Studies, 31(3), 288-309."
+raw_text = "Lemons, Carberry, Swan, Jarvin, and Rogers (2010). The benefits of model building in teaching engineering design. Design Studies, 31(3), 288-309. DOI: 10.1016/j.destud.2010.02.001."
+provisional = false
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -226,18 +469,18 @@ family_id = "family_drinking_fountain"
 name = "Drinking Fountain"
 group = "transport-infrastructure"
 external_aliases = ["CAT-B"]
-canonical_prompt_ids = ["prompt_accessible_drinking_fountain"]
+canonical_prompt_ids = ["prompt_accessible_drinking_fountain", "prompt_accessible_drinking_fountain_derivative"]
 tags = ["infrastructure", "accessibility"]
-notes = "Public infrastructure and accessibility prompt family."
+notes = "Public infrastructure and accessibility prompt family with both original and derivative framings."
 
 [[families]]
 family_id = "family_peanut_shelling"
 name = "Peanut Shelling"
 group = "food-agriculture"
 external_aliases = ["CAT-C"]
-canonical_prompt_ids = ["prompt_peanut_shelling"]
+canonical_prompt_ids = ["prompt_peanut_shelling", "prompt_peanut_shelling_original"]
 tags = ["agriculture", "mechanical-design"]
-notes = "Frequent food-processing prompt family in the secondary catalog."
+notes = "Linsey et al. (2005) provides the root peanut-shelling study framing; Fu et al. (2010) and Viswanathan and Linsey (2013) reuse and elaborate the task, and Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
 
 [[families]]
 family_id = "family_corn_husking"
@@ -280,18 +523,18 @@ family_id = "family_book_picking"
 name = "Book Picking"
 group = "accessibility-assistive"
 external_aliases = ["CAT-H"]
-canonical_prompt_ids = ["prompt_out_of_reach_book_retrieval"]
+canonical_prompt_ids = ["prompt_out_of_reach_book_retrieval", "prompt_out_of_reach_book_retrieval_original"]
 tags = ["assistive", "retrieval", "accessibility"]
-notes = "Assistive retrieval prompt family linked to peach-picking derivatives."
+notes = "Cardoso and Badke-Schaub (2011) provides the original library-shelf retrieval brief; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing. This family is linked to peach-picking derivatives."
 
 [[families]]
 family_id = "family_blind_cup"
 name = "Blind Cup"
 group = "accessibility-assistive"
 external_aliases = ["CAT-I"]
-canonical_prompt_ids = ["prompt_measuring_cup_for_blind_users"]
+canonical_prompt_ids = ["prompt_measuring_cup_for_blind_users", "prompt_measuring_cup_for_blind_users_original"]
 tags = ["accessibility", "consumer"]
-notes = "Accessibility prompt family used for measuring-cup variants."
+notes = "Jansson and Smith (1991) provides the original measuring-cup brief; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
 
 [[families]]
 family_id = "family_clothes_ironing"
@@ -316,18 +559,18 @@ family_id = "family_spill_proof_coffee_cup"
 name = "Spill-proof Coffee Cup"
 group = "consumer-household"
 external_aliases = ["CAT-L"]
-canonical_prompt_ids = []
-tags = ["consumer", "family-stub"]
-notes = "Catalog family from the secondary prompt-family synthesis."
+canonical_prompt_ids = ["prompt_disposable_spill_proof_coffee_cup"]
+tags = ["consumer", "household"]
+notes = "Jansson and Smith (1991) provides an early spill-proof coffee-cup brief that aligns with this prompt family."
 
 [[families]]
 family_id = "family_bike_rack"
 name = "Bike Rack"
 group = "transport-infrastructure"
 external_aliases = ["CAT-M"]
-canonical_prompt_ids = []
-tags = ["transport", "infrastructure", "family-stub"]
-notes = "Catalog family from the secondary prompt-family synthesis."
+canonical_prompt_ids = ["prompt_car_mounted_bicycle_rack"]
+tags = ["transport", "infrastructure"]
+notes = "Jansson and Smith (1991) provides an early car-mounted bicycle-rack brief that aligns with this prompt family."
 
 [[families]]
 family_id = "family_burrito_folding"
@@ -352,36 +595,40 @@ family_id = "family_human_motion_energy"
 name = "Human Motion Energy Harvesting"
 group = "other-ideation"
 external_aliases = []
-canonical_prompt_ids = ["prompt_human_motion_energy_harvesting"]
+canonical_prompt_ids = ["prompt_human_motion_energy_harvesting", "prompt_human_motion_energy_harvesting_rural_communities"]
 tags = ["energy", "wearables"]
-notes = "Additional family added to house the human-motion energy prompt."
+notes = "The task appears in Chan et al. (2011), is printed in full in Fu et al. (2013), and is later reduced to a one-line derivative framing by Goucher-Lambert and Cagan (2019)."
 
 [[families]]
 family_id = "family_time_measurement"
 name = "Time Measurement"
 group = "other-ideation"
 external_aliases = []
-canonical_prompt_ids = ["prompt_measure_passage_of_time"]
+canonical_prompt_ids = ["prompt_measure_passage_of_time", "prompt_measure_passage_of_time_room_clock"]
 tags = ["consumer", "abstract"]
-notes = "Additional family added to house the time-measurement prompt."
+notes = "Tseng et al. (2008) provides the original room-based time-measurement brief; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
 
 [[families]]
 family_id = "family_powder_dispersal"
 name = "Powder Dispersal"
 group = "other-ideation"
 external_aliases = []
-canonical_prompt_ids = ["prompt_powdered_surface_coating"]
+canonical_prompt_ids = [
+  "prompt_powdered_surface_coating",
+  "prompt_powdered_surface_coating_domain_specific",
+  "prompt_powdered_surface_coating_general",
+]
 tags = ["manufacturing", "mechanisms"]
-notes = "Additional family added to house the powder-dispersion prompt."
+notes = "Linsey, Wood, and Markman (2008) provides both domain-specific and general powder-dispersion problem statements; Goucher-Lambert and Cagan (2019) later reduce the general version to a one-line derivative framing."
 
 [[families]]
 family_id = "family_milk_frothing"
 name = "Milk Frothing"
 group = "consumer-household"
 external_aliases = []
-canonical_prompt_ids = ["prompt_milk_frothing_product"]
+canonical_prompt_ids = ["prompt_milk_frothing_product", "prompt_milk_frothing_product_original"]
 tags = ["consumer", "kitchen"]
-notes = "Additional family added to house the milk-frothing prompt."
+notes = "Toh and Miller (2014) provides the original milk-frothing brief; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
 
 [[families]]
 family_id = "family_pedestrian_safety"
@@ -397,9 +644,9 @@ family_id = "family_joint_immobilization"
 name = "Joint Immobilization"
 group = "accessibility-assistive"
 external_aliases = []
-canonical_prompt_ids = ["prompt_joint_immobilization_device"]
+canonical_prompt_ids = ["prompt_joint_immobilization_device", "prompt_joint_immobilization_mountain_trek"]
 tags = ["medical", "mechanical-design"]
-notes = "Additional family added to house the joint immobilization prompt."
+notes = "Wilson et al. (2010) provides the original Mountain-TREK brief; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
 
 [[families]]
 family_id = "family_towel_folding"
@@ -436,17 +683,53 @@ group = "accessibility-assistive"
 external_aliases = []
 canonical_prompt_ids = ["prompt_one_handed_lidded_container_opening"]
 tags = ["assistive", "food", "containers"]
-notes = "Additional family added to house the one-handed container-opening prompt."
+notes = "Jablokow et al. (2015) lists the task in neutral form; Silk et al. (2014) presents an earlier related framing adapted from Lemons et al. (2010)."
+
+[[families]]
+family_id = "family_snow_transport"
+name = "Snow Transport"
+group = "transport-infrastructure"
+external_aliases = []
+canonical_prompt_ids = ["prompt_snow_transport_for_novices"]
+tags = ["mobility", "snow", "recreation"]
+notes = "Jablokow et al. (2015) lists the task in neutral form; Silk et al. (2014) presents an earlier related framing adapted from Chusilp and Jin (2006) and Jin and Chusilp (2006)."
+
+[[families]]
+family_id = "family_public_belongings_security"
+name = "Public Belongings Security"
+group = "transport-infrastructure"
+external_aliases = []
+canonical_prompt_ids = ["prompt_public_belongings_security", "prompt_public_place_belongings_securer"]
+tags = ["security", "public-space"]
+notes = "Silk et al. (2014) provides the exact neutral Belongings prompt; Jablokow et al. (2015) later lists a shorter related neutral brief."
+
+[[families]]
+family_id = "family_remote_rainwater_access"
+name = "Remote Rainwater Access"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_remote_village_rainwater_access"]
+tags = ["water", "rural", "infrastructure"]
+notes = "Jablokow et al. (2015) lists the task in neutral form; Silk et al. (2014) presents an earlier related framing adapted from Spradlin (2012)."
+
+[[families]]
+family_id = "family_home_energy_conservation"
+name = "Home Energy Conservation"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_home_energy_conservation"]
+tags = ["sustainability", "energy", "home"]
+notes = "Original training problem introduced by Goucher-Lambert and Cagan (2019)."
 
 [[prompts]]
 prompt_id = "prompt_travel_exercise_device"
 problem_id = "ideation_travel_exercise_device"
 family_id = "family_travel_exercise"
 canonical_brief = "A lightweight exercise device that can be used while traveling."
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_viswanathan_2014"]
 tags = ["consumer", "travel", "ideation"]
-status = "needs_primary_fill"
+status = "complete"
 variant_ids = ["variant_travel_exercise_device"]
 
 [[prompts]]
@@ -454,65 +737,131 @@ prompt_id = "prompt_human_motion_energy_harvesting"
 problem_id = "ideation_human_motion_energy_harvesting"
 family_id = "family_human_motion_energy"
 canonical_brief = "A device that can collect energy from human motion."
-evidence_tier = "secondary_canonical"
-source_citation_keys = ["goucher_lambert_cagan_2019", "fu_chan_cagan_2013"]
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goucher_lambert_cagan_2019", "fu_chan_cagan_kotovsky_schunn_wood_2013", "chan_fu_schunn_cagan_wood_kotovsky_2011"]
 tags = ["energy", "wearables", "ideation"]
-status = "needs_primary_fill"
+status = "complete"
 variant_ids = ["variant_human_motion_energy_harvesting"]
+
+[[prompts]]
+prompt_id = "prompt_human_motion_energy_harvesting_rural_communities"
+problem_id = "ideation_human_motion_energy_harvesting_rural_communities"
+family_id = "family_human_motion_energy"
+canonical_brief = "Design a device to collect energy from human motion for use in developing and impoverished rural communities."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["fu_chan_cagan_kotovsky_schunn_wood_2013", "chan_fu_schunn_cagan_wood_kotovsky_2011"]
+tags = ["energy", "rural-communities", "ideation"]
+status = "complete"
+variant_ids = ["variant_human_motion_energy_harvesting_rural_communities"]
 
 [[prompts]]
 prompt_id = "prompt_measure_passage_of_time"
 problem_id = "ideation_measure_passage_of_time"
 family_id = "family_time_measurement"
 canonical_brief = "A new way to measure the passage of time."
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "tseng_moss_cagan_kotovsky_2008"]
 tags = ["consumer", "abstract", "ideation"]
-status = "needs_primary_fill"
+status = "complete"
 variant_ids = ["variant_measure_passage_of_time"]
+
+[[prompts]]
+prompt_id = "prompt_measure_passage_of_time_room_clock"
+problem_id = "ideation_measure_passage_of_time_room_clock"
+family_id = "family_time_measurement"
+canonical_brief = "Come up with as many shorter processes to measure the passage of hours, minutes, and seconds as you can in ten minutes."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["tseng_moss_cagan_kotovsky_2008"]
+tags = ["consumer", "abstract", "ideation", "timing"]
+status = "complete"
+variant_ids = ["variant_measure_passage_of_time_room_clock"]
 
 [[prompts]]
 prompt_id = "prompt_powdered_surface_coating"
 problem_id = "ideation_powdered_surface_coating"
 family_id = "family_powder_dispersal"
 canonical_brief = "A device that disperses a light coating of a powdered substance over a surface."
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_2008_powder"]
 tags = ["manufacturing", "mechanisms", "ideation"]
-status = "needs_primary_fill"
+status = "complete"
 variant_ids = ["variant_powdered_surface_coating"]
+
+[[prompts]]
+prompt_id = "prompt_powdered_surface_coating_domain_specific"
+problem_id = "ideation_powdered_surface_coating_domain_specific"
+family_id = "family_powder_dispersal"
+canonical_brief = "Design a kitchen utensil to sprinkle flour over a counter."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["linsey_2008_powder"]
+tags = ["manufacturing", "mechanisms", "ideation", "kitchen"]
+status = "complete"
+variant_ids = ["variant_powdered_surface_coating_domain_specific"]
+
+[[prompts]]
+prompt_id = "prompt_powdered_surface_coating_general"
+problem_id = "ideation_powdered_surface_coating_general"
+family_id = "family_powder_dispersal"
+canonical_brief = "Design a device to disperse a light coating of a powdered substance that forms clumps over a surface."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["linsey_2008_powder"]
+tags = ["manufacturing", "mechanisms", "ideation"]
+status = "complete"
+variant_ids = ["variant_powdered_surface_coating_general"]
 
 [[prompts]]
 prompt_id = "prompt_out_of_reach_book_retrieval"
 problem_id = "ideation_out_of_reach_book_retrieval"
 family_id = "family_book_picking"
 canonical_brief = "A device that allows people to get a book that is out of reach."
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "cardoso_badke_schaub_2011"]
 tags = ["assistive", "retrieval", "ideation"]
-status = "needs_primary_fill"
+status = "complete"
 variant_ids = ["variant_out_of_reach_book_retrieval"]
+
+[[prompts]]
+prompt_id = "prompt_out_of_reach_book_retrieval_original"
+problem_id = "ideation_out_of_reach_book_retrieval_original"
+family_id = "family_book_picking"
+canonical_brief = "Design a device that allows people to pickup a book from a shelf (e.g. in a library) that is out of their reach, for instance, above their head."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["cardoso_badke_schaub_2011"]
+tags = ["assistive", "retrieval", "ideation", "library"]
+status = "complete"
+variant_ids = ["variant_out_of_reach_book_retrieval_original"]
 
 [[prompts]]
 prompt_id = "prompt_milk_frothing_product"
 problem_id = "ideation_milk_frothing_product"
 family_id = "family_milk_frothing"
 canonical_brief = "An innovative product to froth milk."
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "toh_miller_2014"]
 tags = ["consumer", "kitchen", "ideation"]
-status = "needs_primary_fill"
+status = "complete"
 variant_ids = ["variant_milk_frothing_product"]
+
+[[prompts]]
+prompt_id = "prompt_milk_frothing_product_original"
+problem_id = "ideation_milk_frothing_product_original"
+family_id = "family_milk_frothing"
+canonical_brief = "Develop concepts for a new, innovative product that can froth milk in a short amount of time."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["toh_miller_2014"]
+tags = ["consumer", "kitchen", "ideation"]
+status = "complete"
+variant_ids = ["variant_milk_frothing_product_original"]
 
 [[prompts]]
 prompt_id = "prompt_walking_texting_accident_reduction"
 problem_id = "ideation_walking_texting_accident_reduction"
 family_id = "family_pedestrian_safety"
 canonical_brief = "A way to minimize accidents from people walking and texting on a cell phone."
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "miller_bailey_kirlik_2014"]
 tags = ["safety", "consumer", "ideation"]
-status = "needs_primary_fill"
+status = "complete"
 variant_ids = ["variant_walking_texting_accident_reduction"]
 
 [[prompts]]
@@ -520,10 +869,10 @@ prompt_id = "prompt_small_towel_folding"
 problem_id = "ideation_small_towel_folding"
 family_id = "family_towel_folding"
 canonical_brief = "A device to fold washcloths, hand towels, and small bath towels."
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_2012_towels"]
 tags = ["automation", "household", "ideation"]
-status = "needs_primary_fill"
+status = "complete"
 variant_ids = ["variant_small_towel_folding"]
 
 [[prompts]]
@@ -538,37 +887,81 @@ status = "complete"
 variant_ids = ["variant_accessible_drinking_fountain"]
 
 [[prompts]]
+prompt_id = "prompt_accessible_drinking_fountain_derivative"
+problem_id = "ideation_accessible_drinking_fountain_derivative"
+family_id = "family_drinking_fountain"
+canonical_brief = "A way to make drinking fountains accessible for all people."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goucher_lambert_cagan_2019", "goldschmidt_smolkov_2006"]
+tags = ["accessibility", "infrastructure", "ideation"]
+status = "complete"
+variant_ids = ["variant_accessible_drinking_fountain_derivative"]
+
+[[prompts]]
 prompt_id = "prompt_measuring_cup_for_blind_users"
 problem_id = "ideation_measuring_cup_for_blind_users"
 family_id = "family_blind_cup"
 canonical_brief = "A measuring cup for the blind."
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "jansson_smith_1991", "purcell_williams_gero_colbron_1993"]
 tags = ["accessibility", "consumer", "ideation"]
-status = "needs_primary_fill"
+status = "complete"
 variant_ids = ["variant_measuring_cup_for_blind_users"]
+
+[[prompts]]
+prompt_id = "prompt_measuring_cup_for_blind_users_original"
+problem_id = "ideation_measuring_cup_for_blind_users_original"
+family_id = "family_blind_cup"
+canonical_brief = "Design a volume-measuring device for cooking by visually impaired users."
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["jansson_smith_1991"]
+tags = ["accessibility", "consumer", "ideation"]
+status = "needs_primary_fill"
+variant_ids = ["variant_measuring_cup_for_blind_users_original"]
 
 [[prompts]]
 prompt_id = "prompt_joint_immobilization_device"
 problem_id = "ideation_joint_immobilization_device"
 family_id = "family_joint_immobilization"
 canonical_brief = "A device to immobilize a human joint."
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "wilson_2010"]
 tags = ["medical", "mechanical-design", "ideation"]
-status = "needs_primary_fill"
+status = "complete"
 variant_ids = ["variant_joint_immobilization_device"]
+
+[[prompts]]
+prompt_id = "prompt_joint_immobilization_mountain_trek"
+problem_id = "ideation_joint_immobilization_mountain_trek"
+family_id = "family_joint_immobilization"
+canonical_brief = "Design a device that can be used to immobilize a joint or limb in case of an extreme injury."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["wilson_2010"]
+tags = ["medical", "mechanical-design", "ideation", "wilderness"]
+status = "complete"
+variant_ids = ["variant_joint_immobilization_mountain_trek"]
 
 [[prompts]]
 prompt_id = "prompt_peanut_shelling"
 problem_id = "ideation_peanut_shelling"
 family_id = "family_peanut_shelling"
 canonical_brief = "A device to remove the shell from a peanut in areas with no electricity."
-evidence_tier = "secondary_canonical"
-source_citation_keys = ["goucher_lambert_cagan_2019", "viswanathan_linsey_2013"]
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goucher_lambert_cagan_2019", "viswanathan_linsey_2013", "linsey_green_murphy_wood_markman_2005"]
+tags = ["agriculture", "mechanical-design", "ideation"]
+status = "complete"
+variant_ids = ["variant_peanut_shelling_canonical", "variant_peanut_sheller_fu2010_detail"]
+
+[[prompts]]
+prompt_id = "prompt_peanut_shelling_original"
+problem_id = "ideation_peanut_shelling_original"
+family_id = "family_peanut_shelling"
+canonical_brief = "Design a device to quickly shell peanuts for use in places like Haiti and West African countries."
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["linsey_green_murphy_wood_markman_2005", "viswanathan_linsey_2013"]
 tags = ["agriculture", "mechanical-design", "ideation"]
 status = "needs_primary_fill"
-variant_ids = ["variant_peanut_shelling_canonical", "variant_peanut_sheller_fu2010_detail"]
+variant_ids = ["variant_peanut_shelling_original"]
 
 [[prompts]]
 prompt_id = "prompt_injured_athlete_campus_mobility"
@@ -598,10 +991,67 @@ problem_id = "ideation_one_handed_lidded_container_opening"
 family_id = "family_one_handed_container_opening"
 canonical_brief = "Design a way for a person with limited or no use of one upper extremity to open a lidded food container with one hand."
 evidence_tier = "primary_verbatim"
-source_citation_keys = ["jablokow_teerlink_yilmaz_daly_silk_wehr_2015"]
+source_citation_keys = [
+  "jablokow_teerlink_yilmaz_daly_silk_wehr_2015",
+  "silk_daly_jablokow_yilmaz_rosenberg_2014",
+  "lemons_carberry_swan_jarvin_rogers_2010",
+]
 tags = ["assistive", "variety", "intervention", "asme"]
 status = "complete"
 variant_ids = ["variant_one_handed_lidded_container_opening"]
+
+[[prompts]]
+prompt_id = "prompt_snow_transport_for_novices"
+problem_id = "ideation_snow_transport_for_novices"
+family_id = "family_snow_transport"
+canonical_brief = "A way for individuals with little skill or experience in skiing or snowboarding to transport themselves on snow."
+evidence_tier = "primary_verbatim"
+source_citation_keys = [
+  "jablokow_teerlink_yilmaz_daly_silk_wehr_2015",
+  "silk_daly_jablokow_yilmaz_rosenberg_2014",
+  "chusilp_jin_2006",
+  "jin_chusilp_2006",
+]
+tags = ["mobility", "snow", "variety", "intervention", "asme"]
+status = "complete"
+variant_ids = ["variant_snow_transport_for_novices"]
+
+[[prompts]]
+prompt_id = "prompt_public_belongings_security"
+problem_id = "ideation_public_belongings_security"
+family_id = "family_public_belongings_security"
+canonical_brief = "A way for someone to secure several of his/her belongings in a public area safely without disrupting the space."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["jablokow_teerlink_yilmaz_daly_silk_wehr_2015", "silk_daly_jablokow_yilmaz_rosenberg_2014"]
+tags = ["security", "public-space", "variety", "intervention", "asme"]
+status = "complete"
+variant_ids = ["variant_public_belongings_security"]
+
+[[prompts]]
+prompt_id = "prompt_public_place_belongings_securer"
+problem_id = "ideation_public_place_belongings_securer"
+family_id = "family_public_belongings_security"
+canonical_brief = "Design a way for someone to secure several of his or her belongings in a public area to prevent theft quickly without disrupting the space."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["silk_daly_jablokow_yilmaz_rosenberg_2014"]
+tags = ["security", "public-space", "ideation"]
+status = "complete"
+variant_ids = ["variant_public_place_belongings_securer"]
+
+[[prompts]]
+prompt_id = "prompt_remote_village_rainwater_access"
+problem_id = "ideation_remote_village_rainwater_access"
+family_id = "family_remote_rainwater_access"
+canonical_brief = "A way for remote villagers to catch, store, and access rainwater."
+evidence_tier = "primary_verbatim"
+source_citation_keys = [
+  "jablokow_teerlink_yilmaz_daly_silk_wehr_2015",
+  "silk_daly_jablokow_yilmaz_rosenberg_2014",
+  "spradlin_2012",
+]
+tags = ["water", "rural", "variety", "intervention", "asme"]
+status = "complete"
+variant_ids = ["variant_remote_village_rainwater_access"]
 
 [[prompts]]
 prompt_id = "prompt_chocolate_packaging"
@@ -614,93 +1064,192 @@ tags = ["packaging", "consumer", "ideation"]
 status = "complete"
 variant_ids = ["variant_chocolate_packaging"]
 
+[[prompts]]
+prompt_id = "prompt_car_mounted_bicycle_rack"
+problem_id = "ideation_car_mounted_bicycle_rack"
+family_id = "family_bike_rack"
+canonical_brief = "Design a car-mounted bicycle rack that is easy to mount, protects the bike and car, and works across bike and car types."
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["jansson_smith_1991"]
+tags = ["transport", "consumer", "ideation"]
+status = "needs_primary_fill"
+variant_ids = ["variant_car_mounted_bicycle_rack"]
+
+[[prompts]]
+prompt_id = "prompt_disposable_spill_proof_coffee_cup"
+problem_id = "ideation_disposable_spill_proof_coffee_cup"
+family_id = "family_spill_proof_coffee_cup"
+canonical_brief = "Design an inexpensive, disposable, spill-proof coffee cup that works with one hand and excludes straws and mouthpieces."
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["jansson_smith_1991"]
+tags = ["consumer", "household", "ideation"]
+status = "needs_primary_fill"
+variant_ids = ["variant_disposable_spill_proof_coffee_cup"]
+
+[[prompts]]
+prompt_id = "prompt_home_energy_conservation"
+problem_id = "ideation_home_energy_conservation"
+family_id = "family_home_energy_conservation"
+canonical_brief = "A device that can help a home conserve energy."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goucher_lambert_cagan_2019"]
+tags = ["sustainability", "energy", "ideation"]
+status = "complete"
+variant_ids = ["variant_home_energy_conservation"]
+
 [[variants]]
 variant_id = "variant_travel_exercise_device"
 prompt_id = "prompt_travel_exercise_device"
 problem_id = "ideation_travel_exercise_device"
-label = "Canonical one-line brief"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_viswanathan_2014"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
-status = "needs_primary_fill"
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019)."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_human_motion_energy_harvesting"
 prompt_id = "prompt_human_motion_energy_harvesting"
 problem_id = "ideation_human_motion_energy_harvesting"
-label = "Canonical one-line brief"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
-evidence_tier = "secondary_canonical"
-source_citation_keys = ["goucher_lambert_cagan_2019", "fu_chan_cagan_2013"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
-status = "needs_primary_fill"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goucher_lambert_cagan_2019", "fu_chan_cagan_kotovsky_schunn_wood_2013", "chan_fu_schunn_cagan_wood_kotovsky_2011"]
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), summarizing the design problem introduced in Chan et al. (2011) and printed in full in Fu et al. (2013)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_human_motion_energy_harvesting_rural_communities"
+prompt_id = "prompt_human_motion_energy_harvesting_rural_communities"
+problem_id = "ideation_human_motion_energy_harvesting_rural_communities"
+label = "Fu et al. (2013) full design-problem framing"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["fu_chan_cagan_kotovsky_schunn_wood_2013", "chan_fu_schunn_cagan_wood_kotovsky_2011"]
+notes = "Verbatim participant-facing prompt block printed in Fu et al. (2013); the paper states that this design problem had been used in previous work, consistent with Chan et al. (2011)."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_measure_passage_of_time"
 prompt_id = "prompt_measure_passage_of_time"
 problem_id = "ideation_measure_passage_of_time"
-label = "Canonical one-line brief"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "tseng_moss_cagan_kotovsky_2008"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
-status = "needs_primary_fill"
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), adapted from the original room-based brief in Tseng et al. (2008)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_measure_passage_of_time_room_clock"
+prompt_id = "prompt_measure_passage_of_time_room_clock"
+problem_id = "ideation_measure_passage_of_time_room_clock"
+label = "Tseng et al. (2008) room-based brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["tseng_moss_cagan_kotovsky_2008"]
+notes = "Verbatim room-based time-measurement brief as shown in Tseng, Moss, Cagan, and Kotovsky (2008)."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_powdered_surface_coating"
 prompt_id = "prompt_powdered_surface_coating"
 problem_id = "ideation_powdered_surface_coating"
-label = "Canonical one-line brief"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_2008_powder"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
-status = "needs_primary_fill"
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), derived from the general powder-dispersion problem statement in Linsey, Wood, and Markman (2008)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_powdered_surface_coating_domain_specific"
+prompt_id = "prompt_powdered_surface_coating_domain_specific"
+problem_id = "ideation_powdered_surface_coating_domain_specific"
+label = "Linsey, Wood, and Markman (2008) domain-specific brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["linsey_2008_powder"]
+notes = "Exact domain-specific Design Problem 2 statement from Table 3 in the analogy study; participants first worked on this open-ended problem for 11 minutes before added constraints."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_powdered_surface_coating_general"
+prompt_id = "prompt_powdered_surface_coating_general"
+problem_id = "ideation_powdered_surface_coating_general"
+label = "Linsey, Wood, and Markman (2008) general brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["linsey_2008_powder"]
+notes = "Exact general Design Problem 2 statement from Table 3 in the analogy study; participants first worked on this open-ended problem for 11 minutes before added constraints."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_out_of_reach_book_retrieval"
 prompt_id = "prompt_out_of_reach_book_retrieval"
 problem_id = "ideation_out_of_reach_book_retrieval"
-label = "Canonical one-line brief"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "cardoso_badke_schaub_2011"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
-status = "needs_primary_fill"
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), adapted from the longer library-shelf retrieval brief in Cardoso and Badke-Schaub (2011)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_out_of_reach_book_retrieval_original"
+prompt_id = "prompt_out_of_reach_book_retrieval_original"
+problem_id = "ideation_out_of_reach_book_retrieval_original"
+label = "Cardoso and Badke-Schaub (2011) original brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["cardoso_badke_schaub_2011"]
+notes = "Exact design brief wording from the experimental setup section, with one-hour individual sketching and explicit ease-of-use, manufacture, and minimized-book-damage criteria."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_milk_frothing_product"
 prompt_id = "prompt_milk_frothing_product"
 problem_id = "ideation_milk_frothing_product"
-label = "Canonical one-line brief"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "toh_miller_2014"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
-status = "needs_primary_fill"
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), adapted from the original milk-frothing brief in Toh and Miller (2014)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_milk_frothing_product_original"
+prompt_id = "prompt_milk_frothing_product_original"
+problem_id = "ideation_milk_frothing_product_original"
+label = "Toh and Miller (2014) original brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["toh_miller_2014"]
+notes = "Verbatim milk-frothing design brief quoted in Toh and Miller (2014)."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_walking_texting_accident_reduction"
 prompt_id = "prompt_walking_texting_accident_reduction"
 problem_id = "ideation_walking_texting_accident_reduction"
-label = "Canonical one-line brief"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "miller_bailey_kirlik_2014"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
-status = "needs_primary_fill"
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019)."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_small_towel_folding"
 prompt_id = "prompt_small_towel_folding"
 problem_id = "ideation_small_towel_folding"
-label = "Canonical one-line brief"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_2012_towels"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
-status = "needs_primary_fill"
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019)."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_accessible_drinking_fountain"
@@ -714,37 +1263,70 @@ notes = "Verbatim task framing from Section 3.2.2 of the Design Studies paper."
 status = "complete"
 
 [[variants]]
+variant_id = "variant_accessible_drinking_fountain_derivative"
+prompt_id = "prompt_accessible_drinking_fountain_derivative"
+problem_id = "ideation_accessible_drinking_fountain_derivative"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
+statement_type = "canonical"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goucher_lambert_cagan_2019", "goldschmidt_smolkov_2006"]
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), adapted from Goldschmidt and Smolkov (2006)."
+status = "complete"
+
+[[variants]]
 variant_id = "variant_measuring_cup_for_blind_users"
 prompt_id = "prompt_measuring_cup_for_blind_users"
 problem_id = "ideation_measuring_cup_for_blind_users"
-label = "Canonical one-line brief"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "jansson_smith_1991", "purcell_williams_gero_colbron_1993"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), adapted from the original measuring-cup prompt family studied in Jansson and Smith (1991)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_measuring_cup_for_blind_users_original"
+prompt_id = "prompt_measuring_cup_for_blind_users_original"
+problem_id = "ideation_measuring_cup_for_blind_users_original"
+label = "Jansson and Smith (1991) reconstructed brief"
+statement_type = "study-specific"
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["jansson_smith_1991"]
+notes = "Reconstructed from the Experiment 2 description in Jansson and Smith (1991); the exact instruction sheet wording is not fully recoverable from the accessible text."
 status = "needs_primary_fill"
 
 [[variants]]
 variant_id = "variant_joint_immobilization_device"
 prompt_id = "prompt_joint_immobilization_device"
 problem_id = "ideation_joint_immobilization_device"
-label = "Canonical one-line brief"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
-evidence_tier = "secondary_canonical"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "wilson_2010"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
-status = "needs_primary_fill"
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), adapted from the original Mountain-TREK brief in Wilson et al. (2010)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_joint_immobilization_mountain_trek"
+prompt_id = "prompt_joint_immobilization_mountain_trek"
+problem_id = "ideation_joint_immobilization_mountain_trek"
+label = "Wilson et al. (2010) Mountain-TREK brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["wilson_2010"]
+notes = "Verbatim Mountain-TREK design brief as shown in Wilson, Rosen, Nelson, and Yen (2010)."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_peanut_shelling_canonical"
 prompt_id = "prompt_peanut_shelling"
 problem_id = "ideation_peanut_shelling"
-label = "Canonical one-line brief"
+label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
-evidence_tier = "secondary_canonical"
-source_citation_keys = ["goucher_lambert_cagan_2019", "viswanathan_linsey_2013"]
-notes = "Secondary-source canonical brief; verify primary wording before formal reuse."
-status = "needs_primary_fill"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goucher_lambert_cagan_2019", "viswanathan_linsey_2013", "linsey_green_murphy_wood_markman_2005"]
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), tracing through Viswanathan and Linsey (2013) to the original Linsey et al. (2005) peanut-shelling study."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_peanut_sheller_fu2010_detail"
@@ -753,8 +1335,19 @@ problem_id = "peanut_sheller_fu2010"
 label = "Detailed packaged peanut sheller prompt"
 statement_type = "study-specific"
 evidence_tier = "primary_reconstructed"
-source_citation_keys = ["fu2010design"]
-notes = "Longer packaged prompt retained for compatibility and linked to the canonical peanut family."
+source_citation_keys = ["fu2010design", "linsey_green_murphy_wood_markman_2005"]
+notes = "Longer packaged prompt retained for compatibility and linked to the canonical peanut family; the underlying peanut-shelling task traces back to Linsey et al. (2005)."
+status = "needs_primary_fill"
+
+[[variants]]
+variant_id = "variant_peanut_shelling_original"
+prompt_id = "prompt_peanut_shelling_original"
+problem_id = "ideation_peanut_shelling_original"
+label = "Linsey et al. (2005) root study framing"
+statement_type = "study-specific"
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["linsey_green_murphy_wood_markman_2005", "viswanathan_linsey_2013"]
+notes = "Reconstructed from the design-problem descriptions in Linsey et al. (2005) and Viswanathan and Linsey (2013); the exact participant instruction sheet wording is not available in the accessible text."
 status = "needs_primary_fill"
 
 [[variants]]
@@ -786,8 +1379,65 @@ problem_id = "ideation_one_handed_lidded_container_opening"
 label = "ASME stated brief"
 statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
-source_citation_keys = ["jablokow_teerlink_yilmaz_daly_silk_wehr_2015"]
-notes = "Explicitly stated in the accessible paper text."
+source_citation_keys = [
+  "jablokow_teerlink_yilmaz_daly_silk_wehr_2015",
+  "silk_daly_jablokow_yilmaz_rosenberg_2014",
+  "lemons_carberry_swan_jarvin_rogers_2010",
+]
+notes = "Explicitly stated in the accessible 2015 paper text; earlier related framing appears in Silk et al. (2014), adapted from Lemons et al. (2010)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_snow_transport_for_novices"
+prompt_id = "prompt_snow_transport_for_novices"
+problem_id = "ideation_snow_transport_for_novices"
+label = "ASME listed brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = [
+  "jablokow_teerlink_yilmaz_daly_silk_wehr_2015",
+  "silk_daly_jablokow_yilmaz_rosenberg_2014",
+  "chusilp_jin_2006",
+  "jin_chusilp_2006",
+]
+notes = "Explicitly listed among the four neutrally framed tasks in the accessible 2015 paper text; Silk et al. (2014) provides an earlier related framing adapted from Chusilp and Jin (2006) and Jin and Chusilp (2006)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_public_belongings_security"
+prompt_id = "prompt_public_belongings_security"
+problem_id = "ideation_public_belongings_security"
+label = "ASME listed brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["jablokow_teerlink_yilmaz_daly_silk_wehr_2015", "silk_daly_jablokow_yilmaz_rosenberg_2014"]
+notes = "Explicitly listed among the four neutrally framed tasks in the accessible 2015 paper text; the exact earlier neutral Belongings prompt appears in Silk et al. (2014)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_public_place_belongings_securer"
+prompt_id = "prompt_public_place_belongings_securer"
+problem_id = "ideation_public_place_belongings_securer"
+label = "Silk et al. (2014) exact neutral brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["silk_daly_jablokow_yilmaz_rosenberg_2014"]
+notes = "Exact neutral Belongings prompt shown in the main text of the Design Problem Framework paper."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_remote_village_rainwater_access"
+prompt_id = "prompt_remote_village_rainwater_access"
+problem_id = "ideation_remote_village_rainwater_access"
+label = "ASME listed brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = [
+  "jablokow_teerlink_yilmaz_daly_silk_wehr_2015",
+  "silk_daly_jablokow_yilmaz_rosenberg_2014",
+  "spradlin_2012",
+]
+notes = "Explicitly listed among the four neutrally framed tasks in the accessible 2015 paper text; Silk et al. (2014) provides an earlier related framing adapted from Spradlin (2012)."
 status = "complete"
 
 [[variants]]
@@ -799,6 +1449,39 @@ statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["goldschmidt_smolkov_2006"]
 notes = "Verbatim task framing from Section 3.2.1 of the Design Studies paper."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_car_mounted_bicycle_rack"
+prompt_id = "prompt_car_mounted_bicycle_rack"
+problem_id = "ideation_car_mounted_bicycle_rack"
+label = "Jansson and Smith (1991) reconstructed brief"
+statement_type = "study-specific"
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["jansson_smith_1991"]
+notes = "Reconstructed from the Experiment 1 description in Jansson and Smith (1991); the exact instruction sheet wording is not fully recoverable from the accessible text."
+status = "needs_primary_fill"
+
+[[variants]]
+variant_id = "variant_disposable_spill_proof_coffee_cup"
+prompt_id = "prompt_disposable_spill_proof_coffee_cup"
+problem_id = "ideation_disposable_spill_proof_coffee_cup"
+label = "Jansson and Smith (1991) reconstructed brief"
+statement_type = "study-specific"
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["jansson_smith_1991"]
+notes = "Reconstructed from the Experiment 3 description in Jansson and Smith (1991); the exact instruction sheet wording is not fully recoverable from the accessible text."
+status = "needs_primary_fill"
+
+[[variants]]
+variant_id = "variant_home_energy_conservation"
+prompt_id = "prompt_home_energy_conservation"
+problem_id = "ideation_home_energy_conservation"
+label = "Goucher-Lambert and Cagan (2019) original training prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goucher_lambert_cagan_2019"]
+notes = "Verbatim original training prompt listed as Problem NA in Table 1 of Goucher-Lambert and Cagan (2019)."
 status = "complete"
 
 [[studies]]
@@ -840,7 +1523,12 @@ status = "needs_primary_fill"
 study_id = "study_s3_jablokow_et_al_2015"
 title = "Ideation Variety in Mechanical Design"
 citation_keys = ["jablokow_teerlink_yilmaz_daly_silk_wehr_2015"]
-prompt_variant_ids = ["variant_one_handed_lidded_container_opening"]
+prompt_variant_ids = [
+  "variant_snow_transport_for_novices",
+  "variant_one_handed_lidded_container_opening",
+  "variant_public_belongings_security",
+  "variant_remote_village_rainwater_access",
+]
 participant_summary = "N=132 sophomore mechanical engineering students; KAI subset N=87 for the reported cognitive-style analyses."
 conditions_summary = "Two 20-minute ideation sessions: one without intervention and one with Design Heuristics cards."
 time_on_task_minutes = 20

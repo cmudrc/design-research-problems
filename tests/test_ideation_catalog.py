@@ -11,9 +11,9 @@ from design_research_problems._catalog._validation import validate_catalog
 
 def test_ideation_catalog_exposes_expected_table_sizes() -> None:
     catalog = get_ideation_catalog()
-    assert len(catalog.list_prompts()) == 16
-    assert len(catalog.list_variants()) == 17
-    assert len(catalog.list_families()) == 25
+    assert len(catalog.list_prompts()) == 33
+    assert len(catalog.list_variants()) == 34
+    assert len(catalog.list_families()) == 29
     assert len(catalog.list_studies()) == 3
 
 
@@ -37,11 +37,16 @@ def test_ideation_catalog_cross_references_are_resolved() -> None:
 def test_ideation_catalog_supports_search_and_export() -> None:
     catalog = get_ideation_catalog()
     matches = catalog.search_prompts(
-        tags=("assistive",),
+        tags=("intervention",),
         evidence_tiers=(EvidenceTier.PRIMARY_VERBATIM,),
         max_timebox_minutes=20,
     )
-    assert [prompt.prompt_id for prompt in matches] == ["prompt_one_handed_lidded_container_opening"]
+    assert [prompt.prompt_id for prompt in matches] == [
+        "prompt_one_handed_lidded_container_opening",
+        "prompt_snow_transport_for_novices",
+        "prompt_public_belongings_security",
+        "prompt_remote_village_rainwater_access",
+    ]
 
     json_payload = catalog.export_prompt_index(format="json")
     rows = json.loads(json_payload)

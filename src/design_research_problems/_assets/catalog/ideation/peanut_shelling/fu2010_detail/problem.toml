@@ -1,6 +1,6 @@
 problem_id = "peanut_sheller_fu2010"
 title = "Design Problem - Device to shell peanuts"
-summary = "A text-based design prompt about a low-cost peanut sheller for small-scale farmers."
+summary = "A fuller later peanut-sheller prompt, with the underlying task tracing back to the original Linsey, Green, Murphy, Wood, and Markman (2005) study."
 kind = "text"
 statement = '''
 # Design Problem - Device to shell peanuts
@@ -54,4 +54,15 @@ year = 2010
 venue = "Research source for the packaged peanut sheller prompt."
 formatted_text = "Fu, Cagan, and Kotovsky (2010). Design team convergence: the influence of example solution quality."
 raw_text_file = "citation.bib"
+provisional = true
+
+[[citations]]
+key = "linsey_green_murphy_wood_markman_2005"
+kind = "inline"
+authors = ["Julie S. Linsey", "Matthew G. Green", "J. T. Murphy", "Kristin L. Wood", "Arthur B. Markman"]
+title = "\"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques"
+year = 2005
+venue = "ASME IDETC/CIE 2005, DETC2005-85351"
+formatted_text = "Linsey, Green, Murphy, Wood, and Markman (2005). \"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques. ASME IDETC/CIE 2005, DETC2005-85351."
+raw_text = "Linsey, Green, Murphy, Wood, and Markman (2005). \"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques. Proceedings of IDETC/CIE 2005, ASME 2005 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference, DETC2005-85351."
 provisional = true

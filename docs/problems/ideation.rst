@@ -24,9 +24,11 @@ Evidence Tiers
 
 The current ideation corpus includes:
 
-- 12 canonical one-line prompts from the design-studies reuse synthesis,
+- 12 derivative one-line prompts from Table 1 in Goucher-Lambert and Cagan (2019),
+- 1 original training prompt from Goucher-Lambert and Cagan (2019),
 - 3 ASME study-specific prompts,
 - 2 primary task framings from Goldschmidt and Smolkov (2006),
+- 1 derivative drinking-fountain one-liner from Goucher-Lambert and Cagan (2019),
 - the legacy detailed ``peanut_sheller_fu2010`` prompt as a linked variant,
 - 14 cataloged prompt families (CAT-A through CAT-N), and
 - additional family records needed to cover the non-overlapping canonical briefs.

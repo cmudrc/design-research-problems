@@ -5,7 +5,15 @@ kind = "text"
 statement = '''
 # Ideation Prompt - Wheelchair Peach Picking
 
-Design a manually operated device that allows a person using a wheelchair to pick peaches from a tree and collect them in a basket while staying in the wheelchair. The device should prevent fruit damage and prevent fruit from falling during picking.
+People in wheel chair have a very limited range of reach
+especially for heights. With this limitation, they cannot
+experience pleasures such as that of picking peaches in
+summer. Design a device that will allow users in wheel
+chair to experience the joy of picking peaches from the tree
+and collect it in a basket while still in the wheel chair. The
+device must be manually operated and prevent damage to
+the fruit while picking it. The fruit should not fall on the
+ground while picking.
 '''
 capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
 study_suitability = ["human-subjects-ready", "ideation-friendly", "requirements-study-ready"]
