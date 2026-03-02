@@ -14,31 +14,50 @@ variables, discrete conjoint factors, competitor profiles, objective metadata,
 constraint equations, and a discrete part-worth evaluator over the full
 Cartesian option space.
 
-Example
--------
+Examples
+--------
+
+Runnable scripts:
+
+- ``examples/decision/laptop_design.py``
+- ``examples/decision/mseval_material_choice.py``
+
+Laptop design
+~~~~~~~~~~~~~
 
 .. code-block:: python
 
-   from itertools import islice
+   from heapq import nlargest
 
    from design_research_problems import get_problem
 
    problem = get_problem("decision_laptop_design_profit_maximization")
 
-   variable_specs = problem.decision_variable_specs
-   objective_specs = problem.objective_specs
-   constraint_specs = problem.constraint_specs
-   option_count = problem.option_count
+   top_three = nlargest(3, problem.iter_option_evaluations(), key=lambda evaluation: evaluation.objective_value)
+   best = top_three[0]
 
-   first_three_options = list(islice(problem.iter_options(), 3))
-   best = problem.best_option()
+   print(problem.metadata.problem_id)
+   print(problem.objective_specs[0].key)
+   print(problem.option_count)
+   print(round(best.objective_value, 6), dict(best.option.values))
 
-   print(variable_specs[0].symbol, variable_specs[0].lower_bound, variable_specs[0].upper_bound)
-   print(objective_specs[0].label, objective_specs[0].executable)
-   print(constraint_specs[0].key, constraint_specs[0].expression)
-   print(option_count)
-   print(first_three_options[0].values)
-   print(best.predicted_share)
+MSEval empirical choice
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from design_research_problems import get_problem
+
+   problem = get_problem("decision_mseval_safety_helmet_lightweight")
+
+   top_three = problem.rank_choices()[:3]
+   best = top_three[0]
+
+   print(problem.metadata.problem_id)
+   print(problem.objective_specs[0].key)
+   print(len(problem.choice_options))
+   print(best.choice_label, best.objective_value)
+   print([entry.choice_label for entry in top_three])
 
 The discrete evaluator scores the 3,125 explicit Table 5 conjoint profiles
 against the ten Table 6 competitor profiles using the Table 8 part-worth logit

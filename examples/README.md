@@ -4,6 +4,8 @@
 - `catalog/ideation_catalog.py`: inspect prompt, variant, family, and study counts.
 - `catalog/ideation_dataframe.py`: export prompt rows to pandas when the optional extra is installed.
 - `catalog/ideation_exports.py`: preview JSON and CSV prompt-index exports.
+- `decision/laptop_design.py`: inspect the laptop discrete option space and best-scoring design.
+- `decision/mseval_material_choice.py`: inspect one empirical MSEval material-choice benchmark.
 - `text/peanut_sheller_packet.py`: render the text prompt and citation packet.
 - `optimization/pill_problem.py`: sample and optionally solve the pill problem.
 - `grammar/planar_truss_span.py`: build a simple truss grammar state and evaluate it when `trussme` is installed.
