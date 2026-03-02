@@ -37,7 +37,7 @@ check-uv:
 	@$(UV) --version >/dev/null 2>&1 || (echo "uv is required for lock/repro targets."; exit 1)
 
 dev:
-	$(PIP) install --upgrade pip
+	$(PIP) install --upgrade pip setuptools wheel
 	$(PIP) install -e ".[dev,opt]"
 
 install-dev: dev
