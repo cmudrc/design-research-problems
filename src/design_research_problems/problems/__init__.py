@@ -8,12 +8,12 @@ from ._text import TextProblem
 
 __all__ = [
     "Citation",
+    "DecisionProblem",
+    "GrammarProblem",
+    "OptimizationProblem",
     "ProblemAsset",
     "ProblemKind",
     "ProblemMetadata",
     "ProblemTaxonomy",
     "TextProblem",
-    "DecisionProblem",
-    "OptimizationProblem",
-    "GrammarProblem",
 ]

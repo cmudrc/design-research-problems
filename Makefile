@@ -75,7 +75,7 @@ coverage: check-python
 
 release-check: check-python
 	rm -rf dist
-	$(BUILD)
+	$(BUILD) --no-isolation
 	$(TWINE) check dist/*
 
 examples-smoke: check-python
