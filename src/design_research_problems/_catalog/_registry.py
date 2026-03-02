@@ -9,7 +9,13 @@ from typing import cast
 from design_research_problems._catalog._loader import load_problem_manifests, load_statement_text
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import ProblemEvaluationError
-from design_research_problems.problems import GrammarProblem, OptimizationProblem, ProblemKind, TextProblem
+from design_research_problems.problems import (
+    DecisionProblem,
+    GrammarProblem,
+    OptimizationProblem,
+    ProblemKind,
+    TextProblem,
+)
 from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._metadata import ProblemMetadata
 
@@ -32,7 +38,7 @@ def _resolve_object(import_path: str) -> object:
     return getattr(import_module(module_path), attr_name)
 
 
-ProblemInstance = TextProblem | OptimizationProblem | GrammarProblem
+ProblemInstance = TextProblem | DecisionProblem | OptimizationProblem | GrammarProblem
 
 
 class ProblemRegistry:
@@ -205,6 +211,14 @@ class ProblemRegistry:
                 assets=manifest.metadata.assets,
                 resource_bundle=PackageResourceBundle("design_research_problems", manifest.resource_dir),
             )
+        if manifest.metadata.kind is ProblemKind.DECISION:
+            return DecisionProblem(
+                metadata=manifest.metadata,
+                statement_markdown=statement_markdown,
+                assets=manifest.metadata.assets,
+                resource_bundle=PackageResourceBundle("design_research_problems", manifest.resource_dir),
+                parameters=manifest.parameters,
+            )
 
         implementation = manifest.metadata.implementation
         if implementation is None:
@@ -235,7 +249,7 @@ def list_problems() -> tuple[str, ...]:
     return tuple(metadata.problem_id for metadata in _DEFAULT_REGISTRY.list())
 
 
-def get_problem(problem_id: str) -> TextProblem | OptimizationProblem | GrammarProblem:
+def get_problem(problem_id: str) -> TextProblem | DecisionProblem | OptimizationProblem | GrammarProblem:
     """Return one problem instance by ID.
 
     Args:
