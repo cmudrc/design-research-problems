@@ -6,13 +6,20 @@ from types import ModuleType
 import numpy
 import pytest
 
-from design_research_problems import MissingOptionalDependencyError, ProblemKind, get_problem, list_problems
-from design_research_problems.problems.grammar import AddMember, RemoveMember
+from design_research_problems import (
+    DecisionProblem,
+    MissingOptionalDependencyError,
+    ProblemKind,
+    get_problem,
+    list_problems,
+)
+from design_research_problems.problems.grammar import AddJointPair, AddMember, RemoveMember
 from design_research_problems.problems.optimization._pill import _pill_area, _pill_volume
 
 
 def test_list_problems_returns_seed_problem_ids() -> None:
     assert list_problems() == (
+        "decision_laptop_design_profit_maximization",
         "ideation_accessible_drinking_fountain",
         "ideation_accessible_drinking_fountain_derivative",
         "ideation_car_mounted_bicycle_rack",
@@ -62,6 +69,8 @@ def test_registry_entries_filter_by_kind() -> None:
     from design_research_problems import ProblemRegistry
 
     registry = ProblemRegistry()
+    decision_kinds = registry.by_kind(ProblemKind.DECISION)
+    assert [entry.problem_id for entry in decision_kinds] == ["decision_laptop_design_profit_maximization"]
     kinds = registry.by_kind(ProblemKind.TEXT)
     assert [entry.problem_id for entry in kinds] == [
         "ideation_accessible_drinking_fountain",
@@ -128,6 +137,11 @@ def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
 
     registry = ProblemRegistry()
     grouped = registry.kind_feature_flags()
+    assert grouped[ProblemKind.DECISION] == (
+        "bounded-variables",
+        "citation-backed",
+        "statement-markdown",
+    )
     assert grouped[ProblemKind.TEXT] == (
         "citation-backed",
         "human-subjects-ready",
@@ -172,12 +186,34 @@ def test_text_problem_can_render_summary_and_raw_citations() -> None:
     assert "@article{fu2010design," in packet
 
 
+def test_decision_problem_exposes_structured_brief() -> None:
+    problem = get_problem("decision_laptop_design_profit_maximization")
+    assert isinstance(problem, DecisionProblem)
+    assert problem.decision_variables[0] == "LCD size x1 in [10, 17] inches"
+    assert problem.objectives[0] == "Maximize expected profit Pi = q * (p - cT)."
+    assert problem.constraints[-1] == "Respect all lower and upper bounds taken from observed market offerings."
+
+    brief = problem.render_brief(citation_mode="summary+raw")
+    assert "## Context" in brief
+    assert "## Decision Variables" in brief
+    assert "## Objectives" in brief
+    assert "## Constraints" in brief
+    assert "## Assumptions" in brief
+    assert "## BibTeX" in brief
+    assert "Shiau, Tseng, Heutchy, and Michalek (2007)." in brief
+
+
 def test_registry_search_filters_by_feature_flags() -> None:
     from design_research_problems import ProblemRegistry
 
     registry = ProblemRegistry()
     matches = registry.search(feature_flags=("seeded data generation",))
-    assert [entry.problem_id for entry in matches] == ["pill_capsule_min_area"]
+    assert [entry.problem_id for entry in matches] == [
+        "moneymaker_hip_pump_cost_min",
+        "pill_capsule_min_area",
+    ]
+    decision_matches = registry.search(kind=ProblemKind.DECISION, text="laptop")
+    assert [entry.problem_id for entry in decision_matches] == ["decision_laptop_design_profit_maximization"]
     text_matches = registry.search(
         kind=ProblemKind.TEXT,
         capabilities=("citation-backed",),

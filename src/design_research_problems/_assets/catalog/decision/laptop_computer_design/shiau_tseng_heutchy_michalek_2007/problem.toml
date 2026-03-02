@@ -1,0 +1,92 @@
+problem_id = "decision_laptop_design_profit_maximization"
+title = "Decision Problem - Student Laptop Design Under Choice-Based Demand"
+summary = "A decision-based design framing for choosing laptop architecture and price to maximize expected profit in a student market segment under engineering and demand constraints."
+kind = "decision"
+statement = '''
+# Decision Problem - Student Laptop Design Under Choice-Based Demand
+
+Select the specification and selling price of a new laptop targeted at college
+and graduate students. The decision combines engineering feasibility, estimated
+production cost, and a conjoint-survey demand model calibrated against ten
+competitor laptops.
+
+The paper models a single-product launch. The decision is to choose LCD size,
+body width, body depth, body thickness, battery volume ratio, and price so that
+expected profit is maximized while the resulting design remains physically
+reasonable and attractive to the target market.
+
+Profit is modeled as demand quantity times unit margin. Demand quantity is the
+market size multiplied by predicted market share from a logit or mixed-logit
+choice model. The design must also satisfy packaging, screen-fit, minimum
+battery-life, and maximum-weight constraints.
+'''
+capabilities = ["statement-markdown", "citation-backed", "bounded-variables"]
+study_suitability = []
+
+[parameters]
+decision_maker = "A laptop producer choosing one new product design for the U.S. student laptop segment."
+market_segment = "College and graduate students, modeled as a 1.6 million-unit market segment with ten incumbent competitors."
+decision_scope = "Choose one product configuration and price at a single time point, assuming competitor designs and prices remain fixed during the decision."
+decision_variables = [
+  "LCD size x1 in [10, 17] inches",
+  "Body width x2 in [5, 20] inches",
+  "Body depth x3 in [5, 20] inches",
+  "Body thickness x4 in [0.75, 2.0] inches",
+  "Battery volume ratio x5 in [-0.05, 0.20]",
+  "Price p in [0, 20] hundred-dollar units",
+]
+objectives = [
+  "Maximize expected profit Pi = q * (p - cT).",
+  "Use demand quantity q = S * Pr, where Pr comes from an estimated aggregate-logit, part-worth logit, or mixed-logit choice model.",
+  "Under the paper's equal-margin assumption across products, the decision is equivalent to maximizing market share.",
+]
+constraints = [
+  "Reserve at least 100 cubic inches for non-battery components.",
+  "Ensure the LCD plus a 0.5-inch margin fits within the chosen width and depth.",
+  "Provide at least 1 hour of battery life using the battery-capacity regression model.",
+  "Keep total weight at or below 10 pounds.",
+  "Respect all lower and upper bounds taken from observed market offerings.",
+]
+assumptions = [
+  "The target market is approximated using responses from 18 Carnegie Mellon graduate students.",
+  "Competitor products are treated as static alternatives during optimization.",
+  "Cost curves for the LCD, battery, and motherboard are simplified empirical regressions.",
+  "Brand effects, advertising, distribution, and multi-product line interactions are excluded.",
+]
+inputs = [
+  "Five engineering design variables plus price.",
+  "Five conjoint attributes: LCD size, thickness, battery life, weight, and price.",
+  "Ten observed competitor laptop profiles.",
+  "Main-effects choice-based conjoint survey data.",
+]
+
+[taxonomy]
+formulation = "decision_based_design"
+convexity = "not_guaranteed"
+design_variable_type = "mixed"
+is_dynamic = false
+orientation = "engineering-practical"
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "Six bounded decision variables: five physical design attributes plus price."
+tags = ["decision", "product-design", "laptop", "consumer-choice", "profit", "conjoint-analysis", "market-modeling"]
+deliverable_type = "recommended-design"
+participants = "individual"
+evaluation_mode = "profit-maximization"
+
+[[citations]]
+key = "shiau_tseng_heutchy_michalek_2007"
+kind = "inline"
+authors = ["Ching-Shin Shiau", "Ian H. Tseng", "Andrew W. Heutchy", "Jeremy Michalek"]
+title = "Design optimization of a laptop computer using aggregate and mixed logit demand models with consumer survey data"
+year = 2007
+venue = "ASME IDETC/CIE 2007, DETC2007/DAC-34883"
+formatted_text = "Shiau, Tseng, Heutchy, and Michalek (2007). Design optimization of a laptop computer using aggregate and mixed logit demand models with consumer survey data. ASME IDETC/CIE 2007, DETC2007/DAC-34883."
+raw_text = '''
+Shiau, Ching-Shin, Ian H. Tseng, Andrew W. Heutchy, and Jeremy Michalek (2007).
+Design optimization of a laptop computer using aggregate and mixed logit demand
+models with consumer survey data. Proceedings of the ASME 2007 International
+Design Engineering Technical Conferences & Computers and Information in
+Engineering Conference, DETC2007/DAC-34883.
+'''
+provisional = false
