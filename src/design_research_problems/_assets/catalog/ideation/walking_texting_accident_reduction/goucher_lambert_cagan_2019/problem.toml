@@ -1,11 +1,11 @@
-problem_id = "ideation_measuring_cup_for_blind_users"
-title = "Ideation Prompt - Measuring Cup for Blind Users"
-summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the original measuring-cup brief studied in Jansson and Smith (1991) and later reused by Purcell, Williams, Gero, and Colbron (1993)."
+problem_id = "ideation_walking_texting_accident_reduction"
+title = "Ideation Prompt - Reduce Walking and Texting Accidents"
+summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the longer campus pedestrian-safety brief used by Miller, Bailey, and Kirlik (2014)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Measuring Cup for Blind Users
+# Ideation Prompt - Reduce Walking and Texting Accidents
 
-A measuring cup for the blind.
+A way to minimize accidents from people walking and texting on a cell phone.
 '''
 capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
 study_suitability = ["human-subjects-ready", "ideation-friendly"]
@@ -13,10 +13,10 @@ study_suitability = ["human-subjects-ready", "ideation-friendly"]
 [taxonomy]
 formulation = "textual_prompt"
 is_dynamic = false
-orientation = "engineering_practical"
+orientation = "safety-design"
 objective_mode = "qualitative"
-constraint_nature = "informal"
-tags = ["text", "human-subjects", "ideation", "accessibility", "consumer"]
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "safety", "consumer"]
 deliverable_type = "concepts"
 timebox_hint_minutes = 20
 participants = "individual"
@@ -48,28 +48,14 @@ author = {Kosa Goucher-Lambert and Jonathan Cagan}
 provisional = false
 
 [[citations]]
-key = "jansson_smith_1991"
-kind = "bibtex"
-authors = ["David G. Jansson", "Steven M. Smith"]
-title = "Design fixation"
-year = 1991
-venue = "Design Studies, 12(1), 3-11"
-doi = "10.1016/0142-694X(91)90003-F"
-url = "https://www.sciencedirect.com/science/article/pii/0142694X9190003F"
-formatted_text = "Jansson and Smith (1991). Design fixation. Design Studies, 12(1), 3-11."
-raw_text = '''
-@article{JANSSON19913,
-title = {Design fixation},
-journal = {Design Studies},
-volume = {12},
-number = {1},
-pages = {3-11},
-year = {1991},
-issn = {0142-694X},
-doi = {https://doi.org/10.1016/0142-694X(91)90003-F},
-url = {https://www.sciencedirect.com/science/article/pii/0142694X9190003F},
-author = {David G. Jansson and Steven M. Smith},
-keywords = {conceptual design, engineering design, creativity}
-}
-'''
+key = "miller_bailey_kirlik_2014"
+kind = "inline"
+authors = ["Scarlett R. Miller", "Brian P. Bailey", "Alex Kirlik"]
+title = "Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge"
+year = 2014
+venue = "Human-Computer Interaction, 29(5-6), 487-515"
+doi = "10.1080/07370024.2013.870393"
+url = "https://doi.org/10.1080/07370024.2013.870393"
+formatted_text = "Miller, Bailey, and Kirlik (2014). Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge. Human-Computer Interaction, 29(5-6), 487-515."
+raw_text = "Miller, Scarlett R., Brian P. Bailey, and Alex Kirlik (2014). Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge. Human-Computer Interaction, 29(5-6), 487-515. DOI: 10.1080/07370024.2013.870393."
 provisional = false

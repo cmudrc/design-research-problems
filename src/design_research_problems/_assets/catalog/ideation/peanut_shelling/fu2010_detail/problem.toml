@@ -1,6 +1,6 @@
 problem_id = "peanut_sheller_fu2010"
 title = "Design Problem - Device to shell peanuts"
-summary = "A fuller later peanut-sheller prompt, with the underlying task tracing back to the original Linsey, Green, Murphy, Wood, and Markman (2005) study."
+summary = "The full control-group peanut-sheller prompt printed by Fu, Cagan, and Kotovsky (2010), with the underlying task tracing back to the original Linsey, Green, Murphy, Wood, and Markman (2005) study."
 kind = "text"
 statement = '''
 # Design Problem - Device to shell peanuts
@@ -41,20 +41,34 @@ objective_mode = "qualitative"
 constraint_nature = "informal"
 tags = ["text", "human-subjects", "agriculture", "mechanical-design"]
 deliverable_type = "concepts"
-timebox_hint_minutes = 20
-participants = "individual"
+timebox_hint_minutes = 30
+participants = "team"
 evaluation_mode = "idea_generation"
 
 [[citations]]
 key = "fu2010design"
 kind = "bibtex"
 authors = ["Katherine Fu", "Jonathan Cagan", "Kenneth Kotovsky"]
-title = "Design team convergence: the influence of example solution quality"
+title = "Design Team Convergence: The Influence of Example Solution Quality"
 year = 2010
-venue = "Research source for the packaged peanut sheller prompt."
-formatted_text = "Fu, Cagan, and Kotovsky (2010). Design team convergence: the influence of example solution quality."
-raw_text_file = "citation.bib"
-provisional = true
+venue = "Journal of Mechanical Design, 132(11), 111005"
+doi = "10.1115/1.4002202"
+url = "https://doi.org/10.1115/1.4002202"
+formatted_text = "Fu, Cagan, and Kotovsky (2010). Design Team Convergence: The Influence of Example Solution Quality. Journal of Mechanical Design, 132(11), 111005."
+raw_text = '''
+@article{fu2010design,
+  author = {Katherine Fu and Jonathan Cagan and Kenneth Kotovsky},
+  title = {Design Team Convergence: The Influence of Example Solution Quality},
+  journal = {Journal of Mechanical Design},
+  volume = {132},
+  number = {11},
+  pages = {111005},
+  year = {2010},
+  doi = {10.1115/1.4002202},
+  url = {https://doi.org/10.1115/1.4002202}
+}
+'''
+provisional = false
 
 [[citations]]
 key = "linsey_green_murphy_wood_markman_2005"

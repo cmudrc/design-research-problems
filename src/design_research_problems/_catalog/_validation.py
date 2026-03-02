@@ -111,9 +111,7 @@ def validate_catalog() -> CatalogValidationReport:
 
     for family in ideation.families:
         if family.derived_from_family_id is not None and family.derived_from_family_id not in family_ids:
-            errors.append(
-                f"{family.family_id}: references unknown parent family {family.derived_from_family_id!r}"
-            )
+            errors.append(f"{family.family_id}: references unknown parent family {family.derived_from_family_id!r}")
         for prompt_id in family.canonical_prompt_ids:
             if prompt_id not in prompt_ids:
                 errors.append(f"{family.family_id}: references unknown prompt {prompt_id!r}")

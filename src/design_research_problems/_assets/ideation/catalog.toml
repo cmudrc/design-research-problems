@@ -37,12 +37,15 @@ provisional = true
 [[citations]]
 key = "linsey_viswanathan_2014"
 kind = "inline"
-authors = ["Julie Linsey", "Vimal Viswanathan"]
-title = "A lightweight exercise device that can be used while traveling"
+authors = ["Julie S. Linsey", "Vimal K. Viswanathan"]
+title = "Overcoming Cognitive Challenges in Bioinspired Design and Analogy"
 year = 2014
-formatted_text = "Linsey and Viswanathan (2014). A lightweight exercise device that can be used while traveling."
-raw_text = "Linsey and Viswanathan (2014). A lightweight exercise device that can be used while traveling."
-provisional = true
+venue = "Biologically Inspired Design"
+doi = "10.1007/978-1-4471-5248-4_9"
+url = "https://doi.org/10.1007/978-1-4471-5248-4_9"
+formatted_text = "Linsey and Viswanathan (2014). Overcoming Cognitive Challenges in Bioinspired Design and Analogy. In Biologically Inspired Design."
+raw_text = "Linsey, Julie S., and Vimal K. Viswanathan (2014). Overcoming Cognitive Challenges in Bioinspired Design and Analogy. In Biologically Inspired Design. DOI: 10.1007/978-1-4471-5248-4_9."
+provisional = false
 
 [[citations]]
 key = "fu_chan_cagan_kotovsky_schunn_wood_2013"
@@ -208,12 +211,15 @@ provisional = false
 [[citations]]
 key = "miller_bailey_kirlik_2014"
 kind = "inline"
-authors = ["Scott Miller", "Ryan Bailey", "Alex Kirlik"]
-title = "A way to minimize accidents from people walking and texting on a cell phone"
+authors = ["Scarlett R. Miller", "Brian P. Bailey", "Alex Kirlik"]
+title = "Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge"
 year = 2014
-formatted_text = "Miller, Bailey, and Kirlik (2014). A way to minimize accidents from people walking and texting on a cell phone."
-raw_text = "Miller, Bailey, and Kirlik (2014). A way to minimize accidents from people walking and texting on a cell phone."
-provisional = true
+venue = "Human-Computer Interaction, 29(5-6), 487-515"
+doi = "10.1080/07370024.2013.870393"
+url = "https://doi.org/10.1080/07370024.2013.870393"
+formatted_text = "Miller, Bailey, and Kirlik (2014). Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge. Human-Computer Interaction, 29(5-6), 487-515."
+raw_text = "Miller, Scarlett R., Brian P. Bailey, and Alex Kirlik (2014). Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge. Human-Computer Interaction, 29(5-6), 487-515. DOI: 10.1080/07370024.2013.870393."
+provisional = false
 
 [[citations]]
 key = "linsey_2012_towels"
@@ -221,8 +227,9 @@ kind = "inline"
 authors = ["Julie Linsey", "et al."]
 title = "A device to fold washcloths, hand towels, and small bath towels"
 year = 2012
-formatted_text = "Linsey et al. (2012). A device to fold washcloths, hand towels, and small bath towels."
-raw_text = "Linsey et al. (2012). A device to fold washcloths, hand towels, and small bath towels."
+venue = "Secondary attribution preserved from Goucher-Lambert and Cagan (2019); original 2012 source not yet resolved"
+formatted_text = "Linsey et al. (2012). A device to fold washcloths, hand towels, and small bath towels. Secondary attribution preserved from Goucher-Lambert and Cagan (2019)."
+raw_text = "Linsey et al. (2012). A device to fold washcloths, hand towels, and small bath towels. Secondary attribution preserved from Goucher-Lambert and Cagan (2019); original 2012 source not yet resolved."
 provisional = true
 
 [[citations]]
@@ -233,8 +240,16 @@ title = "Wordtrees: A method for design by analogy"
 year = 2008
 venue = "2008 Annual Conference & Exposition"
 formatted_text = "Linsey, Wood, and Markman (2008). Wordtrees: A method for design by analogy. 2008 Annual Conference & Exposition."
-raw_text = "Linsey, Julie and Wood, Kristin and Markman, Arthur (2008). Wordtrees: A method for design by analogy. 2008 Annual Conference & Exposition, pp. 13-1407."
-provisional = true
+raw_text = '''
+@inproceedings{linsey2008wordtrees,
+  title = {Wordtrees: A method for design by analogy},
+  author = {Linsey, Julie and Wood, Kristin and Markman, Arthur},
+  booktitle = {2008 Annual Conference \& Exposition},
+  pages = {13--1407},
+  year = {2008}
+}
+'''
+provisional = false
 
 [[citations]]
 key = "goldschmidt_smolkov_2006"
@@ -364,13 +379,28 @@ provisional = true
 
 [[citations]]
 key = "fu2010design"
-kind = "inline"
+kind = "bibtex"
 authors = ["Katherine Fu", "Jonathan Cagan", "Kenneth Kotovsky"]
-title = "Design team convergence: the influence of example solution quality"
+title = "Design Team Convergence: The Influence of Example Solution Quality"
 year = 2010
-formatted_text = "Fu, Cagan, and Kotovsky (2010). Design team convergence: the influence of example solution quality."
-raw_text = "Fu, Cagan, and Kotovsky (2010). Design team convergence: the influence of example solution quality."
-provisional = true
+venue = "Journal of Mechanical Design, 132(11), 111005"
+doi = "10.1115/1.4002202"
+url = "https://doi.org/10.1115/1.4002202"
+formatted_text = "Fu, Cagan, and Kotovsky (2010). Design Team Convergence: The Influence of Example Solution Quality. Journal of Mechanical Design, 132(11), 111005."
+raw_text = '''
+@article{fu2010design,
+  author = {Katherine Fu and Jonathan Cagan and Kenneth Kotovsky},
+  title = {Design Team Convergence: The Influence of Example Solution Quality},
+  journal = {Journal of Mechanical Design},
+  volume = {132},
+  number = {11},
+  pages = {111005},
+  year = {2010},
+  doi = {10.1115/1.4002202},
+  url = {https://doi.org/10.1115/1.4002202}
+}
+'''
+provisional = false
 
 [[citations]]
 key = "hu_booth_reid_2015"
@@ -597,9 +627,9 @@ family_id = "family_travel_exercise"
 name = "Travel Exercise Device"
 group = "consumer-household"
 external_aliases = []
-canonical_prompt_ids = ["prompt_travel_exercise_device"]
+canonical_prompt_ids = ["prompt_travel_exercise_device", "prompt_travel_exercise_device_original"]
 tags = ["travel", "consumer"]
-notes = "Additional family added to house the canonical travel exercise prompt."
+notes = "Linsey and Viswanathan (2014) reproduces the earliest recoverable travel-exercise phrasing as a figure label; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
 
 [[families]]
 family_id = "family_human_motion_energy"
@@ -646,9 +676,12 @@ family_id = "family_pedestrian_safety"
 name = "Pedestrian Safety"
 group = "transport-infrastructure"
 external_aliases = []
-canonical_prompt_ids = ["prompt_walking_texting_accident_reduction"]
+canonical_prompt_ids = [
+  "prompt_walking_texting_accident_reduction",
+  "prompt_walking_texting_accident_reduction_original",
+]
 tags = ["safety", "consumer"]
-notes = "Additional family added to house the walking-and-texting safety prompt."
+notes = "Miller, Bailey, and Kirlik (2014) provides the original campus pedestrian-safety brief; Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
 
 [[families]]
 family_id = "family_joint_immobilization"
@@ -692,18 +725,24 @@ family_id = "family_one_handed_container_opening"
 name = "One-Handed Container Opening"
 group = "accessibility-assistive"
 external_aliases = []
-canonical_prompt_ids = ["prompt_one_handed_lidded_container_opening"]
+canonical_prompt_ids = [
+  "prompt_one_handed_lidded_container_opening",
+  "prompt_one_handed_lidded_container_opening_framework",
+]
 tags = ["assistive", "food", "containers"]
-notes = "Jablokow et al. (2015) lists the task in neutral form; Silk et al. (2014) presents an earlier related framing adapted from Lemons et al. (2010)."
+notes = "Jablokow et al. (2015) lists the task in neutral form; Silk et al. (2014) provides the earlier framework-era neutral prompt and cites Lemons et al. (2010) as the upstream adaptation source."
 
 [[families]]
 family_id = "family_snow_transport"
 name = "Snow Transport"
 group = "transport-infrastructure"
 external_aliases = []
-canonical_prompt_ids = ["prompt_snow_transport_for_novices"]
+canonical_prompt_ids = [
+  "prompt_snow_transport_for_novices",
+  "prompt_snow_transport_for_novices_framework",
+]
 tags = ["mobility", "snow", "recreation"]
-notes = "Jablokow et al. (2015) lists the task in neutral form; Silk et al. (2014) presents an earlier related framing adapted from Chusilp and Jin (2006) and Jin and Chusilp (2006)."
+notes = "Jablokow et al. (2015) lists the task in neutral form; Silk et al. (2014) provides the earlier framework-era neutral prompt and cites Chusilp and Jin (2006) and Jin and Chusilp (2006) as upstream sources."
 
 [[families]]
 family_id = "family_public_belongings_security"
@@ -719,9 +758,12 @@ family_id = "family_remote_rainwater_access"
 name = "Remote Rainwater Access"
 group = "sustainability-waste"
 external_aliases = []
-canonical_prompt_ids = ["prompt_remote_village_rainwater_access"]
+canonical_prompt_ids = [
+  "prompt_remote_village_rainwater_access",
+  "prompt_remote_village_rainwater_access_framework",
+]
 tags = ["water", "rural", "infrastructure"]
-notes = "Jablokow et al. (2015) lists the task in neutral form; Silk et al. (2014) presents an earlier related framing adapted from Spradlin (2012)."
+notes = "Jablokow et al. (2015) lists the task in neutral form; Silk et al. (2014) provides the earlier framework-era neutral prompt and cites Spradlin (2012) as the upstream source."
 
 [[families]]
 family_id = "family_home_energy_conservation"
@@ -742,6 +784,17 @@ source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_viswanathan_2014"]
 tags = ["consumer", "travel", "ideation"]
 status = "complete"
 variant_ids = ["variant_travel_exercise_device"]
+
+[[prompts]]
+prompt_id = "prompt_travel_exercise_device_original"
+problem_id = "ideation_travel_exercise_device_original"
+family_id = "family_travel_exercise"
+canonical_brief = "Design problem: Lightweight travel exercise device."
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["linsey_viswanathan_2014"]
+tags = ["consumer", "travel", "ideation"]
+status = "needs_primary_fill"
+variant_ids = ["variant_travel_exercise_device_original"]
 
 [[prompts]]
 prompt_id = "prompt_human_motion_energy_harvesting"
@@ -874,6 +927,17 @@ source_citation_keys = ["goucher_lambert_cagan_2019", "miller_bailey_kirlik_2014
 tags = ["safety", "consumer", "ideation"]
 status = "complete"
 variant_ids = ["variant_walking_texting_accident_reduction"]
+
+[[prompts]]
+prompt_id = "prompt_walking_texting_accident_reduction_original"
+problem_id = "ideation_walking_texting_accident_reduction_original"
+family_id = "family_pedestrian_safety"
+canonical_brief = "Develop as many solutions as possible to reduce pedestrian accidents caused by students texting, talking on cell phones, or listening to music while walking around campus."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["miller_bailey_kirlik_2014"]
+tags = ["safety", "consumer", "ideation", "campus"]
+status = "complete"
+variant_ids = ["variant_walking_texting_accident_reduction_original"]
 
 [[prompts]]
 prompt_id = "prompt_small_towel_folding"
@@ -1023,6 +1087,17 @@ status = "complete"
 variant_ids = ["variant_one_handed_lidded_container_opening"]
 
 [[prompts]]
+prompt_id = "prompt_one_handed_lidded_container_opening_framework"
+problem_id = "ideation_one_handed_lidded_container_opening_framework"
+family_id = "family_one_handed_container_opening"
+canonical_brief = "Design a way for individuals who have limited or no use of one upper extremity to open a lidded food container with one hand."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["silk_daly_jablokow_yilmaz_rosenberg_2014", "lemons_carberry_swan_jarvin_rogers_2010"]
+tags = ["assistive", "food", "containers", "ideation"]
+status = "complete"
+variant_ids = ["variant_one_handed_lidded_container_opening_framework"]
+
+[[prompts]]
 prompt_id = "prompt_snow_transport_for_novices"
 problem_id = "ideation_snow_transport_for_novices"
 family_id = "family_snow_transport"
@@ -1037,6 +1112,17 @@ source_citation_keys = [
 tags = ["mobility", "snow", "variety", "intervention", "asme"]
 status = "complete"
 variant_ids = ["variant_snow_transport_for_novices"]
+
+[[prompts]]
+prompt_id = "prompt_snow_transport_for_novices_framework"
+problem_id = "ideation_snow_transport_for_novices_framework"
+family_id = "family_snow_transport"
+canonical_brief = "Design a way for individuals without lots of skill and experience skiing or snowboarding to transport themselves on snow."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["silk_daly_jablokow_yilmaz_rosenberg_2014", "chusilp_jin_2006", "jin_chusilp_2006"]
+tags = ["mobility", "snow", "ideation"]
+status = "complete"
+variant_ids = ["variant_snow_transport_for_novices_framework"]
 
 [[prompts]]
 prompt_id = "prompt_public_belongings_security"
@@ -1074,6 +1160,17 @@ source_citation_keys = [
 tags = ["water", "rural", "variety", "intervention", "asme"]
 status = "complete"
 variant_ids = ["variant_remote_village_rainwater_access"]
+
+[[prompts]]
+prompt_id = "prompt_remote_village_rainwater_access_framework"
+problem_id = "ideation_remote_village_rainwater_access_framework"
+family_id = "family_remote_rainwater_access"
+canonical_brief = "Design a way for remote villagers to catch, store, and access rainwater."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["silk_daly_jablokow_yilmaz_rosenberg_2014", "spradlin_2012"]
+tags = ["water", "rural", "ideation"]
+status = "complete"
+variant_ids = ["variant_remote_village_rainwater_access_framework"]
 
 [[prompts]]
 prompt_id = "prompt_chocolate_packaging"
@@ -1127,8 +1224,19 @@ label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_viswanathan_2014"]
-notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019)."
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), adapted from the earlier travel-exercise case label reproduced by Linsey and Viswanathan (2014)."
 status = "complete"
+
+[[variants]]
+variant_id = "variant_travel_exercise_device_original"
+prompt_id = "prompt_travel_exercise_device_original"
+problem_id = "ideation_travel_exercise_device_original"
+label = "Linsey and Viswanathan (2014) figure-label framing"
+statement_type = "reconstructed"
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["linsey_viswanathan_2014"]
+notes = "Best recoverable root wording from the chapter: the design problem appears as a figure label rather than a full participant handout."
+status = "needs_primary_fill"
 
 [[variants]]
 variant_id = "variant_human_motion_energy_harvesting"
@@ -1259,7 +1367,18 @@ label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019", "miller_bailey_kirlik_2014"]
-notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019)."
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), adapted from the longer campus pedestrian-safety brief used by Miller, Bailey, and Kirlik (2014)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_walking_texting_accident_reduction_original"
+prompt_id = "prompt_walking_texting_accident_reduction_original"
+problem_id = "ideation_walking_texting_accident_reduction_original"
+label = "Miller, Bailey, and Kirlik (2014) original brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["miller_bailey_kirlik_2014"]
+notes = "Verbatim campus pedestrian-safety brief from the study's idea-generation phase, where participants had one hour to develop as many solutions as possible."
 status = "complete"
 
 [[variants]]
@@ -1367,10 +1486,10 @@ prompt_id = "prompt_peanut_shelling"
 problem_id = "peanut_sheller_fu2010"
 label = "Detailed packaged peanut sheller prompt"
 statement_type = "study-specific"
-evidence_tier = "primary_reconstructed"
+evidence_tier = "primary_verbatim"
 source_citation_keys = ["fu2010design", "linsey_green_murphy_wood_markman_2005"]
-notes = "Longer packaged prompt retained for compatibility and linked to the canonical peanut family; the underlying peanut-shelling task traces back to Linsey et al. (2005)."
-status = "needs_primary_fill"
+notes = "Exact control-group design-problem statement printed in Fu, Cagan, and Kotovsky (2010), retained for compatibility and linked to the canonical peanut family; the underlying task traces back to Linsey et al. (2005)."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_peanut_shelling_original"
@@ -1421,6 +1540,17 @@ notes = "Explicitly stated in the accessible 2015 paper text; earlier related fr
 status = "complete"
 
 [[variants]]
+variant_id = "variant_one_handed_lidded_container_opening_framework"
+prompt_id = "prompt_one_handed_lidded_container_opening_framework"
+problem_id = "ideation_one_handed_lidded_container_opening_framework"
+label = "Silk et al. (2014) framework brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["silk_daly_jablokow_yilmaz_rosenberg_2014", "lemons_carberry_swan_jarvin_rogers_2010"]
+notes = "Exact neutral Lids prompt shown in the Design Problem Framework appendix, adapted there from Lemons et al. (2010)."
+status = "complete"
+
+[[variants]]
 variant_id = "variant_snow_transport_for_novices"
 prompt_id = "prompt_snow_transport_for_novices"
 problem_id = "ideation_snow_transport_for_novices"
@@ -1434,6 +1564,17 @@ source_citation_keys = [
   "jin_chusilp_2006",
 ]
 notes = "Explicitly listed among the four neutrally framed tasks in the accessible 2015 paper text; Silk et al. (2014) provides an earlier related framing adapted from Chusilp and Jin (2006) and Jin and Chusilp (2006)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_snow_transport_for_novices_framework"
+prompt_id = "prompt_snow_transport_for_novices_framework"
+problem_id = "ideation_snow_transport_for_novices_framework"
+label = "Silk et al. (2014) framework brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["silk_daly_jablokow_yilmaz_rosenberg_2014", "chusilp_jin_2006", "jin_chusilp_2006"]
+notes = "Exact neutral Snow prompt shown in the Design Problem Framework appendix, adapted there from Chusilp and Jin (2006) and Jin and Chusilp (2006)."
 status = "complete"
 
 [[variants]]
@@ -1471,6 +1612,17 @@ source_citation_keys = [
   "spradlin_2012",
 ]
 notes = "Explicitly listed among the four neutrally framed tasks in the accessible 2015 paper text; Silk et al. (2014) provides an earlier related framing adapted from Spradlin (2012)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_remote_village_rainwater_access_framework"
+prompt_id = "prompt_remote_village_rainwater_access_framework"
+problem_id = "ideation_remote_village_rainwater_access_framework"
+label = "Silk et al. (2014) framework brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["silk_daly_jablokow_yilmaz_rosenberg_2014", "spradlin_2012"]
+notes = "Exact neutral Rainwater prompt shown in the Design Problem Framework appendix, adapted there from Spradlin (2012)."
 status = "complete"
 
 [[variants]]
@@ -1571,5 +1723,73 @@ materials_summary = "Paper sheets with one idea per sheet and a set of 10 Design
 limitations = [
   "The 20-minute session length may have been too short.",
   "The sample produced an unusually high rate of unreliable KAI scores."
+]
+status = "needs_primary_fill"
+
+[[studies]]
+study_id = "study_cardoso_badke_schaub_2011"
+title = "The Influence of Different Pictorial Representations During Idea Generation"
+citation_keys = ["cardoso_badke_schaub_2011"]
+prompt_variant_ids = ["variant_out_of_reach_book_retrieval_original"]
+participant_summary = "66 fourth-year industrial design engineering master's students were recruited; the analyzed sample was reduced to N=60 after excluding outliers."
+conditions_summary = "Control brief-only group (n=19) vs line-drawing priming group (n=21) vs photo priming group (n=20), all completing one hour of individual sketching."
+time_on_task_minutes = 60
+dependent_measures = [
+  "repetition of key attributes",
+  "fluency",
+  "flexibility",
+  "originality",
+  "ease of use",
+  "manufacture",
+  "book damage",
+]
+coding_summary = "The paper describes a key-attribute repetition coding scheme plus quantitative and qualitative idea assessments."
+materials_summary = "Book-retrieval brief, optional written annotations, and either no priming material, a line drawing, or a photo of a candidate solution."
+limitations = [
+  "This catalog entry relies on the accessible experimental-setup and scoring sections rather than a dedicated author-stated limitations section.",
+]
+status = "needs_primary_fill"
+
+[[studies]]
+study_id = "study_linsey_wood_markman_2008_analogy"
+title = "Modality and Representation in Analogy"
+citation_keys = ["linsey_2008_powder"]
+prompt_variant_ids = [
+  "variant_powdered_surface_coating_domain_specific",
+  "variant_powdered_surface_coating_general",
+]
+participant_summary = "Senior-level mechanical engineering students with instruction in design methodology and idea generation participated; the accessible text does not state a single consolidated N in the extracted sections used here."
+conditions_summary = "A 2x2 factorial design varied analogous-product representation (general vs domain specific) and design-problem representation (general vs domain specific) across a two-task experiment separated by about a week for most participants."
+time_on_task_minutes = 11
+dependent_measures = [
+  "phase at which participants generated the target-analogy solution",
+  "phase at which participants identified the analogy",
+  "survey responses about time and idea exhaustion",
+]
+coding_summary = "Two evaluators judged when participants produced and identified target-analogy-based solutions."
+materials_summary = "Memorization task with functional-textual product descriptions and pictures, followed by staged design problems, analogy prompts, and function structures."
+limitations = [
+  "This catalog entry uses the accessible experimental-method and results sections; the accessible excerpt used here does not provide a single consolidated sample size.",
+]
+status = "needs_primary_fill"
+
+[[studies]]
+study_id = "study_miller_bailey_kirlik_2014"
+title = "Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge"
+citation_keys = ["miller_bailey_kirlik_2014"]
+prompt_variant_ids = ["variant_walking_texting_accident_reduction_original"]
+participant_summary = "N=71 students in an upper-level human factors engineering design course; the accessible participant section reports 27 junior-level and 43 senior-level students, ages 19-23."
+conditions_summary = "Four-week course sequence with a Bayesian Truth Serum survey, one hour of individual idea generation in week 2, peer critique in week 3, and redesign in week 4."
+time_on_task_minutes = 60
+dependent_measures = [
+  "Bayesian Truth Serum scores",
+  "idea quantity",
+  "critique quality",
+  "redesign outcomes",
+]
+coding_summary = "The paper compares survey-derived design-knowledge signals against downstream ideation, critique, and redesign outcomes."
+materials_summary = "Campus pedestrian-safety brief, sketching materials, a peer-critique rubric, and the Bayesian Truth Serum survey on design principles."
+limitations = [
+  "This catalog entry relies on the accessible participant, procedure, and idea-generation sections rather than a dedicated author-stated limitations section.",
 ]
 status = "needs_primary_fill"

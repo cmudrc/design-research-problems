@@ -82,9 +82,7 @@ def _parse_citations(raw_data: dict[str, Any], resource_dir: str) -> tuple[Citat
         if raw_text_file:
             raw_text = _resource_root(resource_dir).joinpath(raw_text_file).read_text(encoding="utf-8")
         authors = tuple(
-            str(author).strip()
-            for author in cast(list[object], entry.get("authors", []))
-            if str(author).strip()
+            str(author).strip() for author in cast(list[object], entry.get("authors", [])) if str(author).strip()
         )
         citations.append(
             Citation(

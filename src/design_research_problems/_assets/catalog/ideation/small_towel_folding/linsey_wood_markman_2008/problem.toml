@@ -33,5 +33,13 @@ title = "Wordtrees: A method for design by analogy"
 year = 2008
 venue = "2008 Annual Conference & Exposition"
 formatted_text = "Linsey, Wood, and Markman (2008). Wordtrees: A method for design by analogy. 2008 Annual Conference & Exposition."
-raw_text = "Linsey, Julie and Wood, Kristin and Markman, Arthur (2008). Wordtrees: A method for design by analogy. 2008 Annual Conference & Exposition, pp. 13-1407."
-provisional = true
+raw_text = '''
+@inproceedings{linsey2008wordtrees,
+  title = {Wordtrees: A method for design by analogy},
+  author = {Linsey, Julie and Wood, Kristin and Markman, Arthur},
+  booktitle = {2008 Annual Conference \& Exposition},
+  pages = {13--1407},
+  year = {2008}
+}
+'''
+provisional = false

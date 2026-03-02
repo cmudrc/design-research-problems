@@ -11,10 +11,10 @@ from design_research_problems._catalog._validation import validate_catalog
 
 def test_ideation_catalog_exposes_expected_table_sizes() -> None:
     catalog = get_ideation_catalog()
-    assert len(catalog.list_prompts()) == 34
-    assert len(catalog.list_variants()) == 35
+    assert len(catalog.list_prompts()) == 39
+    assert len(catalog.list_variants()) == 40
     assert len(catalog.list_families()) == 29
-    assert len(catalog.list_studies()) == 3
+    assert len(catalog.list_studies()) == 6
 
 
 def test_ideation_catalog_cross_references_are_resolved() -> None:

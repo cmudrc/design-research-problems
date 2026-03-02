@@ -1,0 +1,54 @@
+problem_id = "ideation_walking_texting_accident_reduction_original"
+title = "Ideation Prompt - Reduce Walking and Texting Accidents (Original)"
+summary = "The original campus pedestrian-safety brief used by Miller, Bailey, and Kirlik (2014)."
+kind = "text"
+statement = '''
+# Ideation Prompt - Reduce Walking and Texting Accidents (Original)
+
+There has been an increase in student accidents on campus in recent years from
+students texting and or talking on cell phones or listening to music on an MP3
+player while walking around campus. While using these devices, students become
+distracted and can trip, fall, or even run into something.
+
+In fact, in 2008 over 1,000 pedestrians visited emergency rooms due to
+accidents from using these devices while walking. There are reports of
+concussions, sprained ankles, broken appendages, and even fatalities from
+these accidents. These numbers do not include the countless number of
+unreported incidents involving walking into something (for example, a parked
+car) without an emergency-room visit. This increase in accidents has been
+substantial on college campuses because of the number of students on campus
+and the increase of MP3-player and cellular usage, all of which are
+distracting.
+
+You have been tasked with developing as many solutions as possible that would
+address all or some of the issues associated with this increased accident rate.
+These ideas can include either alterations to current technologies or the
+design of new technologies to help reduce these accidents.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "safety-design"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "safety", "consumer", "campus"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 60
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "miller_bailey_kirlik_2014"
+kind = "inline"
+authors = ["Scarlett R. Miller", "Brian P. Bailey", "Alex Kirlik"]
+title = "Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge"
+year = 2014
+venue = "Human-Computer Interaction, 29(5-6), 487-515"
+doi = "10.1080/07370024.2013.870393"
+url = "https://doi.org/10.1080/07370024.2013.870393"
+formatted_text = "Miller, Bailey, and Kirlik (2014). Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge. Human-Computer Interaction, 29(5-6), 487-515."
+raw_text = "Miller, Scarlett R., Brian P. Bailey, and Alex Kirlik (2014). Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge. Human-Computer Interaction, 29(5-6), 487-515. DOI: 10.1080/07370024.2013.870393."
+provisional = false
