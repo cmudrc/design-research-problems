@@ -188,14 +188,34 @@ def _coerce_float(value: object) -> float:
 
 
 def _coerce_float_tuple(raw_values: object) -> tuple[float, ...]:
-    """Convert a manifest value into a tuple of floats."""
+    """Convert a manifest value into a tuple of floats.
+
+    Args:
+        raw_values: Raw manifest value.
+
+    Returns:
+        Tuple of float-converted values.
+
+    Raises:
+        TypeError: If the value is not a list or tuple.
+    """
     if not isinstance(raw_values, list | tuple):
         raise TypeError("Expected a list or tuple of floats.")
     return tuple(_coerce_float(raw_value) for raw_value in raw_values)
 
 
 def _coerce_fractional_points(raw_values: object) -> tuple[tuple[float, float], ...]:
-    """Convert a manifest value into fractional point pairs."""
+    """Convert a manifest value into fractional point pairs.
+
+    Args:
+        raw_values: Raw manifest value.
+
+    Returns:
+        Tuple of two-item ``(x, y)`` coordinate pairs.
+
+    Raises:
+        TypeError: If the value is not a sequence of two-item coordinate pairs.
+    """
     if not isinstance(raw_values, list | tuple):
         raise TypeError("Expected a list or tuple of 2-item coordinate pairs.")
     pairs: list[tuple[float, float]] = []
@@ -208,17 +228,42 @@ def _coerce_fractional_points(raw_values: object) -> tuple[tuple[float, float], 
 
 
 def _float_matches(left: float, right: float) -> bool:
-    """Return whether two coordinates should be treated as equal."""
+    """Return whether two coordinates should be treated as equal.
+
+    Args:
+        left: First coordinate value.
+        right: Second coordinate value.
+
+    Returns:
+        True when the coordinates are effectively equal.
+    """
     return math.isclose(left, right, rel_tol=1e-9, abs_tol=1e-9)
 
 
 def _point_in_collection(points: set[tuple[float, float]], x_value: float, y_value: float) -> bool:
-    """Return whether one coordinate pair is already occupied."""
+    """Return whether one coordinate pair is already occupied.
+
+    Args:
+        points: Existing occupied coordinates.
+        x_value: Candidate x-coordinate.
+        y_value: Candidate y-coordinate.
+
+    Returns:
+        True when one occupied point matches the candidate coordinates.
+    """
     return any(_float_matches(px, x_value) and _float_matches(py, y_value) for px, py in points)
 
 
 def _roofline_y(x_fraction: float, max_height: float) -> float:
-    """Return the y-coordinate for a simple gable roof profile."""
+    """Return the y-coordinate for a simple gable roof profile.
+
+    Args:
+        x_fraction: Horizontal location expressed as a span fraction.
+        max_height: Peak roof height.
+
+    Returns:
+        Roofline y-coordinate at the requested horizontal location.
+    """
     return max_height * (1.0 - abs((2.0 * x_fraction) - 1.0))
 
 
@@ -240,12 +285,26 @@ def _coerce_state(state: object) -> PlanarTrussState:
 
 
 def _joint_map(state: PlanarTrussState) -> dict[int, PlanarJoint]:
-    """Return one ID-indexed joint lookup table."""
+    """Return one ID-indexed joint lookup table.
+
+    Args:
+        state: Grammar state to index.
+
+    Returns:
+        Mapping of joint IDs to joint records.
+    """
     return {joint.joint_id: joint for joint in state.joints}
 
 
 def _member_lookup(state: PlanarTrussState) -> dict[tuple[int, int], PlanarMember]:
-    """Return one edge-indexed member lookup table."""
+    """Return one edge-indexed member lookup table.
+
+    Args:
+        state: Grammar state to index.
+
+    Returns:
+        Mapping of normalized member edges to member records.
+    """
     return {
         _edge_key(member.start_joint_id, member.end_joint_id): member
         for member in state.members
@@ -253,7 +312,15 @@ def _member_lookup(state: PlanarTrussState) -> dict[tuple[int, int], PlanarMembe
 
 
 def _mirrored_joint_id(state: PlanarTrussState, joint_id: int) -> int | None:
-    """Return the mirrored joint identifier for one symmetric state."""
+    """Return the mirrored joint identifier for one symmetric state.
+
+    Args:
+        state: Grammar state that may enforce symmetry.
+        joint_id: Joint identifier to mirror.
+
+    Returns:
+        Mirrored joint ID, the original ID for non-symmetric states, or ``None`` if unmatched.
+    """
     if state.symmetry_axis_x is None:
         return joint_id
 
@@ -270,7 +337,15 @@ def _mirrored_joint_id(state: PlanarTrussState, joint_id: int) -> int | None:
 
 
 def _mirrored_edge(state: PlanarTrussState, edge: tuple[int, int]) -> tuple[int, int] | None:
-    """Return the mirrored edge for one symmetric state."""
+    """Return the mirrored edge for one symmetric state.
+
+    Args:
+        state: Grammar state that may enforce symmetry.
+        edge: Normalized member edge to mirror.
+
+    Returns:
+        Mirrored normalized edge, or ``None`` if a mirrored joint cannot be found.
+    """
     mirrored_start = _mirrored_joint_id(state, edge[0])
     mirrored_end = _mirrored_joint_id(state, edge[1])
     if mirrored_start is None or mirrored_end is None:
@@ -381,7 +456,14 @@ class PlanarTrussSpanProblem(GrammarProblem):
         )
 
     def _candidate_points(self, state: PlanarTrussState) -> tuple[tuple[float, float], ...]:
-        """Return the configured candidate interior joint coordinates."""
+        """Return the configured candidate interior joint coordinates.
+
+        Args:
+            state: Current grammar state.
+
+        Returns:
+            Candidate interior joint coordinates in deterministic order.
+        """
         if self.candidate_point_fractions:
             return tuple(
                 (state.span * x_fraction, state.max_height * y_fraction)
