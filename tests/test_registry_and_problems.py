@@ -261,10 +261,7 @@ def test_planar_roof_symmetric_variant_enforces_mirrored_actions() -> None:
 
     state = problem.apply_action(state, AddMember(start_joint_id=0, end_joint_id=2))
     assert len(state.members) == 2
-    edges = {
-        tuple(sorted((member.start_joint_id, member.end_joint_id)))
-        for member in state.members
-    }
+    edges = {tuple(sorted((member.start_joint_id, member.end_joint_id))) for member in state.members}
     assert edges == {(0, 2), (1, 4)}
 
     state = problem.apply_action(state, RemoveMember(member_id=0))

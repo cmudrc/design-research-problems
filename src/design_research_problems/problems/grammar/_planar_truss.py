@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from itertools import combinations
-import math
 from typing import Any, Literal, SupportsFloat, cast
 
 import numpy
@@ -305,10 +305,7 @@ def _member_lookup(state: PlanarTrussState) -> dict[tuple[int, int], PlanarMembe
     Returns:
         Mapping of normalized member edges to member records.
     """
-    return {
-        _edge_key(member.start_joint_id, member.end_joint_id): member
-        for member in state.members
-    }
+    return {_edge_key(member.start_joint_id, member.end_joint_id): member for member in state.members}
 
 
 def _mirrored_joint_id(state: PlanarTrussState, joint_id: int) -> int | None:
@@ -436,7 +433,9 @@ class PlanarTrussSpanProblem(GrammarProblem):
                 load_joint_ids.append(index)
             load_value = self.load_magnitude / float(len(load_joint_ids))
             load_vector = (0.0, -load_value, 0.0)
-            additional_loads = tuple(PlanarLoad(joint_id=joint_id, vector=load_vector) for joint_id in load_joint_ids[1:])
+            additional_loads = tuple(
+                PlanarLoad(joint_id=joint_id, vector=load_vector) for joint_id in load_joint_ids[1:]
+            )
             load_joint_id = load_joint_ids[0]
         else:
             joints.append(PlanarJoint(joint_id=2, x=self.span / 2.0, y=self.max_height, support_type="free"))
@@ -506,7 +505,9 @@ class PlanarTrussSpanProblem(GrammarProblem):
                 mirrored_x = (2.0 * typed_state.symmetry_axis_x) - x_value
                 processed_points.add((x_value, y_value))
                 processed_points.add((mirrored_x, y_value))
-                if _point_in_collection(occupied, x_value, y_value) or _point_in_collection(occupied, mirrored_x, y_value):
+                if _point_in_collection(occupied, x_value, y_value) or _point_in_collection(
+                    occupied, mirrored_x, y_value
+                ):
                     continue
                 left_x, right_x = sorted((x_value, mirrored_x))
                 actions.append(AddJointPair(left_x=left_x, left_y=y_value, right_x=right_x, right_y=y_value))
@@ -576,7 +577,9 @@ class PlanarTrussSpanProblem(GrammarProblem):
             if typed_state.symmetry_axis_x is None:
                 raise ValueError("AddJointPair requires a symmetric state.")
             expected_mirror_x = (2.0 * typed_state.symmetry_axis_x) - action.left_x
-            if not _float_matches(expected_mirror_x, action.right_x) or not _float_matches(action.left_y, action.right_y):
+            if not _float_matches(expected_mirror_x, action.right_x) or not _float_matches(
+                action.left_y, action.right_y
+            ):
                 raise ValueError("AddJointPair coordinates must mirror across the symmetry axis.")
             if any(
                 _point_in_collection({(joint.x, joint.y) for joint in typed_state.joints}, x_value, y_value)
@@ -643,7 +646,9 @@ class PlanarTrussSpanProblem(GrammarProblem):
 
         if isinstance(action, RemoveMember):
             existing_lookup = _member_lookup(typed_state)
-            target_member = next((member for member in typed_state.members if member.member_id == action.member_id), None)
+            target_member = next(
+                (member for member in typed_state.members if member.member_id == action.member_id), None
+            )
             if target_member is None:
                 raise ValueError("Unknown member_id.")
             removable_edges = {_edge_key(target_member.start_joint_id, target_member.end_joint_id)}
