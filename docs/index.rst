@@ -63,6 +63,7 @@ What Is In The Initial Catalog?
 -------------------------------
 
 - 40 ideation-focused text prompts.
+- ``moneymaker_hip_pump_cost_min``: a citation-backed scalarized pump optimization benchmark.
 - ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
 - ``planar_truss_span``: a discrete planar truss topology grammar with a lazy ``trussme`` adapter.
 

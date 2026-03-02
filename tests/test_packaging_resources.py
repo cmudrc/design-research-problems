@@ -131,6 +131,7 @@ def test_installed_wheel_loads_registry(tmp_path: Path) -> None:
         "ideation_walking_texting_accident_reduction",
         "ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014",
         "ideation_wheelchair_peach_picking",
+        "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",
         "planar_truss_span",
     ]

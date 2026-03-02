@@ -53,6 +53,7 @@ def test_list_problems_returns_seed_problem_ids() -> None:
         "ideation_walking_texting_accident_reduction",
         "ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014",
         "ideation_wheelchair_peach_picking",
+        "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",
         "planar_truss_span",
     )
@@ -140,6 +141,7 @@ def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
     )
     assert grouped[ProblemKind.OPTIMIZATION] == (
         "bounded-variables",
+        "citation-backed",
         "equality-constraint",
         "optional-solver",
         "seeded-data-generation",
@@ -177,7 +179,10 @@ def test_registry_search_filters_by_feature_flags() -> None:
 
     registry = ProblemRegistry()
     matches = registry.search(feature_flags=("seeded data generation",))
-    assert [entry.problem_id for entry in matches] == ["pill_capsule_min_area"]
+    assert [entry.problem_id for entry in matches] == [
+        "moneymaker_hip_pump_cost_min",
+        "pill_capsule_min_area",
+    ]
     text_matches = registry.search(
         kind=ProblemKind.TEXT,
         capabilities=("citation-backed",),

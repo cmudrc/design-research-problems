@@ -22,6 +22,7 @@ The first catalog includes:
 
 - 40 ideation-focused text prompts
 - `pill_capsule_min_area` for constrained continuous optimization
+- `moneymaker_hip_pump_cost_min` for a citation-backed scalarized pump benchmark
 - `planar_truss_span` for a discrete topology grammar backed by `trussme`
 
 ## Quickstart

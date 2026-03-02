@@ -22,6 +22,9 @@ The optimization problem can be instantiated through the registry:
    x, y = pill.generate_data(n=5, seed=7)
    print(x.shape, y.shape)
 
+   pump = get_problem("moneymaker_hip_pump_cost_min")
+   print(pump.objective_components(pump.generate_initial_solution()))
+
 The grammar problem exposes a serializable starting state and a lazy `trussme`
 adapter:
 

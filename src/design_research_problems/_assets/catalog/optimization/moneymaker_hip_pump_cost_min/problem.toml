@@ -1,0 +1,92 @@
+problem_id = "moneymaker_hip_pump_cost_min"
+title = "MoneyMaker Hip Pump cost minimization problem"
+summary = "A citation-backed nonlinear optimization benchmark that fixes a target flow and tank head, then minimizes projected pump cost using a scalarized form of the MoneyMaker Hip Pump studies."
+kind = "optimization"
+statement = '''
+# MoneyMaker Hip Pump cost minimization problem
+
+This packaged optimization problem is a scalarized subproblem derived from
+the published multi-objective MoneyMaker Hip Pump studies. It uses the
+epsilon-constraint pattern from the papers: the delivery head is fixed at 3 m,
+the target flow rate is fixed at 0.18 L/s, and the scalar objective is the
+projected pump cost.
+
+To fit the current single-objective API cleanly, the packaged instance reduces
+the original 16 design variables to 10 independent continuous variables. The
+remaining geometric relationships and fixed deployment assumptions are
+reconstructed internally from the cited formulation. Bounds are centered on the
+published tall-tank designs so the packaged benchmark stays well-conditioned
+without changing the shared optimization base classes.
+'''
+implementation = "design_research_problems.problems.optimization._moneymaker:MoneyMakerHipPumpProblem"
+capabilities = [
+  "statement-markdown",
+  "citation-backed",
+  "bounded-variables",
+  "equality-constraint",
+  "seeded-data-generation",
+  "optional-solver",
+]
+study_suitability = []
+
+[[citations]]
+key = "mccomb2018moneymaker"
+kind = "inline"
+authors = [
+  "Christopher McComb",
+  "Nathan G. Johnson",
+  "Pablo S. Santaeufemia",
+  "Brandon T. Gorman",
+  "Brent Kolste",
+  "Alexander Mobley",
+  "Kenji Shimada",
+]
+title = "Multi-objective optimization and scenario-based robustness analysis of the MoneyMaker Hip Pump"
+year = 2018
+venue = "Development Engineering"
+doi = "10.1016/j.deveng.2018.01.001"
+formatted_text = "McComb et al. (2018)."
+raw_text = "McComb, C., Johnson, N. G., Santaeufemia, P. S., Gorman, B. T., Kolste, B., Mobley, A., and Shimada, K. (2018). Multi-objective optimization and scenario-based robustness analysis of the MoneyMaker Hip Pump. Development Engineering, 3, 23-33."
+url = "https://doi.org/10.1016/j.deveng.2018.01.001"
+
+[[citations]]
+key = "mccomb2014moneymaker"
+kind = "inline"
+authors = [
+  "Christopher McComb",
+  "Pablo S. Santaeufemia",
+  "Nathan G. Johnson",
+  "Kenji Shimada",
+]
+title = "Identifying technical and economic improvements to the MoneyMaker Hip Pump through multi-objective optimization"
+year = 2014
+venue = "IEEE Global Humanitarian Technology Conference"
+doi = "10.1109/GHTC.2014.6970302"
+formatted_text = "McComb et al. (2014)."
+raw_text = "McComb, C., Santaeufemia, P. S., Johnson, N. G., and Shimada, K. (2014). Identifying technical and economic improvements to the MoneyMaker Hip Pump through multi-objective optimization. IEEE Global Humanitarian Technology Conference."
+url = "https://doi.org/10.1109/GHTC.2014.6970302"
+
+[parameters]
+target_flow_rate_lps = 0.18
+target_tank_height_m = 3.0
+well_depth_m = 7.0
+horizontal_run_m = 18.0
+
+[taxonomy]
+formulation = "nonlinear_program"
+convexity = "not_guaranteed"
+design_variable_type = "continuous"
+is_dynamic = false
+orientation = "engineering-practical"
+feasibility_ratio_hint = 0.1
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "10 reduced continuous variables with fixed 3 m delivery head and reconstructed geometry relationships"
+tags = [
+  "optimization",
+  "continuous",
+  "nonlinear",
+  "hydraulic",
+  "scalarized",
+  "moneymaker",
+]
