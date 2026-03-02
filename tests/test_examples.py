@@ -34,7 +34,7 @@ def test_catalog_example_runs() -> None:
 def test_ideation_catalog_example_runs() -> None:
     completed = _run_example("examples/catalog/ideation_catalog.py")
     assert completed.returncode == 0, completed.stderr
-    assert "prompts 33" in completed.stdout
+    assert "prompts 34" in completed.stdout
 
 
 @pytest.mark.examples_smoke

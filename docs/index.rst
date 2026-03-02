@@ -62,7 +62,7 @@ Choose the path that matches what you want to do next:
 What Is In The Initial Catalog?
 -------------------------------
 
-- 33 ideation-focused text prompts plus the detailed ``peanut_sheller_fu2010`` compatibility packet.
+- 34 ideation-focused text prompts plus the detailed ``peanut_sheller_fu2010`` compatibility packet.
 - ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
 - ``planar_truss_span``: a discrete planar truss topology grammar with a lazy ``trussme`` adapter.
 

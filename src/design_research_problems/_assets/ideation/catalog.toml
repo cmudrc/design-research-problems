@@ -226,6 +226,17 @@ raw_text = "Linsey et al. (2012). A device to fold washcloths, hand towels, and 
 provisional = true
 
 [[citations]]
+key = "linsey_wood_markman_2008_wordtrees"
+kind = "inline"
+authors = ["Julie Linsey", "Kristin Wood", "Arthur Markman"]
+title = "Wordtrees: A method for design by analogy"
+year = 2008
+venue = "2008 Annual Conference & Exposition"
+formatted_text = "Linsey, Wood, and Markman (2008). Wordtrees: A method for design by analogy. 2008 Annual Conference & Exposition."
+raw_text = "Linsey, Julie and Wood, Kristin and Markman, Arthur (2008). Wordtrees: A method for design by analogy. 2008 Annual Conference & Exposition, pp. 13-1407."
+provisional = true
+
+[[citations]]
 key = "goldschmidt_smolkov_2006"
 kind = "bibtex"
 authors = ["Gabriela Goldschmidt", "Maria Smolkov"]
@@ -653,9 +664,9 @@ family_id = "family_towel_folding"
 name = "Towel Folding"
 group = "consumer-household"
 external_aliases = []
-canonical_prompt_ids = ["prompt_small_towel_folding"]
+canonical_prompt_ids = ["prompt_small_towel_folding", "prompt_small_towel_folding_original"]
 tags = ["automation", "household"]
-notes = "Additional family added to house the towel-folding prompt."
+notes = "Linsey, Wood, and Markman (2008) provides the root laundry-folding case-study framing; Goucher-Lambert and Cagan (2019) later cite a shorter derivative framing attributed there to Linsey et al. (2012)."
 
 [[families]]
 family_id = "family_peach_picking"
@@ -870,10 +881,21 @@ problem_id = "ideation_small_towel_folding"
 family_id = "family_towel_folding"
 canonical_brief = "A device to fold washcloths, hand towels, and small bath towels."
 evidence_tier = "primary_verbatim"
-source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_2012_towels"]
+source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_2012_towels", "linsey_wood_markman_2008_wordtrees"]
 tags = ["automation", "household", "ideation"]
 status = "complete"
 variant_ids = ["variant_small_towel_folding"]
+
+[[prompts]]
+prompt_id = "prompt_small_towel_folding_original"
+problem_id = "ideation_small_towel_folding_original"
+family_id = "family_towel_folding"
+canonical_brief = "Create a laundry folding device for students with severe physical and mental disabilities, with the goal of folding wash cloths, hand towels, and small bath towels."
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["linsey_wood_markman_2008_wordtrees"]
+tags = ["automation", "household", "ideation", "assistive"]
+status = "needs_primary_fill"
+variant_ids = ["variant_small_towel_folding_original"]
 
 [[prompts]]
 prompt_id = "prompt_accessible_drinking_fountain"
@@ -1247,9 +1269,20 @@ problem_id = "ideation_small_towel_folding"
 label = "Goucher-Lambert and Cagan (2019) derivative framing"
 statement_type = "canonical"
 evidence_tier = "primary_verbatim"
-source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_2012_towels"]
-notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019)."
+source_citation_keys = ["goucher_lambert_cagan_2019", "linsey_2012_towels", "linsey_wood_markman_2008_wordtrees"]
+notes = "Verbatim derivative framing from Table 1 in Goucher-Lambert and Cagan (2019), with the underlying towel-folding problem family traced back to the WordTree case study in Linsey, Wood, and Markman (2008)."
 status = "complete"
+
+[[variants]]
+variant_id = "variant_small_towel_folding_original"
+prompt_id = "prompt_small_towel_folding_original"
+problem_id = "ideation_small_towel_folding_original"
+label = "Linsey, Wood, and Markman (2008) root case-study framing"
+statement_type = "study-specific"
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["linsey_wood_markman_2008_wordtrees"]
+notes = "Reconstructed from the case-study description in the WordTree paper, which describes creating a laundry folding device for students with severe disabilities and states the goal of folding wash cloths, hand towels, and small bath towels."
+status = "needs_primary_fill"
 
 [[variants]]
 variant_id = "variant_accessible_drinking_fountain"

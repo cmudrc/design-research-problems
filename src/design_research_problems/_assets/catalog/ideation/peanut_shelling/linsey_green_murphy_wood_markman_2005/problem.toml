@@ -1,0 +1,70 @@
+problem_id = "ideation_peanut_shelling_original"
+title = "Ideation Prompt - Peanut Shelling (Root Study)"
+summary = "A reconstructed root peanut-shelling brief from Linsey, Green, Murphy, Wood, and Markman (2005)."
+kind = "text"
+statement = '''
+# Ideation Prompt - Peanut Shelling (Root Study)
+
+Design a device to quickly shell peanuts for use in places like Haiti and West
+African countries.
+
+The current solution is to shell the peanuts by hand, and no electrical energy
+sources are available.
+
+Customer needs described in the study include:
+
+- Low cost.
+- Easy to manufacture.
+- Quickly shell a large quantity of peanuts.
+- Remove the shell with minimal damage to the peanuts.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "agriculture", "mechanical-design"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 40
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "linsey_green_murphy_wood_markman_2005"
+kind = "inline"
+authors = ["Julie S. Linsey", "Matthew G. Green", "J. T. Murphy", "Kristin L. Wood", "Arthur B. Markman"]
+title = "\"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques"
+year = 2005
+venue = "ASME IDETC/CIE 2005, DETC2005-85351"
+formatted_text = "Linsey, Green, Murphy, Wood, and Markman (2005). \"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques. ASME IDETC/CIE 2005, DETC2005-85351."
+raw_text = "Linsey, Green, Murphy, Wood, and Markman (2005). \"Collaborating to Success\": An Experimental Study of Group Idea Generation Techniques. Proceedings of IDETC/CIE 2005, ASME 2005 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference, DETC2005-85351."
+provisional = true
+
+[[citations]]
+key = "viswanathan_linsey_2013"
+kind = "bibtex"
+authors = ["Vimal Viswanathan", "Julie Linsey"]
+title = "Design Fixation and Its Mitigation: A Study on the Role of Expertise"
+year = 2013
+venue = "Journal of Mechanical Design, 135(5), 051008"
+doi = "10.1115/1.4024123"
+url = "https://doi.org/10.1115/1.4024123"
+formatted_text = "Viswanathan and Linsey (2013). Design Fixation and Its Mitigation: A Study on the Role of Expertise. Journal of Mechanical Design, 135(5), 051008."
+raw_text = '''
+@article{10.1115/1.4024123,
+    author = {Viswanathan, Vimal K. and Linsey, Julie S.},
+    title = {Design Fixation and Its Mitigation: A Study on the Role of Expertise},
+    journal = {Journal of Mechanical Design},
+    volume = {135},
+    number = {5},
+    pages = {051008},
+    year = {2013},
+    doi = {10.1115/1.4024123},
+    url = {https://doi.org/10.1115/1.4024123}
+}
+'''
+provisional = false

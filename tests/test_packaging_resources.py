@@ -120,6 +120,7 @@ def test_installed_wheel_loads_registry(tmp_path: Path) -> None:
         "ideation_public_place_belongings_securer",
         "ideation_remote_village_rainwater_access",
         "ideation_small_towel_folding",
+        "ideation_small_towel_folding_original",
         "ideation_snow_transport_for_novices",
         "ideation_travel_exercise_device",
         "ideation_walking_texting_accident_reduction",
