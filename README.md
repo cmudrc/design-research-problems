@@ -22,7 +22,8 @@ The first catalog includes:
 
 - 40 ideation-focused text prompts
 - `pill_capsule_min_area` for constrained continuous optimization
-- `planar_truss_span` for a discrete topology grammar backed by `trussme`
+- `planar_truss_span` for the original seed planar truss grammar backed by `trussme`
+- six `planar_roof_truss_*` variants that approximate the roof-truss formulations reported by Shea and Cagan
 
 ## Quickstart
 

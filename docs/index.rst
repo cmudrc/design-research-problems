@@ -64,7 +64,7 @@ What Is In The Initial Catalog?
 
 - 40 ideation-focused text prompts.
 - ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
-- ``planar_truss_span``: a discrete planar truss topology grammar with a lazy ``trussme`` adapter.
+- ``planar_truss_span`` plus six ``planar_roof_truss_*`` entries: discrete truss grammars with a lazy ``trussme`` adapter.
 
 .. toctree::
    :maxdepth: 2

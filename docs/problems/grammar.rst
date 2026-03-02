@@ -4,7 +4,10 @@ Grammar Problems
 Grammar problems describe discrete design actions over a library-owned state.
 
 The seed entry is `planar_truss_span`, which translates a serializable planar
-topology state into a fresh `trussme.Truss` for evaluation.
+topology state into a fresh `trussme.Truss` for evaluation. The catalog also
+includes six `planar_roof_truss_*` variants that approximate the planar roof
+truss formulations discussed by Shea and Cagan, including multi-load and
+symmetry-constrained cases.
 
 `trussme` is an optional dependency:
 

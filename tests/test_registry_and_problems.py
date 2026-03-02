@@ -7,7 +7,7 @@ import numpy
 import pytest
 
 from design_research_problems import MissingOptionalDependencyError, ProblemKind, get_problem, list_problems
-from design_research_problems.problems.grammar import AddMember, RemoveMember
+from design_research_problems.problems.grammar import AddJointPair, AddMember, RemoveMember
 from design_research_problems.problems.optimization._pill import _pill_area, _pill_volume
 
 
@@ -54,6 +54,12 @@ def test_list_problems_returns_seed_problem_ids() -> None:
         "ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014",
         "ideation_wheelchair_peach_picking",
         "pill_capsule_min_area",
+        "planar_roof_truss_seven_point_asymmetric",
+        "planar_roof_truss_seven_point_symmetric",
+        "planar_roof_truss_three_point_symmetric",
+        "planar_roof_truss_three_point_symmetric_depth_eighth",
+        "planar_roof_truss_three_point_symmetric_depth_sixth",
+        "planar_roof_truss_three_point_symmetric_depth_sixth_discrete_sizing",
         "planar_truss_span",
     )
 
@@ -237,6 +243,34 @@ def test_planar_truss_state_and_actions_are_validated() -> None:
     assert len(state.members) == 2
 
 
+def test_planar_roof_variant_initial_state_tracks_multiple_loads() -> None:
+    problem = get_problem("planar_roof_truss_seven_point_asymmetric")
+    state = problem.initial_state()
+
+    assert len(state.joints) == 9
+    assert len(state.additional_loads) == 6
+    assert state.symmetry_axis_x is None
+
+
+def test_planar_roof_symmetric_variant_enforces_mirrored_actions() -> None:
+    problem = get_problem("planar_roof_truss_three_point_symmetric")
+    state = problem.initial_state()
+    actions = problem.enumerate_actions(state)
+
+    assert any(isinstance(action, AddJointPair) for action in actions)
+
+    state = problem.apply_action(state, AddMember(start_joint_id=0, end_joint_id=2))
+    assert len(state.members) == 2
+    edges = {
+        tuple(sorted((member.start_joint_id, member.end_joint_id)))
+        for member in state.members
+    }
+    assert edges == {(0, 2), (1, 4)}
+
+    state = problem.apply_action(state, RemoveMember(member_id=0))
+    assert state.members == ()
+
+
 def test_planar_truss_reports_missing_dependency(monkeypatch: pytest.MonkeyPatch) -> None:
     problem = get_problem("planar_truss_span")
     state = problem.initial_state()
@@ -342,3 +376,54 @@ def test_planar_truss_unstable_state_is_infeasible(monkeypatch: pytest.MonkeyPat
     evaluation = problem.evaluate(state)
     assert evaluation.is_feasible is False
     assert evaluation.failure_reason is not None
+
+
+def test_planar_roof_truss_evaluate_applies_all_loads(monkeypatch: pytest.MonkeyPatch) -> None:
+    class FakeTruss:
+        def __init__(self) -> None:
+            self.mass = 10.0
+            self.fos = 1.1
+            self.fos_buckling = 1.1
+            self.fos_yielding = 1.1
+            self.deflection = 0.01
+            self._joints = 0
+            self.load_calls = 0
+
+        def add_pinned_joint(self, coordinates: list[float]) -> int:
+            del coordinates
+            index = self._joints
+            self._joints += 1
+            return index
+
+        def add_roller_joint(self, coordinates: list[float]) -> int:
+            return self.add_pinned_joint(coordinates)
+
+        def add_free_joint(self, coordinates: list[float]) -> int:
+            return self.add_pinned_joint(coordinates)
+
+        def add_out_of_plane_support(self, constrained_axis: str = "z") -> None:
+            del constrained_axis
+
+        def add_member(self, start_joint_index: int, end_joint_index: int) -> int:
+            del start_joint_index, end_joint_index
+            return 0
+
+        def set_load(self, joint_index: int, load: list[float]) -> None:
+            del joint_index, load
+            self.load_calls += 1
+
+        def analyze(self) -> None:
+            return None
+
+    fake_module = ModuleType("trussme")
+    fake_truss = FakeTruss()
+    fake_module.Truss = lambda: fake_truss
+    monkeypatch.setitem(sys.modules, "trussme", fake_module)
+
+    problem = get_problem("planar_roof_truss_seven_point_asymmetric")
+    state = problem.initial_state()
+    state = problem.apply_action(state, AddMember(start_joint_id=0, end_joint_id=2))
+    evaluation = problem.evaluate(state)
+
+    assert evaluation.is_feasible is True
+    assert fake_truss.load_calls == 7

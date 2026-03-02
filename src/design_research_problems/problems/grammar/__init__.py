@@ -2,8 +2,10 @@
 
 from ._planar_truss import (
     AddJoint,
+    AddJointPair,
     AddMember,
     PlanarJoint,
+    PlanarLoad,
     PlanarMember,
     PlanarTrussEvaluation,
     PlanarTrussSpanProblem,
@@ -13,8 +15,10 @@ from ._planar_truss import (
 
 __all__ = [
     "AddJoint",
+    "AddJointPair",
     "AddMember",
     "PlanarJoint",
+    "PlanarLoad",
     "PlanarMember",
     "PlanarTrussEvaluation",
     "PlanarTrussSpanProblem",
