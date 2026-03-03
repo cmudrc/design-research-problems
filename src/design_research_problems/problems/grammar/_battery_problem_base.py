@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import cast
 
 from design_research_problems._catalog._manifest import ProblemManifest
+from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._grammar import GrammarProblem
 from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems.grammar._battery_cell_model import load_18650_cell_model
@@ -50,10 +51,15 @@ class BatteryCircuitProblemBase(GrammarProblem):
         self,
         metadata: ProblemMetadata,
         statement_markdown: str = "",
+        resource_bundle: PackageResourceBundle | None = None,
         requirements: BatteryRequirements | None = None,
     ) -> None:
         """Store shared packaged battery requirements."""
-        super().__init__(metadata=metadata, statement_markdown=statement_markdown)
+        super().__init__(
+            metadata=metadata,
+            statement_markdown=statement_markdown,
+            resource_bundle=resource_bundle,
+        )
         self.requirements = requirements or BatteryRequirements(
             target_voltage_v=14.8,
             minimum_capacity_ah=10.0,

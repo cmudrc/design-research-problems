@@ -11,6 +11,7 @@ import numpy
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import MissingOptionalDependencyError
+from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._grammar import GrammarProblem
 from design_research_problems.problems._metadata import ProblemMetadata
 
@@ -357,6 +358,7 @@ class PlanarTrussSpanProblem(GrammarProblem):
         self,
         metadata: ProblemMetadata,
         statement_markdown: str = "",
+        resource_bundle: PackageResourceBundle | None = None,
         span: float = 10.0,
         max_height: float = 5.0,
         load_magnitude: float = 1_000.0,
@@ -369,6 +371,7 @@ class PlanarTrussSpanProblem(GrammarProblem):
         Args:
             metadata: Shared packaged metadata.
             statement_markdown: Human-readable problem statement.
+            resource_bundle: Optional package-resource loader.
             span: Support-to-support span.
             max_height: Maximum design envelope height.
             load_magnitude: Downward point-load magnitude.
@@ -376,7 +379,11 @@ class PlanarTrussSpanProblem(GrammarProblem):
             candidate_point_fractions: Optional interior joint locations as span and height fractions.
             enforce_symmetry: Whether edits should preserve left-right symmetry.
         """
-        super().__init__(metadata=metadata, statement_markdown=statement_markdown)
+        super().__init__(
+            metadata=metadata,
+            statement_markdown=statement_markdown,
+            resource_bundle=resource_bundle,
+        )
         self.span = span
         self.max_height = max_height
         self.load_magnitude = load_magnitude
@@ -385,19 +392,19 @@ class PlanarTrussSpanProblem(GrammarProblem):
         self.enforce_symmetry = enforce_symmetry
 
     @classmethod
-    def from_manifest(cls, manifest: ProblemManifest, statement_markdown: str) -> PlanarTrussSpanProblem:
+    def from_manifest(cls, manifest: ProblemManifest) -> PlanarTrussSpanProblem:
         """Construct the seed grammar problem from packaged parameters.
 
         Args:
             manifest: Parsed packaged manifest.
-            statement_markdown: Human-readable problem statement.
 
         Returns:
             Initialized grammar problem.
         """
         return cls(
             metadata=manifest.metadata,
-            statement_markdown=statement_markdown,
+            statement_markdown=manifest.statement_markdown,
+            resource_bundle=cls.resource_bundle_from_manifest(manifest),
             span=_coerce_float(manifest.parameters.get("span", 10.0)),
             max_height=_coerce_float(manifest.parameters.get("max_height", 5.0)),
             load_magnitude=_coerce_float(manifest.parameters.get("load_magnitude", 1_000.0)),

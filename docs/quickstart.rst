@@ -20,6 +20,7 @@ The optimization problem can be instantiated through the registry:
 
    pill = get_problem("pill_capsule_min_area")
    print(pill.generate_initial_solution(seed=7))
+   print(pill.evaluate(pill.generate_initial_solution(seed=7)).is_feasible)
    print(pill.solve().fun)
 
    pump = get_problem("moneymaker_hip_pump_cost_min")

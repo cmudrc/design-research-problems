@@ -6,17 +6,11 @@ from collections.abc import Callable
 from importlib import import_module
 from typing import cast
 
-from design_research_problems._catalog._loader import load_problem_manifests, load_statement_text
+from design_research_problems._catalog._loader import load_problem_manifests
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import ProblemEvaluationError
-from design_research_problems.problems import (
-    DecisionProblem,
-    GrammarProblem,
-    OptimizationProblem,
-    ProblemKind,
-    TextProblem,
-)
-from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems import Problem, ProblemKind, TextProblem
+from design_research_problems.problems._decision import load_decision_problem
 from design_research_problems.problems._metadata import ProblemMetadata
 
 
@@ -36,9 +30,6 @@ def _resolve_object(import_path: str) -> object:
     if not module_path or not attr_name:
         raise ProblemEvaluationError(f"Invalid implementation path: {import_path!r}")
     return getattr(import_module(module_path), attr_name)
-
-
-ProblemInstance = TextProblem | DecisionProblem | OptimizationProblem | GrammarProblem
 
 
 class ProblemRegistry:
@@ -186,7 +177,7 @@ class ProblemRegistry:
             matches.append(metadata)
         return tuple(matches)
 
-    def get(self, problem_id: str) -> ProblemInstance:
+    def get(self, problem_id: str) -> Problem:
         """Instantiate one problem by ID.
 
         Args:
@@ -203,36 +194,24 @@ class ProblemRegistry:
         if manifest is None:
             raise KeyError(f"Unknown problem id: {problem_id}")
 
-        statement_markdown = load_statement_text(manifest)
         implementation = manifest.metadata.implementation
         if implementation is not None:
             target = _resolve_object(implementation)
             factory = getattr(target, "from_manifest", None)
             if callable(factory):
-                manifest_factory = cast(Callable[[ProblemManifest, str], ProblemInstance], factory)
-                return manifest_factory(manifest, statement_markdown)
+                manifest_factory = cast(Callable[[ProblemManifest], Problem], factory)
+                return manifest_factory(manifest)
 
             if callable(target):
-                direct_factory = cast(Callable[[object, str], ProblemInstance], target)
-                return direct_factory(manifest.metadata, statement_markdown)
+                direct_factory = cast(Callable[[ProblemManifest], Problem], target)
+                return direct_factory(manifest)
 
             raise ProblemEvaluationError(f"Problem implementation for {problem_id!r} is not callable.")
 
         if manifest.metadata.kind is ProblemKind.TEXT:
-            return TextProblem(
-                metadata=manifest.metadata,
-                statement_markdown=statement_markdown,
-                assets=manifest.metadata.assets,
-                resource_bundle=PackageResourceBundle("design_research_problems", manifest.resource_dir),
-            )
+            return TextProblem.from_manifest(manifest)
         if manifest.metadata.kind is ProblemKind.DECISION:
-            return DecisionProblem(
-                metadata=manifest.metadata,
-                statement_markdown=statement_markdown,
-                assets=manifest.metadata.assets,
-                resource_bundle=PackageResourceBundle("design_research_problems", manifest.resource_dir),
-                parameters=manifest.parameters,
-            )
+            return load_decision_problem(manifest)
         raise ProblemEvaluationError(f"Problem {problem_id!r} is missing an implementation path.")
 
 
@@ -248,7 +227,7 @@ def list_problems() -> tuple[str, ...]:
     return tuple(metadata.problem_id for metadata in _DEFAULT_REGISTRY.list())
 
 
-def get_problem(problem_id: str) -> TextProblem | DecisionProblem | OptimizationProblem | GrammarProblem:
+def get_problem(problem_id: str) -> Problem:
     """Return one problem instance by ID.
 
     Args:

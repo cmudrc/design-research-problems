@@ -9,6 +9,7 @@ import numpy
 from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
+from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems._optimization import (
     Bounds,
@@ -55,6 +56,7 @@ class IDETreadlePumpMaterialMin(OptimizationProblem):
         self,
         metadata: ProblemMetadata,
         statement_markdown: str = "",
+        resource_bundle: PackageResourceBundle | None = None,
         target_flow_rate_lps: float = 2.5,
         target_lift_height_m: float = 1.9,
     ) -> None:
@@ -63,10 +65,15 @@ class IDETreadlePumpMaterialMin(OptimizationProblem):
         Args:
             metadata: Shared packaged metadata.
             statement_markdown: Human-readable problem statement.
+            resource_bundle: Optional package-resource loader.
             target_flow_rate_lps: Fixed design flow rate in liters per second.
             target_lift_height_m: Fixed suction lift in meters.
         """
-        super().__init__(metadata=metadata, statement_markdown=statement_markdown)
+        super().__init__(
+            metadata=metadata,
+            statement_markdown=statement_markdown,
+            resource_bundle=resource_bundle,
+        )
         self.target_flow_rate_lps = target_flow_rate_lps
         self.target_flow_rate_m3_per_s = target_flow_rate_lps / 1000.0
         self.target_lift_height_m = target_lift_height_m
@@ -89,12 +96,11 @@ class IDETreadlePumpMaterialMin(OptimizationProblem):
         ]
 
     @classmethod
-    def from_manifest(cls, manifest: ProblemManifest, statement_markdown: str) -> IDETreadlePumpMaterialMin:
+    def from_manifest(cls, manifest: ProblemManifest) -> IDETreadlePumpMaterialMin:
         """Construct an instance from packaged manifest data.
 
         Args:
             manifest: Parsed packaged manifest.
-            statement_markdown: Human-readable problem statement.
 
         Returns:
             Initialized problem instance.
@@ -103,7 +109,8 @@ class IDETreadlePumpMaterialMin(OptimizationProblem):
         target_lift_height_m = float(cast(float, manifest.parameters.get("target_lift_height_m", 1.9)))
         return cls(
             metadata=manifest.metadata,
-            statement_markdown=statement_markdown,
+            statement_markdown=manifest.statement_markdown,
+            resource_bundle=cls.resource_bundle_from_manifest(manifest),
             target_flow_rate_lps=target_flow_rate_lps,
             target_lift_height_m=target_lift_height_m,
         )

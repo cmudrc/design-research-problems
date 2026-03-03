@@ -10,6 +10,8 @@ from typing import Literal
 import numpy
 from numpy.typing import NDArray
 
+from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._computable import ComputableProblem
 from design_research_problems.problems._metadata import ProblemMetadata
 
 
@@ -51,6 +53,22 @@ class OptimizationResult:
     """Number of baseline iterations or candidates considered."""
     nfev: int = 0
     """Number of objective evaluations used by the solver."""
+
+
+@dataclass(frozen=True)
+class OptimizationEvaluation:
+    """Standardized evaluation result for one optimization candidate."""
+
+    x: NDArray[numpy.float64]
+    """Evaluated candidate vector."""
+    objective_value: float
+    """Objective value at ``x``."""
+    total_constraint_violation: float
+    """Sum of all bound and constraint violations."""
+    max_constraint_violation: float
+    """Largest single bound or constraint violation."""
+    is_feasible: bool
+    """Whether ``x`` is feasible under the default tolerance."""
 
 
 @dataclass(frozen=True)
@@ -125,23 +143,45 @@ def bounded_pattern_search(
     return LocalSearchResult(x=current, fun=value, nit=nit, nfev=nfev)
 
 
-class OptimizationProblem(ABC):
+class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], OptimizationEvaluation], ABC):
     """Abstract base for optimization problems."""
 
-    def __init__(self, metadata: ProblemMetadata, statement_markdown: str = "") -> None:
+    def __init__(
+        self,
+        metadata: ProblemMetadata,
+        statement_markdown: str = "",
+        resource_bundle: PackageResourceBundle | None = None,
+    ) -> None:
         """Store shared metadata and initialize empty bounds and constraints.
 
         Args:
             metadata: Shared packaged metadata for the problem.
             statement_markdown: Human-readable problem statement.
+            resource_bundle: Optional package-resource loader.
         """
-        self.metadata = metadata
-        self.statement_markdown = statement_markdown
+        super().__init__(
+            metadata=metadata,
+            statement_markdown=statement_markdown,
+            resource_bundle=resource_bundle,
+        )
         self.bounds = Bounds(
             lb=numpy.zeros(0, dtype=float),
             ub=numpy.zeros(0, dtype=float),
         )
         self.constraints: list[ConstraintDefinition] = []
+
+    def evaluate(self, variables: NDArray[numpy.float64]) -> OptimizationEvaluation:
+        """Evaluate one candidate vector without invoking the solver."""
+        candidate = numpy.array(variables, dtype=float, copy=True)
+        total_violation = self.constraint_violation(candidate)
+        max_violation = self.max_constraint_violation(candidate)
+        return OptimizationEvaluation(
+            x=candidate,
+            objective_value=self.objective(candidate),
+            total_constraint_violation=total_violation,
+            max_constraint_violation=max_violation,
+            is_feasible=max_violation <= 1e-9,
+        )
 
     def bound_violation(self, variables: NDArray[numpy.float64]) -> float:
         """Return the total amount by which bounds are violated.

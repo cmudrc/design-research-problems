@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from design_research_problems._catalog._manifest import ProblemManifest
+from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems.grammar._battery_circuit import (
     BatteryCellInstance,
@@ -118,6 +119,7 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase):
         *,
         metadata: ProblemMetadata,
         statement_markdown: str = "",
+        resource_bundle: PackageResourceBundle | None = None,
         requirements: BatteryRequirements | None = None,
         max_cell_count: int = 16,
     ) -> None:
@@ -125,20 +127,18 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase):
         super().__init__(
             metadata=metadata,
             statement_markdown=statement_markdown,
+            resource_bundle=resource_bundle,
             requirements=requirements,
         )
         self.max_cell_count = max_cell_count
 
     @classmethod
-    def from_manifest(
-        cls,
-        manifest: ProblemManifest,
-        statement_markdown: str,
-    ) -> BatteryPack18650OpenEndedProblem:
+    def from_manifest(cls, manifest: ProblemManifest) -> BatteryPack18650OpenEndedProblem:
         """Build the open-ended benchmark from packaged manifest parameters."""
         return cls(
             metadata=manifest.metadata,
-            statement_markdown=statement_markdown,
+            statement_markdown=manifest.statement_markdown,
+            resource_bundle=cls.resource_bundle_from_manifest(manifest),
             requirements=parse_battery_requirements(manifest),
             max_cell_count=_coerce_int(manifest.parameters.get("max_cell_count"), 16),
         )

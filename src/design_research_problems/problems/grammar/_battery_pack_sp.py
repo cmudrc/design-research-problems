@@ -240,15 +240,12 @@ class BatteryPack18650SeriesParallelProblem(BatteryCircuitProblemBase):
     """Co-design grammar for a constrained 18650 series-parallel battery pack."""
 
     @classmethod
-    def from_manifest(
-        cls,
-        manifest: ProblemManifest,
-        statement_markdown: str,
-    ) -> BatteryPack18650SeriesParallelProblem:
+    def from_manifest(cls, manifest: ProblemManifest) -> BatteryPack18650SeriesParallelProblem:
         """Build the benchmark from packaged manifest parameters."""
         return cls(
             metadata=manifest.metadata,
-            statement_markdown=statement_markdown,
+            statement_markdown=manifest.statement_markdown,
+            resource_bundle=cls.resource_bundle_from_manifest(manifest),
             requirements=parse_battery_requirements(manifest),
         )
 

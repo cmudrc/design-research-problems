@@ -9,19 +9,18 @@ from copy import deepcopy
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import ProblemEvaluationError
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._decision import DecisionProblem
+from design_research_problems.problems._decision_empirical import EmpiricalChoiceDecisionProblem
 
 
-class MSEvalEmpiricalChoiceProblem(DecisionProblem):
+class MSEvalEmpiricalChoiceProblem(EmpiricalChoiceDecisionProblem):
     """Empirical MSEval material-selection decision problem."""
 
     @classmethod
-    def from_manifest(cls, manifest: ProblemManifest, statement_markdown: str) -> MSEvalEmpiricalChoiceProblem:
+    def from_manifest(cls, manifest: ProblemManifest) -> MSEvalEmpiricalChoiceProblem:
         """Construct an MSEval decision problem from a minimal manifest.
 
         Args:
             manifest: Parsed packaged manifest.
-            statement_markdown: Human-readable problem statement.
 
         Returns:
             Initialized empirical choice decision problem.
@@ -30,8 +29,7 @@ class MSEvalEmpiricalChoiceProblem(DecisionProblem):
         parameters = cls._materialize_parameters(manifest.parameters, resource_bundle)
         return cls(
             metadata=manifest.metadata,
-            statement_markdown=statement_markdown,
-            assets=manifest.metadata.assets,
+            statement_markdown=manifest.statement_markdown,
             resource_bundle=resource_bundle,
             parameters=parameters,
         )

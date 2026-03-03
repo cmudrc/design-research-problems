@@ -11,12 +11,17 @@ discrete grammar-style problems behind a small, typed Python API.
 
 ## Overview
 
-The initial release centers on three problem families plus a linked ideation metadata catalog:
+The initial release centers on four problem families plus a linked ideation metadata catalog:
 
 - Text problems for human-subjects studies and prompt packets
+- Decision problems with typed discrete or empirical evaluation interfaces
 - Optimization problems with typed bounds and representative built-in baselines
 - Grammar problems that describe discrete design actions and optional evaluation adapters
 - An ideation catalog with prompt records, variants, families, and study summaries
+
+The public problem model now centers on a shared ``Problem`` documentation base
+and a ``ComputableProblem`` evaluation layer, with family-specific subclasses on
+top.
 
 The first catalog includes:
 

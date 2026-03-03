@@ -4,6 +4,8 @@ import design_research_problems as drp
 
 EXPECTED_PUBLIC_API = [
     "__version__",
+    "Problem",
+    "ComputableProblem",
     "ProblemKind",
     "ProblemMetadata",
     "ProblemTaxonomy",
@@ -11,7 +13,10 @@ EXPECTED_PUBLIC_API = [
     "ProblemAsset",
     "TextProblem",
     "DecisionProblem",
+    "DiscreteOptionDecisionProblem",
+    "EmpiricalChoiceDecisionProblem",
     "OptimizationProblem",
+    "OptimizationEvaluation",
     "GrammarProblem",
     "ProblemRegistry",
     "MissingOptionalDependencyError",

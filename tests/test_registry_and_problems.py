@@ -8,9 +8,13 @@ import numpy
 import pytest
 
 from design_research_problems import (
+    ComputableProblem,
     DecisionProblem,
+    DiscreteOptionDecisionProblem,
+    EmpiricalChoiceDecisionProblem,
     MissingOptionalDependencyError,
-    ProblemEvaluationError,
+    OptimizationEvaluation,
+    Problem,
     ProblemKind,
     get_problem,
     list_problems,
@@ -130,12 +134,14 @@ def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
 
 def test_text_problem_renders_statement_and_citation() -> None:
     problem = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
+    assert isinstance(problem, Problem)
     packet = problem.render_packet()
     assert packet.count("# Design Problem - Device to shell peanuts") == 1
     assert "Fu, Cagan, and Kotovsky (2010)." in packet
     assert "Must remove the shell with minimal damage to the peanuts." in packet
     assert "## BibTeX" not in packet
     assert problem.metadata.has_feature("human subjects ready") is True
+    assert hasattr(problem, "assets") is False
 
 
 def test_text_problem_can_render_summary_and_raw_citations() -> None:
@@ -148,6 +154,7 @@ def test_text_problem_can_render_summary_and_raw_citations() -> None:
 
 def test_decision_problem_exposes_structured_brief() -> None:
     problem = get_problem("decision_laptop_design_profit_maximization")
+    assert isinstance(problem, DiscreteOptionDecisionProblem)
     assert isinstance(problem, DecisionProblem)
     assert problem.decision_variables[0] == "LCD size x1 in [10, 17] inches"
     assert (
@@ -175,6 +182,7 @@ def test_decision_problem_exposes_structured_brief() -> None:
 
 def test_mseval_decision_problem_exposes_empirical_choice_benchmarks() -> None:
     problem = get_problem("decision_mseval_kitchen_utensil_grip_lightweight")
+    assert isinstance(problem, EmpiricalChoiceDecisionProblem)
     assert isinstance(problem, DecisionProblem)
     assert problem.choice_options == (
         "steel",
@@ -188,7 +196,7 @@ def test_mseval_decision_problem_exposes_empirical_choice_benchmarks() -> None:
         "composite",
     )
 
-    steel = problem.evaluate_choice("steel")
+    steel = problem.evaluate("steel")
     assert steel.choice_key == "steel"
     assert steel.choice_label == "Steel"
     assert steel.response_count == 67
@@ -199,23 +207,22 @@ def test_mseval_decision_problem_exposes_empirical_choice_benchmarks() -> None:
     assert steel.std_rating == pytest.approx(2.54316, abs=1e-6)
     assert problem.metadata.citations[0].raw_text.startswith("@misc{jain2024msevaldatasetmaterialselection,")
 
-    assert problem.evaluate_choice("Steel") == steel
+    assert problem.evaluate("Steel") == steel
     assert problem.best_choice().choice_key == "composite"
     assert problem.best_choice(metric="mean-rating").choice_key == "composite"
+    assert problem.evaluate_with_metric("steel", metric="median-rating").objective_metric == "median-rating"
 
     brief = problem.render_brief()
     assert "## Choices" in brief
     assert "## Empirical Benchmark" in brief
 
     with pytest.raises(ValueError):
-        problem.evaluate_choice("ceramic")
-    with pytest.raises(ProblemEvaluationError, match="use evaluate_choice"):
-        problem.evaluate_option({})
+        problem.evaluate("ceramic")
 
 
 def test_decision_problem_exposes_typed_option_space_and_evaluator() -> None:
     problem = get_problem("decision_laptop_design_profit_maximization")
-    assert isinstance(problem, DecisionProblem)
+    assert isinstance(problem, DiscreteOptionDecisionProblem)
 
     assert len(problem.decision_variable_specs) == 6
     assert problem.decision_variable_specs[0].symbol == "x1"
@@ -263,7 +270,7 @@ def test_decision_problem_exposes_typed_option_space_and_evaluator() -> None:
     sample_options = list(islice(problem.iter_options(), 3))
     assert all(tuple(option.values) == ("z1", "z2", "z3", "z4", "z5") for option in sample_options)
 
-    evaluation = problem.evaluate_option(first_option)
+    evaluation = problem.evaluate(first_option)
     assert numpy.isfinite(evaluation.utility)
     assert 0.0 < evaluation.predicted_share < 1.0
     assert evaluation.expected_demand_units == pytest.approx(1_600_000 * evaluation.predicted_share)
@@ -271,6 +278,17 @@ def test_decision_problem_exposes_typed_option_space_and_evaluator() -> None:
 
     best = problem.best_option()
     assert best == max(problem.iter_option_evaluations(), key=lambda item: item.objective_value)
+
+
+def test_non_text_problems_are_computable() -> None:
+    problem_ids = (
+        "decision_laptop_design_profit_maximization",
+        "decision_mseval_kitchen_utensil_grip_lightweight",
+        "pill_capsule_min_area",
+        "planar_truss_span",
+    )
+    for problem_id in problem_ids:
+        assert isinstance(get_problem(problem_id), ComputableProblem)
 
 
 def test_registry_search_filters_by_feature_flags() -> None:
@@ -567,6 +585,18 @@ def test_pill_problem_is_deterministic() -> None:
     x2 = problem.generate_initial_solution(seed=7)
     assert x1.shape == (2,)
     assert numpy.allclose(x1, x2)
+
+
+def test_pill_problem_evaluate_returns_standardized_optimization_evaluation() -> None:
+    problem = get_problem("pill_capsule_min_area")
+    candidate = problem.generate_initial_solution(seed=5)
+    evaluation = problem.evaluate(candidate)
+    assert isinstance(evaluation, OptimizationEvaluation)
+    assert evaluation.x.shape == (2,)
+    assert evaluation.objective_value == pytest.approx(problem.objective(candidate))
+    assert evaluation.total_constraint_violation == pytest.approx(problem.constraint_violation(candidate))
+    assert evaluation.max_constraint_violation == pytest.approx(problem.max_constraint_violation(candidate))
+    assert evaluation.is_feasible is True
 
 
 def test_pill_problem_seeded_initial_solution_stays_within_bounds() -> None:

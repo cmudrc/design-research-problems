@@ -10,6 +10,7 @@ import numpy
 from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
+from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems._optimization import (
     Bounds,
@@ -169,6 +170,7 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         self,
         metadata: ProblemMetadata,
         statement_markdown: str = "",
+        resource_bundle: PackageResourceBundle | None = None,
         target_flow_rate_lps: float = 0.18,
         target_tank_height_m: float = 3.0,
         well_depth_m: float = _DEFAULT_WELL_DEPTH,
@@ -179,6 +181,7 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         Args:
             metadata: Shared packaged metadata.
             statement_markdown: Human-readable problem statement.
+            resource_bundle: Optional package-resource loader.
             target_flow_rate_lps: Fixed target flow rate in liters per second.
             target_tank_height_m: Fixed delivery head in meters.
             well_depth_m: Fixed well depth in meters.
@@ -187,7 +190,11 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         Raises:
             ValueError: If ``horizontal_run_m`` is negative.
         """
-        super().__init__(metadata=metadata, statement_markdown=statement_markdown)
+        super().__init__(
+            metadata=metadata,
+            statement_markdown=statement_markdown,
+            resource_bundle=resource_bundle,
+        )
         if horizontal_run_m < 0.0:
             raise ValueError("horizontal_run_m must be nonnegative.")
         self.target_flow_rate_lps = target_flow_rate_lps
@@ -218,12 +225,11 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         ]
 
     @classmethod
-    def from_manifest(cls, manifest: ProblemManifest, statement_markdown: str) -> MoneyMakerHipPumpProblem:
+    def from_manifest(cls, manifest: ProblemManifest) -> MoneyMakerHipPumpProblem:
         """Construct an instance from packaged manifest data.
 
         Args:
             manifest: Parsed packaged manifest.
-            statement_markdown: Human-readable problem statement.
 
         Returns:
             Initialized problem instance.
@@ -234,7 +240,8 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         horizontal_run_m = float(cast(float, manifest.parameters.get("horizontal_run_m", _DEFAULT_HORIZONTAL_RUN)))
         return cls(
             metadata=manifest.metadata,
-            statement_markdown=statement_markdown,
+            statement_markdown=manifest.statement_markdown,
+            resource_bundle=cls.resource_bundle_from_manifest(manifest),
             target_flow_rate_lps=target_flow_rate_lps,
             target_tank_height_m=target_tank_height_m,
             well_depth_m=well_depth_m,

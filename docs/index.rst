@@ -13,7 +13,8 @@ Highlights
 ----------
 
 - A packaged catalog of reusable design research prompts and benchmark problems.
-- Three problem families: text, optimization, and grammar, plus a linked ideation metadata catalog.
+- Four problem families: text, decision, optimization, and grammar, plus a linked ideation metadata catalog.
+- A shared ``Problem`` base plus ``ComputableProblem`` layer for executable entries.
 - Lazy optional integrations for SciPy, ``trussme``, and ``pybamm`` so the base install stays light.
 - Problem-level feature flags plus family-level aggregated feature flags for capability discovery.
 - Typed metadata and a deliberately small public API.
@@ -42,6 +43,9 @@ Problem Families
 ``Text``
    Prompt packets, citations, and optional assets for human-subjects studies.
 
+``Decision``
+   Structured decision briefs with either explicit discrete-option or empirical-choice evaluators.
+
 ``Optimization``
    Structured numerical problems with bounds, constraints, and representative built-in baselines.
 
@@ -54,7 +58,7 @@ Common Paths
 Choose the path that matches what you want to do next:
 
 - Read :doc:`quickstart` to load the catalog and inspect each problem family.
-- Read :doc:`problems/index` to understand the three problem types.
+- Read :doc:`problems/index` to understand the four problem families.
 - Read :doc:`dependencies_and_extras` before enabling SciPy, ``trussme``, or ``pybamm`` support.
 - Read :doc:`examples/index` for runnable scripts you can execute immediately.
 - Read :doc:`api` if you want the public surface contract first.

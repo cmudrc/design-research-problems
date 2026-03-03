@@ -2,15 +2,21 @@
 
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from collections.abc import Iterator, Mapping, Sequence
-from dataclasses import dataclass, field
-from itertools import product
+from dataclasses import dataclass
 from math import exp, prod
 from types import MappingProxyType
-from typing import Literal, cast
+from typing import TYPE_CHECKING, Literal, cast
 
 from design_research_problems._exceptions import ProblemEvaluationError
-from design_research_problems.problems._text import TextProblem
+from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._computable import ComputableProblem
+from design_research_problems.problems._metadata import ProblemMetadata
+from design_research_problems.problems._problem import Problem
+
+if TYPE_CHECKING:
+    from design_research_problems._catalog._manifest import ProblemManifest
 
 _DISCRETE_MARKET_SIZE = 1_600_000.0
 _CHOICE_METRIC_TOP_CHOICE_SHARE = "top-choice-share"
@@ -24,7 +30,6 @@ _SUPPORTED_CHOICE_METRICS = frozenset(
         _CHOICE_METRIC_MEDIAN_RATING,
     }
 )
-
 
 @dataclass(frozen=True)
 class DecisionVariableSpec:
@@ -374,7 +379,7 @@ class _ParsedDecisionPayload:
     """Parsed objective descriptors."""
     constraint_specs: tuple[DecisionConstraintSpec, ...]
     """Parsed constraint descriptors."""
-    default_choice_metric: str
+    default_choice_metric: ChoiceMetric
     """Default metric for empirical choice ranking."""
     response_count: int
     """Number of valid respondents represented by the aggregates."""
@@ -601,57 +606,52 @@ def parse_structured_decision_payload(parameters: Mapping[str, object]) -> _Pars
     )
 
 
-@dataclass(frozen=True)
-class DecisionProblem(TextProblem):
-    """Structured text problem for decision-centered design studies."""
+class DecisionProblem[DecisionCandidateT, DecisionEvaluationT](
+    ComputableProblem[DecisionCandidateT, DecisionEvaluationT],
+    ABC,
+):
+    """Shared decision-family base with parsed structure and rendering helpers."""
 
-    parameters: Mapping[str, object]
-    """Structured decision metadata extracted from the source."""
-    _decision_variable_specs: tuple[DecisionVariableSpec, ...] = field(init=False, repr=False)
-    """Cached typed engineering variable specs."""
-    _option_factors: tuple[DecisionFactor, ...] = field(init=False, repr=False)
-    """Cached typed discrete conjoint factors."""
-    _choice_benchmarks: tuple[DecisionChoiceBenchmark, ...] = field(init=False, repr=False)
-    """Cached empirical categorical choice benchmarks."""
-    _choice_lookup: Mapping[str, DecisionChoiceBenchmark] = field(init=False, repr=False)
-    """Cached case-insensitive choice-key and label lookup."""
-    _competitor_profiles: tuple[DecisionProfile, ...] = field(init=False, repr=False)
-    """Cached observed competitor profiles."""
-    _objective_specs: tuple[DecisionObjectiveSpec, ...] = field(init=False, repr=False)
-    """Cached typed objective descriptors."""
-    _constraint_specs: tuple[DecisionConstraintSpec, ...] = field(init=False, repr=False)
-    """Cached typed constraint descriptors."""
-    _default_choice_metric: ChoiceMetric = field(init=False, repr=False)
-    """Cached default empirical choice metric."""
-    _response_count: int = field(init=False, repr=False)
-    """Cached empirical response count."""
-    _factor_splines: Mapping[str, _NaturalCubicSpline] = field(init=False, repr=False)
-    """Cached spline evaluators keyed by factor."""
-
-    def __post_init__(self) -> None:
-        """Freeze the parameter mapping and parse typed payloads."""
-        frozen_parameters = MappingProxyType(dict(self.parameters))
-        object.__setattr__(self, "parameters", frozen_parameters)
-        payload = parse_structured_decision_payload(frozen_parameters)
-        object.__setattr__(self, "_decision_variable_specs", payload.decision_variable_specs)
-        object.__setattr__(self, "_option_factors", payload.option_factors)
-        object.__setattr__(self, "_choice_benchmarks", payload.choice_benchmarks)
-        object.__setattr__(self, "_competitor_profiles", payload.competitor_profiles)
-        object.__setattr__(self, "_objective_specs", payload.objective_specs)
-        object.__setattr__(self, "_constraint_specs", payload.constraint_specs)
-        object.__setattr__(self, "_default_choice_metric", payload.default_choice_metric)
-        object.__setattr__(self, "_response_count", payload.response_count)
-        splines = {
-            factor.key: _NaturalCubicSpline.from_points(factor.levels, factor.part_worths)
-            for factor in payload.option_factors
-            if factor.part_worths
-        }
+    def __init__(
+        self,
+        *,
+        metadata: ProblemMetadata,
+        statement_markdown: str = "",
+        parameters: Mapping[str, object],
+        resource_bundle: PackageResourceBundle | None = None,
+    ) -> None:
+        """Parse the structured decision payload and cache shared lookups."""
+        super().__init__(
+            metadata=metadata,
+            statement_markdown=statement_markdown,
+            resource_bundle=resource_bundle,
+        )
+        self.parameters = MappingProxyType(dict(parameters))
+        payload = parse_structured_decision_payload(self.parameters)
+        self._decision_variable_specs = payload.decision_variable_specs
+        self._option_factors = payload.option_factors
+        self._choice_benchmarks = payload.choice_benchmarks
+        self._competitor_profiles = payload.competitor_profiles
+        self._objective_specs = payload.objective_specs
+        self._constraint_specs = payload.constraint_specs
+        self._default_choice_metric = payload.default_choice_metric
+        self._response_count = payload.response_count
+        self._factor_splines = MappingProxyType(
+            {
+                factor.key: _NaturalCubicSpline.from_points(factor.levels, factor.part_worths)
+                for factor in payload.option_factors
+                if factor.part_worths
+            }
+        )
         choice_lookup: dict[str, DecisionChoiceBenchmark] = {}
         for benchmark in payload.choice_benchmarks:
             choice_lookup[benchmark.key.lower()] = benchmark
             choice_lookup[benchmark.label.lower()] = benchmark
-        object.__setattr__(self, "_choice_lookup", MappingProxyType(choice_lookup))
-        object.__setattr__(self, "_factor_splines", MappingProxyType(splines))
+        self._choice_lookup = MappingProxyType(choice_lookup)
+
+    @abstractmethod
+    def evaluate(self, candidate: DecisionCandidateT) -> DecisionEvaluationT:
+        """Evaluate one decision candidate."""
 
     @property
     def decision_variables(self) -> tuple[str, ...]:
@@ -735,15 +735,6 @@ class DecisionProblem(TextProblem):
         return self._choice_benchmarks
 
     @property
-    def choice_options(self) -> tuple[str, ...]:
-        """Return the canonical empirical choice keys in source order.
-
-        Returns:
-            Choice keys in source order.
-        """
-        return tuple(benchmark.key for benchmark in self.choice_benchmarks)
-
-    @property
     def default_choice_metric(self) -> ChoiceMetric:
         """Return the default metric used for empirical choice ranking.
 
@@ -772,39 +763,11 @@ class DecisionProblem(TextProblem):
             return 0
         return int(prod(len(factor.levels) for factor in self.option_factors))
 
-    def iter_options(self) -> Iterator[DecisionOption]:
-        """Yield the full Cartesian product of the discrete option space.
-
-        Yields:
-            Explicit options in deterministic Cartesian-product order.
-        """
-        if not self.option_factors:
-            return
-        factor_keys = tuple(factor.key for factor in self.option_factors)
-        level_domains = tuple(factor.levels for factor in self.option_factors)
-        for combination in product(*level_domains):
-            yield DecisionOption(values=dict(zip(factor_keys, combination, strict=True)))
-
-    def evaluate_option(self, option: DecisionOption | Mapping[str, float]) -> DecisionOptionEvaluation:
-        """Evaluate one explicit discrete option against the competitor set.
-
-        Args:
-            option: Candidate option mapping or value object.
-
-        Returns:
-            Typed evaluation result with utility, market share, and demand.
-
-        Raises:
-            ValueError: If the option keys or levels do not match the declared option space.
-            ProblemEvaluationError: If the problem has no executable discrete objective.
-        """
+    def _evaluate_option(self, option: DecisionOption | Mapping[str, float]) -> DecisionOptionEvaluation:
+        """Evaluate one explicit discrete option against the competitor set."""
         objective = self._executable_objective()
-        if objective.domain == "empirical-choice":
-            raise ProblemEvaluationError(
-                "evaluate_option() is unavailable for empirical-choice objectives; use evaluate_choice() instead."
-            )
         if objective.domain != "discrete-option":
-            raise ProblemEvaluationError("evaluate_option() only supports executable discrete-option objectives.")
+            raise ProblemEvaluationError("Decision problem does not define an executable discrete-option objective.")
 
         candidate = self._coerce_option(option)
         utility = sum(self._factor_part_worth(factor, candidate.values[factor.key]) for factor in self.option_factors)
@@ -821,50 +784,12 @@ class DecisionProblem(TextProblem):
             objective_value=predicted_share,
         )
 
-    def iter_option_evaluations(self) -> Iterator[DecisionOptionEvaluation]:
-        """Yield evaluations for every explicit option.
-
-        Yields:
-            Evaluations aligned with ``iter_options()`` order.
-        """
-        for option in self.iter_options():
-            yield self.evaluate_option(option)
-
-    def best_option(self) -> DecisionOptionEvaluation:
-        """Return the best-scoring explicit option in iteration order.
-
-        Returns:
-            Highest-scoring option evaluation.
-
-        Raises:
-            ProblemEvaluationError: If no explicit option space is available.
-        """
-        best: DecisionOptionEvaluation | None = None
-        for evaluation in self.iter_option_evaluations():
-            if best is None or evaluation.objective_value > best.objective_value:
-                best = evaluation
-        if best is None:
-            raise ProblemEvaluationError("No discrete option space is available to evaluate.")
-        return best
-
-    def evaluate_choice(
+    def _evaluate_choice(
         self,
         choice: str,
         metric: ChoiceMetric | None = None,
     ) -> DecisionChoiceEvaluation:
-        """Evaluate one empirical categorical choice option.
-
-        Args:
-            choice: Canonical key or display label for the option.
-            metric: Optional ranking metric override.
-
-        Returns:
-            Typed evaluation result backed by the stored empirical aggregate.
-
-        Raises:
-            ValueError: If the requested choice name is unknown.
-            ProblemEvaluationError: If the problem has no empirical choice benchmark data.
-        """
+        """Evaluate one empirical categorical choice option."""
         benchmark = self._coerce_choice(choice)
         selected_metric = self._normalize_choice_metric(metric)
         return DecisionChoiceEvaluation(
@@ -879,21 +804,11 @@ class DecisionProblem(TextProblem):
             objective_metric=selected_metric,
         )
 
-    def rank_choices(
+    def _rank_choice_evaluations(
         self,
         metric: ChoiceMetric | None = None,
     ) -> tuple[DecisionChoiceEvaluation, ...]:
-        """Return all empirical choices ranked by one metric.
-
-        Args:
-            metric: Optional ranking metric override.
-
-        Returns:
-            Ranked evaluations in deterministic order.
-
-        Raises:
-            ProblemEvaluationError: If the problem has no empirical choice benchmark data.
-        """
+        """Return all empirical choices ranked by one metric."""
         selected_metric = self._normalize_choice_metric(metric)
         if not self.choice_benchmarks:
             raise ProblemEvaluationError("Decision problem does not define empirical choice benchmarks.")
@@ -922,26 +837,6 @@ class DecisionProblem(TextProblem):
             )
         )
         return tuple(evaluation for _, evaluation in ranked)
-
-    def best_choice(
-        self,
-        metric: ChoiceMetric | None = None,
-    ) -> DecisionChoiceEvaluation:
-        """Return the best-scoring empirical categorical choice.
-
-        Args:
-            metric: Optional ranking metric override.
-
-        Returns:
-            Highest-ranking empirical choice evaluation.
-
-        Raises:
-            ProblemEvaluationError: If the problem has no empirical choice benchmark data.
-        """
-        ranked = self.rank_choices(metric=metric)
-        if not ranked:
-            raise ProblemEvaluationError("Decision problem does not define empirical choice benchmarks.")
-        return ranked[0]
 
     def render_brief(
         self,
@@ -1212,7 +1107,7 @@ class DecisionProblem(TextProblem):
         Returns:
             Markdown table sorted by the default choice metric.
         """
-        evaluations = self.rank_choices(metric=self.default_choice_metric)
+        evaluations = self._rank_choice_evaluations(metric=self.default_choice_metric)
         lines = [
             "| Choice | Key | Top Choice Share | Mean Rating | Median Rating | Std Rating |",
             "| --- | --- | ---: | ---: | ---: | ---: |",
@@ -1273,6 +1168,20 @@ class DecisionProblem(TextProblem):
             Markdown bullet list text.
         """
         return "\n".join(f"- {item}" for item in items)
+
+
+def load_decision_problem(manifest: ProblemManifest) -> Problem:
+    """Route one manifest to the appropriate concrete decision subtype."""
+    from design_research_problems.problems._decision_discrete import DiscreteOptionDecisionProblem
+    from design_research_problems.problems._decision_empirical import EmpiricalChoiceDecisionProblem
+
+    if "option_factors" in manifest.parameters:
+        return DiscreteOptionDecisionProblem.from_manifest(manifest)
+    if "choice_options" in manifest.parameters or "choice_benchmarks" in manifest.parameters:
+        return EmpiricalChoiceDecisionProblem.from_manifest(manifest)
+    raise ProblemEvaluationError(
+        f"Decision problem {manifest.metadata.problem_id!r} does not expose a supported executable structure."
+    )
 
 
 def _freeze_numeric_mapping(values: Mapping[str, float]) -> Mapping[str, float]:
