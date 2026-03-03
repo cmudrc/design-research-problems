@@ -435,10 +435,8 @@ def test_open_ended_battery_problem_state_and_actions_are_validated() -> None:
     state = problem.apply_action(state, RemoveCell(cell_id=parallel_cell.cell_id))
     assert len(state.cells) == 2
     assert all(
-        connection.from_terminal_id
-        not in {parallel_cell.negative_terminal_id, parallel_cell.positive_terminal_id}
-        and connection.to_terminal_id
-        not in {parallel_cell.negative_terminal_id, parallel_cell.positive_terminal_id}
+        connection.from_terminal_id not in {parallel_cell.negative_terminal_id, parallel_cell.positive_terminal_id}
+        and connection.to_terminal_id not in {parallel_cell.negative_terminal_id, parallel_cell.positive_terminal_id}
         for connection in state.connections
     )
 

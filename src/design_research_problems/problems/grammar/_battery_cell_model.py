@@ -83,9 +83,7 @@ def load_18650_cell_model() -> BatteryCellModel:
         transient_capacitance_fn = parameter_values.get("C1 [F]", None)
 
         for soc in soc_grid:
-            open_circuit_voltage_v.append(
-                _evaluate_parameter(parameter_values, open_circuit_fn(soc))
-            )
+            open_circuit_voltage_v.append(_evaluate_parameter(parameter_values, open_circuit_fn(soc)))
             series_resistance_ohm.append(
                 max(
                     1.0e-6,
@@ -130,9 +128,7 @@ def load_18650_cell_model() -> BatteryCellModel:
                 transient_capacitance_f.append(1.0)
 
         nominal_index = min(range(len(soc_grid)), key=lambda index: abs(soc_grid[index] - 0.5))
-        nominal_total_resistance = (
-            series_resistance_ohm[nominal_index] + transient_resistance_ohm[nominal_index]
-        )
+        nominal_total_resistance = series_resistance_ohm[nominal_index] + transient_resistance_ohm[nominal_index]
         resistance_normalization = (
             1.0
             if nominal_total_resistance <= 1.0e-12
@@ -141,17 +137,13 @@ def load_18650_cell_model() -> BatteryCellModel:
         capacitance_normalization = max(resistance_normalization, 1.0e-12)
 
         series_resistance_ohm = [
-            max(1.0e-6, resistance * resistance_normalization)
-            for resistance in series_resistance_ohm
+            max(1.0e-6, resistance * resistance_normalization) for resistance in series_resistance_ohm
         ]
         transient_resistance_ohm = [
-            max(0.0, resistance * resistance_normalization)
-            for resistance in transient_resistance_ohm
+            max(0.0, resistance * resistance_normalization) for resistance in transient_resistance_ohm
         ]
         transient_capacitance_f = [
-            max(1.0, capacitance / capacitance_normalization)
-            if transient_resistance_ohm[index] > 1.0e-12
-            else 1.0
+            max(1.0, capacitance / capacitance_normalization) if transient_resistance_ohm[index] > 1.0e-12 else 1.0
             for index, capacitance in enumerate(transient_capacitance_f)
         ]
 
@@ -238,8 +230,7 @@ def interpolate_cell_model(model: BatteryCellModel, soc: float) -> tuple[float, 
             lower_ocv + (ratio * (upper_ocv - lower_ocv)),
             lower_series_resistance + (ratio * (upper_series_resistance - lower_series_resistance)),
             lower_transient_resistance + (ratio * (upper_transient_resistance - lower_transient_resistance)),
-            lower_transient_capacitance
-            + (ratio * (upper_transient_capacitance - lower_transient_capacitance)),
+            lower_transient_capacitance + (ratio * (upper_transient_capacitance - lower_transient_capacitance)),
         )
 
     return (

@@ -201,9 +201,7 @@ def next_connection_id(connections: Iterable[BatteryConnection]) -> int:
 def terminal_ids(state: BatteryCircuitState) -> tuple[int, ...]:
     """Return all terminal identifiers in deterministic order."""
     ids = {
-        terminal_id
-        for cell in state.cells
-        for terminal_id in (cell.negative_terminal_id, cell.positive_terminal_id)
+        terminal_id for cell in state.cells for terminal_id in (cell.negative_terminal_id, cell.positive_terminal_id)
     }
     return tuple(sorted(ids))
 
@@ -443,9 +441,7 @@ def validate_battery_circuit_state(
         return "Cell identifiers must be unique."
 
     terminal_id_list = [
-        terminal_id
-        for cell in state.cells
-        for terminal_id in (cell.negative_terminal_id, cell.positive_terminal_id)
+        terminal_id for cell in state.cells for terminal_id in (cell.negative_terminal_id, cell.positive_terminal_id)
     ]
     if len(set(terminal_id_list)) != len(terminal_id_list):
         return "Terminal identifiers must be unique."
@@ -615,9 +611,7 @@ def simulate_battery_circuit(
             negative_node_id = dsu.find(cell.negative_terminal_id)
             terminal_voltage = node_voltage[positive_node_id] - node_voltage[negative_node_id]
             effective_open_circuit_voltage = open_circuit_voltage_v - rc_voltage_by_cell_id[cell.cell_id]
-            current_positive_to_negative = (
-                terminal_voltage - effective_open_circuit_voltage
-            ) / series_resistance_ohm
+            current_positive_to_negative = (terminal_voltage - effective_open_circuit_voltage) / series_resistance_ohm
             discharge_current = -current_positive_to_negative
             max_cell_current_a = max(max_cell_current_a, abs(discharge_current))
             min_cell_voltage_v = min(min_cell_voltage_v, terminal_voltage)
@@ -638,9 +632,9 @@ def simulate_battery_circuit(
             if transient_resistance_ohm > 1.0e-12 and transient_capacitance_f > 1.0e-12:
                 tau_seconds = transient_resistance_ohm * transient_capacitance_f
                 alpha = 0.0 if tau_seconds <= 1.0e-12 else exp(-1.0 / tau_seconds)
-                rc_voltage_by_cell_id[cell.cell_id] = (
-                    alpha * rc_voltage_by_cell_id[cell.cell_id]
-                ) + ((1.0 - alpha) * discharge_current * transient_resistance_ohm)
+                rc_voltage_by_cell_id[cell.cell_id] = (alpha * rc_voltage_by_cell_id[cell.cell_id]) + (
+                    (1.0 - alpha) * discharge_current * transient_resistance_ohm
+                )
             else:
                 rc_voltage_by_cell_id[cell.cell_id] = 0.0
             if next_soc <= 1.0e-9 and (step + 1) < target_steps:

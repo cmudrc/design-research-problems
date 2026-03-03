@@ -337,8 +337,7 @@ def test_orphan_cell_is_rejected_before_simulation() -> None:
     assert evaluation.cell_model_warning is None
     assert evaluation.is_feasible is False
     assert (
-        evaluation.failure_reason
-        == "Every cell must lie on at least one conductive path between the pack terminals."
+        evaluation.failure_reason == "Every cell must lie on at least one conductive path between the pack terminals."
     )
 
 
@@ -388,9 +387,7 @@ def test_load_18650_cell_model_raises_when_pybamm_extraction_fails(
 
     battery_cell_model.load_18650_cell_model.cache_clear()
     fake_module = SimpleNamespace(
-        equivalent_circuit=SimpleNamespace(
-            Thevenin=lambda **kwargs: (_ for _ in ()).throw(RuntimeError("boom"))
-        )
+        equivalent_circuit=SimpleNamespace(Thevenin=lambda **kwargs: (_ for _ in ()).throw(RuntimeError("boom")))
     )
     monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_module)
 

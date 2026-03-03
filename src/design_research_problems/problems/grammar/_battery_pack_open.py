@@ -98,9 +98,7 @@ def _coerce_state(state: object) -> BatteryCircuitState:
 def _connection_pair_key(from_terminal_id: int, to_terminal_id: int) -> tuple[int, int]:
     """Return a canonical unordered terminal-pair key."""
     return (
-        (from_terminal_id, to_terminal_id)
-        if from_terminal_id <= to_terminal_id
-        else (to_terminal_id, from_terminal_id)
+        (from_terminal_id, to_terminal_id) if from_terminal_id <= to_terminal_id else (to_terminal_id, from_terminal_id)
     )
 
 
@@ -268,27 +266,18 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase):
             if connect_positive_to_terminal_id is None and not action.use_positive_as_pack_terminal:
                 connect_positive_to_terminal_id = typed_state.pack_positive_terminal_id
 
-            if (
-                connect_negative_to_terminal_id is not None
-                and action.use_negative_as_pack_terminal
-            ) or (
-                connect_positive_to_terminal_id is not None
-                and action.use_positive_as_pack_terminal
+            if (connect_negative_to_terminal_id is not None and action.use_negative_as_pack_terminal) or (
+                connect_positive_to_terminal_id is not None and action.use_positive_as_pack_terminal
             ):
                 raise ValueError("Each AddCell lead can either connect to the circuit or become a pack terminal.")
 
-            if (
-                connect_negative_to_terminal_id is None
-                and connect_positive_to_terminal_id is None
-            ):
+            if connect_negative_to_terminal_id is None and connect_positive_to_terminal_id is None:
                 raise ValueError("AddCell must connect at least one new lead to the existing circuit.")
 
             if (
-                connect_negative_to_terminal_id is not None
-                and connect_negative_to_terminal_id not in terminal_id_set
+                connect_negative_to_terminal_id is not None and connect_negative_to_terminal_id not in terminal_id_set
             ) or (
-                connect_positive_to_terminal_id is not None
-                and connect_positive_to_terminal_id not in terminal_id_set
+                connect_positive_to_terminal_id is not None and connect_positive_to_terminal_id not in terminal_id_set
             ):
                 raise ValueError("AddCell must reference existing terminal ids.")
 
@@ -440,9 +429,7 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase):
 
         if isinstance(action, RemoveConnection):
             kept_connections = [
-                connection
-                for connection in connections
-                if connection.connection_id != action.connection_id
+                connection for connection in connections if connection.connection_id != action.connection_id
             ]
             if len(kept_connections) == len(connections):
                 raise ValueError(f"Unknown connection_id: {action.connection_id}")
