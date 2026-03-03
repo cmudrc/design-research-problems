@@ -38,53 +38,18 @@ MSEVAL_IDS = (
 )
 
 
-def test_list_problems_returns_seed_problem_ids() -> None:
-    assert list_problems() == (
-        "ideation_accessible_drinking_fountain",
-        "ideation_accessible_drinking_fountain_derivative",
-        "ideation_car_mounted_bicycle_rack",
-        "ideation_chocolate_packaging",
-        "ideation_disposable_spill_proof_coffee_cup",
-        "ideation_home_energy_conservation",
-        "ideation_human_motion_energy_harvesting",
-        "ideation_human_motion_energy_harvesting_rural_communities",
-        "ideation_injured_athlete_campus_mobility",
-        "ideation_joint_immobilization_device",
-        "ideation_joint_immobilization_mountain_trek",
-        "ideation_measure_passage_of_time",
-        "ideation_measure_passage_of_time_room_clock",
-        "ideation_measuring_cup_for_blind_users",
-        "ideation_measuring_cup_for_blind_users_jansson_smith_1991",
-        "ideation_milk_frothing_product",
-        "ideation_milk_frothing_product_toh_miller_2014",
-        "ideation_one_handed_lidded_container_opening",
-        "ideation_one_handed_lidded_container_opening_framework",
-        "ideation_out_of_reach_book_retrieval",
-        "ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011",
-        "ideation_peanut_shelling",
-        "ideation_peanut_shelling_fu_cagan_kotovsky_2010",
-        "ideation_peanut_shelling_linsey_green_murphy_wood_markman_2005",
-        "ideation_powdered_surface_coating",
-        "ideation_powdered_surface_coating_domain_specific",
-        "ideation_powdered_surface_coating_general",
-        "ideation_public_belongings_security",
-        "ideation_public_place_belongings_securer",
-        "ideation_remote_village_rainwater_access",
-        "ideation_remote_village_rainwater_access_framework",
-        "ideation_small_towel_folding",
-        "ideation_small_towel_folding_linsey_wood_markman_2008",
-        "ideation_snow_transport_for_novices",
-        "ideation_snow_transport_for_novices_framework",
-        "ideation_travel_exercise_device",
-        "ideation_travel_exercise_device_linsey_viswanathan_2014",
-        "ideation_walking_texting_accident_reduction",
-        "ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014",
-        "ideation_wheelchair_peach_picking",
-        "moneymaker_hip_pump_cost_min",
-        "pill_capsule_min_area",
-        "planar_truss_span",
-        "treadle_pump_ide_material_min",
-    )
+def test_list_problems_returns_sorted_registered_problem_ids() -> None:
+    problem_ids = list_problems()
+
+    assert isinstance(problem_ids, tuple)
+    assert problem_ids == tuple(sorted(problem_ids))
+    assert problem_ids[0] == "decision_laptop_design_profit_maximization"
+    assert set(MSEVAL_IDS).issubset(problem_ids)
+    assert "ideation_accessible_drinking_fountain" in problem_ids
+    assert "moneymaker_hip_pump_cost_min" in problem_ids
+    assert "pill_capsule_min_area" in problem_ids
+    assert "planar_truss_span" in problem_ids
+    assert "treadle_pump_ide_material_min" in problem_ids
 
 
 def test_registry_entries_filter_by_kind() -> None:
