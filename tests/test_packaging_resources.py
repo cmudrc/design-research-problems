@@ -93,6 +93,7 @@ def test_installed_wheel_loads_registry(tmp_path: Path) -> None:
     assert probe.returncode == 0, probe.stderr
     payload = json.loads(probe.stdout.strip())
     assert payload == [
+        "battery_pack_18650_open_ended",
         "battery_pack_18650_series_parallel",
         "ideation_accessible_drinking_fountain",
         "ideation_accessible_drinking_fountain_derivative",

@@ -1,0 +1,50 @@
+problem_id = "battery_pack_18650_open_ended"
+title = "18650 open-ended battery-pack graph grammar"
+summary = "An explicit-circuit grammar for adding 18650 cells one at a time, wiring arbitrary valid interconnects, and evaluating the resulting pack with a shared circuit backend."
+kind = "grammar"
+statement = '''
+# 18650 open-ended battery-pack graph grammar
+
+Design a battery pack using 18650 cells under an explicit electrical graph
+model. The grammar starts with a single cell and lets designers add one cell at
+a time already tied into the circuit, remove cells, move cells in space, add or
+remove interconnects between cell terminals, and choose the positive and
+negative pack terminals directly.
+
+The benchmark target is a `14.8V` pack with at least `10Ah` capacity and at
+least `60A` continuous current, under a `500mm x 500mm x 250mm` envelope. The
+evaluation path applies deterministic geometry and graph-validity checks first,
+then uses a shared library-owned equivalent-circuit simulation informed by a
+single-cell `pybamm` integration.
+'''
+implementation = "design_research_problems.problems.grammar._battery_pack_open:BatteryPack18650OpenEndedProblem"
+capabilities = [
+  "statement-markdown",
+  "serializable-state",
+  "discrete-actions",
+  "optional-evaluator",
+  "external-adapter",
+]
+study_suitability = []
+
+[parameters]
+target_voltage_v = 14.8
+minimum_capacity_ah = 10.0
+minimum_current_a = 60.0
+max_width_mm = 500.0
+max_depth_mm = 500.0
+max_height_mm = 250.0
+voltage_tolerance_v = 0.1
+max_cell_count = 16
+
+[taxonomy]
+formulation = "discrete_grammar"
+convexity = "not_applicable"
+design_variable_type = "discrete"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.05
+objective_mode = "multi"
+constraint_nature = "hard"
+bounds_summary = "explicit 3D cell coordinates inside a fixed envelope plus an explicit battery-circuit netlist capped at 16 cells"
+tags = ["grammar", "battery", "graph-netlist", "layout", "co-design"]

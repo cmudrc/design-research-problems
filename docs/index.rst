@@ -64,7 +64,8 @@ What Is In The Initial Catalog?
 
 - 40 ideation-focused text prompts.
 - ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
-- ``battery_pack_18650_series_parallel``: a constrained 18650 pack co-design grammar with optional ``pybamm`` evaluation.
+- ``battery_pack_18650_open_ended``: an explicit 18650 graph-netlist battery grammar with optional PyBaMM-shaped fixed-ambient single-cell surrogates and a library-owned pack solver.
+- ``battery_pack_18650_series_parallel``: a constrained 18650 pack co-design grammar backed by the same optional single-cell surrogate plus the shared pack solver.
 - ``planar_truss_span`` plus six ``planar_roof_truss_*`` entries: discrete truss grammars with a lazy ``trussme`` adapter.
 
 .. toctree::

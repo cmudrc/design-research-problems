@@ -69,10 +69,23 @@ def test_optimization_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
+def test_open_ended_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_pack_18650_open_ended.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "battery_pack_18650_open_ended" in completed.stdout
+    if "pybamm is required for battery grammar evaluation" in completed.stdout:
+        return
+    assert completed.stdout.splitlines()[-1].split()[1] == "True"
+
+
+@pytest.mark.examples_smoke
 def test_battery_grammar_example_runs() -> None:
     completed = _run_example("examples/grammar/battery_pack_18650_series_parallel.py")
     assert completed.returncode == 0, completed.stderr
     assert "battery_pack_18650_series_parallel" in completed.stdout
+    if "pybamm is required for battery grammar evaluation" in completed.stdout:
+        return
+    assert completed.stdout.splitlines()[-1].split()[0] == "True"
 
 
 @pytest.mark.trussme_real

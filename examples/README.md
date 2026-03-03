@@ -6,5 +6,6 @@
 - `catalog/ideation_exports.py`: preview JSON and CSV prompt-index exports.
 - `text/peanut_sheller_packet.py`: render the text prompt and citation packet.
 - `optimization/pill_problem.py`: sample and optionally solve the pill problem.
-- `grammar/battery_pack_18650_series_parallel.py`: build a 4S4P battery grammar state and evaluate it when `pybamm` is installed.
+- `grammar/battery_pack_18650_open_ended.py`: build a 4S4P-equivalent explicit battery graph and evaluate it when `pybamm` is installed.
+- `grammar/battery_pack_18650_series_parallel.py`: build the constrained rectangular 4S4P battery grammar state and evaluate it when `pybamm` is installed.
 - `grammar/planar_truss_span.py`: build a simple truss grammar state and evaluate it when `trussme` is installed.

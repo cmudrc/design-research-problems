@@ -4,25 +4,29 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from itertools import combinations
-from typing import cast
 
 from design_research_problems._catalog._manifest import ProblemManifest
-from design_research_problems.problems._grammar import GrammarProblem
-from design_research_problems.problems._metadata import ProblemMetadata
+from design_research_problems.problems.grammar._battery_circuit import (
+    BatteryCellInstance,
+    BatteryCircuitState,
+    BatteryConnection,
+    analyze_battery_topology,
+)
 from design_research_problems.problems.grammar._battery_core import (
     BatteryCellPlacement,
     BatteryMetricSummary,
-    BatteryRequirements,
     candidate_frontier_coordinates,
     compute_metric_summary,
     coordinate_is_in_bounds,
-    grid_index_limits,
-    import_pybamm,
     next_cell_id,
     occupied_coordinates,
-    simulate_series_parallel_pack,
     sort_cell_placements,
     validate_rectangular_topology,
+)
+from design_research_problems.problems.grammar._battery_layout import DEFAULT_INTERCONNECT_RESISTANCE_OHM
+from design_research_problems.problems.grammar._battery_problem_base import (
+    BatteryCircuitProblemBase,
+    parse_battery_requirements,
 )
 
 
@@ -113,74 +117,31 @@ class SeriesParallelBatteryEvaluation:
     analytic_current_limit: float
     """Coarse analytic current limit in amps."""
     pybamm_ran: bool
-    """Whether the PyBaMM adapter executed."""
+    """Legacy flag tracking whether the post-validation cell-model path executed."""
     pybamm_pack_end_voltage: float | None
-    """Pack end voltage inferred from PyBaMM, when available."""
+    """Pack end voltage inferred from the shared solver, when available."""
     pybamm_delivered_capacity_ah: float | None
-    """Delivered pack capacity inferred from PyBaMM, when available."""
+    """Delivered pack capacity inferred from the shared solver, when available."""
     pybamm_feasible: bool
-    """Whether the PyBaMM adapter accepted the state."""
+    """Whether the shared circuit backend accepted the state."""
     is_feasible: bool
-    """Overall feasibility after deterministic and PyBaMM checks."""
+    """Overall feasibility after deterministic and simulated checks."""
     failure_reason: str | None = None
     """Human-readable infeasibility reason, when present."""
-
-
-def _coerce_int(value: object, default: int) -> int:
-    """Return an integer manifest value with a fallback default.
-
-    Args:
-        value: Raw manifest parameter value.
-        default: Fallback integer value.
-
-    Returns:
-        Parsed integer value.
-    """
-    if value is None:
-        return default
-    return int(cast(int, value))
-
-
-def _coerce_float(value: object, default: float) -> float:
-    """Return a float manifest value with a fallback default.
-
-    Args:
-        value: Raw manifest parameter value.
-        default: Fallback float value.
-
-    Returns:
-        Parsed float value.
-    """
-    if value is None:
-        return default
-    return float(cast(float, value))
+    cell_model_source: str | None = None
+    """Exact source of the effective single-cell surrogate when the path ran."""
+    cell_model_warning: str | None = None
+    """Non-fatal warning reported while building the effective surrogate."""
 
 
 def _sort_coordinate_key(coordinate: tuple[int, int, int]) -> tuple[int, int, int]:
-    """Return the deterministic enumeration key for one coordinate.
-
-    Args:
-        coordinate: Grid coordinate to sort.
-
-    Returns:
-        Deterministic sort key.
-    """
+    """Return the deterministic enumeration key for one coordinate."""
     x_value, y_value, z_value = coordinate
     return (z_value, y_value, x_value)
 
 
 def _coerce_state(state: object) -> SeriesParallelBatteryState:
-    """Validate and return the typed battery state.
-
-    Args:
-        state: Candidate grammar state.
-
-    Returns:
-        Typed battery state.
-
-    Raises:
-        TypeError: If ``state`` is not a battery state.
-    """
+    """Validate and return the typed battery state."""
     if not isinstance(state, SeriesParallelBatteryState):
         raise TypeError("Expected a SeriesParallelBatteryState.")
     return state
@@ -196,22 +157,10 @@ def _evaluation_from_summary(
     pybamm_feasible: bool,
     is_feasible: bool,
     failure_reason: str | None,
+    cell_model_source: str | None = None,
+    cell_model_warning: str | None = None,
 ) -> SeriesParallelBatteryEvaluation:
-    """Build one structured evaluation object from computed metrics.
-
-    Args:
-        state: Battery pack state that was evaluated.
-        summary: Deterministic metric summary for the state.
-        pybamm_ran: Whether the PyBaMM adapter ran.
-        pybamm_pack_end_voltage: Inferred pack end voltage from PyBaMM.
-        pybamm_delivered_capacity_ah: Inferred delivered capacity from PyBaMM.
-        pybamm_feasible: Whether the PyBaMM adapter accepted the state.
-        is_feasible: Overall feasibility flag.
-        failure_reason: Optional infeasibility reason.
-
-    Returns:
-        Structured evaluation result.
-    """
+    """Build one structured evaluation object from computed metrics."""
     return SeriesParallelBatteryEvaluation(
         series_count=state.series_count,
         parallel_count=state.parallel_count,
@@ -234,35 +183,61 @@ def _evaluation_from_summary(
         pybamm_feasible=pybamm_feasible,
         is_feasible=is_feasible,
         failure_reason=failure_reason,
+        cell_model_source=cell_model_source,
+        cell_model_warning=cell_model_warning,
     )
 
 
-class BatteryPack18650SeriesParallelProblem(GrammarProblem):
-    """Co-design grammar for a constrained 18650 series-parallel battery pack."""
-
-    def __init__(
-        self,
-        metadata: ProblemMetadata,
-        statement_markdown: str = "",
-        requirements: BatteryRequirements | None = None,
-    ) -> None:
-        """Store the fixed benchmark requirements.
-
-        Args:
-            metadata: Shared packaged metadata.
-            statement_markdown: Human-readable problem statement.
-            requirements: Optional benchmark requirements override.
-        """
-        super().__init__(metadata=metadata, statement_markdown=statement_markdown)
-        self.requirements = requirements or BatteryRequirements(
-            target_voltage_v=14.8,
-            minimum_capacity_ah=10.0,
-            minimum_current_a=60.0,
-            max_width_mm=500.0,
-            max_depth_mm=500.0,
-            max_height_mm=250.0,
-            voltage_tolerance_v=0.1,
+def _build_circuit_state_from_series_parallel(state: SeriesParallelBatteryState) -> BatteryCircuitState:
+    """Translate the rectangular SxP state into the shared explicit-circuit representation."""
+    ordered_cells = sorted(state.cells, key=lambda cell: (cell.stage_index, cell.branch_index, cell.cell_id))
+    circuit_cells: list[BatteryCellInstance] = []
+    bus_members: list[list[int]] = [[] for _ in range(state.series_count + 1)]
+    next_terminal_id_value = 0
+    for cell in ordered_cells:
+        negative_terminal_id = next_terminal_id_value
+        positive_terminal_id = next_terminal_id_value + 1
+        next_terminal_id_value += 2
+        circuit_cells.append(
+            BatteryCellInstance(
+                cell_id=cell.cell_id,
+                positive_terminal_id=positive_terminal_id,
+                negative_terminal_id=negative_terminal_id,
+                x=cell.x,
+                y=cell.y,
+                z=cell.z,
+            )
         )
+        bus_members[cell.stage_index].append(negative_terminal_id)
+        bus_members[cell.stage_index + 1].append(positive_terminal_id)
+
+    connections: list[BatteryConnection] = []
+    next_connection_id_value = 0
+    for members in bus_members:
+        if not members:
+            continue
+        anchor = members[0]
+        for member in members[1:]:
+            connections.append(
+                BatteryConnection(
+                    connection_id=next_connection_id_value,
+                    from_terminal_id=anchor,
+                    to_terminal_id=member,
+                    resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                )
+            )
+            next_connection_id_value += 1
+
+    return BatteryCircuitState(
+        cells=tuple(circuit_cells),
+        connections=tuple(connections),
+        pack_positive_terminal_id=bus_members[-1][0],
+        pack_negative_terminal_id=bus_members[0][0],
+    )
+
+
+class BatteryPack18650SeriesParallelProblem(BatteryCircuitProblemBase):
+    """Co-design grammar for a constrained 18650 series-parallel battery pack."""
 
     @classmethod
     def from_manifest(
@@ -270,36 +245,15 @@ class BatteryPack18650SeriesParallelProblem(GrammarProblem):
         manifest: ProblemManifest,
         statement_markdown: str,
     ) -> BatteryPack18650SeriesParallelProblem:
-        """Build the benchmark from packaged manifest parameters.
-
-        Args:
-            manifest: Parsed packaged manifest.
-            statement_markdown: Human-readable problem statement.
-
-        Returns:
-            Initialized battery grammar problem.
-        """
-        requirements = BatteryRequirements(
-            target_voltage_v=_coerce_float(manifest.parameters.get("target_voltage_v"), 14.8),
-            minimum_capacity_ah=_coerce_float(manifest.parameters.get("minimum_capacity_ah"), 10.0),
-            minimum_current_a=_coerce_float(manifest.parameters.get("minimum_current_a"), 60.0),
-            max_width_mm=_coerce_float(manifest.parameters.get("max_width_mm"), 500.0),
-            max_depth_mm=_coerce_float(manifest.parameters.get("max_depth_mm"), 500.0),
-            max_height_mm=_coerce_float(manifest.parameters.get("max_height_mm"), 250.0),
-            voltage_tolerance_v=_coerce_float(manifest.parameters.get("voltage_tolerance_v"), 0.1),
-        )
+        """Build the benchmark from packaged manifest parameters."""
         return cls(
             metadata=manifest.metadata,
             statement_markdown=statement_markdown,
-            requirements=requirements,
+            requirements=parse_battery_requirements(manifest),
         )
 
     def initial_state(self) -> SeriesParallelBatteryState:
-        """Return a minimal valid 1S1P state.
-
-        Returns:
-            Canonical starting battery state.
-        """
+        """Return a minimal valid 1S1P state."""
         return SeriesParallelBatteryState(
             series_count=1,
             parallel_count=1,
@@ -316,14 +270,7 @@ class BatteryPack18650SeriesParallelProblem(GrammarProblem):
         )
 
     def enumerate_actions(self, state: object) -> tuple[object, ...]:
-        """Return deterministic move and group-edit actions.
-
-        Args:
-            state: Current grammar state.
-
-        Returns:
-            Available actions in deterministic order.
-        """
+        """Return deterministic move and group-edit actions."""
         typed_state = _coerce_state(state)
         actions: list[object] = []
         frontier = candidate_frontier_coordinates(typed_state, self.requirements)
@@ -364,19 +311,7 @@ class BatteryPack18650SeriesParallelProblem(GrammarProblem):
         return tuple(actions)
 
     def apply_action(self, state: object, action: object) -> SeriesParallelBatteryState:
-        """Apply one move or group-edit action and return the new state.
-
-        Args:
-            state: Current grammar state.
-            action: One action returned by :meth:`enumerate_actions`.
-
-        Returns:
-            Updated grammar state.
-
-        Raises:
-            TypeError: If the state or action type is unsupported.
-            ValueError: If the action violates topology or placement rules.
-        """
+        """Apply one move or group-edit action and return the new state."""
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         occupied = occupied_coordinates(typed_state.cells)
@@ -484,15 +419,7 @@ class BatteryPack18650SeriesParallelProblem(GrammarProblem):
         state: SeriesParallelBatteryState,
         placements: tuple[tuple[int, int, int], ...],
     ) -> None:
-        """Validate coordinates used by one grouped add action.
-
-        Args:
-            state: Current grammar state.
-            placements: Candidate coordinates for a grouped add.
-
-        Raises:
-            ValueError: If any placement is duplicated, out of bounds, or occupied.
-        """
+        """Validate coordinates used by one grouped add action."""
         if len(set(placements)) != len(placements):
             raise ValueError("Grouped placement coordinates must be unique.")
         occupied = occupied_coordinates(state.cells)
@@ -503,14 +430,7 @@ class BatteryPack18650SeriesParallelProblem(GrammarProblem):
                 raise ValueError("Grouped placement collides with an occupied coordinate.")
 
     def evaluate(self, state: object) -> SeriesParallelBatteryEvaluation:
-        """Evaluate one battery-pack state using deterministic checks and PyBaMM.
-
-        Args:
-            state: Grammar state to evaluate.
-
-        Returns:
-            Structured battery evaluation result.
-        """
+        """Evaluate one battery-pack state using deterministic checks and the shared circuit backend."""
         typed_state = _coerce_state(state)
         summary = compute_metric_summary(typed_state, self.requirements)
         topology_failure = validate_rectangular_topology(typed_state)
@@ -634,40 +554,46 @@ class BatteryPack18650SeriesParallelProblem(GrammarProblem):
                 failure_reason="Analytic current limit is below the required continuous current.",
             )
 
-        pybamm_module = import_pybamm()
-        pack_end_voltage, delivered_capacity_ah, pybamm_feasible = simulate_series_parallel_pack(
-            pybamm_module=pybamm_module,
-            requirements=self.requirements,
-            series_count=typed_state.series_count,
-            parallel_count=typed_state.parallel_count,
-        )
-        if not pybamm_feasible:
+        circuit_state = _build_circuit_state_from_series_parallel(typed_state)
+        translated_topology = analyze_battery_topology(circuit_state)
+        if (
+            translated_topology.topology_kind != "series_parallel"
+            or translated_topology.series_count != typed_state.series_count
+            or translated_topology.parallel_count != typed_state.parallel_count
+        ):
             return _evaluation_from_summary(
                 typed_state,
                 summary,
-                pybamm_ran=True,
-                pybamm_pack_end_voltage=pack_end_voltage,
-                pybamm_delivered_capacity_ah=delivered_capacity_ah,
+                pybamm_ran=False,
+                pybamm_pack_end_voltage=None,
+                pybamm_delivered_capacity_ah=None,
                 pybamm_feasible=False,
                 is_feasible=False,
-                failure_reason="PyBaMM did not confirm the required discharge performance.",
+                failure_reason="Internal series-parallel translation did not preserve the rectangular topology.",
             )
 
+        circuit_evaluation = self.evaluate_circuit_state(circuit_state)
         return _evaluation_from_summary(
             typed_state,
             summary,
-            pybamm_ran=True,
-            pybamm_pack_end_voltage=pack_end_voltage,
-            pybamm_delivered_capacity_ah=delivered_capacity_ah,
-            pybamm_feasible=True,
-            is_feasible=True,
-            failure_reason=None,
+            pybamm_ran=circuit_evaluation.pybamm_ran,
+            pybamm_pack_end_voltage=circuit_evaluation.pack_terminal_voltage_end,
+            pybamm_delivered_capacity_ah=circuit_evaluation.delivered_capacity_ah,
+            pybamm_feasible=circuit_evaluation.is_feasible,
+            is_feasible=circuit_evaluation.is_feasible,
+            failure_reason=circuit_evaluation.failure_reason,
+            cell_model_source=circuit_evaluation.cell_model_source,
+            cell_model_warning=circuit_evaluation.cell_model_warning,
         )
 
-    def legal_grid_shape(self) -> tuple[int, int, int]:
-        """Return the maximum legal grid indices for this packaged benchmark.
 
-        Returns:
-            Maximum legal ``(x, y, z)`` grid indices.
-        """
-        return grid_index_limits(self.requirements)
+__all__ = [
+    "AddParallelBranch",
+    "AddSeriesStage",
+    "BatteryPack18650SeriesParallelProblem",
+    "MoveCell",
+    "RemoveParallelBranch",
+    "RemoveSeriesStage",
+    "SeriesParallelBatteryEvaluation",
+    "SeriesParallelBatteryState",
+]

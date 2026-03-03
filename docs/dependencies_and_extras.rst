@@ -22,7 +22,11 @@ SciPy-backed solving is optional:
 Battery evaluation support
 --------------------------
 
-PyBaMM-backed battery grammar evaluation is optional:
+Battery grammar evaluation is optional and installs ``pybamm>=25.12,<26``.
+The package uses PyBaMM only to extract a fixed-ambient, SOC-indexed single-cell
+surrogate; the library still performs the pack-level circuit simulation. There
+is no packaged fallback for battery evaluation when a supported PyBaMM install is
+not available:
 
 .. code-block:: bash
 

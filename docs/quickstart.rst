@@ -32,8 +32,8 @@ adapter:
    actions = truss_problem.enumerate_actions(state)
    print(len(actions))
 
-The battery grammar exposes explicit cell placements and group-wise series or
-parallel edits:
+The constrained battery grammar exposes explicit cell placements and group-wise
+series or parallel edits:
 
 .. code-block:: python
 
@@ -41,3 +41,13 @@ parallel edits:
    battery_state = battery_problem.initial_state()
    battery_actions = battery_problem.enumerate_actions(battery_state)
    print(battery_state.series_count, battery_state.parallel_count, len(battery_actions))
+
+The open-ended battery grammar starts from a single cell and exposes explicit
+netlist edits:
+
+.. code-block:: python
+
+   open_battery_problem = get_problem("battery_pack_18650_open_ended")
+   open_battery_state = open_battery_problem.initial_state()
+   open_battery_actions = open_battery_problem.enumerate_actions(open_battery_state)
+   print(len(open_battery_state.cells), len(open_battery_state.connections), len(open_battery_actions))
