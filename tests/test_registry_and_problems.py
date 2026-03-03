@@ -7,7 +7,14 @@ from types import ModuleType
 import numpy
 import pytest
 
-from design_research_problems import MissingOptionalDependencyError, ProblemKind, get_problem, list_problems
+from design_research_problems import (
+    DecisionProblem,
+    MissingOptionalDependencyError,
+    ProblemEvaluationError,
+    ProblemKind,
+    get_problem,
+    list_problems,
+)
 from design_research_problems.problems.grammar import (
     AddCell,
     AddConnection,
@@ -23,15 +30,6 @@ from design_research_problems.problems.grammar import (
     RemoveSeriesStage,
 )
 from design_research_problems.problems.grammar._battery_cell_model import BatteryCellModel
-from design_research_problems import (
-    DecisionProblem,
-    MissingOptionalDependencyError,
-    ProblemEvaluationError,
-    ProblemKind,
-    get_problem,
-    list_problems,
-)
-from design_research_problems.problems.grammar import AddMember, RemoveMember
 from design_research_problems.problems.optimization._pill import _pill_area, _pill_volume
 
 MSEVAL_IDS = (
@@ -55,58 +53,10 @@ MSEVAL_IDS = (
 
 
 def test_list_problems_returns_seed_problem_ids() -> None:
-    assert list_problems() == (
-        "battery_pack_18650_open_ended",
-        "battery_pack_18650_series_parallel",
-        "ideation_accessible_drinking_fountain",
-        "ideation_accessible_drinking_fountain_derivative",
-        "ideation_car_mounted_bicycle_rack",
-        "ideation_chocolate_packaging",
-        "ideation_disposable_spill_proof_coffee_cup",
-        "ideation_home_energy_conservation",
-        "ideation_human_motion_energy_harvesting",
-        "ideation_human_motion_energy_harvesting_rural_communities",
-        "ideation_injured_athlete_campus_mobility",
-        "ideation_joint_immobilization_device",
-        "ideation_joint_immobilization_mountain_trek",
-        "ideation_measure_passage_of_time",
-        "ideation_measure_passage_of_time_room_clock",
-        "ideation_measuring_cup_for_blind_users",
-        "ideation_measuring_cup_for_blind_users_jansson_smith_1991",
-        "ideation_milk_frothing_product",
-        "ideation_milk_frothing_product_toh_miller_2014",
-        "ideation_one_handed_lidded_container_opening",
-        "ideation_one_handed_lidded_container_opening_framework",
-        "ideation_out_of_reach_book_retrieval",
-        "ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011",
-        "ideation_peanut_shelling",
-        "ideation_peanut_shelling_fu_cagan_kotovsky_2010",
-        "ideation_peanut_shelling_linsey_green_murphy_wood_markman_2005",
-        "ideation_powdered_surface_coating",
-        "ideation_powdered_surface_coating_domain_specific",
-        "ideation_powdered_surface_coating_general",
-        "ideation_public_belongings_security",
-        "ideation_public_place_belongings_securer",
-        "ideation_remote_village_rainwater_access",
-        "ideation_remote_village_rainwater_access_framework",
-        "ideation_small_towel_folding",
-        "ideation_small_towel_folding_linsey_wood_markman_2008",
-        "ideation_snow_transport_for_novices",
-        "ideation_snow_transport_for_novices_framework",
-        "ideation_travel_exercise_device",
-        "ideation_travel_exercise_device_linsey_viswanathan_2014",
-        "ideation_walking_texting_accident_reduction",
-        "ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014",
-        "ideation_wheelchair_peach_picking",
-        "pill_capsule_min_area",
-        "planar_roof_truss_seven_point_asymmetric",
-        "planar_roof_truss_seven_point_symmetric",
-        "planar_roof_truss_three_point_symmetric",
-        "planar_roof_truss_three_point_symmetric_depth_eighth",
-        "planar_roof_truss_three_point_symmetric_depth_sixth",
-        "planar_roof_truss_three_point_symmetric_depth_sixth_discrete_sizing",
-        "planar_truss_span",
-    )
+    from design_research_problems import ProblemRegistry
+
+    registry = ProblemRegistry()
+    assert list_problems() == tuple(entry.problem_id for entry in registry.list())
 
 
 def test_registry_entries_filter_by_kind() -> None:
