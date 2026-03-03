@@ -1096,10 +1096,7 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
 
     def _format_option_label(self, option: DecisionOption) -> str:
         """Render one option in factor order as a stable label."""
-        parts = [
-            f"{factor.key}={_format_number(option.values[factor.key])}"
-            for factor in self.option_factors
-        ]
+        parts = [f"{factor.key}={_format_number(option.values[factor.key])}" for factor in self.option_factors]
         return ", ".join(parts)
 
     def _factor_part_worth(self, factor: DecisionFactor, value: float) -> float:

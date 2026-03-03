@@ -13,29 +13,22 @@ _LAZY_EXPORTS = {
     "BatteryCircuitState": "design_research_problems.problems.grammar._battery_circuit:BatteryCircuitState",
     "BatteryConnection": "design_research_problems.problems.grammar._battery_circuit:BatteryConnection",
     "BatteryPack18650OpenEndedProblem": (
-        "design_research_problems.problems.grammar._battery_pack_open:"
-        "BatteryPack18650OpenEndedProblem"
+        "design_research_problems.problems.grammar._battery_pack_open:BatteryPack18650OpenEndedProblem"
     ),
     "BatteryPack18650SeriesParallelProblem": (
-        "design_research_problems.problems.grammar._battery_pack_sp:"
-        "BatteryPack18650SeriesParallelProblem"
+        "design_research_problems.problems.grammar._battery_pack_sp:BatteryPack18650SeriesParallelProblem"
     ),
     "PlanarJoint": "design_research_problems.problems.grammar._planar_truss:PlanarJoint",
     "PlanarLoad": "design_research_problems.problems.grammar._planar_truss:PlanarLoad",
     "PlanarMember": "design_research_problems.problems.grammar._planar_truss:PlanarMember",
-    "PlanarTrussEvaluation": (
-        "design_research_problems.problems.grammar._planar_truss:"
-        "PlanarTrussEvaluation"
-    ),
+    "PlanarTrussEvaluation": ("design_research_problems.problems.grammar._planar_truss:PlanarTrussEvaluation"),
     "PlanarTrussSpanProblem": "design_research_problems.problems.grammar._planar_truss:PlanarTrussSpanProblem",
     "PlanarTrussState": "design_research_problems.problems.grammar._planar_truss:PlanarTrussState",
     "SeriesParallelBatteryEvaluation": (
-        "design_research_problems.problems.grammar._battery_pack_sp:"
-        "SeriesParallelBatteryEvaluation"
+        "design_research_problems.problems.grammar._battery_pack_sp:SeriesParallelBatteryEvaluation"
     ),
     "SeriesParallelBatteryState": (
-        "design_research_problems.problems.grammar._battery_pack_sp:"
-        "SeriesParallelBatteryState"
+        "design_research_problems.problems.grammar._battery_pack_sp:SeriesParallelBatteryState"
     ),
 }
 

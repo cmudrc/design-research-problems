@@ -7,17 +7,12 @@ from typing import TYPE_CHECKING
 
 _LAZY_EXPORTS = {
     "BatteryGridSizingProblem": (
-        "design_research_problems.problems.optimization._battery_grid:"
-        "BatteryGridSizingProblem"
+        "design_research_problems.problems.optimization._battery_grid:BatteryGridSizingProblem"
     ),
     "IDETreadlePumpMaterialMin": (
-        "design_research_problems.problems.optimization._ide_treadle:"
-        "IDETreadlePumpMaterialMin"
+        "design_research_problems.problems.optimization._ide_treadle:IDETreadlePumpMaterialMin"
     ),
-    "MoneyMakerHipPumpProblem": (
-        "design_research_problems.problems.optimization._moneymaker:"
-        "MoneyMakerHipPumpProblem"
-    ),
+    "MoneyMakerHipPumpProblem": ("design_research_problems.problems.optimization._moneymaker:MoneyMakerHipPumpProblem"),
     "PillCapsuleMinArea": "design_research_problems.problems.optimization._pill:PillCapsuleMinArea",
 }
 

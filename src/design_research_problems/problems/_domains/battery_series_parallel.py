@@ -98,9 +98,7 @@ def build_canonical_series_parallel_state(
     cells = tuple(
         BatteryCellPlacement(
             cell_id=(
-                stage_index
-                if branch_index == 0
-                else series_count + ((branch_index - 1) * series_count) + stage_index
+                stage_index if branch_index == 0 else series_count + ((branch_index - 1) * series_count) + stage_index
             ),
             stage_index=stage_index,
             branch_index=branch_index,
