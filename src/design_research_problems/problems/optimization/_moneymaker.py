@@ -73,6 +73,10 @@ _PUBLISHED_TALL_TANK_BASELINES = (
     ("published_same_flow_min_cost_tall_tank", _SAME_FLOW_MIN_COST_TALL_TANK_VECTOR),
     ("published_max_flow_same_cost_tall_tank", _MAX_FLOW_SAME_COST_TALL_TANK_VECTOR),
 )
+_LOW_COST_FEASIBLE_REDUCED_START = numpy.array(
+    [0.014, 0.0438215085, 0.646578083, 17.9968385, 0.646578083, 0.014, 0.235349066],
+    dtype=float,
+)
 _REDUCED_SOLVER_INDICES = (0, 1, 2, 3, 4, 5, 8)
 _REDUCED_SOLVER_DERIVED_INDICES = (6, 7, 9)
 
@@ -411,8 +415,15 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         total_nfev = 0
 
         for start in restarts:
-            if self._reconstruct_solution(start) is None:
+            start_candidate = self._reconstruct_solution(start)
+            if start_candidate is None:
                 continue
+            start_violation = self.max_constraint_violation(start_candidate)
+            start_cost = self.objective(start_candidate)
+            start_score = start_cost + 1e6 * start_violation**2 + 1e3 * start_violation
+            if start_score < best_score:
+                best_score = start_score
+                best_vector = start_candidate
             raw_result = minimize(
                 self._solver_objective,
                 x0=start,
@@ -541,6 +552,7 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
             ValueError: If ``initial_solution`` has the wrong shape.
         """
         starts: list[NDArray[numpy.float64]] = []
+        starts.append(_LOW_COST_FEASIBLE_REDUCED_START.copy())
         if initial_solution is not None:
             candidate = numpy.array(initial_solution, dtype=float, copy=True)
             if candidate.shape != (10,):
