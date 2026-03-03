@@ -374,9 +374,7 @@ def analyze_battery_topology(state: BatteryCircuitState) -> BatteryTopologyAnaly
     parallel_count: int | None = None
     for index, node in enumerate(ordered_nodes):
         previous_node = ordered_nodes[index - 1] if index > 0 else None
-        next_ordered_node: int | None = (
-            ordered_nodes[index + 1] if index < len(ordered_nodes) - 1 else None
-        )
+        next_ordered_node: int | None = ordered_nodes[index + 1] if index < len(ordered_nodes) - 1 else None
         incoming_nodes = incoming.get(node, set())
         outgoing_nodes = outgoing.get(node, set())
         if previous_node is None:
