@@ -14,7 +14,7 @@ Highlights
 
 - A packaged catalog of reusable design research prompts and benchmark problems.
 - Three problem families: text, optimization, and grammar, plus a linked ideation metadata catalog.
-- Lazy optional integrations for SciPy and ``trussme`` so the base install stays light.
+- Optional extras such as ``trussme`` stay out of the base install.
 - Problem-level feature flags plus family-level aggregated feature flags for capability discovery.
 - Typed metadata and a deliberately small public API.
 - Runnable examples and generated docs that stay in sync with the codebase.
@@ -43,7 +43,7 @@ Problem Families
    Prompt packets, citations, and optional assets for human-subjects studies.
 
 ``Optimization``
-   Structured numerical problems with bounds, constraints, and optional SciPy solving.
+   Structured numerical problems with bounds, constraints, and representative built-in baselines.
 
 ``Grammar``
    Discrete state-and-action problems for constructive design exploration.
@@ -55,7 +55,7 @@ Choose the path that matches what you want to do next:
 
 - Read :doc:`quickstart` to load the catalog and inspect each problem family.
 - Read :doc:`problems/index` to understand the three problem types.
-- Read :doc:`dependencies_and_extras` before enabling SciPy or ``trussme`` support.
+- Read :doc:`dependencies_and_extras` before enabling optional extras such as ``trussme``.
 - Read :doc:`examples/index` for runnable scripts you can execute immediately.
 - Read :doc:`api` if you want the public surface contract first.
 
@@ -63,7 +63,9 @@ What Is In The Initial Catalog?
 -------------------------------
 
 - 40 ideation-focused text prompts.
+- ``moneymaker_hip_pump_cost_min``: a citation-backed scalarized pump optimization benchmark.
 - ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
+- ``treadle_pump_ide_material_min``: a citation-backed scalarized treadle-pump optimization benchmark.
 - ``planar_truss_span``: a discrete planar truss topology grammar with a lazy ``trussme`` adapter.
 
 .. toctree::

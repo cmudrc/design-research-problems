@@ -52,10 +52,10 @@ jobs:
         include:
           - os: ubuntu-latest
             repro-python: "3.12.12"
-            repro-extras: "dev opt"
+            repro-extras: "dev"
           - os: macos-latest
             repro-python: "3.12"
-            repro-extras: "dev opt"
+            repro-extras: "dev"
     steps:
       - name: Checkout
         uses: actions/checkout@v4

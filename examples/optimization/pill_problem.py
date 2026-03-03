@@ -1,20 +1,17 @@
-"""Sample and optionally solve the pill optimization problem."""
+"""Inspect a feasible seeded start and solve the pill optimization problem."""
 
 from __future__ import annotations
 
-from design_research_problems import MissingOptionalDependencyError, get_problem
+from design_research_problems import get_problem
 
 
 def main() -> None:
-    """Sample the pill problem and solve it when SciPy is available."""
+    """Print a seeded start vector and the SciPy SLSQP baseline solution."""
     problem = get_problem("pill_capsule_min_area")
-    x, y = problem.generate_data(n=5, seed=7)
-    print(x.shape, y.shape)
-    try:
-        result = problem.solve(seed=3)
-    except MissingOptionalDependencyError as exc:
-        print(exc)
-        return
+    initial = problem.generate_initial_solution(seed=7)
+    print(initial.shape)
+    result = problem.solve(seed=3)
+    print(result.message)
     print(bool(result.success), round(float(result.fun), 8))
 
 

@@ -17,8 +17,7 @@ capabilities = [
   "statement-markdown",
   "bounded-variables",
   "equality-constraint",
-  "seeded-data-generation",
-  "optional-solver",
+  "baseline-solver",
 ]
 study_suitability = []
 

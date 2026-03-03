@@ -14,7 +14,7 @@ discrete grammar-style problems behind a small, typed Python API.
 The initial release centers on three problem families plus a linked ideation metadata catalog:
 
 - Text problems for human-subjects studies and prompt packets
-- Optimization problems with typed bounds and lazy SciPy-backed solving
+- Optimization problems with typed bounds and representative built-in baselines
 - Grammar problems that describe discrete design actions and optional evaluation adapters
 - An ideation catalog with prompt records, variants, families, and study summaries
 
@@ -22,6 +22,8 @@ The first catalog includes:
 
 - 40 ideation-focused text prompts
 - `pill_capsule_min_area` for constrained continuous optimization
+- `moneymaker_hip_pump_cost_min` for a citation-backed scalarized pump benchmark
+- `treadle_pump_ide_material_min` for a citation-backed scalarized treadle-pump benchmark
 - `planar_truss_span` for a discrete topology grammar backed by `trussme`
 
 ## Quickstart
@@ -33,17 +35,13 @@ Install from PyPI with:
 pip install design-research-problems
 ```
 
-Install the optional optimization solver support with:
-
-```bash
-pip install "design-research-problems[opt]"
-```
-
 Install the optional `trussme` grammar support with:
 
 ```bash
 pip install "design-research-problems[grammar]"
 ```
+
+The representative optimization baselines are included in the base install.
 
 Then inspect the catalog directly from the installed package:
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import zipfile
@@ -21,6 +22,8 @@ RESOURCE_FILES = tuple(
 
 
 def _build_wheel(tmp_path: Path) -> Path:
+    shutil.rmtree(REPO_ROOT / "build", ignore_errors=True)
+
     probe = subprocess.run(
         [sys.executable, "-m", "pip", "--version"],
         cwd=REPO_ROOT,
