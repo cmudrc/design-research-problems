@@ -146,7 +146,7 @@ def compute_analytic_current_limit(
     max_thermal = layout.surface_area * 1e-6 * 10000.0
     max_thermal_per_cell = max_thermal / float(layout.cell_count)
     sqrt_arg = max_thermal_per_cell / CELL_SPEC_18650.internal_resistance_ohm
-    max_current_per_cell = max(0.0, sqrt_arg) ** 0.5
+    max_current_per_cell: float = float(max(0.0, sqrt_arg) ** 0.5)
     return max_current_per_cell * float(parallel_count)
 
 

@@ -237,7 +237,7 @@ def _build_connection_sets(state: BatteryCircuitState) -> tuple[_DisjointSet, di
     """Return wire-equivalence classes and adjacency from explicit connections."""
     ids = terminal_ids(state)
     dsu = _DisjointSet(ids)
-    adjacency = {terminal_id: set() for terminal_id in ids}
+    adjacency: dict[int, set[int]] = {terminal_id: set() for terminal_id in ids}
     for connection in state.connections:
         adjacency[connection.from_terminal_id].add(connection.to_terminal_id)
         adjacency[connection.to_terminal_id].add(connection.from_terminal_id)
@@ -268,7 +268,7 @@ def _full_graph_adjacency(
     skip_cell_id: int | None = None,
 ) -> dict[int, set[int]]:
     """Return undirected terminal adjacency including cells and interconnects."""
-    adjacency = {terminal_id: set() for terminal_id in terminal_ids(state)}
+    adjacency: dict[int, set[int]] = {terminal_id: set() for terminal_id in terminal_ids(state)}
     for connection in state.connections:
         adjacency[connection.from_terminal_id].add(connection.to_terminal_id)
         adjacency[connection.to_terminal_id].add(connection.from_terminal_id)
@@ -374,7 +374,9 @@ def analyze_battery_topology(state: BatteryCircuitState) -> BatteryTopologyAnaly
     parallel_count: int | None = None
     for index, node in enumerate(ordered_nodes):
         previous_node = ordered_nodes[index - 1] if index > 0 else None
-        next_node = ordered_nodes[index + 1] if index < len(ordered_nodes) - 1 else None
+        next_ordered_node: int | None = (
+            ordered_nodes[index + 1] if index < len(ordered_nodes) - 1 else None
+        )
         incoming_nodes = incoming.get(node, set())
         outgoing_nodes = outgoing.get(node, set())
         if previous_node is None:
@@ -392,7 +394,7 @@ def analyze_battery_topology(state: BatteryCircuitState) -> BatteryTopologyAnaly
                 parallel_count=None,
                 minimum_series_cells=minimum_series_cells,
             )
-        if next_node is None:
+        if next_ordered_node is None:
             if outgoing_nodes:
                 return BatteryTopologyAnalysis(
                     topology_kind="general",
@@ -400,16 +402,16 @@ def analyze_battery_topology(state: BatteryCircuitState) -> BatteryTopologyAnaly
                     parallel_count=None,
                     minimum_series_cells=minimum_series_cells,
                 )
-        elif outgoing_nodes != {next_node}:
+        elif outgoing_nodes != {next_ordered_node}:
             return BatteryTopologyAnalysis(
                 topology_kind="general",
                 series_count=None,
                 parallel_count=None,
                 minimum_series_cells=minimum_series_cells,
             )
-        if next_node is None:
+        if next_ordered_node is None:
             continue
-        layer_count = counts[(node, next_node)]
+        layer_count = counts[(node, next_ordered_node)]
         if parallel_count is None:
             parallel_count = layer_count
         elif parallel_count != layer_count:
