@@ -31,6 +31,7 @@ _SUPPORTED_CHOICE_METRICS = frozenset(
     }
 )
 
+
 @dataclass(frozen=True)
 class DecisionVariableSpec:
     """One bounded engineering-side design variable."""
