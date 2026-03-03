@@ -10,6 +10,7 @@ EXPECTED_PUBLIC_API = [
     "Citation",
     "ProblemAsset",
     "TextProblem",
+    "DecisionProblem",
     "OptimizationProblem",
     "GrammarProblem",
     "ProblemRegistry",

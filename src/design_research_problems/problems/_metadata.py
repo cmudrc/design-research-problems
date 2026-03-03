@@ -10,6 +10,7 @@ class ProblemKind(StrEnum):
     """Supported high-level problem families."""
 
     TEXT = "text"
+    DECISION = "decision"
     OPTIMIZATION = "optimization"
     GRAMMAR = "grammar"
 

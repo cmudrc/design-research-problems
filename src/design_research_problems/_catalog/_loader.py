@@ -58,6 +58,8 @@ def _parse_problem_kind(raw_kind: str) -> ProblemKind:
     normalized = raw_kind.strip().lower()
     if normalized == "text":
         return ProblemKind.TEXT
+    if normalized == "decision":
+        return ProblemKind.DECISION
     if normalized == "optimization":
         return ProblemKind.OPTIMIZATION
     if normalized == "grammar":
