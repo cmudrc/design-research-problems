@@ -23,6 +23,7 @@ The first catalog includes:
 - 40 ideation-focused text prompts
 - `pill_capsule_min_area` for constrained continuous optimization
 - `planar_truss_span` for the original seed planar truss grammar backed by `trussme`
+- `battery_pack_18650_series_parallel` for explicit 18650 series-parallel pack co-design backed by optional `pybamm`
 - six `planar_roof_truss_*` variants that approximate the roof-truss formulations reported by Shea and Cagan
 
 ## Quickstart
@@ -38,6 +39,12 @@ Install the optional optimization solver support with:
 
 ```bash
 pip install "design-research-problems[opt]"
+```
+
+Install the optional battery evaluation support with:
+
+```bash
+pip install "design-research-problems[battery]"
 ```
 
 Install the optional `trussme` grammar support with:

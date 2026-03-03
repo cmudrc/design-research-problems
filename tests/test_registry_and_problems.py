@@ -7,12 +7,22 @@ import numpy
 import pytest
 
 from design_research_problems import MissingOptionalDependencyError, ProblemKind, get_problem, list_problems
-from design_research_problems.problems.grammar import AddJointPair, AddMember, RemoveMember
+from design_research_problems.problems.grammar import (
+    AddJointPair,
+    AddMember,
+    AddParallelBranch,
+    AddSeriesStage,
+    MoveCell,
+    RemoveMember,
+    RemoveParallelBranch,
+    RemoveSeriesStage,
+)
 from design_research_problems.problems.optimization._pill import _pill_area, _pill_volume
 
 
 def test_list_problems_returns_seed_problem_ids() -> None:
     assert list_problems() == (
+        "battery_pack_18650_series_parallel",
         "ideation_accessible_drinking_fountain",
         "ideation_accessible_drinking_fountain_derivative",
         "ideation_car_mounted_bicycle_rack",
@@ -201,6 +211,106 @@ def test_registry_search_filters_by_feature_flags() -> None:
 def test_pill_helpers_return_expected_positive_values() -> None:
     assert _pill_volume(0.1, 0.2) > 0.0
     assert _pill_area(0.1, 0.2) > 0.0
+
+
+def _build_feasible_battery_state() -> object:
+    problem = get_problem("battery_pack_18650_series_parallel")
+    state = problem.initial_state()
+    state = problem.apply_action(state, AddSeriesStage(placements=((1, 0, 0),)))
+    state = problem.apply_action(state, AddSeriesStage(placements=((2, 0, 0),)))
+    state = problem.apply_action(state, AddSeriesStage(placements=((3, 0, 0),)))
+    state = problem.apply_action(state, AddParallelBranch(placements=((0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0))))
+    state = problem.apply_action(state, AddParallelBranch(placements=((0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0))))
+    state = problem.apply_action(state, AddParallelBranch(placements=((0, 3, 0), (1, 3, 0), (2, 3, 0), (3, 3, 0))))
+    return state
+
+
+def test_battery_problem_state_and_actions_are_validated() -> None:
+    problem = get_problem("battery_pack_18650_series_parallel")
+    state = problem.initial_state()
+    assert state.series_count == 1
+    assert state.parallel_count == 1
+    assert len(state.cells) == 1
+
+    state = problem.apply_action(state, MoveCell(cell_id=0, x=1, y=0, z=0))
+    assert state.cells[0].x == 1
+
+    state = problem.apply_action(state, AddSeriesStage(placements=((0, 0, 0),)))
+    assert state.series_count == 2
+    assert len(state.cells) == 2
+
+    with pytest.raises(ValueError):
+        problem.apply_action(state, MoveCell(cell_id=0, x=0, y=0, z=0))
+
+    state = problem.apply_action(state, AddParallelBranch(placements=((0, 1, 0), (1, 1, 0))))
+    assert state.parallel_count == 2
+    assert len(state.cells) == 4
+
+    with pytest.raises(ValueError):
+        problem.apply_action(state, AddSeriesStage(placements=((2, 0, 0),)))
+
+    state = problem.apply_action(state, RemoveParallelBranch())
+    assert state.parallel_count == 1
+    assert len(state.cells) == 2
+
+    state = problem.apply_action(state, RemoveSeriesStage())
+    assert state.series_count == 1
+    assert len(state.cells) == 1
+
+    with pytest.raises(ValueError):
+        problem.apply_action(problem.initial_state(), RemoveSeriesStage())
+
+
+def test_battery_problem_precheck_skips_pybamm(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems.grammar import _battery_pack_sp as battery_pack_sp
+
+    def _unexpected_import() -> object:
+        raise AssertionError("PyBaMM should not be imported when deterministic prechecks fail.")
+
+    monkeypatch.setattr(battery_pack_sp, "import_pybamm", _unexpected_import)
+
+    problem = get_problem("battery_pack_18650_series_parallel")
+    evaluation = problem.evaluate(problem.initial_state())
+    assert evaluation.is_feasible is False
+    assert evaluation.pybamm_ran is False
+    assert evaluation.failure_reason == "Pack voltage does not match the required target voltage."
+
+
+def test_battery_problem_reports_missing_dependency(monkeypatch: pytest.MonkeyPatch) -> None:
+    problem = get_problem("battery_pack_18650_series_parallel")
+    state = _build_feasible_battery_state()
+    monkeypatch.setitem(sys.modules, "pybamm", None)
+    with pytest.raises(MissingOptionalDependencyError):
+        problem.evaluate(state)
+
+
+def test_battery_problem_evaluate_uses_fake_adapter(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems.grammar import _battery_pack_sp as battery_pack_sp
+
+    monkeypatch.setattr(battery_pack_sp, "import_pybamm", lambda: object())
+    monkeypatch.setattr(
+        battery_pack_sp,
+        "simulate_series_parallel_pack",
+        lambda pybamm_module, requirements, series_count, parallel_count: (14.8, 10.1, True),
+    )
+
+    problem = get_problem("battery_pack_18650_series_parallel")
+    evaluation = problem.evaluate(_build_feasible_battery_state())
+    assert evaluation.pybamm_ran is True
+    assert evaluation.pybamm_feasible is True
+    assert evaluation.is_feasible is True
+    assert evaluation.cell_count == 16
+
+
+@pytest.mark.pybamm_real
+def test_battery_problem_evaluates_when_pybamm_is_installed() -> None:
+    problem = get_problem("battery_pack_18650_series_parallel")
+    try:
+        evaluation = problem.evaluate(_build_feasible_battery_state())
+    except MissingOptionalDependencyError:
+        pytest.skip("pybamm is not installed in this environment.")
+    assert evaluation.pybamm_ran is True
+    assert evaluation.pybamm_pack_end_voltage is not None
 
 
 def test_pill_problem_is_deterministic() -> None:

@@ -1,5 +1,16 @@
 """Grammar problem implementations."""
 
+from ._battery_core import BatteryCellPlacement
+from ._battery_pack_sp import (
+    AddParallelBranch,
+    AddSeriesStage,
+    BatteryPack18650SeriesParallelProblem,
+    MoveCell,
+    RemoveParallelBranch,
+    RemoveSeriesStage,
+    SeriesParallelBatteryEvaluation,
+    SeriesParallelBatteryState,
+)
 from ._planar_truss import (
     AddJoint,
     AddJointPair,
@@ -17,6 +28,11 @@ __all__ = [
     "AddJoint",
     "AddJointPair",
     "AddMember",
+    "AddParallelBranch",
+    "AddSeriesStage",
+    "BatteryCellPlacement",
+    "BatteryPack18650SeriesParallelProblem",
+    "MoveCell",
     "PlanarJoint",
     "PlanarLoad",
     "PlanarMember",
@@ -24,4 +40,8 @@ __all__ = [
     "PlanarTrussSpanProblem",
     "PlanarTrussState",
     "RemoveMember",
+    "RemoveParallelBranch",
+    "RemoveSeriesStage",
+    "SeriesParallelBatteryEvaluation",
+    "SeriesParallelBatteryState",
 ]

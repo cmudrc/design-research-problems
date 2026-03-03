@@ -68,6 +68,13 @@ def test_optimization_example_runs() -> None:
     assert "(5, 2) (5, 1)" in completed.stdout
 
 
+@pytest.mark.examples_smoke
+def test_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_pack_18650_series_parallel.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "battery_pack_18650_series_parallel" in completed.stdout
+
+
 @pytest.mark.trussme_real
 def test_grammar_example_runs_when_trussme_is_installed() -> None:
     completed = _run_example("examples/grammar/planar_truss_span.py")

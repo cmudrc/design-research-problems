@@ -31,3 +31,13 @@ adapter:
    state = truss_problem.initial_state()
    actions = truss_problem.enumerate_actions(state)
    print(len(actions))
+
+The battery grammar exposes explicit cell placements and group-wise series or
+parallel edits:
+
+.. code-block:: python
+
+   battery_problem = get_problem("battery_pack_18650_series_parallel")
+   battery_state = battery_problem.initial_state()
+   battery_actions = battery_problem.enumerate_actions(battery_state)
+   print(battery_state.series_count, battery_state.parallel_count, len(battery_actions))

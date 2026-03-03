@@ -14,7 +14,7 @@ Highlights
 
 - A packaged catalog of reusable design research prompts and benchmark problems.
 - Three problem families: text, optimization, and grammar, plus a linked ideation metadata catalog.
-- Lazy optional integrations for SciPy and ``trussme`` so the base install stays light.
+- Lazy optional integrations for SciPy, ``trussme``, and ``pybamm`` so the base install stays light.
 - Problem-level feature flags plus family-level aggregated feature flags for capability discovery.
 - Typed metadata and a deliberately small public API.
 - Runnable examples and generated docs that stay in sync with the codebase.
@@ -55,7 +55,7 @@ Choose the path that matches what you want to do next:
 
 - Read :doc:`quickstart` to load the catalog and inspect each problem family.
 - Read :doc:`problems/index` to understand the three problem types.
-- Read :doc:`dependencies_and_extras` before enabling SciPy or ``trussme`` support.
+- Read :doc:`dependencies_and_extras` before enabling SciPy, ``trussme``, or ``pybamm`` support.
 - Read :doc:`examples/index` for runnable scripts you can execute immediately.
 - Read :doc:`api` if you want the public surface contract first.
 
@@ -64,6 +64,7 @@ What Is In The Initial Catalog?
 
 - 40 ideation-focused text prompts.
 - ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
+- ``battery_pack_18650_series_parallel``: a constrained 18650 pack co-design grammar with optional ``pybamm`` evaluation.
 - ``planar_truss_span`` plus six ``planar_roof_truss_*`` entries: discrete truss grammars with a lazy ``trussme`` adapter.
 
 .. toctree::

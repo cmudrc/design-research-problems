@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import zipfile
@@ -19,6 +20,7 @@ RESOURCE_FILES = tuple(
 
 
 def _build_wheel(tmp_path: Path) -> Path:
+    shutil.rmtree(REPO_ROOT / "build", ignore_errors=True)
     probe = subprocess.run(
         [sys.executable, "-m", "pip", "--version"],
         cwd=REPO_ROOT,
@@ -91,6 +93,7 @@ def test_installed_wheel_loads_registry(tmp_path: Path) -> None:
     assert probe.returncode == 0, probe.stderr
     payload = json.loads(probe.stdout.strip())
     assert payload == [
+        "battery_pack_18650_series_parallel",
         "ideation_accessible_drinking_fountain",
         "ideation_accessible_drinking_fountain_derivative",
         "ideation_car_mounted_bicycle_rack",

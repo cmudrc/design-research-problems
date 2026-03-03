@@ -19,6 +19,15 @@ SciPy-backed solving is optional:
 
    pip install design-research-problems[opt]
 
+Battery evaluation support
+--------------------------
+
+PyBaMM-backed battery grammar evaluation is optional:
+
+.. code-block:: bash
+
+   pip install design-research-problems[battery]
+
 Grammar support
 ---------------
 
@@ -35,3 +44,9 @@ installs the same dependency:
 .. code-block:: bash
 
    make install-trussme
+
+For the battery evaluator:
+
+.. code-block:: bash
+
+   make install-pybamm
