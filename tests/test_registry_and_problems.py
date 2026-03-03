@@ -220,6 +220,21 @@ def test_pill_problem_seeded_initial_solution_stays_within_bounds() -> None:
     assert _pill_volume(float(initial[0]), float(initial[1])) == pytest.approx(problem.required_volume)
 
 
+def test_pill_problem_clamps_infeasible_seeded_initial_solution_to_bounds() -> None:
+    baseline_problem = get_problem("pill_capsule_min_area")
+    problem = type(baseline_problem)(
+        metadata=baseline_problem.metadata,
+        statement_markdown="",
+        required_volume=_pill_volume(1.0, 1.0) + 1.0,
+    )
+    initial = problem.generate_initial_solution(seed=3)
+
+    assert numpy.all(initial >= problem.bounds.lb)
+    assert numpy.all(initial <= problem.bounds.ub)
+    assert float(initial[0]) == pytest.approx(float(problem.bounds.ub[0]))
+    assert float(initial[1]) == pytest.approx(float(problem.bounds.ub[1]))
+
+
 def test_pill_problem_solve_returns_feasible_manifold_solution() -> None:
     problem = get_problem("pill_capsule_min_area")
     initial = problem.generate_initial_solution(seed=1)

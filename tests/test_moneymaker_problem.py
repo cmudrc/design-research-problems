@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy
+import pytest
 
 from design_research_problems import get_problem
 
@@ -50,3 +51,10 @@ def test_moneymaker_problem_binds_inlet_run_to_configured_horizontal_run() -> No
     assert problem.decode_design(baseline).x11 >= 0.0
     assert float(seeded[3]) <= problem.horizontal_run_m
     assert problem.decode_design(seeded).x11 >= 0.0
+
+
+def test_moneymaker_problem_rejects_negative_horizontal_run() -> None:
+    baseline_problem = get_problem("moneymaker_hip_pump_cost_min")
+
+    with pytest.raises(ValueError, match="horizontal_run_m must be nonnegative"):
+        type(baseline_problem)(metadata=baseline_problem.metadata, statement_markdown="", horizontal_run_m=-1.0)

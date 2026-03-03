@@ -183,8 +183,13 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
             target_tank_height_m: Fixed delivery head in meters.
             well_depth_m: Fixed well depth in meters.
             horizontal_run_m: Fixed horizontal distance between well and tank.
+
+        Raises:
+            ValueError: If ``horizontal_run_m`` is negative.
         """
         super().__init__(metadata=metadata, statement_markdown=statement_markdown)
+        if horizontal_run_m < 0.0:
+            raise ValueError("horizontal_run_m must be nonnegative.")
         self.target_flow_rate_lps = target_flow_rate_lps
         self.target_flow_rate_m3_per_s = target_flow_rate_lps / 1000.0
         self.target_tank_height_m = target_tank_height_m

@@ -129,7 +129,8 @@ class PillCapsuleMinArea(OptimizationProblem):
             rng = numpy.random.default_rng(seed)
             radius = float(rng.uniform(radius_lower, radius_upper))
         length = _pill_length_for_volume(self.required_volume, radius)
-        return numpy.array([radius, max(length, 0.0)], dtype=float)
+        bounded_length = float(numpy.clip(length, self.bounds.lb[1], self.bounds.ub[1]))
+        return numpy.array([radius, bounded_length], dtype=float)
 
     def objective(self, variables: NDArray[numpy.float64]) -> float:
         """Return the pill area.
