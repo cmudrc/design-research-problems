@@ -37,6 +37,8 @@ Issues = "https://github.com/cmudrc/design-research-problems/issues"
 
 [project.optional-dependencies]
 grammar = ["trussme>=0.1.0"]
+battery = ["pybamm>=25.12,<26"]
+opt = ["scipy>=1.11,<2"]
 pandas = ["pandas>=2.2,<3"]
 dev = [
   "build>=1.2,<2",
@@ -78,6 +80,7 @@ testpaths = ["tests"]
 markers = [
   "examples_full: deterministic example execution suite",
   "examples_smoke: lightweight example smoke checks",
+  "pybamm_real: tests that require an installed pybamm package",
   "trussme_real: tests that require an installed trussme package",
 ]
 
@@ -117,6 +120,8 @@ strict_equality = true
 
 [[tool.mypy.overrides]]
 module = [
+  "pybamm",
+  "pybamm.*",
   "scipy",
   "scipy.*",
   "trussme",

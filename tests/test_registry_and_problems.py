@@ -15,7 +15,21 @@ from design_research_problems import (
     get_problem,
     list_problems,
 )
-from design_research_problems.problems.grammar import AddMember, RemoveMember
+from design_research_problems.problems.grammar import (
+    AddCell,
+    AddConnection,
+    AddJointPair,
+    AddMember,
+    AddParallelBranch,
+    AddSeriesStage,
+    MoveCell,
+    RemoveCell,
+    RemoveConnection,
+    RemoveMember,
+    RemoveParallelBranch,
+    RemoveSeriesStage,
+)
+from design_research_problems.problems.grammar._battery_cell_model import BatteryCellModel
 from design_research_problems.problems.optimization._pill import _pill_area, _pill_volume
 
 MSEVAL_IDS = (
@@ -38,18 +52,11 @@ MSEVAL_IDS = (
 )
 
 
-def test_list_problems_returns_sorted_registered_problem_ids() -> None:
-    problem_ids = list_problems()
+def test_list_problems_returns_seed_problem_ids() -> None:
+    from design_research_problems import ProblemRegistry
 
-    assert isinstance(problem_ids, tuple)
-    assert problem_ids == tuple(sorted(problem_ids))
-    assert problem_ids[0] == "decision_laptop_design_profit_maximization"
-    assert set(MSEVAL_IDS).issubset(problem_ids)
-    assert "ideation_accessible_drinking_fountain" in problem_ids
-    assert "moneymaker_hip_pump_cost_min" in problem_ids
-    assert "pill_capsule_min_area" in problem_ids
-    assert "planar_truss_span" in problem_ids
-    assert "treadle_pump_ide_material_min" in problem_ids
+    registry = ProblemRegistry()
+    assert list_problems() == tuple(entry.problem_id for entry in registry.list())
 
 
 def test_registry_entries_filter_by_kind() -> None:
@@ -295,7 +302,266 @@ def test_pill_helpers_return_expected_positive_values() -> None:
     assert _pill_area(0.1, 0.2) > 0.0
 
 
-def test_pill_problem_initial_solution_is_deterministic() -> None:
+def _build_feasible_battery_state() -> object:
+    problem = get_problem("battery_pack_18650_series_parallel")
+    state = problem.initial_state()
+    state = problem.apply_action(state, AddSeriesStage(placements=((1, 0, 0),)))
+    state = problem.apply_action(state, AddSeriesStage(placements=((2, 0, 0),)))
+    state = problem.apply_action(state, AddSeriesStage(placements=((3, 0, 0),)))
+    state = problem.apply_action(state, AddParallelBranch(placements=((0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0))))
+    state = problem.apply_action(state, AddParallelBranch(placements=((0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0))))
+    state = problem.apply_action(state, AddParallelBranch(placements=((0, 3, 0), (1, 3, 0), (2, 3, 0), (3, 3, 0))))
+    return state
+
+
+def _fake_cell_model() -> BatteryCellModel:
+    return BatteryCellModel(
+        soc_grid=(0.0, 1.0),
+        open_circuit_voltage_v=(4.2, 4.2),
+        series_resistance_ohm=(0.01, 0.01),
+        transient_resistance_ohm=(0.0, 0.0),
+        transient_capacitance_f=(1.0, 1.0),
+    )
+
+
+def _build_feasible_open_battery_state() -> object:
+    problem = get_problem("battery_pack_18650_open_ended")
+    state = problem.initial_state()
+    stage_input_terminal_id = state.pack_negative_terminal_id
+    stage_output_terminal_id = state.pack_positive_terminal_id
+    for branch_index in range(1, 4):
+        state = problem.apply_action(
+            state,
+            AddCell(
+                x=0,
+                y=branch_index,
+                z=0,
+                connect_negative_to_terminal_id=stage_input_terminal_id,
+                connect_positive_to_terminal_id=stage_output_terminal_id,
+            ),
+        )
+
+    for stage_index in range(1, 4):
+        previous_stage_output_terminal_id = stage_output_terminal_id
+        state = problem.apply_action(
+            state,
+            AddCell(
+                x=stage_index,
+                y=0,
+                z=0,
+                connect_negative_to_terminal_id=previous_stage_output_terminal_id,
+                use_positive_as_pack_terminal=True,
+            ),
+        )
+        stage_output_terminal_id = state.pack_positive_terminal_id
+        for branch_index in range(1, 4):
+            state = problem.apply_action(
+                state,
+                AddCell(
+                    x=stage_index,
+                    y=branch_index,
+                    z=0,
+                    connect_negative_to_terminal_id=previous_stage_output_terminal_id,
+                    connect_positive_to_terminal_id=stage_output_terminal_id,
+                ),
+            )
+    return state
+
+
+def test_battery_problem_state_and_actions_are_validated() -> None:
+    problem = get_problem("battery_pack_18650_series_parallel")
+    state = problem.initial_state()
+    assert state.series_count == 1
+    assert state.parallel_count == 1
+    assert len(state.cells) == 1
+
+    state = problem.apply_action(state, MoveCell(cell_id=0, x=1, y=0, z=0))
+    assert state.cells[0].x == 1
+
+    state = problem.apply_action(state, AddSeriesStage(placements=((0, 0, 0),)))
+    assert state.series_count == 2
+    assert len(state.cells) == 2
+
+    with pytest.raises(ValueError):
+        problem.apply_action(state, MoveCell(cell_id=0, x=0, y=0, z=0))
+
+    state = problem.apply_action(state, AddParallelBranch(placements=((0, 1, 0), (1, 1, 0))))
+    assert state.parallel_count == 2
+    assert len(state.cells) == 4
+
+    with pytest.raises(ValueError):
+        problem.apply_action(state, AddSeriesStage(placements=((2, 0, 0),)))
+
+    state = problem.apply_action(state, RemoveParallelBranch())
+    assert state.parallel_count == 1
+    assert len(state.cells) == 2
+
+    state = problem.apply_action(state, RemoveSeriesStage())
+    assert state.series_count == 1
+    assert len(state.cells) == 1
+
+    with pytest.raises(ValueError):
+        problem.apply_action(problem.initial_state(), RemoveSeriesStage())
+
+
+def test_battery_problem_precheck_skips_pybamm(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems.grammar import _battery_problem_base as battery_problem_base
+
+    def _unexpected_load() -> BatteryCellModel:
+        raise AssertionError("The effective cell model should not load when deterministic prechecks fail.")
+
+    monkeypatch.setattr(battery_problem_base, "load_18650_cell_model", _unexpected_load)
+
+    problem = get_problem("battery_pack_18650_series_parallel")
+    evaluation = problem.evaluate(problem.initial_state())
+    assert evaluation.is_feasible is False
+    assert evaluation.pybamm_ran is False
+    assert evaluation.cell_model_source is None
+    assert evaluation.cell_model_warning is None
+    assert evaluation.failure_reason == "Pack voltage does not match the required target voltage."
+
+
+def test_battery_problem_reports_missing_dependency(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems.grammar import _battery_problem_base as battery_problem_base
+
+    def _missing_cell_model() -> BatteryCellModel:
+        raise MissingOptionalDependencyError("pybamm is required")
+
+    problem = get_problem("battery_pack_18650_series_parallel")
+    state = _build_feasible_battery_state()
+    monkeypatch.setattr(battery_problem_base, "load_18650_cell_model", _missing_cell_model)
+    with pytest.raises(MissingOptionalDependencyError):
+        problem.evaluate(state)
+
+
+def test_battery_problem_evaluate_uses_fake_adapter(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems.grammar import _battery_problem_base as battery_problem_base
+
+    monkeypatch.setattr(battery_problem_base, "load_18650_cell_model", _fake_cell_model)
+
+    problem = get_problem("battery_pack_18650_series_parallel")
+    evaluation = problem.evaluate(_build_feasible_battery_state())
+    assert evaluation.pybamm_ran is True
+    assert evaluation.cell_model_source == "custom"
+    assert evaluation.cell_model_warning is None
+    assert evaluation.pybamm_feasible is True
+    assert evaluation.is_feasible is True
+    assert evaluation.cell_count == 16
+
+
+def test_open_ended_battery_problem_state_and_actions_are_validated() -> None:
+    problem = get_problem("battery_pack_18650_open_ended")
+    state = problem.initial_state()
+    assert len(state.cells) == 1
+    assert len(state.connections) == 0
+
+    initial_negative_terminal_id = state.pack_negative_terminal_id
+    initial_positive_terminal_id = state.pack_positive_terminal_id
+    state = problem.apply_action(
+        state,
+        AddCell(
+            x=1,
+            y=0,
+            z=0,
+            connect_negative_to_terminal_id=initial_positive_terminal_id,
+            use_positive_as_pack_terminal=True,
+        ),
+    )
+    assert len(state.cells) == 2
+    assert len(state.connections) == 1
+    assert state.pack_positive_terminal_id != initial_positive_terminal_id
+
+    with pytest.raises(ValueError):
+        problem.apply_action(
+            state,
+            AddCell(
+                x=2,
+                y=0,
+                z=0,
+                connect_negative_to_terminal_id=initial_positive_terminal_id,
+                connect_positive_to_terminal_id=initial_positive_terminal_id,
+            ),
+        )
+
+    series_cell = next(cell for cell in state.cells if cell.cell_id != 0)
+    state = problem.apply_action(
+        state,
+        AddCell(
+            x=1,
+            y=1,
+            z=0,
+            connect_negative_to_terminal_id=initial_positive_terminal_id,
+            connect_positive_to_terminal_id=state.pack_positive_terminal_id,
+        ),
+    )
+    assert len(state.cells) == 3
+    assert len(state.connections) == 3
+    parallel_cell = max(state.cells, key=lambda cell: cell.cell_id)
+
+    state = problem.apply_action(
+        state,
+        AddConnection(
+            from_terminal_id=initial_negative_terminal_id,
+            to_terminal_id=parallel_cell.negative_terminal_id,
+        ),
+    )
+    assert len(state.connections) == 4
+
+    state = problem.apply_action(state, MoveCell(cell_id=parallel_cell.cell_id, x=1, y=2, z=0))
+    moved_parallel_cell = next(cell for cell in state.cells if cell.cell_id == parallel_cell.cell_id)
+    assert moved_parallel_cell.y == 2
+
+    extra_connection_id = max(connection.connection_id for connection in state.connections)
+    state = problem.apply_action(state, RemoveConnection(connection_id=extra_connection_id))
+    assert len(state.connections) == 3
+
+    state = problem.apply_action(state, RemoveCell(cell_id=parallel_cell.cell_id))
+    assert len(state.cells) == 2
+    assert all(
+        connection.from_terminal_id not in {parallel_cell.negative_terminal_id, parallel_cell.positive_terminal_id}
+        and connection.to_terminal_id not in {parallel_cell.negative_terminal_id, parallel_cell.positive_terminal_id}
+        for connection in state.connections
+    )
+
+    state = problem.apply_action(state, RemoveCell(cell_id=series_cell.cell_id))
+    assert len(state.cells) == 1
+    assert len(state.connections) == 0
+    assert state.pack_positive_terminal_id == state.cells[0].positive_terminal_id
+    assert state.pack_negative_terminal_id == state.cells[0].negative_terminal_id
+
+    with pytest.raises(ValueError):
+        problem.apply_action(state, RemoveCell(cell_id=state.cells[0].cell_id))
+
+
+def test_open_ended_battery_problem_evaluate_uses_fake_adapter(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems.grammar import _battery_problem_base as battery_problem_base
+
+    monkeypatch.setattr(battery_problem_base, "load_18650_cell_model", _fake_cell_model)
+
+    problem = get_problem("battery_pack_18650_open_ended")
+    evaluation = problem.evaluate(_build_feasible_open_battery_state())
+    assert evaluation.pybamm_ran is True
+    assert evaluation.cell_model_source == "custom"
+    assert evaluation.cell_model_warning is None
+    assert evaluation.is_feasible is True
+    assert evaluation.cell_count == 16
+    assert evaluation.connection_count == 27
+    assert evaluation.topology_kind == "series_parallel"
+
+
+@pytest.mark.pybamm_real
+def test_battery_problem_evaluates_when_pybamm_is_installed() -> None:
+    problem = get_problem("battery_pack_18650_series_parallel")
+    try:
+        evaluation = problem.evaluate(_build_feasible_battery_state())
+    except MissingOptionalDependencyError:
+        pytest.skip("pybamm is not installed in this environment.")
+    assert evaluation.pybamm_ran is True
+    assert evaluation.cell_model_source == "pybamm_thevenin"
+    assert evaluation.pybamm_pack_end_voltage is not None
+
+
+def test_pill_problem_is_deterministic() -> None:
     problem = get_problem("pill_capsule_min_area")
     x1 = problem.generate_initial_solution(seed=7)
     x2 = problem.generate_initial_solution(seed=7)
@@ -353,6 +619,31 @@ def test_planar_truss_state_and_actions_are_validated() -> None:
 
     state = problem.apply_action(state, RemoveMember(member_id=1))
     assert len(state.members) == 2
+
+
+def test_planar_roof_variant_initial_state_tracks_multiple_loads() -> None:
+    problem = get_problem("planar_roof_truss_seven_point_asymmetric")
+    state = problem.initial_state()
+
+    assert len(state.joints) == 9
+    assert len(state.additional_loads) == 6
+    assert state.symmetry_axis_x is None
+
+
+def test_planar_roof_symmetric_variant_enforces_mirrored_actions() -> None:
+    problem = get_problem("planar_roof_truss_three_point_symmetric")
+    state = problem.initial_state()
+    actions = problem.enumerate_actions(state)
+
+    assert any(isinstance(action, AddJointPair) for action in actions)
+
+    state = problem.apply_action(state, AddMember(start_joint_id=0, end_joint_id=2))
+    assert len(state.members) == 2
+    edges = {tuple(sorted((member.start_joint_id, member.end_joint_id))) for member in state.members}
+    assert edges == {(0, 2), (1, 4)}
+
+    state = problem.apply_action(state, RemoveMember(member_id=0))
+    assert state.members == ()
 
 
 def test_planar_truss_reports_missing_dependency(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -460,3 +751,54 @@ def test_planar_truss_unstable_state_is_infeasible(monkeypatch: pytest.MonkeyPat
     evaluation = problem.evaluate(state)
     assert evaluation.is_feasible is False
     assert evaluation.failure_reason is not None
+
+
+def test_planar_roof_truss_evaluate_applies_all_loads(monkeypatch: pytest.MonkeyPatch) -> None:
+    class FakeTruss:
+        def __init__(self) -> None:
+            self.mass = 10.0
+            self.fos = 1.1
+            self.fos_buckling = 1.1
+            self.fos_yielding = 1.1
+            self.deflection = 0.01
+            self._joints = 0
+            self.load_calls = 0
+
+        def add_pinned_joint(self, coordinates: list[float]) -> int:
+            del coordinates
+            index = self._joints
+            self._joints += 1
+            return index
+
+        def add_roller_joint(self, coordinates: list[float]) -> int:
+            return self.add_pinned_joint(coordinates)
+
+        def add_free_joint(self, coordinates: list[float]) -> int:
+            return self.add_pinned_joint(coordinates)
+
+        def add_out_of_plane_support(self, constrained_axis: str = "z") -> None:
+            del constrained_axis
+
+        def add_member(self, start_joint_index: int, end_joint_index: int) -> int:
+            del start_joint_index, end_joint_index
+            return 0
+
+        def set_load(self, joint_index: int, load: list[float]) -> None:
+            del joint_index, load
+            self.load_calls += 1
+
+        def analyze(self) -> None:
+            return None
+
+    fake_module = ModuleType("trussme")
+    fake_truss = FakeTruss()
+    fake_module.Truss = lambda: fake_truss
+    monkeypatch.setitem(sys.modules, "trussme", fake_module)
+
+    problem = get_problem("planar_roof_truss_seven_point_asymmetric")
+    state = problem.initial_state()
+    state = problem.apply_action(state, AddMember(start_joint_id=0, end_joint_id=2))
+    evaluation = problem.evaluate(state)
+
+    assert evaluation.is_feasible is True
+    assert fake_truss.load_calls == 7

@@ -1,0 +1,43 @@
+problem_id = "planar_roof_truss_three_point_symmetric_depth_sixth"
+title = "Planar roof truss grammar (depth = 1/6 span)"
+summary = "A symmetric three-point roof-truss grammar constrained to the 1/6-span depth variant reported in the structural essay study."
+kind = "grammar"
+statement = '''
+# Planar roof truss grammar (depth = 1/6 span)
+
+This catalog entry approximates the third planar roof-truss formulation from
+the structural essay study: the symmetric three-point loading case with the
+depth limit relaxed to approximately one-sixth of the span.
+
+Relative to the 1/8-span variant, the load joints and candidate interior joints
+are placed in a taller envelope to reflect the larger allowable truss depth.
+'''
+implementation = "design_research_problems.problems.grammar._planar_truss:PlanarTrussSpanProblem"
+capabilities = [
+  "statement-markdown",
+  "serializable-state",
+  "discrete-actions",
+  "optional-evaluator",
+  "external-adapter",
+]
+study_suitability = []
+
+[parameters]
+span = 10.0
+max_height = 1.6666666667
+load_magnitude = 1000.0
+roof_load_x_fractions = [0.25, 0.5, 0.75]
+candidate_point_fractions = [[0.2, 0.2], [0.35, 0.34], [0.5, 0.22]]
+enforce_symmetry = true
+
+[taxonomy]
+formulation = "discrete_grammar"
+convexity = "not_applicable"
+design_variable_type = "discrete"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.25
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "symmetric planar roof-truss topology with a 1/6-span roof rise"
+tags = ["grammar", "truss", "roof", "discrete", "topology", "symmetric", "depth-limited"]

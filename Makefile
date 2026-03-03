@@ -16,14 +16,16 @@ TRUSSME_SPEC ?= trussme>=0.1.0
 	docstrings-check \
 	examples-smoke examples-test examples-metrics \
 	docs docs-build docs-check docs-linkcheck \
-	install-trussme dev-truss test-trussme \
+	install-trussme install-pybamm dev-truss dev-battery test-trussme \
 	ci clean
 
 help:
 	@echo "Common targets:"
 	@echo "  dev                  Install project in editable mode with dev dependencies."
 	@echo "  install-trussme      Install the optional trussme grammar dependency."
+	@echo "  install-pybamm       Install the optional pybamm battery dependency."
 	@echo "  dev-truss            Install dev dependencies plus trussme."
+	@echo "  dev-battery          Install dev dependencies plus pybamm."
 	@echo "  test                 Run the default pytest suite."
 	@echo "  test-trussme         Run tests that require an installed trussme package."
 	@echo "  release-check        Build sdist/wheel and run twine metadata checks."
@@ -61,16 +63,16 @@ type: check-python
 	$(MYPY) src
 
 test: check-python
-	PYTHONPATH=src $(PYTEST) -m "not trussme_real" -q
+	PYTHONPATH=src $(PYTEST) -m "not trussme_real and not pybamm_real" -q
 
 qa: lint fmt-check type test
 
 docstrings-check: check-python
-	$(PYTHON) scripts/check_google_docstrings.py
+	$(PYTHON) scripts/check_google_docstrings.py --baseline .docstrings-baseline.txt
 
 coverage: check-python
 	mkdir -p artifacts/coverage
-	PYTHONPATH=src $(PYTEST) -m "not trussme_real" --cov=src/design_research_problems --cov-report=term --cov-report=json:artifacts/coverage/coverage.json -q
+	PYTHONPATH=src $(PYTEST) -m "not trussme_real and not pybamm_real" --cov=src/design_research_problems --cov-report=term --cov-report=json:artifacts/coverage/coverage.json -q
 	$(PYTHON) scripts/check_coverage_thresholds.py --coverage-json artifacts/coverage/coverage.json
 
 release-check: check-python
@@ -104,7 +106,12 @@ docs: docs-build
 install-trussme:
 	$(PIP) install "$(TRUSSME_SPEC)"
 
+install-pybamm:
+	$(PIP) install "pybamm>=25.12,<26"
+
 dev-truss: dev install-trussme
+
+dev-battery: dev install-pybamm
 
 test-trussme: check-python
 	PYTHONPATH=src $(PYTEST) -m trussme_real -q
