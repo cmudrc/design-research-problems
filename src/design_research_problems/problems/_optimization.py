@@ -5,12 +5,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Literal
 
 import numpy
 from numpy.typing import NDArray
 
-from design_research_problems._exceptions import MissingOptionalDependencyError
 from design_research_problems.problems._metadata import ProblemMetadata
 
 
@@ -29,29 +28,101 @@ class ConstraintDefinition:
     """Minimal solver-independent constraint definition."""
 
     kind: Literal["eq", "ineq"]
-    """Constraint type understood by SciPy-like solvers."""
+    """Constraint type understood by baseline optimization routines."""
     evaluate: Callable[[NDArray[numpy.float64]], float]
     """Callable that maps variables to a scalar constraint value."""
     target: float = 0.0
     """Target value for the constraint function."""
 
 
-def _import_scipy_optimize() -> Any:
-    """Import ``scipy.optimize`` lazily for optional solve support.
+@dataclass(frozen=True)
+class OptimizationResult:
+    """Minimal SciPy-like result object returned by built-in baseline solvers."""
+
+    x: NDArray[numpy.float64]
+    """Best candidate vector returned by the baseline routine."""
+    fun: float
+    """Objective value evaluated at ``x``."""
+    success: bool
+    """Whether the baseline routine reached a representative valid answer."""
+    message: str
+    """Short human-readable status summary."""
+    nit: int = 1
+    """Number of baseline iterations or candidates considered."""
+    nfev: int = 0
+    """Number of objective evaluations used by the solver."""
+
+
+@dataclass(frozen=True)
+class LocalSearchResult:
+    """Internal result object for bounded pattern search."""
+
+    x: NDArray[numpy.float64]
+    """Best point found by the local search."""
+    fun: float
+    """Objective value at ``x``."""
+    nit: int
+    """Number of search sweeps performed."""
+    nfev: int
+    """Number of objective evaluations performed."""
+
+
+def bounded_pattern_search(
+    objective: Callable[[NDArray[numpy.float64]], float],
+    lower_bounds: NDArray[numpy.float64],
+    upper_bounds: NDArray[numpy.float64],
+    initial_solution: NDArray[numpy.float64],
+    maxiter: int = 200,
+    initial_step_fraction: float = 0.15,
+    minimum_step_fraction: float = 1e-4,
+) -> LocalSearchResult:
+    """Run a deterministic bounded coordinate-pattern local search.
+
+    Args:
+        objective: Scalar objective to minimize.
+        lower_bounds: Inclusive lower bounds.
+        upper_bounds: Inclusive upper bounds.
+        initial_solution: Starting point for the search.
+        maxiter: Maximum number of coordinate-sweep iterations.
+        initial_step_fraction: Initial step size as a fraction of the bound span.
+        minimum_step_fraction: Search stops when all steps fall below this
+            fraction of the span.
 
     Returns:
-        Imported SciPy optimize module.
-
-    Raises:
-        MissingOptionalDependencyError: If SciPy is not installed.
+        Local search result with the best point found.
     """
-    try:
-        import scipy.optimize as optimize
-    except ImportError as exc:
-        raise MissingOptionalDependencyError(
-            "SciPy is required for solve(). Install it with: pip install design-research-problems[opt]"
-        ) from exc
-    return optimize
+    span = upper_bounds - lower_bounds
+    safe_span = numpy.where(span > 0.0, span, 1.0)
+    current = numpy.clip(numpy.array(initial_solution, dtype=float, copy=True), lower_bounds, upper_bounds)
+    step = numpy.maximum(initial_step_fraction * safe_span, minimum_step_fraction * safe_span)
+    value = float(objective(current))
+    nfev = 1
+    nit = 0
+    tolerance = 1e-12
+
+    for _ in range(maxiter):
+        nit += 1
+        improved = False
+        for index in range(current.shape[0]):
+            for direction in (-1.0, 1.0):
+                candidate = current.copy()
+                candidate[index] = float(
+                    numpy.clip(candidate[index] + direction * step[index], lower_bounds[index], upper_bounds[index])
+                )
+                candidate_value = float(objective(candidate))
+                nfev += 1
+                if candidate_value + tolerance < value:
+                    current = candidate
+                    value = candidate_value
+                    improved = True
+        if improved:
+            step = numpy.minimum(step * 1.1, 0.3 * safe_span)
+            continue
+        step *= 0.5
+        if bool(numpy.all(step <= minimum_step_fraction * safe_span)):
+            break
+
+    return LocalSearchResult(x=current, fun=value, nit=nit, nfev=nfev)
 
 
 class OptimizationProblem(ABC):
@@ -71,6 +142,55 @@ class OptimizationProblem(ABC):
             ub=numpy.zeros(0, dtype=float),
         )
         self.constraints: list[ConstraintDefinition] = []
+
+    def bound_violation(self, variables: NDArray[numpy.float64]) -> float:
+        """Return the total amount by which bounds are violated.
+
+        Args:
+            variables: Candidate design vector.
+
+        Returns:
+            Sum of lower- and upper-bound violations.
+        """
+        lower = numpy.maximum(self.bounds.lb - variables, 0.0)
+        upper = numpy.maximum(variables - self.bounds.ub, 0.0)
+        return float(lower.sum() + upper.sum())
+
+    def constraint_violation(self, variables: NDArray[numpy.float64]) -> float:
+        """Return the total equality, inequality, and bound violation.
+
+        Args:
+            variables: Candidate design vector.
+
+        Returns:
+            Total scalar violation measure.
+        """
+        violation = self.bound_violation(variables)
+        for constraint in self.constraints:
+            value = constraint.evaluate(variables)
+            if constraint.kind == "eq":
+                violation += abs(value - constraint.target)
+            else:
+                violation += max(constraint.target - value, 0.0)
+        return float(violation)
+
+    def max_constraint_violation(self, variables: NDArray[numpy.float64]) -> float:
+        """Return the largest single equality, inequality, or bound violation.
+
+        Args:
+            variables: Candidate design vector.
+
+        Returns:
+            Maximum scalar violation.
+        """
+        values: list[float] = [self.bound_violation(variables)]
+        for constraint in self.constraints:
+            value = constraint.evaluate(variables)
+            if constraint.kind == "eq":
+                values.append(abs(value - constraint.target))
+            else:
+                values.append(max(constraint.target - value, 0.0))
+        return float(max(values, default=0.0))
 
     @abstractmethod
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
@@ -94,68 +214,20 @@ class OptimizationProblem(ABC):
             Scalar objective value.
         """
 
-    def generate_data(
-        self,
-        n: int = 1000,
-        seed: int | None = None,
-    ) -> tuple[NDArray[numpy.float64], NDArray[numpy.float64]]:
-        """Generate uniform samples and their objective values.
-
-        Args:
-            n: Number of samples to generate.
-            seed: Optional random seed.
-
-        Returns:
-            Tuple of sampled variables and objective values.
-        """
-        rng = numpy.random.default_rng(seed)
-        x = rng.random((n, self.bounds.lb.shape[0]))
-        scale = self.bounds.ub - self.bounds.lb
-        x = x * scale + self.bounds.lb
-        y = numpy.empty((n, 1), dtype=float)
-        for index, row in enumerate(x):
-            y[index, 0] = float(self.objective(row))
-        return x, y
-
     @abstractmethod
-    def load_data(self) -> object:
-        """Load a curated dataset when available.
-
-        Returns:
-            Problem-specific dataset object.
-        """
-
     def solve(
         self,
         initial_solution: NDArray[numpy.float64] | None = None,
         seed: int | None = None,
         maxiter: int = 200,
-    ) -> object:
-        """Solve the optimization problem with SciPy SLSQP.
+    ) -> OptimizationResult:
+        """Run the problem's representative baseline optimization routine.
 
         Args:
-            initial_solution: Optional initial vector. When omitted, one is generated.
-            seed: Optional random seed used when generating the initial vector.
-            maxiter: Maximum SLSQP iterations.
+            initial_solution: Optional candidate vector supplied by the caller.
+            seed: Optional random seed for any stochastic baseline logic.
+            maxiter: Problem-specific iteration or candidate budget.
 
         Returns:
-            SciPy optimization result object.
+            Baseline optimization result.
         """
-        optimize = _import_scipy_optimize()
-        x0 = self.generate_initial_solution(seed=seed) if initial_solution is None else initial_solution
-        scipy_constraints: list[dict[str, object]] = []
-        for constraint in self.constraints:
-            scipy_constraints.append(
-                {
-                    "type": constraint.kind,
-                    "fun": lambda x, constraint=constraint: constraint.evaluate(x) - constraint.target,
-                }
-            )
-        return optimize.minimize(
-            self.objective,
-            x0=x0,
-            method="SLSQP",
-            bounds=optimize.Bounds(self.bounds.lb, self.bounds.ub),
-            constraints=scipy_constraints,
-            options={"maxiter": maxiter},
-        )

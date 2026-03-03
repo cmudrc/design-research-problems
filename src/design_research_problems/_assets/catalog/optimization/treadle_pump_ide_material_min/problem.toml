@@ -1,0 +1,79 @@
+problem_id = "treadle_pump_ide_material_min"
+title = "IDE-style treadle pump material minimization problem"
+summary = "A citation-backed nonlinear optimization benchmark that fixes a low-flow Zone I IDE-style treadle-pump operating point and minimizes a reduced material-volume proxy."
+kind = "optimization"
+statement = '''
+# IDE-style treadle pump material minimization problem
+
+This packaged optimization problem is a scalarized, citation-backed surrogate
+derived from the published IDE-style treadle pump studies. It fixes a low-flow
+Zone I operating point at 2.5 L/s and 1.9 m suction lift, then minimizes a
+reduced material-volume proxy for the pump.
+
+To fit the current single-objective API cleanly, the packaged instance uses
+four continuous design variables: cylinder radius, hose radius, treadle
+length, and stepping cadence. The built-in baseline solver searches over the
+two primary geometric variables and analytically reconstructs the hose radius
+and cadence needed to satisfy the flow and lift equalities at each candidate.
+'''
+implementation = "design_research_problems.problems.optimization._ide_treadle:IDETreadlePumpMaterialMin"
+capabilities = [
+  "statement-markdown",
+  "citation-backed",
+  "bounded-variables",
+  "equality-constraint",
+  "baseline-solver",
+]
+study_suitability = []
+
+[[citations]]
+key = "santaeufemia2014treadle"
+kind = "inline"
+authors = [
+  "Pablo S. Santaeufemia",
+  "Nathan G. Johnson",
+  "Christopher McComb",
+  "Kenji Shimada",
+]
+title = "Improving irrigation in remote areas: multi-objective optimization of a treadle pump"
+year = 2014
+venue = "Proceedings of the ASME 2014 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference"
+formatted_text = "Santaeufemia et al. (2014)."
+raw_text = "Santaeufemia, P. S., Johnson, N. G., McComb, C., and Shimada, K. (2014). Improving irrigation in remote areas: multi-objective optimization of a treadle pump. Proceedings of the ASME 2014 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference, DETC2014-35463."
+
+[[citations]]
+key = "mccomb2016idetreadle"
+kind = "inline"
+authors = [
+  "Christopher McComb",
+  "Nathan G. Johnson",
+  "Brandon T. Gorman",
+]
+title = "Scenario-based robustness analysis of optimized I.D.E.-style treadle pump designs"
+year = 2016
+venue = "Proceedings of the ASME 2016 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference"
+formatted_text = "McComb et al. (2016)."
+raw_text = "McComb, C., Johnson, N. G., and Gorman, B. T. (2016). Scenario-based robustness analysis of optimized I.D.E.-style treadle pump designs. Proceedings of the ASME 2016 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference, DETC2016-60127."
+
+[parameters]
+target_flow_rate_lps = 2.5
+target_lift_height_m = 1.9
+
+[taxonomy]
+formulation = "nonlinear_program"
+convexity = "not_guaranteed"
+design_variable_type = "continuous"
+is_dynamic = false
+orientation = "engineering-practical"
+feasibility_ratio_hint = 0.2
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "four continuous variables with fixed low-flow Zone I targets and an analytic two-variable baseline reconstruction"
+tags = [
+  "optimization",
+  "continuous",
+  "nonlinear",
+  "hydraulic",
+  "scalarized",
+  "treadle-pump",
+]

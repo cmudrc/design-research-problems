@@ -8,7 +8,7 @@ BUILD ?= $(PYTHON) -m build
 TWINE ?= $(PYTHON) -m twine
 UV ?= $(if $(wildcard .venv/bin/uv),.venv/bin/uv,uv)
 REPRO_PYTHON ?= $(shell cat .python-version 2>/dev/null || echo 3.12.12)
-REPRO_EXTRAS ?= dev opt
+REPRO_EXTRAS ?= dev
 TRUSSME_SPEC ?= trussme>=0.1.0
 
 .PHONY: help check-python check-uv dev install-dev repro lock \
@@ -39,8 +39,8 @@ check-uv:
 	@$(UV) --version >/dev/null 2>&1 || (echo "uv is required for lock/repro targets."; exit 1)
 
 dev:
-	$(PIP) install --upgrade pip
-	$(PIP) install -e ".[dev,opt]"
+	$(PIP) install --upgrade pip setuptools wheel
+	$(PIP) install -e ".[dev]"
 
 install-dev: dev
 
@@ -76,9 +76,8 @@ coverage: check-python
 	$(PYTHON) scripts/check_coverage_thresholds.py --coverage-json artifacts/coverage/coverage.json
 
 release-check: check-python
-	rm -rf dist
-	@$(PYTHON) -c "import setuptools, wheel" >/dev/null 2>&1 || $(PIP) install setuptools wheel
-	$(BUILD) --no-isolation
+	rm -rf build dist
+	$(BUILD)
 	$(TWINE) check dist/*
 
 examples-smoke: check-python

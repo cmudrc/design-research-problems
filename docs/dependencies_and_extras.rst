@@ -4,20 +4,17 @@ Dependencies And Extras
 Base install
 ------------
 
-The base package installs only NumPy:
+The base package installs NumPy and SciPy:
 
 .. code-block:: bash
 
    pip install design-research-problems
 
-Optimization support
---------------------
+Optimization baselines
+----------------------
 
-SciPy-backed solving is optional:
-
-.. code-block:: bash
-
-   pip install design-research-problems[opt]
+The representative optimization `solve()` baselines use SciPy's constrained
+optimizers and ship in the base install; no extra dependency is required.
 
 Battery evaluation support
 --------------------------

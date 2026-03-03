@@ -12,5 +12,7 @@ The example inventory is generated from the checked-in scripts.
 - ``examples/grammar/battery_pack_18650_open_ended.py``
 - ``examples/grammar/battery_pack_18650_series_parallel.py``
 - ``examples/grammar/planar_truss_span.py``
+- ``examples/optimization/ide_treadle_pump.py``
+- ``examples/optimization/moneymaker_hip_pump.py``
 - ``examples/optimization/pill_problem.py``
 - ``examples/text/peanut_sheller_packet.py``

@@ -43,7 +43,7 @@ Problem Families
    Prompt packets, citations, and optional assets for human-subjects studies.
 
 ``Optimization``
-   Structured numerical problems with bounds, constraints, and optional SciPy solving.
+   Structured numerical problems with bounds, constraints, and representative built-in baselines.
 
 ``Grammar``
    Discrete state-and-action problems for constructive design exploration.
@@ -63,10 +63,13 @@ What Is In The Initial Catalog?
 -------------------------------
 
 - 40 ideation-focused text prompts.
+- ``moneymaker_hip_pump_cost_min``: a citation-backed scalarized pump optimization benchmark.
 - ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
 - ``battery_pack_18650_open_ended``: an explicit 18650 graph-netlist battery grammar with optional PyBaMM-shaped fixed-ambient single-cell surrogates and a library-owned pack solver.
 - ``battery_pack_18650_series_parallel``: a constrained 18650 pack co-design grammar backed by the same optional single-cell surrogate plus the shared pack solver.
 - ``planar_truss_span`` plus six ``planar_roof_truss_*`` entries: discrete truss grammars with a lazy ``trussme`` adapter.
+- ``treadle_pump_ide_material_min``: a citation-backed scalarized treadle-pump optimization benchmark.
+- ``planar_truss_span``: a discrete planar truss topology grammar with a lazy ``trussme`` adapter.
 
 .. toctree::
    :maxdepth: 2

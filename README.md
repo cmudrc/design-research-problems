@@ -14,7 +14,7 @@ discrete grammar-style problems behind a small, typed Python API.
 The initial release centers on three problem families plus a linked ideation metadata catalog:
 
 - Text problems for human-subjects studies and prompt packets
-- Optimization problems with typed bounds and lazy SciPy-backed solving
+- Optimization problems with typed bounds and representative built-in baselines
 - Grammar problems that describe discrete design actions and optional evaluation adapters
 - An ideation catalog with prompt records, variants, families, and study summaries
 
@@ -26,6 +26,8 @@ The first catalog includes:
 - `battery_pack_18650_open_ended` for explicit 18650 cell-by-cell graph-netlist co-design backed by an optional PyBaMM-shaped single-cell surrogate plus a library-owned pack solver
 - `battery_pack_18650_series_parallel` for explicit 18650 series-parallel pack co-design backed by the same optional PyBaMM-shaped single-cell surrogate plus a library-owned pack solver
 - six `planar_roof_truss_*` variants that approximate the roof-truss formulations reported by Shea and Cagan
+- `moneymaker_hip_pump_cost_min` for a citation-backed scalarized pump benchmark
+- `treadle_pump_ide_material_min` for a citation-backed scalarized treadle-pump benchmark
 
 ## Quickstart
 
@@ -36,23 +38,13 @@ Install from PyPI with:
 pip install design-research-problems
 ```
 
-Install the optional optimization solver support with:
-
-```bash
-pip install "design-research-problems[opt]"
-```
-
-Install the optional battery evaluation support with:
-
-```bash
-pip install "design-research-problems[battery]"
-```
-
 Install the optional `trussme` grammar support with:
 
 ```bash
 pip install "design-research-problems[grammar]"
 ```
+
+The representative optimization baselines are included in the base install.
 
 Then inspect the catalog directly from the installed package:
 
