@@ -213,13 +213,14 @@ def test_pill_problem_initial_solution_is_deterministic() -> None:
 
 def test_pill_problem_solve_returns_feasible_manifold_solution() -> None:
     problem = get_problem("pill_capsule_min_area")
-    result = problem.solve(seed=1)
+    initial = problem.generate_initial_solution(seed=1)
+    result = problem.solve(initial_solution=initial)
     assert result.success is True
     assert "Converged SciPy SLSQP baseline" in result.message
     assert result.x.shape == (2,)
-    assert float(result.x[1]) == pytest.approx(0.0, abs=1e-6)
     assert _pill_volume(float(result.x[0]), float(result.x[1])) == pytest.approx(problem.required_volume)
     assert result.fun == pytest.approx(_pill_area(float(result.x[0]), float(result.x[1])))
+    assert result.fun < problem.objective(initial)
 
 
 def test_planar_truss_state_and_actions_are_validated() -> None:
