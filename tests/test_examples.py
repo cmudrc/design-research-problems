@@ -61,6 +61,24 @@ def test_text_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
+def test_decision_laptop_example_runs() -> None:
+    completed = _run_example("examples/decision/laptop_design.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "decision_laptop_design_profit_maximization" in completed.stdout
+    assert "candidate-count 3125" in completed.stdout
+    assert "top-three" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_decision_mseval_example_runs() -> None:
+    completed = _run_example("examples/decision/mseval_material_choice.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "decision_mseval_safety_helmet_lightweight" in completed.stdout
+    assert "candidate-count 9" in completed.stdout
+    assert "best Composite" in completed.stdout
+
+
+@pytest.mark.examples_smoke
 @pytest.mark.examples_full
 def test_optimization_example_runs() -> None:
     completed = _run_example("examples/optimization/pill_problem.py")

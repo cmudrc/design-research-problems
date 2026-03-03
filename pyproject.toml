@@ -46,10 +46,12 @@ dev = [
   "pytest>=8.2,<9",
   "pytest-cov>=7.0,<8",
   "ruff>=0.6.0,<1",
+  "setuptools>=77",
   "sphinx>=7.4,<9",
   "sphinx-rtd-theme>=2.0,<4",
   "sphinxcontrib-mermaid>=1.0,<2",
   "twine>=5.1,<7",
+  "wheel>=0.45",
 ]
 
 [tool.setuptools]
