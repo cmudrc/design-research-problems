@@ -14,6 +14,7 @@ _EXPORTS: Final[dict[str, str]] = {
     "Citation": "design_research_problems.problems:Citation",
     "ProblemAsset": "design_research_problems.problems:ProblemAsset",
     "TextProblem": "design_research_problems.problems:TextProblem",
+    "DecisionProblem": "design_research_problems.problems:DecisionProblem",
     "OptimizationProblem": "design_research_problems.problems:OptimizationProblem",
     "GrammarProblem": "design_research_problems.problems:GrammarProblem",
     "ProblemRegistry": "design_research_problems._catalog:ProblemRegistry",
@@ -78,6 +79,7 @@ if TYPE_CHECKING:
     from .ideation import IdeationStudy as IdeationStudy
     from .ideation import get_ideation_catalog as get_ideation_catalog
     from .problems import Citation as Citation
+    from .problems import DecisionProblem as DecisionProblem
     from .problems import GrammarProblem as GrammarProblem
     from .problems import OptimizationProblem as OptimizationProblem
     from .problems import ProblemAsset as ProblemAsset

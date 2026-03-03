@@ -4,6 +4,7 @@ API
 The top-level package exports a small curated public API:
 
 - ``Citation``
+- ``DecisionProblem``
 - ``EvidenceTier``
 - ``GrammarProblem``
 - ``IdeationCatalog``

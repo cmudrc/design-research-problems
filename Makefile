@@ -75,7 +75,8 @@ coverage: check-python
 
 release-check: check-python
 	rm -rf dist
-	$(BUILD)
+	@$(PYTHON) -c "import setuptools, wheel" >/dev/null 2>&1 || $(PIP) install setuptools wheel
+	$(BUILD) --no-isolation
 	$(TWINE) check dist/*
 
 examples-smoke: check-python
