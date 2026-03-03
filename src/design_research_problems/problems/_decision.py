@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
+from itertools import product
 from math import exp, prod
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Literal, cast
@@ -13,7 +13,6 @@ from design_research_problems._exceptions import ProblemEvaluationError
 from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._computable import ComputableProblem
 from design_research_problems.problems._metadata import ProblemMetadata
-from design_research_problems.problems._problem import Problem
 
 if TYPE_CHECKING:
     from design_research_problems._catalog._manifest import ProblemManifest
@@ -30,6 +29,7 @@ _SUPPORTED_CHOICE_METRICS = frozenset(
         _CHOICE_METRIC_MEDIAN_RATING,
     }
 )
+type DecisionCandidateKind = Literal["discrete-option", "empirical-choice"]
 
 
 @dataclass(frozen=True)
@@ -247,29 +247,6 @@ class DecisionConstraintSpec:
 
 
 @dataclass(frozen=True)
-class DecisionOptionEvaluation:
-    """Evaluation result for one explicit option."""
-
-    option: DecisionOption
-    """Normalized option that was evaluated."""
-    utility: float
-    """Discrete part-worth utility of the option."""
-    predicted_share: float
-    """Predicted logit market share against the competitor set."""
-    expected_demand_units: float
-    """Expected demand under the fixed market-size assumption."""
-    objective_value: float
-    """Objective scalar used for ranking."""
-
-    def __post_init__(self) -> None:
-        """Normalize numeric outputs."""
-        object.__setattr__(self, "utility", float(self.utility))
-        object.__setattr__(self, "predicted_share", float(self.predicted_share))
-        object.__setattr__(self, "expected_demand_units", float(self.expected_demand_units))
-        object.__setattr__(self, "objective_value", float(self.objective_value))
-
-
-@dataclass(frozen=True)
 class DecisionChoiceBenchmark:
     """One empirical categorical choice benchmark entry."""
 
@@ -312,56 +289,88 @@ class DecisionChoiceBenchmark:
         object.__setattr__(self, "std_rating", std_rating)
 
 
-@dataclass(frozen=True)
-class DecisionChoiceEvaluation:
-    """Evaluation result for one empirical categorical choice."""
+type DecisionCandidate = DecisionOption | Mapping[str, float] | str
 
-    choice_key: str
-    """Canonical option key used for the evaluation."""
-    choice_label: str
-    """Human-readable option label."""
-    top_choice_share: float
-    """Tie-adjusted fraction of expert top matches."""
-    mean_rating: float
-    """Mean 0-10 source rating for the choice."""
-    median_rating: float
-    """Median 0-10 source rating for the choice."""
-    std_rating: float
-    """Sample standard deviation of the source ratings."""
-    response_count: int
-    """Number of valid respondents included in the aggregate."""
+
+@dataclass(frozen=True)
+class DecisionEvaluation:
+    """Unified evaluation result for one decision candidate."""
+
+    candidate_kind: DecisionCandidateKind
+    """Whether the result came from a discrete or empirical decision problem."""
+    candidate: DecisionOption | str
+    """Canonical candidate representation used for evaluation."""
+    candidate_label: str
+    """Human-readable candidate label."""
     objective_value: float
-    """Metric-specific scalar value used for ranking."""
+    """Objective scalar used for ranking."""
     objective_metric: str
-    """Name of the metric used to populate ``objective_value``."""
+    """Metric or objective identifier used to populate ``objective_value``."""
+    option: DecisionOption | None = None
+    """Normalized option that was evaluated when in discrete mode."""
+    utility: float | None = None
+    """Discrete part-worth utility of the option."""
+    predicted_share: float | None = None
+    """Predicted logit market share against the competitor set."""
+    expected_demand_units: float | None = None
+    """Expected demand under the fixed market-size assumption."""
+    choice_key: str | None = None
+    """Canonical empirical choice key when in empirical mode."""
+    choice_label: str | None = None
+    """Human-readable empirical choice label when in empirical mode."""
+    top_choice_share: float | None = None
+    """Tie-adjusted fraction of expert top matches."""
+    mean_rating: float | None = None
+    """Mean 0-10 source rating for the choice."""
+    median_rating: float | None = None
+    """Median 0-10 source rating for the choice."""
+    std_rating: float | None = None
+    """Sample standard deviation of the source ratings."""
+    response_count: int | None = None
+    """Number of valid respondents included in the aggregate."""
 
     def __post_init__(self) -> None:
-        """Normalize numeric outputs and the metric identifier.
-
-        Raises:
-            ValueError: If required fields are empty or the metric payload is invalid.
-        """
-        choice_key = self.choice_key.strip().lower()
-        if not choice_key:
-            raise ValueError("DecisionChoiceEvaluation requires a non-empty choice_key.")
-        choice_label = self.choice_label.strip()
-        if not choice_label:
-            raise ValueError(f"DecisionChoiceEvaluation {choice_key!r} requires a non-empty choice_label.")
-        response_count = int(self.response_count)
-        if response_count < 0:
-            raise ValueError("DecisionChoiceEvaluation response_count must be non-negative.")
+        """Normalize textual and numeric outputs."""
+        candidate_label = self.candidate_label.strip()
+        if not candidate_label:
+            raise ValueError("DecisionEvaluation requires a non-empty candidate_label.")
         objective_metric = self.objective_metric.strip().lower()
-        if objective_metric not in _SUPPORTED_CHOICE_METRICS:
-            raise ValueError(f"Unsupported choice metric: {objective_metric!r}")
-        object.__setattr__(self, "choice_key", choice_key)
-        object.__setattr__(self, "choice_label", choice_label)
-        object.__setattr__(self, "top_choice_share", float(self.top_choice_share))
-        object.__setattr__(self, "mean_rating", float(self.mean_rating))
-        object.__setattr__(self, "median_rating", float(self.median_rating))
-        object.__setattr__(self, "std_rating", float(self.std_rating))
-        object.__setattr__(self, "response_count", response_count)
+        if not objective_metric:
+            raise ValueError("DecisionEvaluation requires a non-empty objective_metric.")
+        if self.candidate_kind not in {"discrete-option", "empirical-choice"}:
+            raise ValueError(f"Unsupported decision candidate kind: {self.candidate_kind!r}")
+        object.__setattr__(self, "candidate_label", candidate_label)
         object.__setattr__(self, "objective_value", float(self.objective_value))
         object.__setattr__(self, "objective_metric", objective_metric)
+        if self.utility is not None:
+            object.__setattr__(self, "utility", float(self.utility))
+        if self.predicted_share is not None:
+            object.__setattr__(self, "predicted_share", float(self.predicted_share))
+        if self.expected_demand_units is not None:
+            object.__setattr__(self, "expected_demand_units", float(self.expected_demand_units))
+        if self.choice_key is not None:
+            choice_key = self.choice_key.strip().lower()
+            if not choice_key:
+                raise ValueError("DecisionEvaluation choice_key must be non-empty when provided.")
+            object.__setattr__(self, "choice_key", choice_key)
+        if self.choice_label is not None:
+            choice_label = self.choice_label.strip()
+            if not choice_label:
+                raise ValueError("DecisionEvaluation choice_label must be non-empty when provided.")
+            object.__setattr__(self, "choice_label", choice_label)
+        if self.top_choice_share is not None:
+            object.__setattr__(self, "top_choice_share", float(self.top_choice_share))
+        if self.mean_rating is not None:
+            object.__setattr__(self, "mean_rating", float(self.mean_rating))
+        if self.median_rating is not None:
+            object.__setattr__(self, "median_rating", float(self.median_rating))
+        if self.std_rating is not None:
+            object.__setattr__(self, "std_rating", float(self.std_rating))
+        if self.response_count is not None:
+            response_count = int(self.response_count)
+            if response_count < 0:
+                raise ValueError("DecisionEvaluation response_count must be non-negative.")
+            object.__setattr__(self, "response_count", response_count)
 
 
 @dataclass(frozen=True)
@@ -607,11 +616,18 @@ def parse_structured_decision_payload(parameters: Mapping[str, object]) -> _Pars
     )
 
 
-class DecisionProblem[DecisionCandidateT, DecisionEvaluationT](
-    ComputableProblem[DecisionCandidateT, DecisionEvaluationT],
-    ABC,
-):
-    """Shared decision-family base with parsed structure and rendering helpers."""
+class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
+    """Concrete decision problem with a unified candidate/evaluation workflow."""
+
+    @classmethod
+    def from_manifest(cls, manifest: ProblemManifest) -> DecisionProblem:
+        """Construct the problem directly from a packaged manifest."""
+        return cls(
+            metadata=manifest.metadata,
+            statement_markdown=manifest.statement_markdown,
+            parameters=manifest.parameters,
+            resource_bundle=cls.resource_bundle_from_manifest(manifest),
+        )
 
     def __init__(
         self,
@@ -649,10 +665,19 @@ class DecisionProblem[DecisionCandidateT, DecisionEvaluationT](
             choice_lookup[benchmark.key.lower()] = benchmark
             choice_lookup[benchmark.label.lower()] = benchmark
         self._choice_lookup = MappingProxyType(choice_lookup)
+        has_discrete = bool(self._option_factors)
+        has_empirical = bool(self._choice_benchmarks)
+        if has_discrete == has_empirical:
+            raise ValueError(
+                "DecisionProblem requires exactly one executable candidate source: "
+                "either option_factors or choice_benchmarks."
+            )
+        self._candidate_kind: DecisionCandidateKind = "discrete-option" if has_discrete else "empirical-choice"
 
-    @abstractmethod
-    def evaluate(self, candidate: DecisionCandidateT) -> DecisionEvaluationT:
-        """Evaluate one decision candidate."""
+    @property
+    def candidate_kind(self) -> DecisionCandidateKind:
+        """Return the active decision-candidate mode."""
+        return self._candidate_kind
 
     @property
     def decision_variables(self) -> tuple[str, ...]:
@@ -764,7 +789,76 @@ class DecisionProblem[DecisionCandidateT, DecisionEvaluationT](
             return 0
         return int(prod(len(factor.levels) for factor in self.option_factors))
 
-    def _evaluate_option(self, option: DecisionOption | Mapping[str, float]) -> DecisionOptionEvaluation:
+    @property
+    def candidate_count(self) -> int:
+        """Return the number of candidates exposed by the active decision mode."""
+        if self.candidate_kind == "discrete-option":
+            return self.option_count
+        return len(self.choice_benchmarks)
+
+    def iter_candidates(self) -> Iterator[DecisionOption | str]:
+        """Yield candidates in deterministic source order."""
+        if self.candidate_kind == "discrete-option":
+            factor_keys = tuple(factor.key for factor in self.option_factors)
+            level_domains = tuple(factor.levels for factor in self.option_factors)
+            for combination in product(*level_domains):
+                yield DecisionOption(values=dict(zip(factor_keys, combination, strict=True)))
+            return
+
+        for benchmark in self.choice_benchmarks:
+            yield benchmark.key
+
+    def evaluate(self, candidate: DecisionCandidate) -> DecisionEvaluation:
+        """Evaluate one candidate using the active decision mode."""
+        if self.candidate_kind == "discrete-option":
+            if isinstance(candidate, str) or not isinstance(candidate, (DecisionOption, Mapping)):
+                raise TypeError(
+                    "Discrete-option decision problems require a DecisionOption or factor-to-level mapping."
+                )
+            return self._evaluate_option(candidate)
+        if not isinstance(candidate, str):
+            raise TypeError("Empirical-choice decision problems require a string choice key.")
+        return self._evaluate_choice(candidate)
+
+    def iter_evaluations(self, metric: ChoiceMetric | None = None) -> Iterator[DecisionEvaluation]:
+        """Yield evaluations for every candidate in deterministic order."""
+        if self.candidate_kind == "discrete-option":
+            if metric is not None:
+                raise ProblemEvaluationError("Discrete-option decision problems do not support metric overrides.")
+            for candidate in self.iter_candidates():
+                yield self._evaluate_option(cast(DecisionOption, candidate))
+            return
+
+        selected_metric = self._normalize_choice_metric(metric)
+        for benchmark in self.choice_benchmarks:
+            yield self._build_choice_evaluation(benchmark, selected_metric)
+
+    def rank_evaluations(self, metric: ChoiceMetric | None = None) -> tuple[DecisionEvaluation, ...]:
+        """Return all candidate evaluations ranked by the active objective."""
+        if self.candidate_kind == "discrete-option":
+            if metric is not None:
+                raise ProblemEvaluationError("Discrete-option decision problems do not support metric overrides.")
+            evaluations = tuple(self.iter_evaluations())
+            return tuple(sorted(evaluations, key=lambda item: item.objective_value, reverse=True))
+
+        ranked = list(enumerate(self.iter_evaluations(metric=metric)))
+        ranked.sort(
+            key=lambda item: (
+                -item[1].objective_value,
+                -cast(float, item[1].mean_rating),
+                item[0],
+            )
+        )
+        return tuple(evaluation for _, evaluation in ranked)
+
+    def best_evaluation(self, metric: ChoiceMetric | None = None) -> DecisionEvaluation:
+        """Return the highest-ranked evaluation in the active mode."""
+        ranked = self.rank_evaluations(metric=metric)
+        if not ranked:
+            raise ProblemEvaluationError("Decision problem does not define any evaluable candidates.")
+        return ranked[0]
+
+    def _evaluate_option(self, option: DecisionOption | Mapping[str, float]) -> DecisionEvaluation:
         """Evaluate one explicit discrete option against the competitor set."""
         objective = self._executable_objective()
         if objective.domain != "discrete-option":
@@ -777,7 +871,11 @@ class DecisionProblem[DecisionCandidateT, DecisionEvaluationT](
             denominator += exp(self._profile_utility(profile))
         predicted_share = exp(utility) / denominator
         expected_demand_units = _DISCRETE_MARKET_SIZE * predicted_share
-        return DecisionOptionEvaluation(
+        return DecisionEvaluation(
+            candidate_kind="discrete-option",
+            candidate=candidate,
+            candidate_label=self._format_option_label(candidate),
+            objective_metric=objective.key,
             option=candidate,
             utility=utility,
             predicted_share=predicted_share,
@@ -789,11 +887,23 @@ class DecisionProblem[DecisionCandidateT, DecisionEvaluationT](
         self,
         choice: str,
         metric: ChoiceMetric | None = None,
-    ) -> DecisionChoiceEvaluation:
+    ) -> DecisionEvaluation:
         """Evaluate one empirical categorical choice option."""
         benchmark = self._coerce_choice(choice)
         selected_metric = self._normalize_choice_metric(metric)
-        return DecisionChoiceEvaluation(
+        return self._build_choice_evaluation(benchmark, selected_metric)
+
+    def _build_choice_evaluation(
+        self,
+        benchmark: DecisionChoiceBenchmark,
+        metric: ChoiceMetric,
+    ) -> DecisionEvaluation:
+        """Build one empirical evaluation payload for a normalized benchmark."""
+        return DecisionEvaluation(
+            candidate_kind="empirical-choice",
+            candidate=benchmark.key,
+            candidate_label=benchmark.label,
+            objective_metric=metric,
             choice_key=benchmark.key,
             choice_label=benchmark.label,
             top_choice_share=benchmark.top_choice_share,
@@ -801,43 +911,15 @@ class DecisionProblem[DecisionCandidateT, DecisionEvaluationT](
             median_rating=benchmark.median_rating,
             std_rating=benchmark.std_rating,
             response_count=self._response_count,
-            objective_value=self._choice_metric_value(benchmark, selected_metric),
-            objective_metric=selected_metric,
+            objective_value=self._choice_metric_value(benchmark, metric),
         )
 
     def _rank_choice_evaluations(
         self,
         metric: ChoiceMetric | None = None,
-    ) -> tuple[DecisionChoiceEvaluation, ...]:
+    ) -> tuple[DecisionEvaluation, ...]:
         """Return all empirical choices ranked by one metric."""
-        selected_metric = self._normalize_choice_metric(metric)
-        if not self.choice_benchmarks:
-            raise ProblemEvaluationError("Decision problem does not define empirical choice benchmarks.")
-        ranked = [
-            (
-                index,
-                DecisionChoiceEvaluation(
-                    choice_key=benchmark.key,
-                    choice_label=benchmark.label,
-                    top_choice_share=benchmark.top_choice_share,
-                    mean_rating=benchmark.mean_rating,
-                    median_rating=benchmark.median_rating,
-                    std_rating=benchmark.std_rating,
-                    response_count=self._response_count,
-                    objective_value=self._choice_metric_value(benchmark, selected_metric),
-                    objective_metric=selected_metric,
-                ),
-            )
-            for index, benchmark in enumerate(self.choice_benchmarks)
-        ]
-        ranked.sort(
-            key=lambda item: (
-                -item[1].objective_value,
-                -item[1].mean_rating,
-                item[0],
-            )
-        )
-        return tuple(evaluation for _, evaluation in ranked)
+        return self.rank_evaluations(metric=metric)
 
     def render_brief(
         self,
@@ -1012,6 +1094,14 @@ class DecisionProblem[DecisionCandidateT, DecisionEvaluationT](
             return benchmark.median_rating
         raise ValueError(f"Unsupported choice metric: {metric!r}")
 
+    def _format_option_label(self, option: DecisionOption) -> str:
+        """Render one option in factor order as a stable label."""
+        parts = [
+            f"{factor.key}={_format_number(option.values[factor.key])}"
+            for factor in self.option_factors
+        ]
+        return ", ".join(parts)
+
     def _factor_part_worth(self, factor: DecisionFactor, value: float) -> float:
         """Return the exact discrete part-worth coefficient for one level.
 
@@ -1114,14 +1204,20 @@ class DecisionProblem[DecisionCandidateT, DecisionEvaluationT](
             "| --- | --- | ---: | ---: | ---: | ---: |",
         ]
         for evaluation in evaluations:
+            choice_label = cast(str, evaluation.choice_label)
+            choice_key = cast(str, evaluation.choice_key)
+            top_choice_share = cast(float, evaluation.top_choice_share)
+            mean_rating = cast(float, evaluation.mean_rating)
+            median_rating = cast(float, evaluation.median_rating)
+            std_rating = cast(float, evaluation.std_rating)
             lines.append(
                 "| "
-                f"{evaluation.choice_label} | "
-                f"`{evaluation.choice_key}` | "
-                f"{evaluation.top_choice_share:.6f} | "
-                f"{evaluation.mean_rating:.6f} | "
-                f"{evaluation.median_rating:.6f} | "
-                f"{evaluation.std_rating:.6f} |"
+                f"{choice_label} | "
+                f"`{choice_key}` | "
+                f"{top_choice_share:.6f} | "
+                f"{mean_rating:.6f} | "
+                f"{median_rating:.6f} | "
+                f"{std_rating:.6f} |"
             )
         return "\n".join(lines)
 
@@ -1171,18 +1267,9 @@ class DecisionProblem[DecisionCandidateT, DecisionEvaluationT](
         return "\n".join(f"- {item}" for item in items)
 
 
-def load_decision_problem(manifest: ProblemManifest) -> Problem:
-    """Route one manifest to the appropriate concrete decision subtype."""
-    from design_research_problems.problems._decision_discrete import DiscreteOptionDecisionProblem
-    from design_research_problems.problems._decision_empirical import EmpiricalChoiceDecisionProblem
-
-    if "option_factors" in manifest.parameters:
-        return DiscreteOptionDecisionProblem.from_manifest(manifest)
-    if "choice_options" in manifest.parameters or "choice_benchmarks" in manifest.parameters:
-        return EmpiricalChoiceDecisionProblem.from_manifest(manifest)
-    raise ProblemEvaluationError(
-        f"Decision problem {manifest.metadata.problem_id!r} does not expose a supported executable structure."
-    )
+def load_decision_problem(manifest: ProblemManifest) -> DecisionProblem:
+    """Construct one concrete decision problem from a packaged manifest."""
+    return DecisionProblem.from_manifest(manifest)
 
 
 def _freeze_numeric_mapping(values: Mapping[str, float]) -> Mapping[str, float]:

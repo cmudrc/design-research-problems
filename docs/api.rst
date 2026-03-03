@@ -5,10 +5,9 @@ The top-level package exports a small curated public API:
 
 - ``Citation``
 - ``ComputableProblem``
+- ``DecisionEvaluation``
 - ``DecisionProblem``
-- ``DiscreteOptionDecisionProblem``
 - ``EvidenceTier``
-- ``EmpiricalChoiceDecisionProblem``
 - ``GrammarProblem``
 - ``IdeationCatalog``
 - ``IdeationPromptFamily``

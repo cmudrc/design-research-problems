@@ -9,10 +9,10 @@ from copy import deepcopy
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import ProblemEvaluationError
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._decision_empirical import EmpiricalChoiceDecisionProblem
+from design_research_problems.problems._decision import DecisionProblem
 
 
-class MSEvalEmpiricalChoiceProblem(EmpiricalChoiceDecisionProblem):
+class MSEvalEmpiricalChoiceProblem(DecisionProblem):
     """Empirical MSEval material-selection decision problem."""
 
     @classmethod

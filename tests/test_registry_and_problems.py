@@ -3,24 +3,26 @@ from __future__ import annotations
 import sys
 from itertools import islice
 from types import ModuleType
+from typing import cast
 
 import numpy
 import pytest
 
 from design_research_problems import (
     ComputableProblem,
+    DecisionEvaluation,
     DecisionProblem,
-    DiscreteOptionDecisionProblem,
-    EmpiricalChoiceDecisionProblem,
     GrammarProblem,
     GrammarTransition,
     MissingOptionalDependencyError,
     OptimizationEvaluation,
     Problem,
+    ProblemEvaluationError,
     ProblemKind,
     get_problem,
     list_problems,
 )
+from design_research_problems.problems import DecisionOption
 from design_research_problems.problems.grammar._battery_cell_model import BatteryCellModel
 from design_research_problems.problems.optimization._pill import _pill_area, _pill_volume
 
@@ -142,8 +144,8 @@ def test_text_problem_can_render_summary_and_raw_citations() -> None:
 
 def test_decision_problem_exposes_structured_brief() -> None:
     problem = get_problem("decision_laptop_design_profit_maximization")
-    assert isinstance(problem, DiscreteOptionDecisionProblem)
     assert isinstance(problem, DecisionProblem)
+    assert problem.candidate_kind == "discrete-option"
     assert problem.decision_variables[0] == "LCD size x1 in [10, 17] inches"
     assert (
         problem.objectives[0]
@@ -170,9 +172,9 @@ def test_decision_problem_exposes_structured_brief() -> None:
 
 def test_mseval_decision_problem_exposes_empirical_choice_benchmarks() -> None:
     problem = get_problem("decision_mseval_kitchen_utensil_grip_lightweight")
-    assert isinstance(problem, EmpiricalChoiceDecisionProblem)
     assert isinstance(problem, DecisionProblem)
-    assert problem.choice_options == (
+    assert problem.candidate_kind == "empirical-choice"
+    assert tuple(problem.iter_candidates()) == (
         "steel",
         "aluminium",
         "titanium",
@@ -183,8 +185,13 @@ def test_mseval_decision_problem_exposes_empirical_choice_benchmarks() -> None:
         "thermoset",
         "composite",
     )
+    assert problem.candidate_count == len(problem.choice_benchmarks)
 
     steel = problem.evaluate("steel")
+    assert isinstance(steel, DecisionEvaluation)
+    assert steel.candidate_kind == "empirical-choice"
+    assert steel.candidate == "steel"
+    assert steel.candidate_label == "Steel"
     assert steel.choice_key == "steel"
     assert steel.choice_label == "Steel"
     assert steel.response_count == 67
@@ -196,9 +203,9 @@ def test_mseval_decision_problem_exposes_empirical_choice_benchmarks() -> None:
     assert problem.metadata.citations[0].raw_text.startswith("@misc{jain2024msevaldatasetmaterialselection,")
 
     assert problem.evaluate("Steel") == steel
-    assert problem.best_choice().choice_key == "composite"
-    assert problem.best_choice(metric="mean-rating").choice_key == "composite"
-    assert problem.evaluate_with_metric("steel", metric="median-rating").objective_metric == "median-rating"
+    assert problem.best_evaluation().choice_key == "composite"
+    assert problem.best_evaluation(metric="mean-rating").choice_key == "composite"
+    assert problem.rank_evaluations(metric="median-rating")[0].objective_metric == "median-rating"
 
     brief = problem.render_brief()
     assert "## Choices" in brief
@@ -207,10 +214,14 @@ def test_mseval_decision_problem_exposes_empirical_choice_benchmarks() -> None:
     with pytest.raises(ValueError):
         problem.evaluate("ceramic")
 
+    with pytest.raises(TypeError):
+        problem.evaluate(DecisionOption(values={"z1": 10.4}))
+
 
 def test_decision_problem_exposes_typed_option_space_and_evaluator() -> None:
     problem = get_problem("decision_laptop_design_profit_maximization")
-    assert isinstance(problem, DiscreteOptionDecisionProblem)
+    assert isinstance(problem, DecisionProblem)
+    assert problem.candidate_kind == "discrete-option"
 
     assert len(problem.decision_variable_specs) == 6
     assert problem.decision_variable_specs[0].symbol == "x1"
@@ -245,27 +256,44 @@ def test_decision_problem_exposes_typed_option_space_and_evaluator() -> None:
     assert problem.constraint_specs[0].executable is False
 
     assert problem.option_count == 3125
+    assert problem.candidate_count == 3125
 
-    options_iter = problem.iter_options()
-    first_option = next(options_iter)
-    last_option = None
-    for option in problem.iter_options():
+    candidates_iter = problem.iter_candidates()
+    first_option = next(candidates_iter)
+    assert isinstance(first_option, DecisionOption)
+    last_option: DecisionOption | None = None
+    for option in problem.iter_candidates():
+        assert isinstance(option, DecisionOption)
         last_option = option
     assert last_option is not None
     assert first_option.values == {"z1": 10.4, "z2": 0.75, "z3": 1.0, "z4": 2.5, "z5": 7.5}
     assert last_option.values == {"z1": 17.0, "z2": 1.75, "z3": 8.0, "z4": 10.0, "z5": 20.0}
 
-    sample_options = list(islice(problem.iter_options(), 3))
+    sample_options = [cast(DecisionOption, option) for option in islice(problem.iter_candidates(), 3)]
     assert all(tuple(option.values) == ("z1", "z2", "z3", "z4", "z5") for option in sample_options)
 
     evaluation = problem.evaluate(first_option)
+    assert isinstance(evaluation, DecisionEvaluation)
+    assert evaluation.candidate_kind == "discrete-option"
+    assert evaluation.candidate == first_option
+    assert evaluation.candidate_label == "z1=10.4, z2=0.75, z3=1, z4=2.5, z5=7.5"
+    assert evaluation.objective_metric == "market_share_proxy"
+    assert evaluation.option == first_option
+    assert evaluation.choice_key is None
+    assert evaluation.choice_label is None
     assert numpy.isfinite(evaluation.utility)
     assert 0.0 < evaluation.predicted_share < 1.0
     assert evaluation.expected_demand_units == pytest.approx(1_600_000 * evaluation.predicted_share)
     assert evaluation.objective_value == evaluation.predicted_share
 
-    best = problem.best_option()
-    assert best == max(problem.iter_option_evaluations(), key=lambda item: item.objective_value)
+    best = problem.best_evaluation()
+    assert best == problem.rank_evaluations()[0]
+
+    with pytest.raises(ProblemEvaluationError):
+        problem.best_evaluation(metric="mean-rating")
+
+    with pytest.raises(TypeError):
+        problem.evaluate("steel")
 
 
 def test_non_text_problems_are_computable() -> None:

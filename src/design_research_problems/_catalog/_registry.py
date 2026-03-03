@@ -15,8 +15,7 @@ from design_research_problems.problems._metadata import ProblemMetadata
 
 if TYPE_CHECKING:
     from design_research_problems.problems import (
-        DiscreteOptionDecisionProblem,
-        EmpiricalChoiceDecisionProblem,
+        DecisionProblem,
         OptimizationProblem,
     )
     from design_research_problems.problems.grammar import (
@@ -53,6 +52,8 @@ type _MSEvalProblemId = Literal[
     "decision_mseval_underwater_component_lightweight",
     "decision_mseval_underwater_component_resistant_to_heat",
 ]
+
+type _DecisionProblemId = Literal["decision_laptop_design_profit_maximization"] | _MSEvalProblemId
 
 type _OptimizationProblemId = Literal[
     "pill_capsule_min_area",
@@ -241,11 +242,8 @@ class ProblemRegistry:
     @overload
     def get(
         self,
-        problem_id: Literal["decision_laptop_design_profit_maximization"],
-    ) -> DiscreteOptionDecisionProblem: ...
-
-    @overload
-    def get(self, problem_id: _MSEvalProblemId) -> EmpiricalChoiceDecisionProblem: ...
+        problem_id: _DecisionProblemId,
+    ) -> DecisionProblem: ...
 
     @overload
     def get(self, problem_id: str) -> Problem: ...
@@ -317,11 +315,7 @@ def get_problem(problem_id: _OptimizationProblemId) -> OptimizationProblem: ...
 
 
 @overload
-def get_problem(problem_id: Literal["decision_laptop_design_profit_maximization"]) -> DiscreteOptionDecisionProblem: ...
-
-
-@overload
-def get_problem(problem_id: _MSEvalProblemId) -> EmpiricalChoiceDecisionProblem: ...
+def get_problem(problem_id: _DecisionProblemId) -> DecisionProblem: ...
 
 
 @overload

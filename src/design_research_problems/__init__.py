@@ -16,9 +16,8 @@ _EXPORTS: Final[dict[str, str]] = {
     "Citation": "design_research_problems.problems:Citation",
     "ProblemAsset": "design_research_problems.problems:ProblemAsset",
     "TextProblem": "design_research_problems.problems:TextProblem",
+    "DecisionEvaluation": "design_research_problems.problems:DecisionEvaluation",
     "DecisionProblem": "design_research_problems.problems:DecisionProblem",
-    "DiscreteOptionDecisionProblem": "design_research_problems.problems:DiscreteOptionDecisionProblem",
-    "EmpiricalChoiceDecisionProblem": "design_research_problems.problems:EmpiricalChoiceDecisionProblem",
     "OptimizationProblem": "design_research_problems.problems:OptimizationProblem",
     "OptimizationEvaluation": "design_research_problems.problems:OptimizationEvaluation",
     "GrammarProblem": "design_research_problems.problems:GrammarProblem",
@@ -86,9 +85,8 @@ if TYPE_CHECKING:
     from .ideation import get_ideation_catalog as get_ideation_catalog
     from .problems import Citation as Citation
     from .problems import ComputableProblem as ComputableProblem
+    from .problems import DecisionEvaluation as DecisionEvaluation
     from .problems import DecisionProblem as DecisionProblem
-    from .problems import DiscreteOptionDecisionProblem as DiscreteOptionDecisionProblem
-    from .problems import EmpiricalChoiceDecisionProblem as EmpiricalChoiceDecisionProblem
     from .problems import GrammarProblem as GrammarProblem
     from .problems import GrammarTransition as GrammarTransition
     from .problems import OptimizationEvaluation as OptimizationEvaluation
