@@ -211,6 +211,15 @@ def test_pill_problem_initial_solution_is_deterministic() -> None:
     assert numpy.allclose(x1, x2)
 
 
+def test_pill_problem_seeded_initial_solution_stays_within_bounds() -> None:
+    problem = get_problem("pill_capsule_min_area")
+    initial = problem.generate_initial_solution(seed=3)
+
+    assert numpy.all(initial >= problem.bounds.lb)
+    assert numpy.all(initial <= problem.bounds.ub)
+    assert _pill_volume(float(initial[0]), float(initial[1])) == pytest.approx(problem.required_volume)
+
+
 def test_pill_problem_solve_returns_feasible_manifold_solution() -> None:
     problem = get_problem("pill_capsule_min_area")
     initial = problem.generate_initial_solution(seed=1)

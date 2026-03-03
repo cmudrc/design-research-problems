@@ -190,9 +190,10 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         self.target_tank_height_m = target_tank_height_m
         self.well_depth_m = well_depth_m
         self.horizontal_run_m = horizontal_run_m
+        inlet_run_upper = max(0.0, min(_DEFAULT_HORIZONTAL_RUN, self.horizontal_run_m))
         self.bounds = Bounds(
             lb=numpy.array([0.014, 0.038, 0.5, 0.0, 0.5, 0.014, 40.0, 110.0, 0.15, 0.2], dtype=float),
-            ub=numpy.array([0.028, 0.05, 0.7, 18.0, 0.75, 0.024, 150.0, 140.0, 0.6, 0.3], dtype=float),
+            ub=numpy.array([0.028, 0.05, 0.7, inlet_run_upper, 0.75, 0.024, 150.0, 140.0, 0.6, 0.3], dtype=float),
         )
         self.constraints = [
             ConstraintDefinition(kind="eq", evaluate=self._upstroke_balance),
@@ -277,7 +278,7 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         )
 
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
-        """Return the published tall-tank low-cost design, or a seeded perturbation.
+        """Return the published tall-tank low-cost design projected into bounds, or a seeded perturbation.
 
         Args:
             seed: Optional random seed for the perturbation.
@@ -285,14 +286,19 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         Returns:
             Initial 10-variable solution vector.
         """
+        baseline = numpy.array(
+            numpy.clip(_SAME_FLOW_MIN_COST_TALL_TANK_VECTOR.copy(), self.bounds.lb, self.bounds.ub),
+            dtype=float,
+            copy=False,
+        )
         if seed is None:
-            return _SAME_FLOW_MIN_COST_TALL_TANK_VECTOR.copy()
+            return baseline
 
         rng = numpy.random.default_rng(seed)
         span = self.bounds.ub - self.bounds.lb
         perturbation = rng.normal(loc=0.0, scale=0.05, size=10) * span
-        guess = _SAME_FLOW_MIN_COST_TALL_TANK_VECTOR + perturbation
-        return numpy.clip(guess, self.bounds.lb, self.bounds.ub)
+        guess = baseline + perturbation
+        return numpy.array(numpy.clip(guess, self.bounds.lb, self.bounds.ub), dtype=float, copy=False)
 
     def flow_rate_m3_per_s(self, variables: NDArray[numpy.float64]) -> float:
         """Return the average water flow rate in cubic meters per second.

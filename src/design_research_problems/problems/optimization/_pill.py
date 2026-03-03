@@ -44,6 +44,19 @@ def _pill_area(radius: float, length: float) -> float:
     return 2.0 * math.pi * radius * length + 4.0 * math.pi * radius**2
 
 
+def _pill_length_for_volume(required_volume: float, radius: float) -> float:
+    """Return the cylindrical length needed to meet the target volume.
+
+    Args:
+        required_volume: Fixed target capsule volume.
+        radius: Capsule end-cap radius.
+
+    Returns:
+        Cylindrical section length.
+    """
+    return (required_volume - 4.0 / 3.0 * math.pi * radius**3) / (math.pi * radius**2)
+
+
 class PillCapsuleMinArea(OptimizationProblem):
     """Two-variable constrained optimization problem."""
 
@@ -99,12 +112,23 @@ class PillCapsuleMinArea(OptimizationProblem):
         """
         radius_upper = min(float(self.bounds.ub[0]), (3.0 * self.required_volume / (4.0 * math.pi)) ** (1.0 / 3.0))
         radius_lower = max(float(self.bounds.lb[0]), 1e-9)
+        length_upper = float(self.bounds.ub[1])
+        if _pill_length_for_volume(self.required_volume, radius_lower) > length_upper:
+            lo = radius_lower
+            hi = radius_upper
+            for _ in range(64):
+                midpoint = 0.5 * (lo + hi)
+                if _pill_length_for_volume(self.required_volume, midpoint) > length_upper:
+                    lo = midpoint
+                else:
+                    hi = midpoint
+            radius_lower = hi
         if seed is None:
             radius = 0.5 * (radius_lower + radius_upper)
         else:
             rng = numpy.random.default_rng(seed)
             radius = float(rng.uniform(radius_lower, radius_upper))
-        length = (self.required_volume - 4.0 / 3.0 * math.pi * radius**3) / (math.pi * radius**2)
+        length = _pill_length_for_volume(self.required_volume, radius)
         return numpy.array([radius, max(length, 0.0)], dtype=float)
 
     def objective(self, variables: NDArray[numpy.float64]) -> float:

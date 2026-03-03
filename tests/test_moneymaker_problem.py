@@ -36,3 +36,17 @@ def test_moneymaker_problem_generate_initial_solution_is_deterministic() -> None
 
     assert x1.shape == (10,)
     assert numpy.allclose(x1, x2)
+
+
+def test_moneymaker_problem_binds_inlet_run_to_configured_horizontal_run() -> None:
+    baseline_problem = get_problem("moneymaker_hip_pump_cost_min")
+    problem = type(baseline_problem)(metadata=baseline_problem.metadata, statement_markdown="", horizontal_run_m=10.0)
+
+    baseline = problem.generate_initial_solution()
+    seeded = problem.generate_initial_solution(seed=7)
+
+    assert float(problem.bounds.ub[3]) == 10.0
+    assert float(baseline[3]) <= problem.horizontal_run_m
+    assert problem.decode_design(baseline).x11 >= 0.0
+    assert float(seeded[3]) <= problem.horizontal_run_m
+    assert problem.decode_design(seeded).x11 >= 0.0
