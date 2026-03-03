@@ -10,6 +10,8 @@ from pathlib import Path
 
 import pytest
 
+from design_research_problems import list_problems
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_ASSETS_ROOT = REPO_ROOT / "src" / "design_research_problems" / "_assets"
 RESOURCE_FILES = tuple(

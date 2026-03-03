@@ -1,0 +1,71 @@
+problem_id = "decision_mseval_spacecraft_component_resistant_to_heat"
+title = "Decision Problem - MSEval Spacecraft Component (Resistant to Heat)"
+summary = "Choose one material for Spacecraft Component with emphasis on Resistant to Heat, using expert MSEval survey responses as the evaluation benchmark."
+kind = "decision"
+implementation = "design_research_problems.problems.decision._mseval:MSEvalEmpiricalChoiceProblem"
+statement = '''
+# Decision Problem - MSEval Spacecraft Component (Resistant to Heat)
+
+You are selecting a material for **Spacecraft Component**.
+
+Primary criterion: **Resistant to Heat**.
+
+## Task
+1. Choose **one** material from the list below.
+2. Briefly justify the choice in terms of the stated criterion and likely use context.
+3. Optionally note one follow-up risk or tradeoff to validate next.
+
+## Candidate Materials
+- Steel
+- Aluminium
+- Titanium
+- Glass
+- Wood
+- Thermoplastic
+- Elastomer
+- Thermoset
+- Composite
+
+## Output Format
+- Selected material:
+- Justification (3-6 sentences):
+- Risk or tradeoff to check next (optional):
+
+'''
+capabilities = ["statement-markdown", "citation-backed"]
+study_suitability = []
+
+[taxonomy]
+formulation = "empirical_discrete_choice"
+design_variable_type = "categorical"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "single"
+constraint_nature = "preference-derived"
+tags = ["decision", "material-selection", "mseval", "spacecraft_component", "resistant_to_heat"]
+
+[[citations]]
+key = "jain2024msevaldatasetmaterialselection"
+kind = "bibtex"
+authors = ["Yash Patawari Jain", "Daniele Grandi", "Allin Groom", "Brandon Cramer", "Christopher McComb"]
+title = "MSEval: A Dataset for Material Selection in Conceptual Design to Evaluate Algorithmic Models"
+year = 2024
+url = "https://arxiv.org/abs/2407.09719"
+raw_text = '''
+@misc{jain2024msevaldatasetmaterialselection,
+      title={MSEval: A Dataset for Material Selection in Conceptual Design to Evaluate Algorithmic Models},
+      author={Yash Patawari Jain and Daniele Grandi and Allin Groom and Brandon Cramer and Christopher McComb},
+      year={2024},
+      eprint={2407.09719},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2407.09719},
+}
+'''
+
+[parameters]
+decision_maker = "A designer selecting one material conceptually for a spacecraft component."
+decision_scope = "Choose a single candidate material from the provided materials using an empirical preference benchmark derived from MSEval survey responses."
+default_choice_metric = "top-choice-share"
+benchmark_file = "benchmark.toml"
+market_segment = "MSEval expert benchmark with 67 complete responses for this prompt."
