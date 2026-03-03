@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from design_research_problems import MissingOptionalDependencyError, get_problem
-from design_research_problems.problems.grammar import AddMember
 
 
 def main() -> None:
@@ -14,11 +13,11 @@ def main() -> None:
     problem = get_problem("planar_truss_span")
     state = problem.initial_state()
 
-    # Apply three AddMember actions to connect the top joint to both supports and
-    # then close the base edge. Together these actions build the minimal triangle.
-    state = problem.apply_action(state, AddMember(start_joint_id=0, end_joint_id=2))
-    state = problem.apply_action(state, AddMember(start_joint_id=1, end_joint_id=2))
-    state = problem.apply_action(state, AddMember(start_joint_id=0, end_joint_id=1))
+    # Apply three rule methods to connect the top joint to both supports and then
+    # close the base edge. Together these edits build the minimal triangle.
+    state = problem.add_member(state, start_joint_id=0, end_joint_id=2)
+    state = problem.add_member(state, start_joint_id=1, end_joint_id=2)
+    state = problem.add_member(state, start_joint_id=0, end_joint_id=1)
     try:
         # The evaluator converts the serializable grammar state into a fresh truss
         # model for analysis and returns the resulting performance metrics.

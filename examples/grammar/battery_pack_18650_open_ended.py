@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from design_research_problems import MissingOptionalDependencyError, get_problem
-from design_research_problems.problems.grammar import AddCell
 
 
 def main() -> None:
@@ -15,19 +14,17 @@ def main() -> None:
     stage_input_terminal_id = state.pack_negative_terminal_id
     stage_output_terminal_id = state.pack_positive_terminal_id
 
-    # First, fill out the remaining three parallel cells in stage 0. Each AddCell
+    # First, fill out the remaining three parallel cells in stage 0. Each add_cell
     # action inserts a new physical cell and immediately ties both of its leads into
     # the existing circuit by naming the terminals it should connect to.
     for branch_index in range(1, 4):
-        state = problem.apply_action(
+        state = problem.add_cell(
             state,
-            AddCell(
-                x=0,
-                y=branch_index,
-                z=0,
-                connect_negative_to_terminal_id=stage_input_terminal_id,
-                connect_positive_to_terminal_id=stage_output_terminal_id,
-            ),
+            x=0,
+            y=branch_index,
+            z=0,
+            connect_negative_to_terminal_id=stage_input_terminal_id,
+            connect_positive_to_terminal_id=stage_output_terminal_id,
         )
 
     # Then grow the pack stage by stage. The first cell in each new stage extends
@@ -36,27 +33,23 @@ def main() -> None:
     # previous stage output bus and the new stage output bus.
     for stage_index in range(1, 4):
         previous_stage_output_terminal_id = stage_output_terminal_id
-        state = problem.apply_action(
+        state = problem.add_cell(
             state,
-            AddCell(
-                x=stage_index,
-                y=0,
-                z=0,
-                connect_negative_to_terminal_id=previous_stage_output_terminal_id,
-                use_positive_as_pack_terminal=True,
-            ),
+            x=stage_index,
+            y=0,
+            z=0,
+            connect_negative_to_terminal_id=previous_stage_output_terminal_id,
+            use_positive_as_pack_terminal=True,
         )
         stage_output_terminal_id = state.pack_positive_terminal_id
         for branch_index in range(1, 4):
-            state = problem.apply_action(
+            state = problem.add_cell(
                 state,
-                AddCell(
-                    x=stage_index,
-                    y=branch_index,
-                    z=0,
-                    connect_negative_to_terminal_id=previous_stage_output_terminal_id,
-                    connect_positive_to_terminal_id=stage_output_terminal_id,
-                ),
+                x=stage_index,
+                y=branch_index,
+                z=0,
+                connect_negative_to_terminal_id=previous_stage_output_terminal_id,
+                connect_positive_to_terminal_id=stage_output_terminal_id,
             )
 
     print(problem.metadata.problem_id)

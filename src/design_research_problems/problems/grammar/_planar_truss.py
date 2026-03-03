@@ -12,7 +12,7 @@ import numpy
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import MissingOptionalDependencyError
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._grammar import GrammarProblem
+from design_research_problems.problems._grammar import GrammarProblem, GrammarTransition
 from design_research_problems.problems._metadata import ProblemMetadata
 
 SupportType = Literal["pinned", "roller", "free"]
@@ -74,48 +74,6 @@ class PlanarLoad:
     """Joint receiving the load."""
     vector: tuple[float, float, float]
     """Applied load vector."""
-
-
-@dataclass(frozen=True)
-class AddJoint:
-    """Add one free joint."""
-
-    x: float
-    """Planar x-coordinate for the new joint."""
-    y: float
-    """Planar y-coordinate for the new joint."""
-
-
-@dataclass(frozen=True)
-class AddJointPair:
-    """Add one mirrored pair of free joints."""
-
-    left_x: float
-    """Planar x-coordinate for the left joint."""
-    left_y: float
-    """Planar y-coordinate for the left joint."""
-    right_x: float
-    """Planar x-coordinate for the right joint."""
-    right_y: float
-    """Planar y-coordinate for the right joint."""
-
-
-@dataclass(frozen=True)
-class AddMember:
-    """Add one member."""
-
-    start_joint_id: int
-    """Identifier of the first endpoint joint."""
-    end_joint_id: int
-    """Identifier of the second endpoint joint."""
-
-
-@dataclass(frozen=True)
-class RemoveMember:
-    """Remove one member by ID."""
-
-    member_id: int
-    """Identifier of the member to remove."""
 
 
 @dataclass(frozen=True)
@@ -351,7 +309,7 @@ def _mirrored_edge(state: PlanarTrussState, edge: tuple[int, int]) -> tuple[int,
     return _edge_key(mirrored_start, mirrored_end)
 
 
-class PlanarTrussSpanProblem(GrammarProblem):
+class PlanarTrussSpanProblem(GrammarProblem[PlanarTrussState, PlanarTrussEvaluation]):
     """A small topology grammar for planar truss exploration."""
 
     def __init__(
@@ -481,23 +439,29 @@ class PlanarTrussSpanProblem(GrammarProblem):
             (state.span * 0.75, state.max_height * 0.5),
         )
 
-    def enumerate_actions(self, state: object) -> tuple[object, ...]:
-        """Return deterministic add/remove actions.
+    def enumerate_transitions(self, state: PlanarTrussState) -> tuple[GrammarTransition[PlanarTrussState], ...]:
+        """Return deterministic add/remove transitions.
 
         Args:
             state: Current grammar state.
 
         Returns:
-            Available actions in deterministic order.
+            Fully specified legal transitions in deterministic order.
         """
         typed_state = _coerce_state(state)
-        actions: list[object] = []
+        transitions: list[GrammarTransition[PlanarTrussState]] = []
         candidate_points = self._candidate_points(typed_state)
         occupied = {(joint.x, joint.y) for joint in typed_state.joints}
         if typed_state.symmetry_axis_x is None:
             for x_value, y_value in candidate_points:
                 if not _point_in_collection(occupied, x_value, y_value):
-                    actions.append(AddJoint(x=x_value, y=y_value))
+                    transitions.append(
+                        GrammarTransition(
+                            rule_name="add_joint",
+                            parameters=(("x", x_value), ("y", y_value)),
+                            next_state=self.add_joint(typed_state, x=x_value, y=y_value),
+                        )
+                    )
         else:
             processed_points: set[tuple[float, float]] = set()
             for x_value, y_value in candidate_points:
@@ -506,7 +470,13 @@ class PlanarTrussSpanProblem(GrammarProblem):
                 if _float_matches(x_value, typed_state.symmetry_axis_x):
                     processed_points.add((x_value, y_value))
                     if not _point_in_collection(occupied, x_value, y_value):
-                        actions.append(AddJoint(x=x_value, y=y_value))
+                        transitions.append(
+                            GrammarTransition(
+                                rule_name="add_joint",
+                                parameters=(("x", x_value), ("y", y_value)),
+                                next_state=self.add_joint(typed_state, x=x_value, y=y_value),
+                            )
+                        )
                     continue
 
                 mirrored_x = (2.0 * typed_state.symmetry_axis_x) - x_value
@@ -517,7 +487,24 @@ class PlanarTrussSpanProblem(GrammarProblem):
                 ):
                     continue
                 left_x, right_x = sorted((x_value, mirrored_x))
-                actions.append(AddJointPair(left_x=left_x, left_y=y_value, right_x=right_x, right_y=y_value))
+                transitions.append(
+                    GrammarTransition(
+                        rule_name="add_joint_pair",
+                        parameters=(
+                            ("left_x", left_x),
+                            ("left_y", y_value),
+                            ("right_x", right_x),
+                            ("right_y", y_value),
+                        ),
+                        next_state=self.add_joint_pair(
+                            typed_state,
+                            left_x=left_x,
+                            left_y=y_value,
+                            right_x=right_x,
+                            right_y=y_value,
+                        ),
+                    )
+                )
 
         existing_edges = {_edge_key(member.start_joint_id, member.end_joint_id) for member in typed_state.members}
         joint_ids = [joint.joint_id for joint in typed_state.joints]
@@ -533,7 +520,17 @@ class PlanarTrussSpanProblem(GrammarProblem):
                     continue
                 if mirrored_edge != edge and mirrored_edge in existing_edges:
                     continue
-            actions.append(AddMember(start_joint_id=edge[0], end_joint_id=edge[1]))
+            transitions.append(
+                GrammarTransition(
+                    rule_name="add_member",
+                    parameters=(("start_joint_id", edge[0]), ("end_joint_id", edge[1])),
+                    next_state=self.add_member(
+                        typed_state,
+                        start_joint_id=edge[0],
+                        end_joint_id=edge[1],
+                    ),
+                )
+            )
 
         for member in typed_state.members:
             if typed_state.symmetry_axis_x is not None:
@@ -543,144 +540,164 @@ class PlanarTrussSpanProblem(GrammarProblem):
                     continue
                 if edge != min(edge, mirrored_edge):
                     continue
-            actions.append(RemoveMember(member_id=member.member_id))
+            transitions.append(
+                GrammarTransition(
+                    rule_name="remove_member",
+                    parameters=(("member_id", member.member_id),),
+                    next_state=self.remove_member(typed_state, member_id=member.member_id),
+                )
+            )
 
-        return tuple(actions)
+        return tuple(transitions)
 
-    def apply_action(self, state: object, action: object) -> PlanarTrussState:
-        """Apply one action and return a new immutable state.
+    def add_joint(self, state: PlanarTrussState, *, x: float, y: float) -> PlanarTrussState:
+        """Add one free joint and return the new immutable state.
 
         Args:
             state: Current grammar state.
-            action: Action to apply.
+            x: Planar x-coordinate for the new joint.
+            y: Planar y-coordinate for the new joint.
 
         Returns:
             Updated grammar state.
 
         Raises:
-            TypeError: If the action type is unsupported.
             ValueError: If the action would create an invalid state.
         """
         typed_state = _coerce_state(state)
-        if isinstance(action, AddJoint):
-            if typed_state.symmetry_axis_x is not None and not _float_matches(action.x, typed_state.symmetry_axis_x):
-                raise ValueError("Symmetric states can only add single joints on the symmetry axis.")
-            if any(joint.x == action.x and joint.y == action.y for joint in typed_state.joints):
-                raise ValueError("Duplicate joint coordinates are not allowed.")
-            next_joint_id = max((joint.joint_id for joint in typed_state.joints), default=-1) + 1
-            new_joint = PlanarJoint(joint_id=next_joint_id, x=action.x, y=action.y, support_type="free")
-            return PlanarTrussState(
-                span=typed_state.span,
-                max_height=typed_state.max_height,
-                joints=tuple((*typed_state.joints, new_joint)),
-                members=typed_state.members,
-                load_joint_id=typed_state.load_joint_id,
-                load_vector=typed_state.load_vector,
-                additional_loads=typed_state.additional_loads,
-                symmetry_axis_x=typed_state.symmetry_axis_x,
-            )
+        if typed_state.symmetry_axis_x is not None and not _float_matches(x, typed_state.symmetry_axis_x):
+            raise ValueError("Symmetric states can only add single joints on the symmetry axis.")
+        if any(joint.x == x and joint.y == y for joint in typed_state.joints):
+            raise ValueError("Duplicate joint coordinates are not allowed.")
+        next_joint_id = max((joint.joint_id for joint in typed_state.joints), default=-1) + 1
+        new_joint = PlanarJoint(joint_id=next_joint_id, x=x, y=y, support_type="free")
+        return PlanarTrussState(
+            span=typed_state.span,
+            max_height=typed_state.max_height,
+            joints=tuple((*typed_state.joints, new_joint)),
+            members=typed_state.members,
+            load_joint_id=typed_state.load_joint_id,
+            load_vector=typed_state.load_vector,
+            additional_loads=typed_state.additional_loads,
+            symmetry_axis_x=typed_state.symmetry_axis_x,
+        )
 
-        if isinstance(action, AddJointPair):
-            if typed_state.symmetry_axis_x is None:
-                raise ValueError("AddJointPair requires a symmetric state.")
-            expected_mirror_x = (2.0 * typed_state.symmetry_axis_x) - action.left_x
-            if not _float_matches(expected_mirror_x, action.right_x) or not _float_matches(
-                action.left_y, action.right_y
-            ):
-                raise ValueError("AddJointPair coordinates must mirror across the symmetry axis.")
-            if any(
-                _point_in_collection({(joint.x, joint.y) for joint in typed_state.joints}, x_value, y_value)
-                for x_value, y_value in ((action.left_x, action.left_y), (action.right_x, action.right_y))
-            ):
-                raise ValueError("Duplicate joint coordinates are not allowed.")
-            next_joint_id = max((joint.joint_id for joint in typed_state.joints), default=-1) + 1
-            new_left_joint = PlanarJoint(joint_id=next_joint_id, x=action.left_x, y=action.left_y, support_type="free")
-            new_right_joint = PlanarJoint(
-                joint_id=next_joint_id + 1,
-                x=action.right_x,
-                y=action.right_y,
-                support_type="free",
-            )
-            return PlanarTrussState(
-                span=typed_state.span,
-                max_height=typed_state.max_height,
-                joints=tuple((*typed_state.joints, new_left_joint, new_right_joint)),
-                members=typed_state.members,
-                load_joint_id=typed_state.load_joint_id,
-                load_vector=typed_state.load_vector,
-                additional_loads=typed_state.additional_loads,
-                symmetry_axis_x=typed_state.symmetry_axis_x,
-            )
+    def add_joint_pair(
+        self,
+        state: PlanarTrussState,
+        *,
+        left_x: float,
+        left_y: float,
+        right_x: float,
+        right_y: float,
+    ) -> PlanarTrussState:
+        """Add one mirrored pair of joints and return the new immutable state."""
+        typed_state = _coerce_state(state)
+        if typed_state.symmetry_axis_x is None:
+            raise ValueError("AddJointPair requires a symmetric state.")
+        expected_mirror_x = (2.0 * typed_state.symmetry_axis_x) - left_x
+        if not _float_matches(expected_mirror_x, right_x) or not _float_matches(left_y, right_y):
+            raise ValueError("AddJointPair coordinates must mirror across the symmetry axis.")
+        occupied = {(joint.x, joint.y) for joint in typed_state.joints}
+        if any(
+            _point_in_collection(occupied, x_value, y_value)
+            for x_value, y_value in ((left_x, left_y), (right_x, right_y))
+        ):
+            raise ValueError("Duplicate joint coordinates are not allowed.")
+        next_joint_id = max((joint.joint_id for joint in typed_state.joints), default=-1) + 1
+        new_left_joint = PlanarJoint(joint_id=next_joint_id, x=left_x, y=left_y, support_type="free")
+        new_right_joint = PlanarJoint(
+            joint_id=next_joint_id + 1,
+            x=right_x,
+            y=right_y,
+            support_type="free",
+        )
+        return PlanarTrussState(
+            span=typed_state.span,
+            max_height=typed_state.max_height,
+            joints=tuple((*typed_state.joints, new_left_joint, new_right_joint)),
+            members=typed_state.members,
+            load_joint_id=typed_state.load_joint_id,
+            load_vector=typed_state.load_vector,
+            additional_loads=typed_state.additional_loads,
+            symmetry_axis_x=typed_state.symmetry_axis_x,
+        )
 
-        if isinstance(action, AddMember):
-            if action.start_joint_id == action.end_joint_id:
-                raise ValueError("Members cannot connect a joint to itself.")
-            joint_ids = {joint.joint_id for joint in typed_state.joints}
-            if action.start_joint_id not in joint_ids or action.end_joint_id not in joint_ids:
-                raise ValueError("Members must reference existing joints.")
-            edge = _edge_key(action.start_joint_id, action.end_joint_id)
-            existing_lookup = _member_lookup(typed_state)
-            if edge in existing_lookup:
+    def add_member(
+        self,
+        state: PlanarTrussState,
+        *,
+        start_joint_id: int,
+        end_joint_id: int,
+    ) -> PlanarTrussState:
+        """Add one member and return the new immutable state."""
+        typed_state = _coerce_state(state)
+        if start_joint_id == end_joint_id:
+            raise ValueError("Members cannot connect a joint to itself.")
+        joint_ids = {joint.joint_id for joint in typed_state.joints}
+        if start_joint_id not in joint_ids or end_joint_id not in joint_ids:
+            raise ValueError("Members must reference existing joints.")
+        edge = _edge_key(start_joint_id, end_joint_id)
+        existing_lookup = _member_lookup(typed_state)
+        if edge in existing_lookup:
+            raise ValueError("Duplicate members are not allowed.")
+        next_member_id = max((member.member_id for member in typed_state.members), default=-1) + 1
+        edges_to_add = [edge]
+        if typed_state.symmetry_axis_x is not None:
+            mirrored_edge = _mirrored_edge(typed_state, edge)
+            if mirrored_edge is None:
+                raise ValueError("Symmetric states require mirrored joints before adding members.")
+            if mirrored_edge in existing_lookup:
                 raise ValueError("Duplicate members are not allowed.")
-            next_member_id = max((member.member_id for member in typed_state.members), default=-1) + 1
-            edges_to_add = [edge]
-            if typed_state.symmetry_axis_x is not None:
-                mirrored_edge = _mirrored_edge(typed_state, edge)
-                if mirrored_edge is None:
-                    raise ValueError("Symmetric states require mirrored joints before adding members.")
-                if mirrored_edge in existing_lookup:
-                    raise ValueError("Duplicate members are not allowed.")
-                if mirrored_edge != edge:
-                    edges_to_add.append(mirrored_edge)
-            new_members = tuple(
-                PlanarMember(
-                    member_id=next_member_id + index,
-                    start_joint_id=member_edge[0],
-                    end_joint_id=member_edge[1],
-                )
-                for index, member_edge in enumerate(edges_to_add)
+            if mirrored_edge != edge:
+                edges_to_add.append(mirrored_edge)
+        new_members = tuple(
+            PlanarMember(
+                member_id=next_member_id + index,
+                start_joint_id=member_edge[0],
+                end_joint_id=member_edge[1],
             )
-            return PlanarTrussState(
-                span=typed_state.span,
-                max_height=typed_state.max_height,
-                joints=typed_state.joints,
-                members=tuple((*typed_state.members, *new_members)),
-                load_joint_id=typed_state.load_joint_id,
-                load_vector=typed_state.load_vector,
-                additional_loads=typed_state.additional_loads,
-                symmetry_axis_x=typed_state.symmetry_axis_x,
-            )
+            for index, member_edge in enumerate(edges_to_add)
+        )
+        return PlanarTrussState(
+            span=typed_state.span,
+            max_height=typed_state.max_height,
+            joints=typed_state.joints,
+            members=tuple((*typed_state.members, *new_members)),
+            load_joint_id=typed_state.load_joint_id,
+            load_vector=typed_state.load_vector,
+            additional_loads=typed_state.additional_loads,
+            symmetry_axis_x=typed_state.symmetry_axis_x,
+        )
 
-        if isinstance(action, RemoveMember):
-            existing_lookup = _member_lookup(typed_state)
-            target_member = next(
-                (member for member in typed_state.members if member.member_id == action.member_id), None
-            )
-            if target_member is None:
-                raise ValueError("Unknown member_id.")
-            removable_edges = {_edge_key(target_member.start_joint_id, target_member.end_joint_id)}
-            if typed_state.symmetry_axis_x is not None:
-                mirrored_edge = _mirrored_edge(typed_state, next(iter(removable_edges)))
-                if mirrored_edge is None:
-                    raise ValueError("Symmetric states require mirrored joints before removing members.")
-                if mirrored_edge in existing_lookup:
-                    removable_edges.add(mirrored_edge)
-            return PlanarTrussState(
-                span=typed_state.span,
-                max_height=typed_state.max_height,
-                joints=typed_state.joints,
-                members=tuple(
-                    member
-                    for member in typed_state.members
-                    if _edge_key(member.start_joint_id, member.end_joint_id) not in removable_edges
-                ),
-                load_joint_id=typed_state.load_joint_id,
-                load_vector=typed_state.load_vector,
-                additional_loads=typed_state.additional_loads,
-                symmetry_axis_x=typed_state.symmetry_axis_x,
-            )
-
-        raise TypeError(f"Unsupported action type: {type(action)!r}")
+    def remove_member(self, state: PlanarTrussState, *, member_id: int) -> PlanarTrussState:
+        """Remove one member and its mirrored counterpart when symmetry is enforced."""
+        typed_state = _coerce_state(state)
+        existing_lookup = _member_lookup(typed_state)
+        target_member = next((member for member in typed_state.members if member.member_id == member_id), None)
+        if target_member is None:
+            raise ValueError("Unknown member_id.")
+        removable_edges = {_edge_key(target_member.start_joint_id, target_member.end_joint_id)}
+        if typed_state.symmetry_axis_x is not None:
+            mirrored_edge = _mirrored_edge(typed_state, next(iter(removable_edges)))
+            if mirrored_edge is None:
+                raise ValueError("Symmetric states require mirrored joints before removing members.")
+            if mirrored_edge in existing_lookup:
+                removable_edges.add(mirrored_edge)
+        return PlanarTrussState(
+            span=typed_state.span,
+            max_height=typed_state.max_height,
+            joints=typed_state.joints,
+            members=tuple(
+                member
+                for member in typed_state.members
+                if _edge_key(member.start_joint_id, member.end_joint_id) not in removable_edges
+            ),
+            load_joint_id=typed_state.load_joint_id,
+            load_vector=typed_state.load_vector,
+            additional_loads=typed_state.additional_loads,
+            symmetry_axis_x=typed_state.symmetry_axis_x,
+        )
 
     def evaluate(self, state: object) -> PlanarTrussEvaluation:
         """Evaluate one state with the lazy TrussMe adapter.

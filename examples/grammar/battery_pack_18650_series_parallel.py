@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from design_research_problems import MissingOptionalDependencyError, get_problem
-from design_research_problems.problems.grammar import AddParallelBranch, AddSeriesStage
 
 
 def main() -> None:
@@ -13,19 +12,19 @@ def main() -> None:
     problem = get_problem("battery_pack_18650_series_parallel")
     state = problem.initial_state()
 
-    # Add three more series stages. In this grammar each AddSeriesStage action must
+    # Add three more series stages. In this grammar each add_series_stage call must
     # provide one placement for every existing parallel branch, which is one cell at
     # a time while the pack is still 1P.
-    state = problem.apply_action(state, AddSeriesStage(placements=((1, 0, 0),)))
-    state = problem.apply_action(state, AddSeriesStage(placements=((2, 0, 0),)))
-    state = problem.apply_action(state, AddSeriesStage(placements=((3, 0, 0),)))
+    state = problem.add_series_stage(state, placements=((1, 0, 0),))
+    state = problem.add_series_stage(state, placements=((2, 0, 0),))
+    state = problem.add_series_stage(state, placements=((3, 0, 0),))
 
-    # Add three more parallel branches. Once the pack is 4S, each AddParallelBranch
-    # action must provide one placement for every series stage, so each action adds a
+    # Add three more parallel branches. Once the pack is 4S, each add_parallel_branch
+    # call must provide one placement for every series stage, so each edit adds a
     # full new branch of four cells.
-    state = problem.apply_action(state, AddParallelBranch(placements=((0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0))))
-    state = problem.apply_action(state, AddParallelBranch(placements=((0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0))))
-    state = problem.apply_action(state, AddParallelBranch(placements=((0, 3, 0), (1, 3, 0), (2, 3, 0), (3, 3, 0))))
+    state = problem.add_parallel_branch(state, placements=((0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0)))
+    state = problem.add_parallel_branch(state, placements=((0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0)))
+    state = problem.add_parallel_branch(state, placements=((0, 3, 0), (1, 3, 0), (2, 3, 0), (3, 3, 0)))
 
     print(problem.metadata.problem_id)
     print(f"{state.series_count}S{state.parallel_count}P with {len(state.cells)} cells")

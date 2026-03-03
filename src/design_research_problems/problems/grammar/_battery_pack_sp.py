@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from itertools import combinations
 
 from design_research_problems._catalog._manifest import ProblemManifest
+from design_research_problems.problems._grammar import GrammarTransition
 from design_research_problems.problems.grammar._battery_circuit import (
     BatteryCellInstance,
     BatteryCircuitState,
@@ -40,46 +41,6 @@ class SeriesParallelBatteryState:
     """Number of parallel branches in the pack."""
     cells: tuple[BatteryCellPlacement, ...]
     """Complete ordered set of cell placements."""
-
-
-@dataclass(frozen=True)
-class MoveCell:
-    """Move one existing physical cell to a new coordinate."""
-
-    cell_id: int
-    """Stable identifier of the cell to move."""
-    x: int
-    """New grid x-coordinate."""
-    y: int
-    """New grid y-coordinate."""
-    z: int
-    """New grid z-coordinate."""
-
-
-@dataclass(frozen=True)
-class AddSeriesStage:
-    """Append one new series stage using one placement per existing branch."""
-
-    placements: tuple[tuple[int, int, int], ...]
-    """New coordinates for the appended stage, one per branch."""
-
-
-@dataclass(frozen=True)
-class RemoveSeriesStage:
-    """Remove the final series stage."""
-
-
-@dataclass(frozen=True)
-class AddParallelBranch:
-    """Append one new parallel branch using one placement per existing stage."""
-
-    placements: tuple[tuple[int, int, int], ...]
-    """New coordinates for the appended branch, one per stage."""
-
-
-@dataclass(frozen=True)
-class RemoveParallelBranch:
-    """Remove the final parallel branch."""
 
 
 @dataclass(frozen=True)
@@ -236,7 +197,9 @@ def _build_circuit_state_from_series_parallel(state: SeriesParallelBatteryState)
     )
 
 
-class BatteryPack18650SeriesParallelProblem(BatteryCircuitProblemBase):
+class BatteryPack18650SeriesParallelProblem(
+    BatteryCircuitProblemBase[SeriesParallelBatteryState, SeriesParallelBatteryEvaluation]
+):
     """Co-design grammar for a constrained 18650 series-parallel battery pack."""
 
     @classmethod
@@ -266,10 +229,12 @@ class BatteryPack18650SeriesParallelProblem(BatteryCircuitProblemBase):
             ),
         )
 
-    def enumerate_actions(self, state: object) -> tuple[object, ...]:
-        """Return deterministic move and group-edit actions."""
+    def enumerate_transitions(
+        self, state: SeriesParallelBatteryState
+    ) -> tuple[GrammarTransition[SeriesParallelBatteryState], ...]:
+        """Return deterministic move and group-edit transitions."""
         typed_state = _coerce_state(state)
-        actions: list[object] = []
+        transitions: list[GrammarTransition[SeriesParallelBatteryState]] = []
         frontier = candidate_frontier_coordinates(typed_state, self.requirements)
         occupied = occupied_coordinates(typed_state.cells)
 
@@ -280,136 +245,195 @@ class BatteryPack18650SeriesParallelProblem(BatteryCircuitProblemBase):
                     continue
                 if coordinate in occupied:
                     continue
-                actions.append(
-                    MoveCell(
-                        cell_id=cell.cell_id,
-                        x=coordinate[0],
-                        y=coordinate[1],
-                        z=coordinate[2],
+                parameters = (
+                    ("cell_id", cell.cell_id),
+                    ("x", coordinate[0]),
+                    ("y", coordinate[1]),
+                    ("z", coordinate[2]),
+                )
+                transitions.append(
+                    GrammarTransition(
+                        rule_name="move_cell",
+                        parameters=parameters,
+                        next_state=self.move_cell(
+                            typed_state,
+                            cell_id=cell.cell_id,
+                            x=coordinate[0],
+                            y=coordinate[1],
+                            z=coordinate[2],
+                        ),
                     )
                 )
 
         if len(frontier) >= typed_state.parallel_count:
             for combination in combinations(frontier, typed_state.parallel_count):
                 ordered = tuple(sorted(combination, key=_sort_coordinate_key))
-                actions.append(AddSeriesStage(placements=ordered))
+                transitions.append(
+                    GrammarTransition(
+                        rule_name="add_series_stage",
+                        parameters=(("placements", ordered),),
+                        next_state=self.add_series_stage(typed_state, placements=ordered),
+                    )
+                )
 
         if typed_state.series_count > 1:
-            actions.append(RemoveSeriesStage())
+            transitions.append(
+                GrammarTransition(
+                    rule_name="remove_series_stage",
+                    parameters=(),
+                    next_state=self.remove_series_stage(typed_state),
+                )
+            )
 
         if len(frontier) >= typed_state.series_count:
             for combination in combinations(frontier, typed_state.series_count):
                 ordered = tuple(sorted(combination, key=_sort_coordinate_key))
-                actions.append(AddParallelBranch(placements=ordered))
+                transitions.append(
+                    GrammarTransition(
+                        rule_name="add_parallel_branch",
+                        parameters=(("placements", ordered),),
+                        next_state=self.add_parallel_branch(typed_state, placements=ordered),
+                    )
+                )
 
         if typed_state.parallel_count > 1:
-            actions.append(RemoveParallelBranch())
+            transitions.append(
+                GrammarTransition(
+                    rule_name="remove_parallel_branch",
+                    parameters=(),
+                    next_state=self.remove_parallel_branch(typed_state),
+                )
+            )
 
-        return tuple(actions)
+        return tuple(transitions)
 
-    def apply_action(self, state: object, action: object) -> SeriesParallelBatteryState:
-        """Apply one move or group-edit action and return the new state."""
+    def move_cell(
+        self,
+        state: SeriesParallelBatteryState,
+        *,
+        cell_id: int,
+        x: int,
+        y: int,
+        z: int,
+    ) -> SeriesParallelBatteryState:
+        """Move one existing cell to a new coordinate."""
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         occupied = occupied_coordinates(typed_state.cells)
-
-        if isinstance(action, MoveCell):
-            target_coordinate = (action.x, action.y, action.z)
-            if not coordinate_is_in_bounds(target_coordinate, self.requirements):
-                raise ValueError("Move target lies outside the legal battery grid.")
-            replacement_index = None
-            for index, cell in enumerate(cells):
-                if cell.cell_id == action.cell_id:
-                    replacement_index = index
-                    current_coordinate = (cell.x, cell.y, cell.z)
-                    if target_coordinate != current_coordinate and target_coordinate in occupied:
-                        raise ValueError("Move target is already occupied.")
-                    cells[index] = BatteryCellPlacement(
-                        cell_id=cell.cell_id,
-                        stage_index=cell.stage_index,
-                        branch_index=cell.branch_index,
-                        x=action.x,
-                        y=action.y,
-                        z=action.z,
-                    )
-                    break
-            if replacement_index is None:
-                raise ValueError(f"Unknown cell_id: {action.cell_id}")
-            return SeriesParallelBatteryState(
-                series_count=typed_state.series_count,
-                parallel_count=typed_state.parallel_count,
-                cells=sort_cell_placements(cells),
-            )
-
-        if isinstance(action, AddSeriesStage):
-            if len(action.placements) != typed_state.parallel_count:
-                raise ValueError("AddSeriesStage must include one placement per parallel branch.")
-            self._validate_new_placements(typed_state, action.placements)
-            new_cells = list(cells)
-            next_id = next_cell_id(typed_state.cells)
-            for branch_index, placement in enumerate(action.placements):
-                new_cells.append(
-                    BatteryCellPlacement(
-                        cell_id=next_id,
-                        stage_index=typed_state.series_count,
-                        branch_index=branch_index,
-                        x=placement[0],
-                        y=placement[1],
-                        z=placement[2],
-                    )
+        target_coordinate = (x, y, z)
+        if not coordinate_is_in_bounds(target_coordinate, self.requirements):
+            raise ValueError("Move target lies outside the legal battery grid.")
+        replacement_index = None
+        for index, cell in enumerate(cells):
+            if cell.cell_id == cell_id:
+                replacement_index = index
+                current_coordinate = (cell.x, cell.y, cell.z)
+                if target_coordinate != current_coordinate and target_coordinate in occupied:
+                    raise ValueError("Move target is already occupied.")
+                cells[index] = BatteryCellPlacement(
+                    cell_id=cell.cell_id,
+                    stage_index=cell.stage_index,
+                    branch_index=cell.branch_index,
+                    x=x,
+                    y=y,
+                    z=z,
                 )
-                next_id += 1
-            return SeriesParallelBatteryState(
-                series_count=typed_state.series_count + 1,
-                parallel_count=typed_state.parallel_count,
-                cells=sort_cell_placements(new_cells),
-            )
+                break
+        if replacement_index is None:
+            raise ValueError(f"Unknown cell_id: {cell_id}")
+        return SeriesParallelBatteryState(
+            series_count=typed_state.series_count,
+            parallel_count=typed_state.parallel_count,
+            cells=sort_cell_placements(cells),
+        )
 
-        if isinstance(action, RemoveSeriesStage):
-            if typed_state.series_count <= 1:
-                raise ValueError("Cannot remove the final series stage.")
-            kept_cells = [cell for cell in cells if cell.stage_index != (typed_state.series_count - 1)]
-            return SeriesParallelBatteryState(
-                series_count=typed_state.series_count - 1,
-                parallel_count=typed_state.parallel_count,
-                cells=sort_cell_placements(kept_cells),
-            )
-
-        if isinstance(action, AddParallelBranch):
-            if len(action.placements) != typed_state.series_count:
-                raise ValueError("AddParallelBranch must include one placement per series stage.")
-            self._validate_new_placements(typed_state, action.placements)
-            new_cells = list(cells)
-            next_id = next_cell_id(typed_state.cells)
-            for stage_index, placement in enumerate(action.placements):
-                new_cells.append(
-                    BatteryCellPlacement(
-                        cell_id=next_id,
-                        stage_index=stage_index,
-                        branch_index=typed_state.parallel_count,
-                        x=placement[0],
-                        y=placement[1],
-                        z=placement[2],
-                    )
+    def add_series_stage(
+        self,
+        state: SeriesParallelBatteryState,
+        *,
+        placements: tuple[tuple[int, int, int], ...],
+    ) -> SeriesParallelBatteryState:
+        """Append one new series stage using one placement per branch."""
+        typed_state = _coerce_state(state)
+        cells = list(typed_state.cells)
+        if len(placements) != typed_state.parallel_count:
+            raise ValueError("AddSeriesStage must include one placement per parallel branch.")
+        self._validate_new_placements(typed_state, placements)
+        next_id = next_cell_id(typed_state.cells)
+        for branch_index, placement in enumerate(placements):
+            cells.append(
+                BatteryCellPlacement(
+                    cell_id=next_id,
+                    stage_index=typed_state.series_count,
+                    branch_index=branch_index,
+                    x=placement[0],
+                    y=placement[1],
+                    z=placement[2],
                 )
-                next_id += 1
-            return SeriesParallelBatteryState(
-                series_count=typed_state.series_count,
-                parallel_count=typed_state.parallel_count + 1,
-                cells=sort_cell_placements(new_cells),
             )
+            next_id += 1
+        return SeriesParallelBatteryState(
+            series_count=typed_state.series_count + 1,
+            parallel_count=typed_state.parallel_count,
+            cells=sort_cell_placements(cells),
+        )
 
-        if isinstance(action, RemoveParallelBranch):
-            if typed_state.parallel_count <= 1:
-                raise ValueError("Cannot remove the final parallel branch.")
-            kept_cells = [cell for cell in cells if cell.branch_index != (typed_state.parallel_count - 1)]
-            return SeriesParallelBatteryState(
-                series_count=typed_state.series_count,
-                parallel_count=typed_state.parallel_count - 1,
-                cells=sort_cell_placements(kept_cells),
+    def remove_series_stage(self, state: SeriesParallelBatteryState) -> SeriesParallelBatteryState:
+        """Remove the final series stage."""
+        typed_state = _coerce_state(state)
+        cells = list(typed_state.cells)
+        if typed_state.series_count <= 1:
+            raise ValueError("Cannot remove the final series stage.")
+        kept_cells = [cell for cell in cells if cell.stage_index != (typed_state.series_count - 1)]
+        return SeriesParallelBatteryState(
+            series_count=typed_state.series_count - 1,
+            parallel_count=typed_state.parallel_count,
+            cells=sort_cell_placements(kept_cells),
+        )
+
+    def add_parallel_branch(
+        self,
+        state: SeriesParallelBatteryState,
+        *,
+        placements: tuple[tuple[int, int, int], ...],
+    ) -> SeriesParallelBatteryState:
+        """Append one new parallel branch using one placement per stage."""
+        typed_state = _coerce_state(state)
+        cells = list(typed_state.cells)
+        if len(placements) != typed_state.series_count:
+            raise ValueError("AddParallelBranch must include one placement per series stage.")
+        self._validate_new_placements(typed_state, placements)
+        next_id = next_cell_id(typed_state.cells)
+        for stage_index, placement in enumerate(placements):
+            cells.append(
+                BatteryCellPlacement(
+                    cell_id=next_id,
+                    stage_index=stage_index,
+                    branch_index=typed_state.parallel_count,
+                    x=placement[0],
+                    y=placement[1],
+                    z=placement[2],
+                )
             )
+            next_id += 1
+        return SeriesParallelBatteryState(
+            series_count=typed_state.series_count,
+            parallel_count=typed_state.parallel_count + 1,
+            cells=sort_cell_placements(cells),
+        )
 
-        raise TypeError(f"Unsupported action type: {type(action).__name__}")
+    def remove_parallel_branch(self, state: SeriesParallelBatteryState) -> SeriesParallelBatteryState:
+        """Remove the final parallel branch."""
+        typed_state = _coerce_state(state)
+        cells = list(typed_state.cells)
+        if typed_state.parallel_count <= 1:
+            raise ValueError("Cannot remove the final parallel branch.")
+        kept_cells = [cell for cell in cells if cell.branch_index != (typed_state.parallel_count - 1)]
+        return SeriesParallelBatteryState(
+            series_count=typed_state.series_count,
+            parallel_count=typed_state.parallel_count - 1,
+            cells=sort_cell_placements(kept_cells),
+        )
 
     def _validate_new_placements(
         self,
@@ -585,12 +609,7 @@ class BatteryPack18650SeriesParallelProblem(BatteryCircuitProblemBase):
 
 
 __all__ = [
-    "AddParallelBranch",
-    "AddSeriesStage",
     "BatteryPack18650SeriesParallelProblem",
-    "MoveCell",
-    "RemoveParallelBranch",
-    "RemoveSeriesStage",
     "SeriesParallelBatteryEvaluation",
     "SeriesParallelBatteryState",
 ]

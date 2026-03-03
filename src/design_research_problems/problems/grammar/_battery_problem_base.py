@@ -44,7 +44,7 @@ def parse_battery_requirements(manifest: ProblemManifest) -> BatteryRequirements
     )
 
 
-class BatteryCircuitProblemBase(GrammarProblem):
+class BatteryCircuitProblemBase[StateT, EvaluationT](GrammarProblem[StateT, EvaluationT]):
     """Shared base class for battery grammar problems."""
 
     def __init__(

@@ -38,8 +38,8 @@ adapter:
 
    truss_problem = get_problem("planar_truss_span")
    state = truss_problem.initial_state()
-   actions = truss_problem.enumerate_actions(state)
-   print(len(actions))
+   state = truss_problem.add_member(state, start_joint_id=0, end_joint_id=2)
+   print(len(truss_problem.enumerate_transitions(state)))
 
 The constrained battery grammar exposes explicit cell placements and group-wise
 series or parallel edits:
@@ -48,8 +48,12 @@ series or parallel edits:
 
    battery_problem = get_problem("battery_pack_18650_series_parallel")
    battery_state = battery_problem.initial_state()
-   battery_actions = battery_problem.enumerate_actions(battery_state)
-   print(battery_state.series_count, battery_state.parallel_count, len(battery_actions))
+   battery_state = battery_problem.add_series_stage(battery_state, placements=((1, 0, 0),))
+   print(
+       battery_state.series_count,
+       battery_state.parallel_count,
+       len(battery_problem.enumerate_transitions(battery_state)),
+   )
 
 The open-ended battery grammar starts from a single cell and exposes explicit
 netlist edits:
@@ -58,5 +62,16 @@ netlist edits:
 
    open_battery_problem = get_problem("battery_pack_18650_open_ended")
    open_battery_state = open_battery_problem.initial_state()
-   open_battery_actions = open_battery_problem.enumerate_actions(open_battery_state)
-   print(len(open_battery_state.cells), len(open_battery_state.connections), len(open_battery_actions))
+   open_battery_state = open_battery_problem.add_cell(
+       open_battery_state,
+       x=1,
+       y=0,
+       z=0,
+       connect_negative_to_terminal_id=open_battery_state.pack_positive_terminal_id,
+       use_positive_as_pack_terminal=True,
+   )
+   print(
+       len(open_battery_state.cells),
+       len(open_battery_state.connections),
+       len(open_battery_problem.enumerate_transitions(open_battery_state)),
+   )

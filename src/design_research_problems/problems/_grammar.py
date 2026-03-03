@@ -3,13 +3,26 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._computable import ComputableProblem
 from design_research_problems.problems._metadata import ProblemMetadata
 
 
-class GrammarProblem[StateT, ActionT, EvaluationT](ComputableProblem[StateT, EvaluationT], ABC):
+@dataclass(frozen=True)
+class GrammarTransition[StateT]:
+    """One deterministic grammar transition produced by a concrete rule method."""
+
+    rule_name: str
+    """Concrete public method name used to produce the transition."""
+    parameters: tuple[tuple[str, object], ...]
+    """Ordered keyword arguments that fully specify the rule call."""
+    next_state: StateT
+    """State returned by applying the rule."""
+
+
+class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT], ABC):
     """Abstract base for grammar-defined discrete design problems."""
 
     def __init__(
@@ -40,26 +53,14 @@ class GrammarProblem[StateT, ActionT, EvaluationT](ComputableProblem[StateT, Eva
         """
 
     @abstractmethod
-    def enumerate_actions(self, state: StateT) -> tuple[ActionT, ...]:
-        """Return a deterministic action set for the given state.
+    def enumerate_transitions(self, state: StateT) -> tuple[GrammarTransition[StateT], ...]:
+        """Return deterministic legal transitions for the given state.
 
         Args:
             state: Current grammar state.
 
         Returns:
-            Available actions in deterministic order.
-        """
-
-    @abstractmethod
-    def apply_action(self, state: StateT, action: ActionT) -> StateT:
-        """Apply one action and return a new state.
-
-        Args:
-            state: Current grammar state.
-            action: One action returned by :meth:`enumerate_actions`.
-
-        Returns:
-            Updated grammar state.
+            Fully specified legal transitions in deterministic order.
         """
 
     @abstractmethod
@@ -72,3 +73,6 @@ class GrammarProblem[StateT, ActionT, EvaluationT](ComputableProblem[StateT, Eva
         Returns:
             Problem-specific evaluation result.
         """
+
+
+__all__ = ["GrammarProblem", "GrammarTransition"]

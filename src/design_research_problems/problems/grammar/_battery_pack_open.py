@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._grammar import GrammarTransition
 from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems.grammar._battery_circuit import (
     BatteryCellInstance,
@@ -25,68 +24,11 @@ from design_research_problems.problems.grammar._battery_layout import (
     coordinate_is_in_bounds,
     occupied_coordinates,
 )
-from design_research_problems.problems.grammar._battery_pack_sp import MoveCell
 from design_research_problems.problems.grammar._battery_problem_base import (
     BatteryCircuitProblemBase,
     _coerce_int,
     parse_battery_requirements,
 )
-
-
-@dataclass(frozen=True)
-class AddCell:
-    """Add one new connected cell at one free physical coordinate."""
-
-    x: int
-    """New grid x-coordinate."""
-    y: int
-    """New grid y-coordinate."""
-    z: int
-    """New grid z-coordinate."""
-    connect_negative_to_terminal_id: int | None = None
-    """Existing terminal to connect to the new negative lead, when explicit."""
-    connect_positive_to_terminal_id: int | None = None
-    """Existing terminal to connect to the new positive lead, when explicit."""
-    use_negative_as_pack_terminal: bool = False
-    """Whether the new negative lead replaces the pack negative terminal."""
-    use_positive_as_pack_terminal: bool = False
-    """Whether the new positive lead replaces the pack positive terminal."""
-
-
-@dataclass(frozen=True)
-class RemoveCell:
-    """Remove one existing cell and any incident interconnects."""
-
-    cell_id: int
-    """Stable identifier of the cell to remove."""
-
-
-@dataclass(frozen=True)
-class AddConnection:
-    """Add one interconnect between two existing terminals."""
-
-    from_terminal_id: int
-    """One endpoint terminal identifier."""
-    to_terminal_id: int
-    """The other endpoint terminal identifier."""
-
-
-@dataclass(frozen=True)
-class RemoveConnection:
-    """Remove one existing interconnect."""
-
-    connection_id: int
-    """Stable identifier of the connection to remove."""
-
-
-@dataclass(frozen=True)
-class SetPackTerminals:
-    """Select the explicit output terminals for the pack."""
-
-    positive_terminal_id: int
-    """Pack positive output terminal."""
-    negative_terminal_id: int
-    """Pack negative output terminal."""
 
 
 def _coerce_state(state: object) -> BatteryCircuitState:
@@ -111,7 +53,7 @@ def _next_cell_id(cells: tuple[BatteryCellInstance, ...]) -> int:
     return next_id
 
 
-class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase):
+class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitState, BatteryCircuitEvaluation]):
     """Open-ended 18650 battery grammar with explicit cells and interconnects."""
 
     def __init__(
@@ -161,50 +103,111 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase):
             pack_negative_terminal_id=0,
         )
 
-    def enumerate_actions(self, state: object) -> tuple[object, ...]:
-        """Return deterministic open-ended cell, wire, and terminal actions."""
+    def enumerate_transitions(self, state: BatteryCircuitState) -> tuple[GrammarTransition[BatteryCircuitState], ...]:
+        """Return deterministic open-ended cell, wire, and terminal transitions."""
         typed_state = _coerce_state(state)
-        actions: list[object] = []
+        transitions: list[GrammarTransition[BatteryCircuitState]] = []
         frontier = candidate_frontier_coordinates_from_cells(typed_state.cells, self.requirements)
         occupied = occupied_coordinates(typed_state.cells)
 
         if len(typed_state.cells) < self.max_cell_count:
             for coordinate in frontier:
-                actions.append(AddCell(x=coordinate[0], y=coordinate[1], z=coordinate[2]))
-                actions.append(
-                    AddCell(
-                        x=coordinate[0],
-                        y=coordinate[1],
-                        z=coordinate[2],
-                        connect_negative_to_terminal_id=typed_state.pack_positive_terminal_id,
-                        use_positive_as_pack_terminal=True,
+                transitions.append(
+                    GrammarTransition(
+                        rule_name="add_cell",
+                        parameters=(
+                            ("x", coordinate[0]),
+                            ("y", coordinate[1]),
+                            ("z", coordinate[2]),
+                            ("connect_negative_to_terminal_id", None),
+                            ("connect_positive_to_terminal_id", None),
+                            ("use_negative_as_pack_terminal", False),
+                            ("use_positive_as_pack_terminal", False),
+                        ),
+                        next_state=self.add_cell(
+                            typed_state,
+                            x=coordinate[0],
+                            y=coordinate[1],
+                            z=coordinate[2],
+                        ),
                     )
                 )
-                actions.append(
-                    AddCell(
-                        x=coordinate[0],
-                        y=coordinate[1],
-                        z=coordinate[2],
-                        connect_positive_to_terminal_id=typed_state.pack_negative_terminal_id,
-                        use_negative_as_pack_terminal=True,
+                transitions.append(
+                    GrammarTransition(
+                        rule_name="add_cell",
+                        parameters=(
+                            ("x", coordinate[0]),
+                            ("y", coordinate[1]),
+                            ("z", coordinate[2]),
+                            ("connect_negative_to_terminal_id", typed_state.pack_positive_terminal_id),
+                            ("connect_positive_to_terminal_id", None),
+                            ("use_negative_as_pack_terminal", False),
+                            ("use_positive_as_pack_terminal", True),
+                        ),
+                        next_state=self.add_cell(
+                            typed_state,
+                            x=coordinate[0],
+                            y=coordinate[1],
+                            z=coordinate[2],
+                            connect_negative_to_terminal_id=typed_state.pack_positive_terminal_id,
+                            use_positive_as_pack_terminal=True,
+                        ),
+                    )
+                )
+                transitions.append(
+                    GrammarTransition(
+                        rule_name="add_cell",
+                        parameters=(
+                            ("x", coordinate[0]),
+                            ("y", coordinate[1]),
+                            ("z", coordinate[2]),
+                            ("connect_negative_to_terminal_id", None),
+                            ("connect_positive_to_terminal_id", typed_state.pack_negative_terminal_id),
+                            ("use_negative_as_pack_terminal", True),
+                            ("use_positive_as_pack_terminal", False),
+                        ),
+                        next_state=self.add_cell(
+                            typed_state,
+                            x=coordinate[0],
+                            y=coordinate[1],
+                            z=coordinate[2],
+                            connect_positive_to_terminal_id=typed_state.pack_negative_terminal_id,
+                            use_negative_as_pack_terminal=True,
+                        ),
                     )
                 )
 
         for cell in typed_state.cells:
             current_coordinate = (cell.x, cell.y, cell.z)
             if len(typed_state.cells) > 1:
-                actions.append(RemoveCell(cell_id=cell.cell_id))
+                transitions.append(
+                    GrammarTransition(
+                        rule_name="remove_cell",
+                        parameters=(("cell_id", cell.cell_id),),
+                        next_state=self.remove_cell(typed_state, cell_id=cell.cell_id),
+                    )
+                )
             for coordinate in frontier:
                 if coordinate == current_coordinate:
                     continue
                 if coordinate in occupied:
                     continue
-                actions.append(
-                    MoveCell(
-                        cell_id=cell.cell_id,
-                        x=coordinate[0],
-                        y=coordinate[1],
-                        z=coordinate[2],
+                transitions.append(
+                    GrammarTransition(
+                        rule_name="move_cell",
+                        parameters=(
+                            ("cell_id", cell.cell_id),
+                            ("x", coordinate[0]),
+                            ("y", coordinate[1]),
+                            ("z", coordinate[2]),
+                        ),
+                        next_state=self.move_cell(
+                            typed_state,
+                            cell_id=cell.cell_id,
+                            x=coordinate[0],
+                            y=coordinate[1],
+                            z=coordinate[2],
+                        ),
                     )
                 )
 
@@ -217,243 +220,300 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase):
             for second_terminal_id in ids[first_index + 1 :]:
                 if _connection_pair_key(first_terminal_id, second_terminal_id) in direct_pairs:
                     continue
-                actions.append(
-                    AddConnection(
-                        from_terminal_id=first_terminal_id,
-                        to_terminal_id=second_terminal_id,
+                transitions.append(
+                    GrammarTransition(
+                        rule_name="add_connection",
+                        parameters=(
+                            ("from_terminal_id", first_terminal_id),
+                            ("to_terminal_id", second_terminal_id),
+                        ),
+                        next_state=self.add_connection(
+                            typed_state,
+                            from_terminal_id=first_terminal_id,
+                            to_terminal_id=second_terminal_id,
+                        ),
                     )
                 )
 
         for connection in typed_state.connections:
-            actions.append(RemoveConnection(connection_id=connection.connection_id))
+            transitions.append(
+                GrammarTransition(
+                    rule_name="remove_connection",
+                    parameters=(("connection_id", connection.connection_id),),
+                    next_state=self.remove_connection(typed_state, connection_id=connection.connection_id),
+                )
+            )
 
         for positive_terminal_id in ids:
             for negative_terminal_id in ids:
                 if positive_terminal_id == negative_terminal_id:
                     continue
-                actions.append(
-                    SetPackTerminals(
-                        positive_terminal_id=positive_terminal_id,
-                        negative_terminal_id=negative_terminal_id,
+                transitions.append(
+                    GrammarTransition(
+                        rule_name="set_pack_terminals",
+                        parameters=(
+                            ("positive_terminal_id", positive_terminal_id),
+                            ("negative_terminal_id", negative_terminal_id),
+                        ),
+                        next_state=self.set_pack_terminals(
+                            typed_state,
+                            positive_terminal_id=positive_terminal_id,
+                            negative_terminal_id=negative_terminal_id,
+                        ),
                     )
                 )
 
-        return tuple(actions)
+        return tuple(transitions)
 
-    def apply_action(self, state: object, action: object) -> BatteryCircuitState:
-        """Apply one explicit-circuit action and return the new state."""
+    def add_cell(
+        self,
+        state: BatteryCircuitState,
+        *,
+        x: int,
+        y: int,
+        z: int,
+        connect_negative_to_terminal_id: int | None = None,
+        connect_positive_to_terminal_id: int | None = None,
+        use_negative_as_pack_terminal: bool = False,
+        use_positive_as_pack_terminal: bool = False,
+    ) -> BatteryCircuitState:
+        """Add one new connected cell at a free physical coordinate."""
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         connections = list(typed_state.connections)
+        coordinate = (x, y, z)
+        if len(cells) >= self.max_cell_count:
+            raise ValueError("Cannot exceed the configured maximum cell count.")
+        if not coordinate_is_in_bounds(coordinate, self.requirements):
+            raise ValueError("AddCell target lies outside the legal battery grid.")
+        if coordinate in occupied_coordinates(cells):
+            raise ValueError("AddCell target is already occupied.")
+        if use_negative_as_pack_terminal and use_positive_as_pack_terminal:
+            raise ValueError("AddCell cannot replace both pack terminals at once.")
 
-        if isinstance(action, AddCell):
-            coordinate = (action.x, action.y, action.z)
-            if len(cells) >= self.max_cell_count:
-                raise ValueError("Cannot exceed the configured maximum cell count.")
-            if not coordinate_is_in_bounds(coordinate, self.requirements):
-                raise ValueError("AddCell target lies outside the legal battery grid.")
-            if coordinate in occupied_coordinates(cells):
-                raise ValueError("AddCell target is already occupied.")
-            if action.use_negative_as_pack_terminal and action.use_positive_as_pack_terminal:
-                raise ValueError("AddCell cannot replace both pack terminals at once.")
+        terminal_id_set = set(terminal_ids(typed_state))
+        connect_negative = connect_negative_to_terminal_id
+        connect_positive = connect_positive_to_terminal_id
 
-            terminal_id_set = set(terminal_ids(typed_state))
-            connect_negative_to_terminal_id = action.connect_negative_to_terminal_id
-            connect_positive_to_terminal_id = action.connect_positive_to_terminal_id
+        if connect_negative is None and not use_negative_as_pack_terminal:
+            connect_negative = typed_state.pack_negative_terminal_id
+        if connect_positive is None and not use_positive_as_pack_terminal:
+            connect_positive = typed_state.pack_positive_terminal_id
 
-            if connect_negative_to_terminal_id is None and not action.use_negative_as_pack_terminal:
-                connect_negative_to_terminal_id = typed_state.pack_negative_terminal_id
-            if connect_positive_to_terminal_id is None and not action.use_positive_as_pack_terminal:
-                connect_positive_to_terminal_id = typed_state.pack_positive_terminal_id
+        if (connect_negative is not None and use_negative_as_pack_terminal) or (
+            connect_positive is not None and use_positive_as_pack_terminal
+        ):
+            raise ValueError("Each AddCell lead can either connect to the circuit or become a pack terminal.")
 
-            if (connect_negative_to_terminal_id is not None and action.use_negative_as_pack_terminal) or (
-                connect_positive_to_terminal_id is not None and action.use_positive_as_pack_terminal
-            ):
-                raise ValueError("Each AddCell lead can either connect to the circuit or become a pack terminal.")
+        if connect_negative is None and connect_positive is None:
+            raise ValueError("AddCell must connect at least one new lead to the existing circuit.")
 
-            if connect_negative_to_terminal_id is None and connect_positive_to_terminal_id is None:
-                raise ValueError("AddCell must connect at least one new lead to the existing circuit.")
+        if (connect_negative is not None and connect_negative not in terminal_id_set) or (
+            connect_positive is not None and connect_positive not in terminal_id_set
+        ):
+            raise ValueError("AddCell must reference existing terminal ids.")
 
-            if (
-                connect_negative_to_terminal_id is not None and connect_negative_to_terminal_id not in terminal_id_set
-            ) or (
-                connect_positive_to_terminal_id is not None and connect_positive_to_terminal_id not in terminal_id_set
-            ):
-                raise ValueError("AddCell must reference existing terminal ids.")
+        if connect_negative is not None and connect_positive is not None and connect_negative == connect_positive:
+            raise ValueError("AddCell cannot connect both new leads to the same terminal.")
 
-            if (
-                connect_negative_to_terminal_id is not None
-                and connect_positive_to_terminal_id is not None
-                and connect_negative_to_terminal_id == connect_positive_to_terminal_id
-            ):
-                raise ValueError("AddCell cannot connect both new leads to the same terminal.")
-
-            next_terminal = next_terminal_id(cells)
-            new_negative_terminal_id = next_terminal
-            new_positive_terminal_id = next_terminal + 1
-            cells.append(
-                BatteryCellInstance(
-                    cell_id=_next_cell_id(typed_state.cells),
-                    positive_terminal_id=new_positive_terminal_id,
-                    negative_terminal_id=new_negative_terminal_id,
-                    x=action.x,
-                    y=action.y,
-                    z=action.z,
-                )
+        next_terminal = next_terminal_id(cells)
+        new_negative_terminal_id = next_terminal
+        new_positive_terminal_id = next_terminal + 1
+        cells.append(
+            BatteryCellInstance(
+                cell_id=_next_cell_id(typed_state.cells),
+                positive_terminal_id=new_positive_terminal_id,
+                negative_terminal_id=new_negative_terminal_id,
+                x=x,
+                y=y,
+                z=z,
             )
-            if connect_negative_to_terminal_id is not None:
-                negative_pair = _connection_pair_key(connect_negative_to_terminal_id, new_negative_terminal_id)
-                connections.append(
-                    BatteryConnection(
-                        connection_id=next_connection_id(connections),
-                        from_terminal_id=negative_pair[0],
-                        to_terminal_id=negative_pair[1],
-                        resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
-                    )
-                )
-            if connect_positive_to_terminal_id is not None:
-                positive_pair = _connection_pair_key(connect_positive_to_terminal_id, new_positive_terminal_id)
-                connections.append(
-                    BatteryConnection(
-                        connection_id=next_connection_id(connections),
-                        from_terminal_id=positive_pair[0],
-                        to_terminal_id=positive_pair[1],
-                        resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
-                    )
-                )
-            return BatteryCircuitState(
-                cells=sort_battery_cells(cells),
-                connections=sort_battery_connections(connections),
-                pack_positive_terminal_id=(
-                    new_positive_terminal_id
-                    if action.use_positive_as_pack_terminal
-                    else typed_state.pack_positive_terminal_id
-                ),
-                pack_negative_terminal_id=(
-                    new_negative_terminal_id
-                    if action.use_negative_as_pack_terminal
-                    else typed_state.pack_negative_terminal_id
-                ),
-            )
-
-        if isinstance(action, RemoveCell):
-            if len(cells) <= 1:
-                raise ValueError("Cannot remove the final battery cell.")
-            removed_cell = None
-            kept_cells: list[BatteryCellInstance] = []
-            for cell in cells:
-                if cell.cell_id == action.cell_id:
-                    removed_cell = cell
-                    continue
-                kept_cells.append(cell)
-            if removed_cell is None:
-                raise ValueError(f"Unknown cell_id: {action.cell_id}")
-            removed_terminal_ids = {removed_cell.negative_terminal_id, removed_cell.positive_terminal_id}
-            kept_connections = [
-                connection
-                for connection in connections
-                if connection.from_terminal_id not in removed_terminal_ids
-                and connection.to_terminal_id not in removed_terminal_ids
-            ]
-            sorted_cells = sort_battery_cells(kept_cells)
-            default_cell = sorted_cells[0]
-            pack_positive_terminal_id = typed_state.pack_positive_terminal_id
-            pack_negative_terminal_id = typed_state.pack_negative_terminal_id
-            if pack_positive_terminal_id in removed_terminal_ids:
-                pack_positive_terminal_id = default_cell.positive_terminal_id
-            if pack_negative_terminal_id in removed_terminal_ids:
-                pack_negative_terminal_id = default_cell.negative_terminal_id
-            return BatteryCircuitState(
-                cells=sorted_cells,
-                connections=sort_battery_connections(kept_connections),
-                pack_positive_terminal_id=pack_positive_terminal_id,
-                pack_negative_terminal_id=pack_negative_terminal_id,
-            )
-
-        if isinstance(action, MoveCell):
-            coordinate = (action.x, action.y, action.z)
-            if not coordinate_is_in_bounds(coordinate, self.requirements):
-                raise ValueError("Move target lies outside the legal battery grid.")
-            replacement_index = None
-            occupied = occupied_coordinates(cells)
-            for index, cell in enumerate(cells):
-                if cell.cell_id != action.cell_id:
-                    continue
-                replacement_index = index
-                current_coordinate = (cell.x, cell.y, cell.z)
-                if coordinate != current_coordinate and coordinate in occupied:
-                    raise ValueError("Move target is already occupied.")
-                cells[index] = BatteryCellInstance(
-                    cell_id=cell.cell_id,
-                    positive_terminal_id=cell.positive_terminal_id,
-                    negative_terminal_id=cell.negative_terminal_id,
-                    x=action.x,
-                    y=action.y,
-                    z=action.z,
-                    cell_model_key=cell.cell_model_key,
-                )
-                break
-            if replacement_index is None:
-                raise ValueError(f"Unknown cell_id: {action.cell_id}")
-            return BatteryCircuitState(
-                cells=sort_battery_cells(cells),
-                connections=sort_battery_connections(connections),
-                pack_positive_terminal_id=typed_state.pack_positive_terminal_id,
-                pack_negative_terminal_id=typed_state.pack_negative_terminal_id,
-            )
-
-        if isinstance(action, AddConnection):
-            ids = set(terminal_ids(typed_state))
-            if action.from_terminal_id == action.to_terminal_id:
-                raise ValueError("Connections must join two distinct terminals.")
-            if action.from_terminal_id not in ids or action.to_terminal_id not in ids:
-                raise ValueError("Connections must reference existing terminals.")
-            pair_key = _connection_pair_key(action.from_terminal_id, action.to_terminal_id)
-            for connection in connections:
-                if _connection_pair_key(connection.from_terminal_id, connection.to_terminal_id) == pair_key:
-                    raise ValueError("Duplicate direct connections are not allowed.")
+        )
+        if connect_negative is not None:
+            negative_pair = _connection_pair_key(connect_negative, new_negative_terminal_id)
             connections.append(
                 BatteryConnection(
                     connection_id=next_connection_id(connections),
-                    from_terminal_id=pair_key[0],
-                    to_terminal_id=pair_key[1],
+                    from_terminal_id=negative_pair[0],
+                    to_terminal_id=negative_pair[1],
                     resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
                 )
             )
-            return BatteryCircuitState(
-                cells=sort_battery_cells(cells),
-                connections=sort_battery_connections(connections),
-                pack_positive_terminal_id=typed_state.pack_positive_terminal_id,
-                pack_negative_terminal_id=typed_state.pack_negative_terminal_id,
+        if connect_positive is not None:
+            positive_pair = _connection_pair_key(connect_positive, new_positive_terminal_id)
+            connections.append(
+                BatteryConnection(
+                    connection_id=next_connection_id(connections),
+                    from_terminal_id=positive_pair[0],
+                    to_terminal_id=positive_pair[1],
+                    resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                )
             )
+        return BatteryCircuitState(
+            cells=sort_battery_cells(cells),
+            connections=sort_battery_connections(connections),
+            pack_positive_terminal_id=(
+                new_positive_terminal_id if use_positive_as_pack_terminal else typed_state.pack_positive_terminal_id
+            ),
+            pack_negative_terminal_id=(
+                new_negative_terminal_id if use_negative_as_pack_terminal else typed_state.pack_negative_terminal_id
+            ),
+        )
 
-        if isinstance(action, RemoveConnection):
-            kept_connections = [
-                connection for connection in connections if connection.connection_id != action.connection_id
-            ]
-            if len(kept_connections) == len(connections):
-                raise ValueError(f"Unknown connection_id: {action.connection_id}")
-            return BatteryCircuitState(
-                cells=sort_battery_cells(cells),
-                connections=sort_battery_connections(kept_connections),
-                pack_positive_terminal_id=typed_state.pack_positive_terminal_id,
-                pack_negative_terminal_id=typed_state.pack_negative_terminal_id,
+    def remove_cell(self, state: BatteryCircuitState, *, cell_id: int) -> BatteryCircuitState:
+        """Remove one existing cell and any incident interconnects."""
+        typed_state = _coerce_state(state)
+        cells = list(typed_state.cells)
+        connections = list(typed_state.connections)
+        if len(cells) <= 1:
+            raise ValueError("Cannot remove the final battery cell.")
+        removed_cell = None
+        kept_cells: list[BatteryCellInstance] = []
+        for cell in cells:
+            if cell.cell_id == cell_id:
+                removed_cell = cell
+                continue
+            kept_cells.append(cell)
+        if removed_cell is None:
+            raise ValueError(f"Unknown cell_id: {cell_id}")
+        removed_terminal_ids = {removed_cell.negative_terminal_id, removed_cell.positive_terminal_id}
+        kept_connections = [
+            connection
+            for connection in connections
+            if connection.from_terminal_id not in removed_terminal_ids
+            and connection.to_terminal_id not in removed_terminal_ids
+        ]
+        sorted_cells = sort_battery_cells(kept_cells)
+        default_cell = sorted_cells[0]
+        pack_positive_terminal_id = typed_state.pack_positive_terminal_id
+        pack_negative_terminal_id = typed_state.pack_negative_terminal_id
+        if pack_positive_terminal_id in removed_terminal_ids:
+            pack_positive_terminal_id = default_cell.positive_terminal_id
+        if pack_negative_terminal_id in removed_terminal_ids:
+            pack_negative_terminal_id = default_cell.negative_terminal_id
+        return BatteryCircuitState(
+            cells=sorted_cells,
+            connections=sort_battery_connections(kept_connections),
+            pack_positive_terminal_id=pack_positive_terminal_id,
+            pack_negative_terminal_id=pack_negative_terminal_id,
+        )
+
+    def move_cell(
+        self,
+        state: BatteryCircuitState,
+        *,
+        cell_id: int,
+        x: int,
+        y: int,
+        z: int,
+    ) -> BatteryCircuitState:
+        """Move one existing cell to a new coordinate."""
+        typed_state = _coerce_state(state)
+        cells = list(typed_state.cells)
+        connections = list(typed_state.connections)
+        coordinate = (x, y, z)
+        if not coordinate_is_in_bounds(coordinate, self.requirements):
+            raise ValueError("Move target lies outside the legal battery grid.")
+        replacement_index = None
+        occupied = occupied_coordinates(cells)
+        for index, cell in enumerate(cells):
+            if cell.cell_id != cell_id:
+                continue
+            replacement_index = index
+            current_coordinate = (cell.x, cell.y, cell.z)
+            if coordinate != current_coordinate and coordinate in occupied:
+                raise ValueError("Move target is already occupied.")
+            cells[index] = BatteryCellInstance(
+                cell_id=cell.cell_id,
+                positive_terminal_id=cell.positive_terminal_id,
+                negative_terminal_id=cell.negative_terminal_id,
+                x=x,
+                y=y,
+                z=z,
+                cell_model_key=cell.cell_model_key,
             )
+            break
+        if replacement_index is None:
+            raise ValueError(f"Unknown cell_id: {cell_id}")
+        return BatteryCircuitState(
+            cells=sort_battery_cells(cells),
+            connections=sort_battery_connections(connections),
+            pack_positive_terminal_id=typed_state.pack_positive_terminal_id,
+            pack_negative_terminal_id=typed_state.pack_negative_terminal_id,
+        )
 
-        if isinstance(action, SetPackTerminals):
-            ids = set(terminal_ids(typed_state))
-            if action.positive_terminal_id == action.negative_terminal_id:
-                raise ValueError("Pack positive and negative terminals must be distinct.")
-            if action.positive_terminal_id not in ids or action.negative_terminal_id not in ids:
-                raise ValueError("Pack terminals must reference existing terminals.")
-            return BatteryCircuitState(
-                cells=sort_battery_cells(cells),
-                connections=sort_battery_connections(connections),
-                pack_positive_terminal_id=action.positive_terminal_id,
-                pack_negative_terminal_id=action.negative_terminal_id,
+    def add_connection(
+        self,
+        state: BatteryCircuitState,
+        *,
+        from_terminal_id: int,
+        to_terminal_id: int,
+    ) -> BatteryCircuitState:
+        """Add one interconnect between two existing terminals."""
+        typed_state = _coerce_state(state)
+        cells = list(typed_state.cells)
+        connections = list(typed_state.connections)
+        ids = set(terminal_ids(typed_state))
+        if from_terminal_id == to_terminal_id:
+            raise ValueError("Connections must join two distinct terminals.")
+        if from_terminal_id not in ids or to_terminal_id not in ids:
+            raise ValueError("Connections must reference existing terminals.")
+        pair_key = _connection_pair_key(from_terminal_id, to_terminal_id)
+        for connection in connections:
+            if _connection_pair_key(connection.from_terminal_id, connection.to_terminal_id) == pair_key:
+                raise ValueError("Duplicate direct connections are not allowed.")
+        connections.append(
+            BatteryConnection(
+                connection_id=next_connection_id(connections),
+                from_terminal_id=pair_key[0],
+                to_terminal_id=pair_key[1],
+                resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
             )
+        )
+        return BatteryCircuitState(
+            cells=sort_battery_cells(cells),
+            connections=sort_battery_connections(connections),
+            pack_positive_terminal_id=typed_state.pack_positive_terminal_id,
+            pack_negative_terminal_id=typed_state.pack_negative_terminal_id,
+        )
 
-        raise TypeError(f"Unsupported action type: {type(action).__name__}")
+    def remove_connection(self, state: BatteryCircuitState, *, connection_id: int) -> BatteryCircuitState:
+        """Remove one existing interconnect."""
+        typed_state = _coerce_state(state)
+        cells = list(typed_state.cells)
+        connections = list(typed_state.connections)
+        kept_connections = [connection for connection in connections if connection.connection_id != connection_id]
+        if len(kept_connections) == len(connections):
+            raise ValueError(f"Unknown connection_id: {connection_id}")
+        return BatteryCircuitState(
+            cells=sort_battery_cells(cells),
+            connections=sort_battery_connections(kept_connections),
+            pack_positive_terminal_id=typed_state.pack_positive_terminal_id,
+            pack_negative_terminal_id=typed_state.pack_negative_terminal_id,
+        )
+
+    def set_pack_terminals(
+        self,
+        state: BatteryCircuitState,
+        *,
+        positive_terminal_id: int,
+        negative_terminal_id: int,
+    ) -> BatteryCircuitState:
+        """Select the explicit output terminals for the pack."""
+        typed_state = _coerce_state(state)
+        cells = list(typed_state.cells)
+        connections = list(typed_state.connections)
+        ids = set(terminal_ids(typed_state))
+        if positive_terminal_id == negative_terminal_id:
+            raise ValueError("Pack positive and negative terminals must be distinct.")
+        if positive_terminal_id not in ids or negative_terminal_id not in ids:
+            raise ValueError("Pack terminals must reference existing terminals.")
+        return BatteryCircuitState(
+            cells=sort_battery_cells(cells),
+            connections=sort_battery_connections(connections),
+            pack_positive_terminal_id=positive_terminal_id,
+            pack_negative_terminal_id=negative_terminal_id,
+        )
 
     def evaluate(self, state: object) -> BatteryCircuitEvaluation:
         """Evaluate one explicit open-ended battery circuit."""
@@ -461,10 +521,5 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase):
 
 
 __all__ = [
-    "AddCell",
-    "AddConnection",
     "BatteryPack18650OpenEndedProblem",
-    "RemoveCell",
-    "RemoveConnection",
-    "SetPackTerminals",
 ]

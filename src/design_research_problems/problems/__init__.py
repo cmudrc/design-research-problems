@@ -15,7 +15,7 @@ from ._decision import (
 )
 from ._decision_discrete import DiscreteOptionDecisionProblem
 from ._decision_empirical import EmpiricalChoiceDecisionProblem
-from ._grammar import GrammarProblem
+from ._grammar import GrammarProblem, GrammarTransition
 from ._metadata import Citation, ProblemAsset, ProblemKind, ProblemMetadata, ProblemTaxonomy
 from ._optimization import OptimizationEvaluation, OptimizationProblem
 from ._problem import Problem
@@ -37,6 +37,7 @@ __all__ = [
     "DiscreteOptionDecisionProblem",
     "EmpiricalChoiceDecisionProblem",
     "GrammarProblem",
+    "GrammarTransition",
     "OptimizationEvaluation",
     "OptimizationProblem",
     "Problem",
