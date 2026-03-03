@@ -36,7 +36,6 @@ Issues = "https://github.com/cmudrc/design-research-problems/issues"
 
 [project.optional-dependencies]
 grammar = ["trussme>=0.1.0"]
-opt = ["scipy>=1.11,<2"]
 pandas = ["pandas>=2.2,<3"]
 dev = [
   "build>=1.2,<2",
@@ -115,8 +114,6 @@ strict_equality = true
 
 [[tool.mypy.overrides]]
 module = [
-  "scipy",
-  "scipy.*",
   "trussme",
   "trussme.*",
 ]

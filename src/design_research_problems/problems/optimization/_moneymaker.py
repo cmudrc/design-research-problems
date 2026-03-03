@@ -11,7 +11,14 @@ from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._metadata import ProblemMetadata
-from design_research_problems.problems._optimization import Bounds, ConstraintDefinition, OptimizationProblem
+from design_research_problems.problems._optimization import (
+    Bounds,
+    ConstraintDefinition,
+    LocalSearchResult,
+    OptimizationProblem,
+    OptimizationResult,
+    bounded_pattern_search,
+)
 
 _HDPE_VOLUME_COST = 3808.0
 _UNION_COST = 0.75
@@ -63,6 +70,12 @@ _MAX_FLOW_SAME_COST_TALL_TANK_VECTOR = numpy.array(
     [0.0188, 0.0410, 0.5792, 18.0000, 0.5792, 0.0213, 45.0, 125.5, 0.5538, 0.2413],
     dtype=float,
 )
+_PUBLISHED_TALL_TANK_BASELINES = (
+    ("published_current_tall_tank", _CURRENT_TALL_TANK_VECTOR),
+    ("published_same_flow_min_cost_tall_tank", _SAME_FLOW_MIN_COST_TALL_TANK_VECTOR),
+    ("published_max_flow_same_cost_tall_tank", _MAX_FLOW_SAME_COST_TALL_TANK_VECTOR),
+)
+_REDUCED_SOLVER_INDICES = (0, 1, 2, 3, 4, 5, 8)
 
 
 def _outer_diameter(inner_diameter: float) -> float:
@@ -360,29 +373,204 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         """
         return self.cost_usd(variables)
 
-    def load_data(self) -> object:
-        """Return curated tall-tank designs reported in the 2018 study.
+    def solve(
+        self,
+        initial_solution: NDArray[numpy.float64] | None = None,
+        seed: int | None = None,
+        maxiter: int = 200,
+    ) -> OptimizationResult:
+        """Solve the reduced MoneyMaker subproblem with deterministic local search.
+
+        The three equality constraints can be satisfied analytically once the
+        inlet diameter, cylinder diameter, stroke length, inlet run, handle
+        length, outlet diameter, and downstroke velocity are chosen. This
+        solver therefore searches over those seven free variables and
+        reconstructs the remaining quantities at every candidate point.
+
+        Args:
+            initial_solution: Optional full 10-variable starting point.
+            seed: Optional random seed used to generate deterministic restart
+                candidates.
+            maxiter: Maximum local-search sweeps per restart.
 
         Returns:
-            Mapping of labels and reference arrays for the published designs.
+            Locally optimized feasible pump design.
+
+        Raises:
+            ValueError: If ``initial_solution`` is provided with the wrong
+                shape.
         """
-        return {
-            "labels": (
-                "published_current_tall_tank",
-                "published_same_flow_min_cost_tall_tank",
-                "published_max_flow_same_cost_tall_tank",
-            ),
-            "variables": numpy.vstack(
-                (
-                    _CURRENT_TALL_TANK_VECTOR,
-                    _SAME_FLOW_MIN_COST_TALL_TANK_VECTOR,
-                    _MAX_FLOW_SAME_COST_TALL_TANK_VECTOR,
-                )
-            ),
-            "flow_rate_lps": numpy.array([0.167, 0.180, 0.220], dtype=float),
-            "tank_height_m": numpy.array([3.0, 3.0, 3.0], dtype=float),
-            "cost_usd": numpy.array([31.48, 24.96, 29.99], dtype=float),
-        }
+        restarts = self._solver_start_points(initial_solution=initial_solution, seed=seed)
+        reduced_lb = self.bounds.lb[list(_REDUCED_SOLVER_INDICES)]
+        reduced_ub = self.bounds.ub[list(_REDUCED_SOLVER_INDICES)]
+        best_search: LocalSearchResult | None = None
+        best_vector: NDArray[numpy.float64] | None = None
+        total_nit = 0
+        total_nfev = 0
+
+        for start in restarts:
+            search = bounded_pattern_search(
+                objective=self._solver_merit,
+                lower_bounds=reduced_lb,
+                upper_bounds=reduced_ub,
+                initial_solution=start,
+                maxiter=maxiter,
+            )
+            total_nit += search.nit
+            total_nfev += search.nfev
+            candidate = self._reconstruct_solution(search.x)
+            if candidate is None:
+                continue
+            if best_search is None or search.fun < best_search.fun:
+                best_search = search
+                best_vector = candidate
+
+        if best_search is None or best_vector is None:
+            fallback = self.generate_initial_solution(seed=seed)
+            reduced_fallback = fallback[list(_REDUCED_SOLVER_INDICES)]
+            best_vector = fallback
+            best_search = LocalSearchResult(
+                x=reduced_fallback,
+                fun=self._solver_merit(reduced_fallback),
+                nit=0,
+                nfev=1,
+            )
+            total_nfev += 1
+
+        max_violation = self.max_constraint_violation(best_vector)
+        cost = self.objective(best_vector)
+        if max_violation <= 1e-6:
+            message = (
+                f"Converged reduced-coordinate pattern search (cost {cost:.2f} USD, max violation {max_violation:.3g})."
+            )
+        else:
+            message = (
+                "Reduced-coordinate pattern search returned a best-effort design "
+                f"(cost {cost:.2f} USD, max violation {max_violation:.3g})."
+            )
+        return OptimizationResult(
+            x=numpy.array(best_vector, dtype=float, copy=True),
+            fun=cost,
+            success=max_violation <= 1e-6,
+            message=message,
+            nit=total_nit,
+            nfev=total_nfev,
+        )
+
+    def _solver_start_points(
+        self,
+        initial_solution: NDArray[numpy.float64] | None,
+        seed: int | None,
+    ) -> tuple[NDArray[numpy.float64], ...]:
+        """Return deterministic reduced-coordinate restart points.
+
+        Args:
+            initial_solution: Optional full 10-variable starting point.
+            seed: Optional random seed for deterministic jittered restarts.
+
+        Returns:
+            Reduced-coordinate start vectors.
+
+        Raises:
+            ValueError: If ``initial_solution`` has the wrong shape.
+        """
+        starts: list[NDArray[numpy.float64]] = []
+        if initial_solution is not None:
+            candidate = numpy.array(initial_solution, dtype=float, copy=True)
+            if candidate.shape != (10,):
+                raise ValueError(f"Expected a 10-variable design vector, received shape {candidate.shape!r}.")
+            starts.append(candidate[list(_REDUCED_SOLVER_INDICES)])
+        else:
+            starts.append(self.generate_initial_solution(seed=seed)[list(_REDUCED_SOLVER_INDICES)])
+        for _, vector in _PUBLISHED_TALL_TANK_BASELINES:
+            starts.append(vector[list(_REDUCED_SOLVER_INDICES)].copy())
+
+        reduced_lb = self.bounds.lb[list(_REDUCED_SOLVER_INDICES)]
+        reduced_ub = self.bounds.ub[list(_REDUCED_SOLVER_INDICES)]
+        midpoint = 0.5 * (reduced_lb + reduced_ub)
+        starts.append(midpoint)
+
+        rng = numpy.random.default_rng(0 if seed is None else seed)
+        span = reduced_ub - reduced_lb
+        for _ in range(6):
+            starts.append(reduced_lb + rng.random(reduced_lb.shape) * span)
+
+        return tuple(starts)
+
+    def _reconstruct_solution(self, reduced_variables: NDArray[numpy.float64]) -> NDArray[numpy.float64] | None:
+        """Rebuild a full 10-variable vector while satisfying all equalities.
+
+        Args:
+            reduced_variables: Seven free design variables used by the solver.
+
+        Returns:
+            Full 10-variable design vector, or ``None`` when reconstruction is
+            not physically valid.
+        """
+        x1, x3, x5, x6, x8, x9, x15 = (float(value) for value in reduced_variables)
+        area_term = _VOLUMETRIC_EFFICIENCY * 0.25 * math.pi * x3**2
+        denominator = area_term / self.target_flow_rate_m3_per_s - 1.0 / x15
+        if denominator <= 0.0:
+            return None
+
+        x16 = 1.0 / denominator
+        if x16 <= 0.0:
+            return None
+
+        area = 0.25 * math.pi * x3**2
+        upstroke_term = (
+            _head_loss_major(x6 + self.well_depth_m, x16, x1)
+            + _head_loss_major(0.5 * x5, x16, _VOLUMETRIC_EFFICIENCY * x3)
+            + self.well_depth_m
+            + 0.5 * x5
+            + x16**2 / (2.0 * _GRAVITY)
+        )
+        downstroke_term = (
+            _head_loss_major(self.horizontal_run_m - x6 + self.target_tank_height_m, x15, x9)
+            + _head_loss_major(0.5 * x5, x15, _VOLUMETRIC_EFFICIENCY * x3)
+            + self.well_depth_m
+            - 0.5 * x5
+            - x15**2 / (2.0 * _GRAVITY)
+        )
+        x14 = upstroke_term * _WATER_DENSITY * _GRAVITY * area
+        x13 = downstroke_term * _WATER_DENSITY * _GRAVITY * area
+        return numpy.array([x1, x3, x5, x6, x8, x9, x13, x14, x15, x16], dtype=float)
+
+    def _solver_merit(self, reduced_variables: NDArray[numpy.float64]) -> float:
+        """Return a penalized merit value for reduced-coordinate search.
+
+        Args:
+            reduced_variables: Seven free design variables.
+
+        Returns:
+            Penalized scalar merit.
+        """
+        candidate = self._reconstruct_solution(reduced_variables)
+        if candidate is None:
+            return 1e12
+        violation = self.constraint_violation(candidate)
+        return float(self.objective(candidate) + 1e6 * violation**2 + 1e3 * violation)
+
+    def _hard_constraint_violation(self, variables: NDArray[numpy.float64]) -> float:
+        """Return the total violation across inequality constraints only.
+
+        The published vectors in the cited papers are rounded, so the hydraulic
+        balance equalities can show residuals that are not useful for comparing
+        representative baselines. The baseline solver therefore scores only the
+        hard inequality limits plus the explicit flow-rate mismatch.
+
+        Args:
+            variables: Candidate design vector.
+
+        Returns:
+            Total positive inequality-constraint violation.
+        """
+        violation = 0.0
+        for constraint in self.constraints:
+            if constraint.kind != "ineq":
+                continue
+            violation += max(constraint.target - constraint.evaluate(variables), 0.0)
+        return float(violation)
 
     def _upstroke_balance(self, variables: NDArray[numpy.float64]) -> float:
         """Return the upstroke fluid-balance equality residual.

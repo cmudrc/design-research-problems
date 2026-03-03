@@ -137,4 +137,5 @@ def test_installed_wheel_loads_registry(tmp_path: Path) -> None:
         "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",
         "planar_truss_span",
+        "treadle_pump_ide_material_min",
     ]

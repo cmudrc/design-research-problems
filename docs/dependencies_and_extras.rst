@@ -10,14 +10,11 @@ The base package installs only NumPy:
 
    pip install design-research-problems
 
-Optimization support
---------------------
+Optimization baselines
+----------------------
 
-SciPy-backed solving is optional:
-
-.. code-block:: bash
-
-   pip install design-research-problems[opt]
+The representative optimization `solve()` baselines ship in the base install;
+no extra dependency is required.
 
 Grammar support
 ---------------

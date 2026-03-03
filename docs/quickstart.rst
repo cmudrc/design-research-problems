@@ -19,11 +19,16 @@ The optimization problem can be instantiated through the registry:
 .. code-block:: python
 
    pill = get_problem("pill_capsule_min_area")
-   x, y = pill.generate_data(n=5, seed=7)
-   print(x.shape, y.shape)
+   print(pill.generate_initial_solution(seed=7))
+   print(pill.solve().fun)
 
    pump = get_problem("moneymaker_hip_pump_cost_min")
-   print(pump.objective_components(pump.generate_initial_solution()))
+   result = pump.solve()
+   print(result.message)
+   print(pump.objective_components(result.x))
+
+   treadle = get_problem("treadle_pump_ide_material_min")
+   print(treadle.solve().message)
 
 The grammar problem exposes a serializable starting state and a lazy `trussme`
 adapter:

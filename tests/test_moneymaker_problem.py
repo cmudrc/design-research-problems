@@ -16,25 +16,23 @@ def test_moneymaker_problem_exposes_published_tall_tank_baseline() -> None:
     assert 15.0 < components["cost_usd"] < 35.0
 
 
-def test_moneymaker_problem_load_data_returns_curated_cases() -> None:
+def test_moneymaker_problem_solve_returns_feasible_reduced_coordinate_solution() -> None:
     problem = get_problem("moneymaker_hip_pump_cost_min")
-    dataset = problem.load_data()
+    initial = problem.generate_initial_solution()
+    result = problem.solve()
 
-    assert dataset["labels"] == (
-        "published_current_tall_tank",
-        "published_same_flow_min_cost_tall_tank",
-        "published_max_flow_same_cost_tall_tank",
-    )
-    assert dataset["variables"].shape == (3, 10)
-    assert numpy.allclose(dataset["flow_rate_lps"], numpy.array([0.167, 0.180, 0.220]))
+    assert result.success is True
+    assert "Converged reduced-coordinate pattern search" in result.message
+    assert result.x.shape == (10,)
+    assert result.fun < problem.objective(initial)
+    assert abs(problem.flow_rate_lps(result.x) - problem.target_flow_rate_lps) < 1e-9
+    assert problem.max_constraint_violation(result.x) <= 1e-6
 
 
-def test_moneymaker_problem_generate_data_is_deterministic() -> None:
+def test_moneymaker_problem_generate_initial_solution_is_deterministic() -> None:
     problem = get_problem("moneymaker_hip_pump_cost_min")
-    x1, y1 = problem.generate_data(n=4, seed=7)
-    x2, y2 = problem.generate_data(n=4, seed=7)
+    x1 = problem.generate_initial_solution(seed=7)
+    x2 = problem.generate_initial_solution(seed=7)
 
-    assert x1.shape == (4, 10)
-    assert y1.shape == (4, 1)
+    assert x1.shape == (10,)
     assert numpy.allclose(x1, x2)
-    assert numpy.allclose(y1, y2)

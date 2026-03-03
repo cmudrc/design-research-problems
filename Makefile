@@ -8,7 +8,7 @@ BUILD ?= $(PYTHON) -m build
 TWINE ?= $(PYTHON) -m twine
 UV ?= $(if $(wildcard .venv/bin/uv),.venv/bin/uv,uv)
 REPRO_PYTHON ?= $(shell cat .python-version 2>/dev/null || echo 3.12.12)
-REPRO_EXTRAS ?= dev opt
+REPRO_EXTRAS ?= dev
 TRUSSME_SPEC ?= trussme>=0.1.0
 
 .PHONY: help check-python check-uv dev install-dev repro lock \
@@ -38,7 +38,7 @@ check-uv:
 
 dev:
 	$(PIP) install --upgrade pip setuptools wheel
-	$(PIP) install -e ".[dev,opt]"
+	$(PIP) install -e ".[dev]"
 
 install-dev: dev
 

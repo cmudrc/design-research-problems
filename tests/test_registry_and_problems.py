@@ -56,6 +56,7 @@ def test_list_problems_returns_seed_problem_ids() -> None:
         "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",
         "planar_truss_span",
+        "treadle_pump_ide_material_min",
     )
 
 
@@ -140,11 +141,10 @@ def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
         "variety-study-ready",
     )
     assert grouped[ProblemKind.OPTIMIZATION] == (
+        "baseline-solver",
         "bounded-variables",
         "citation-backed",
         "equality-constraint",
-        "optional-solver",
-        "seeded-data-generation",
         "statement-markdown",
     )
     assert grouped[ProblemKind.GRAMMAR] == (
@@ -178,10 +178,11 @@ def test_registry_search_filters_by_feature_flags() -> None:
     from design_research_problems import ProblemRegistry
 
     registry = ProblemRegistry()
-    matches = registry.search(feature_flags=("seeded data generation",))
+    matches = registry.search(feature_flags=("baseline solver",))
     assert [entry.problem_id for entry in matches] == [
         "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",
+        "treadle_pump_ide_material_min",
     ]
     text_matches = registry.search(
         kind=ProblemKind.TEXT,
@@ -202,28 +203,23 @@ def test_pill_helpers_return_expected_positive_values() -> None:
     assert _pill_area(0.1, 0.2) > 0.0
 
 
-def test_pill_problem_is_deterministic() -> None:
+def test_pill_problem_initial_solution_is_deterministic() -> None:
     problem = get_problem("pill_capsule_min_area")
-    x1, y1 = problem.generate_data(n=4, seed=7)
-    x2, y2 = problem.generate_data(n=4, seed=7)
-    assert x1.shape == (4, 2)
-    assert y1.shape == (4, 1)
+    x1 = problem.generate_initial_solution(seed=7)
+    x2 = problem.generate_initial_solution(seed=7)
+    assert x1.shape == (2,)
     assert numpy.allclose(x1, x2)
-    assert numpy.allclose(y1, y2)
 
 
-def test_pill_problem_load_data_is_not_available() -> None:
+def test_pill_problem_solve_returns_feasible_manifold_solution() -> None:
     problem = get_problem("pill_capsule_min_area")
-    with pytest.raises(NotImplementedError):
-        problem.load_data()
-
-
-def test_pill_problem_reports_missing_scipy(monkeypatch: pytest.MonkeyPatch) -> None:
-    problem = get_problem("pill_capsule_min_area")
-    monkeypatch.setitem(sys.modules, "scipy", None)
-    monkeypatch.setitem(sys.modules, "scipy.optimize", None)
-    with pytest.raises(MissingOptionalDependencyError):
-        problem.solve(seed=1)
+    result = problem.solve(seed=1)
+    assert result.success is True
+    assert "Converged golden-section search" in result.message
+    assert result.x.shape == (2,)
+    assert float(result.x[1]) == pytest.approx(0.0, abs=1e-6)
+    assert _pill_volume(float(result.x[0]), float(result.x[1])) == pytest.approx(problem.required_volume)
+    assert result.fun == pytest.approx(_pill_area(float(result.x[0]), float(result.x[1])))
 
 
 def test_planar_truss_state_and_actions_are_validated() -> None:
