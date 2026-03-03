@@ -2,97 +2,27 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from itertools import combinations
 
 from design_research_problems._catalog._manifest import ProblemManifest
-from design_research_problems.problems._grammar import GrammarTransition
-from design_research_problems.problems.grammar._battery_circuit import (
-    BatteryCellInstance,
-    BatteryCircuitState,
-    BatteryConnection,
-    analyze_battery_topology,
-)
-from design_research_problems.problems.grammar._battery_core import (
+from design_research_problems.problems._domains.battery_core import (
     BatteryCellPlacement,
-    BatteryMetricSummary,
     candidate_frontier_coordinates,
-    compute_metric_summary,
     coordinate_is_in_bounds,
     next_cell_id,
     occupied_coordinates,
     sort_cell_placements,
-    validate_rectangular_topology,
 )
-from design_research_problems.problems.grammar._battery_layout import DEFAULT_INTERCONNECT_RESISTANCE_OHM
+from design_research_problems.problems._domains.battery_series_parallel import (
+    SeriesParallelBatteryEvaluation,
+    SeriesParallelBatteryState,
+    evaluate_series_parallel_state,
+)
+from design_research_problems.problems._grammar import GrammarTransition
 from design_research_problems.problems.grammar._battery_problem_base import (
     BatteryCircuitProblemBase,
     parse_battery_requirements,
 )
-
-
-@dataclass(frozen=True)
-class SeriesParallelBatteryState:
-    """Serializable state for one rectangular series-parallel pack."""
-
-    series_count: int
-    """Number of series stages in the pack."""
-    parallel_count: int
-    """Number of parallel branches in the pack."""
-    cells: tuple[BatteryCellPlacement, ...]
-    """Complete ordered set of cell placements."""
-
-
-@dataclass(frozen=True)
-class SeriesParallelBatteryEvaluation:
-    """Structured evaluation for the series-parallel battery grammar."""
-
-    series_count: int
-    """Evaluated series-stage count."""
-    parallel_count: int
-    """Evaluated parallel-branch count."""
-    cell_count: int
-    """Evaluated physical cell count."""
-    design_width: float
-    """Computed pack width in millimeters."""
-    design_depth: float
-    """Computed pack depth in millimeters."""
-    design_height: float
-    """Computed pack height in millimeters."""
-    design_cost: float
-    """Estimated pack cost in US dollars."""
-    design_volume: float
-    """Computed pack volume in cubic millimeters."""
-    surface_area: float
-    """Computed pack surface area in square millimeters."""
-    moment_of_inertia_xx: float
-    """Moment of inertia about the x-axis."""
-    moment_of_inertia_yy: float
-    """Moment of inertia about the y-axis."""
-    moment_of_inertia_zz: float
-    """Moment of inertia about the z-axis."""
-    design_voltage: float
-    """Idealized nominal pack voltage in volts."""
-    design_capacity: float
-    """Idealized nominal pack capacity in amp-hours."""
-    analytic_current_limit: float
-    """Coarse analytic current limit in amps."""
-    pybamm_ran: bool
-    """Legacy flag tracking whether the post-validation cell-model path executed."""
-    pybamm_pack_end_voltage: float | None
-    """Pack end voltage inferred from the shared solver, when available."""
-    pybamm_delivered_capacity_ah: float | None
-    """Delivered pack capacity inferred from the shared solver, when available."""
-    pybamm_feasible: bool
-    """Whether the shared circuit backend accepted the state."""
-    is_feasible: bool
-    """Overall feasibility after deterministic and simulated checks."""
-    failure_reason: str | None = None
-    """Human-readable infeasibility reason, when present."""
-    cell_model_source: str | None = None
-    """Exact source of the effective single-cell surrogate when the path ran."""
-    cell_model_warning: str | None = None
-    """Non-fatal warning reported while building the effective surrogate."""
 
 
 def _sort_coordinate_key(coordinate: tuple[int, int, int]) -> tuple[int, int, int]:
@@ -106,95 +36,6 @@ def _coerce_state(state: object) -> SeriesParallelBatteryState:
     if not isinstance(state, SeriesParallelBatteryState):
         raise TypeError("Expected a SeriesParallelBatteryState.")
     return state
-
-
-def _evaluation_from_summary(
-    state: SeriesParallelBatteryState,
-    summary: BatteryMetricSummary,
-    *,
-    pybamm_ran: bool,
-    pybamm_pack_end_voltage: float | None,
-    pybamm_delivered_capacity_ah: float | None,
-    pybamm_feasible: bool,
-    is_feasible: bool,
-    failure_reason: str | None,
-    cell_model_source: str | None = None,
-    cell_model_warning: str | None = None,
-) -> SeriesParallelBatteryEvaluation:
-    """Build one structured evaluation object from computed metrics."""
-    return SeriesParallelBatteryEvaluation(
-        series_count=state.series_count,
-        parallel_count=state.parallel_count,
-        cell_count=summary.cell_count,
-        design_width=summary.design_width,
-        design_depth=summary.design_depth,
-        design_height=summary.design_height,
-        design_cost=summary.design_cost,
-        design_volume=summary.design_volume,
-        surface_area=summary.surface_area,
-        moment_of_inertia_xx=summary.moment_of_inertia_xx,
-        moment_of_inertia_yy=summary.moment_of_inertia_yy,
-        moment_of_inertia_zz=summary.moment_of_inertia_zz,
-        design_voltage=summary.design_voltage,
-        design_capacity=summary.design_capacity,
-        analytic_current_limit=summary.analytic_current_limit,
-        pybamm_ran=pybamm_ran,
-        pybamm_pack_end_voltage=pybamm_pack_end_voltage,
-        pybamm_delivered_capacity_ah=pybamm_delivered_capacity_ah,
-        pybamm_feasible=pybamm_feasible,
-        is_feasible=is_feasible,
-        failure_reason=failure_reason,
-        cell_model_source=cell_model_source,
-        cell_model_warning=cell_model_warning,
-    )
-
-
-def _build_circuit_state_from_series_parallel(state: SeriesParallelBatteryState) -> BatteryCircuitState:
-    """Translate the rectangular SxP state into the shared explicit-circuit representation."""
-    ordered_cells = sorted(state.cells, key=lambda cell: (cell.stage_index, cell.branch_index, cell.cell_id))
-    circuit_cells: list[BatteryCellInstance] = []
-    bus_members: list[list[int]] = [[] for _ in range(state.series_count + 1)]
-    next_terminal_id_value = 0
-    for cell in ordered_cells:
-        negative_terminal_id = next_terminal_id_value
-        positive_terminal_id = next_terminal_id_value + 1
-        next_terminal_id_value += 2
-        circuit_cells.append(
-            BatteryCellInstance(
-                cell_id=cell.cell_id,
-                positive_terminal_id=positive_terminal_id,
-                negative_terminal_id=negative_terminal_id,
-                x=cell.x,
-                y=cell.y,
-                z=cell.z,
-            )
-        )
-        bus_members[cell.stage_index].append(negative_terminal_id)
-        bus_members[cell.stage_index + 1].append(positive_terminal_id)
-
-    connections: list[BatteryConnection] = []
-    next_connection_id_value = 0
-    for members in bus_members:
-        if not members:
-            continue
-        anchor = members[0]
-        for member in members[1:]:
-            connections.append(
-                BatteryConnection(
-                    connection_id=next_connection_id_value,
-                    from_terminal_id=anchor,
-                    to_terminal_id=member,
-                    resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
-                )
-            )
-            next_connection_id_value += 1
-
-    return BatteryCircuitState(
-        cells=tuple(circuit_cells),
-        connections=tuple(connections),
-        pack_positive_terminal_id=bus_members[-1][0],
-        pack_negative_terminal_id=bus_members[0][0],
-    )
 
 
 class BatteryPack18650SeriesParallelProblem(
@@ -453,158 +294,10 @@ class BatteryPack18650SeriesParallelProblem(
     def evaluate(self, state: object) -> SeriesParallelBatteryEvaluation:
         """Evaluate one battery-pack state using deterministic checks and the shared circuit backend."""
         typed_state = _coerce_state(state)
-        summary = compute_metric_summary(typed_state, self.requirements)
-        topology_failure = validate_rectangular_topology(typed_state)
-        if topology_failure is not None:
-            return _evaluation_from_summary(
-                typed_state,
-                summary,
-                pybamm_ran=False,
-                pybamm_pack_end_voltage=None,
-                pybamm_delivered_capacity_ah=None,
-                pybamm_feasible=False,
-                is_feasible=False,
-                failure_reason=topology_failure,
-            )
-
-        coordinates = [(cell.x, cell.y, cell.z) for cell in typed_state.cells]
-        if len(set(coordinates)) != len(coordinates):
-            return _evaluation_from_summary(
-                typed_state,
-                summary,
-                pybamm_ran=False,
-                pybamm_pack_end_voltage=None,
-                pybamm_delivered_capacity_ah=None,
-                pybamm_feasible=False,
-                is_feasible=False,
-                failure_reason="Duplicate physical coordinates are not allowed.",
-            )
-
-        for coordinate in coordinates:
-            if any(value < 0 for value in coordinate):
-                return _evaluation_from_summary(
-                    typed_state,
-                    summary,
-                    pybamm_ran=False,
-                    pybamm_pack_end_voltage=None,
-                    pybamm_delivered_capacity_ah=None,
-                    pybamm_feasible=False,
-                    is_feasible=False,
-                    failure_reason="Cell coordinates must be non-negative.",
-                )
-            if not coordinate_is_in_bounds(coordinate, self.requirements):
-                return _evaluation_from_summary(
-                    typed_state,
-                    summary,
-                    pybamm_ran=False,
-                    pybamm_pack_end_voltage=None,
-                    pybamm_delivered_capacity_ah=None,
-                    pybamm_feasible=False,
-                    is_feasible=False,
-                    failure_reason="A cell lies outside the legal grid envelope.",
-                )
-
-        if summary.design_width > self.requirements.max_width_mm:
-            return _evaluation_from_summary(
-                typed_state,
-                summary,
-                pybamm_ran=False,
-                pybamm_pack_end_voltage=None,
-                pybamm_delivered_capacity_ah=None,
-                pybamm_feasible=False,
-                is_feasible=False,
-                failure_reason="Pack width exceeds the maximum allowed width.",
-            )
-        if summary.design_depth > self.requirements.max_depth_mm:
-            return _evaluation_from_summary(
-                typed_state,
-                summary,
-                pybamm_ran=False,
-                pybamm_pack_end_voltage=None,
-                pybamm_delivered_capacity_ah=None,
-                pybamm_feasible=False,
-                is_feasible=False,
-                failure_reason="Pack depth exceeds the maximum allowed depth.",
-            )
-        if summary.design_height > self.requirements.max_height_mm:
-            return _evaluation_from_summary(
-                typed_state,
-                summary,
-                pybamm_ran=False,
-                pybamm_pack_end_voltage=None,
-                pybamm_delivered_capacity_ah=None,
-                pybamm_feasible=False,
-                is_feasible=False,
-                failure_reason="Pack height exceeds the maximum allowed height.",
-            )
-
-        voltage_error = abs(summary.design_voltage - self.requirements.target_voltage_v)
-        if voltage_error > self.requirements.voltage_tolerance_v:
-            return _evaluation_from_summary(
-                typed_state,
-                summary,
-                pybamm_ran=False,
-                pybamm_pack_end_voltage=None,
-                pybamm_delivered_capacity_ah=None,
-                pybamm_feasible=False,
-                is_feasible=False,
-                failure_reason="Pack voltage does not match the required target voltage.",
-            )
-
-        if summary.design_capacity < self.requirements.minimum_capacity_ah:
-            return _evaluation_from_summary(
-                typed_state,
-                summary,
-                pybamm_ran=False,
-                pybamm_pack_end_voltage=None,
-                pybamm_delivered_capacity_ah=None,
-                pybamm_feasible=False,
-                is_feasible=False,
-                failure_reason="Pack capacity is below the minimum required capacity.",
-            )
-
-        if summary.analytic_current_limit < self.requirements.minimum_current_a:
-            return _evaluation_from_summary(
-                typed_state,
-                summary,
-                pybamm_ran=False,
-                pybamm_pack_end_voltage=None,
-                pybamm_delivered_capacity_ah=None,
-                pybamm_feasible=False,
-                is_feasible=False,
-                failure_reason="Analytic current limit is below the required continuous current.",
-            )
-
-        circuit_state = _build_circuit_state_from_series_parallel(typed_state)
-        translated_topology = analyze_battery_topology(circuit_state)
-        if (
-            translated_topology.topology_kind != "series_parallel"
-            or translated_topology.series_count != typed_state.series_count
-            or translated_topology.parallel_count != typed_state.parallel_count
-        ):
-            return _evaluation_from_summary(
-                typed_state,
-                summary,
-                pybamm_ran=False,
-                pybamm_pack_end_voltage=None,
-                pybamm_delivered_capacity_ah=None,
-                pybamm_feasible=False,
-                is_feasible=False,
-                failure_reason="Internal series-parallel translation did not preserve the rectangular topology.",
-            )
-
-        circuit_evaluation = self.evaluate_circuit_state(circuit_state)
-        return _evaluation_from_summary(
+        return evaluate_series_parallel_state(
             typed_state,
-            summary,
-            pybamm_ran=circuit_evaluation.pybamm_ran,
-            pybamm_pack_end_voltage=circuit_evaluation.pack_terminal_voltage_end,
-            pybamm_delivered_capacity_ah=circuit_evaluation.delivered_capacity_ah,
-            pybamm_feasible=circuit_evaluation.is_feasible,
-            is_feasible=circuit_evaluation.is_feasible,
-            failure_reason=circuit_evaluation.failure_reason,
-            cell_model_source=circuit_evaluation.cell_model_source,
-            cell_model_warning=circuit_evaluation.cell_model_warning,
+            self.requirements,
+            self.evaluate_circuit_state,
         )
 
 

@@ -6,15 +6,15 @@ from typing import cast
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._grammar import GrammarProblem
-from design_research_problems.problems._metadata import ProblemMetadata
-from design_research_problems.problems.grammar._battery_cell_model import load_18650_cell_model
-from design_research_problems.problems.grammar._battery_circuit import (
+from design_research_problems.problems._domains.battery_cell_model import load_18650_cell_model
+from design_research_problems.problems._domains.battery_circuit import (
     BatteryCircuitEvaluation,
     BatteryCircuitState,
     evaluate_battery_circuit,
 )
-from design_research_problems.problems.grammar._battery_layout import BatteryRequirements, grid_index_limits
+from design_research_problems.problems._domains.battery_layout import BatteryRequirements, grid_index_limits
+from design_research_problems.problems._grammar import GrammarProblem
+from design_research_problems.problems._metadata import ProblemMetadata
 
 
 def _coerce_int(value: object, default: int) -> int:

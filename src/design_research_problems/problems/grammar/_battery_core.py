@@ -5,13 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Protocol
 
-from design_research_problems.problems.grammar._battery_cell_model import (
+from design_research_problems.problems._domains.battery_cell_model import (
     BatteryCellModel,
     import_pybamm,
     interpolate_cell_model,
     load_18650_cell_model,
 )
-from design_research_problems.problems.grammar._battery_layout import (
+from design_research_problems.problems._domains.battery_layout import (
     CELL_SPEC_18650,
     BatteryCellPlacement,
     BatteryCellSpec,
@@ -158,7 +158,7 @@ def simulate_series_parallel_pack(
 ) -> tuple[float, float, bool]:
     """Compatibility wrapper that evaluates a canonical rectangular pack with the shared solver."""
     del pybamm_module
-    from design_research_problems.problems.grammar._battery_circuit import (
+    from design_research_problems.problems._domains.battery_circuit import (
         BatteryCellInstance,
         BatteryCircuitState,
         BatteryConnection,

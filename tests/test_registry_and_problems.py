@@ -16,6 +16,7 @@ from design_research_problems import (
     GrammarTransition,
     MissingOptionalDependencyError,
     OptimizationEvaluation,
+    OptimizationProblem,
     Problem,
     ProblemEvaluationError,
     ProblemKind,
@@ -24,6 +25,7 @@ from design_research_problems import (
 )
 from design_research_problems.problems import DecisionOption
 from design_research_problems.problems.grammar._battery_cell_model import BatteryCellModel
+from design_research_problems.problems.optimization import BatteryGridSizingProblem
 from design_research_problems.problems.optimization._pill import _pill_area, _pill_volume
 
 MSEVAL_IDS = (
@@ -84,6 +86,10 @@ def test_registry_entries_filter_by_kind() -> None:
         "human-subjects-ready",
         "ideation-friendly",
     )
+    optimization_kinds = registry.by_kind(ProblemKind.OPTIMIZATION)
+    optimization_ids = [entry.problem_id for entry in optimization_kinds]
+    assert len(optimization_ids) == 4
+    assert "battery_pack_18650_series_parallel_cost_min" in optimization_ids
 
 
 def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
@@ -300,6 +306,7 @@ def test_non_text_problems_are_computable() -> None:
     problem_ids = (
         "decision_laptop_design_profit_maximization",
         "decision_mseval_kitchen_utensil_grip_lightweight",
+        "battery_pack_18650_series_parallel_cost_min",
         "pill_capsule_min_area",
         "planar_truss_span",
     )
@@ -313,6 +320,7 @@ def test_registry_search_filters_by_feature_flags() -> None:
     registry = ProblemRegistry()
     matches = registry.search(feature_flags=("baseline solver",))
     assert [entry.problem_id for entry in matches] == [
+        "battery_pack_18650_series_parallel_cost_min",
         "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",
         "treadle_pump_ide_material_min",
@@ -346,6 +354,61 @@ def _build_feasible_battery_state() -> object:
     state = problem.add_parallel_branch(state, placements=((0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0)))
     state = problem.add_parallel_branch(state, placements=((0, 3, 0), (1, 3, 0), (2, 3, 0), (3, 3, 0)))
     return state
+
+
+def test_generic_grammar_family_api_supports_multiple_problems() -> None:
+    for problem_id in ("battery_pack_18650_series_parallel", "planar_truss_span"):
+        problem = get_problem(problem_id)
+        assert isinstance(problem, GrammarProblem)
+        state = problem.initial_state()
+        transitions = problem.enumerate_transitions(state)
+        next_states = problem.enumerate_next_states(state)
+        assert next_states == tuple(transition.next_state for transition in transitions)
+        evaluation = problem.evaluate(state)
+        assert hasattr(evaluation, "is_feasible")
+
+
+def test_battery_grid_sizing_problem_uses_optimization_family_api() -> None:
+    problem = get_problem("battery_pack_18650_series_parallel_cost_min")
+    assert isinstance(problem, OptimizationProblem)
+    assert isinstance(problem, BatteryGridSizingProblem)
+    assert hasattr(problem, "initial_state") is False
+    assert hasattr(problem, "add_series_stage") is False
+
+    initial = problem.generate_initial_solution()
+    assert initial.shape == (2,)
+    evaluation = problem.evaluate(initial)
+    assert isinstance(evaluation, OptimizationEvaluation)
+
+    result = problem.solve(maxiter=25)
+    assert result.x.shape == (2,)
+    assert isinstance(result.fun, float)
+
+
+def test_battery_grid_and_grammar_share_series_parallel_backend() -> None:
+    optimization_problem = get_problem("battery_pack_18650_series_parallel_cost_min")
+    grammar_problem = get_problem("battery_pack_18650_series_parallel")
+    assert isinstance(optimization_problem, BatteryGridSizingProblem)
+    assert isinstance(grammar_problem, GrammarProblem)
+
+    candidate = numpy.array([4.0, 4.0], dtype=float)
+    state = optimization_problem._state_from_variables(candidate)
+    assert state == _build_feasible_battery_state()
+    assert grammar_problem.evaluate(state) == optimization_problem._evaluation_from_variables(candidate)
+
+
+def test_domain_backends_remain_importable_from_legacy_and_new_paths() -> None:
+    from design_research_problems.problems._domains.battery_circuit import (
+        BatteryCircuitState as DomainBatteryCircuitState,
+    )
+    from design_research_problems.problems._domains.planar_truss import PlanarTrussState as DomainPlanarTrussState
+    from design_research_problems.problems.grammar._battery_circuit import (
+        BatteryCircuitState as LegacyBatteryCircuitState,
+    )
+    from design_research_problems.problems.grammar._planar_truss import PlanarTrussState as LegacyPlanarTrussState
+
+    assert DomainBatteryCircuitState is LegacyBatteryCircuitState
+    assert DomainPlanarTrussState is LegacyPlanarTrussState
 
 
 def _fake_cell_model() -> BatteryCellModel:

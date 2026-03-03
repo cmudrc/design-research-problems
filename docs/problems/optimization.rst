@@ -6,6 +6,9 @@ problem-specific representative baseline `solve()` implementations.
 
 The packaged entries include:
 
+- `battery_pack_18650_series_parallel_cost_min`, a fixed-topology integer sizing
+  problem over canonical rectangular 18650 battery packs that reuses the shared
+  battery backend.
 - `pill_capsule_min_area`, a compact nonlinear constrained problem with two
   continuous variables.
 - `moneymaker_hip_pump_cost_min`, a citation-backed scalarized cost

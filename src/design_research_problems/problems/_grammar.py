@@ -63,6 +63,21 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
             Fully specified legal transitions in deterministic order.
         """
 
+    def enumerate_next_states(self, state: StateT) -> tuple[StateT, ...]:
+        """Return the legal successor states for the given state.
+
+        This convenience method supports generic grammar-family tooling that
+        only needs the next design states, not the richer transition metadata.
+
+        Args:
+            state: Current grammar state.
+
+        Returns:
+            Deterministic next states in the same order as
+            :meth:`enumerate_transitions`.
+        """
+        return tuple(transition.next_state for transition in self.enumerate_transitions(state))
+
     @abstractmethod
     def evaluate(self, state: StateT) -> EvaluationT:
         """Evaluate one design state.

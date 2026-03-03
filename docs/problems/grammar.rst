@@ -2,6 +2,9 @@ Grammar Problems
 ================
 
 Grammar problems describe discrete design actions over a library-owned state.
+Generic grammar-family tooling should use the shared `GrammarProblem` contract:
+`initial_state()`, `enumerate_transitions()`, `enumerate_next_states()`, and
+`evaluate()`. Concrete rule methods remain problem-specific conveniences.
 
 The catalog includes `planar_truss_span`, which translates a serializable
 planar topology state into a fresh `trussme.Truss` for evaluation. It also

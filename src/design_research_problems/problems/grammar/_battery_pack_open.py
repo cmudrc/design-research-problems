@@ -4,9 +4,7 @@ from __future__ import annotations
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._grammar import GrammarTransition
-from design_research_problems.problems._metadata import ProblemMetadata
-from design_research_problems.problems.grammar._battery_circuit import (
+from design_research_problems.problems._domains.battery_circuit import (
     BatteryCellInstance,
     BatteryCircuitEvaluation,
     BatteryCircuitState,
@@ -17,13 +15,15 @@ from design_research_problems.problems.grammar._battery_circuit import (
     sort_battery_connections,
     terminal_ids,
 )
-from design_research_problems.problems.grammar._battery_layout import (
+from design_research_problems.problems._domains.battery_layout import (
     DEFAULT_INTERCONNECT_RESISTANCE_OHM,
     BatteryRequirements,
     candidate_frontier_coordinates_from_cells,
     coordinate_is_in_bounds,
     occupied_coordinates,
 )
+from design_research_problems.problems._grammar import GrammarTransition
+from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems.grammar._battery_problem_base import (
     BatteryCircuitProblemBase,
     _coerce_int,

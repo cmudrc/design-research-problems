@@ -23,6 +23,7 @@ if TYPE_CHECKING:
         BatteryPack18650SeriesParallelProblem,
         PlanarTrussSpanProblem,
     )
+    from design_research_problems.problems.optimization import BatteryGridSizingProblem
 
 type _PlanarTrussProblemId = Literal[
     "planar_truss_span",
@@ -56,6 +57,7 @@ type _MSEvalProblemId = Literal[
 type _DecisionProblemId = Literal["decision_laptop_design_profit_maximization"] | _MSEvalProblemId
 
 type _OptimizationProblemId = Literal[
+    "battery_pack_18650_series_parallel_cost_min",
     "pill_capsule_min_area",
     "moneymaker_hip_pump_cost_min",
     "treadle_pump_ide_material_min",
@@ -237,6 +239,9 @@ class ProblemRegistry:
     def get(self, problem_id: _PlanarTrussProblemId) -> PlanarTrussSpanProblem: ...
 
     @overload
+    def get(self, problem_id: Literal["battery_pack_18650_series_parallel_cost_min"]) -> BatteryGridSizingProblem: ...
+
+    @overload
     def get(self, problem_id: _OptimizationProblemId) -> OptimizationProblem: ...
 
     @overload
@@ -308,6 +313,10 @@ def get_problem(problem_id: Literal["battery_pack_18650_open_ended"]) -> Battery
 
 @overload
 def get_problem(problem_id: _PlanarTrussProblemId) -> PlanarTrussSpanProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["battery_pack_18650_series_parallel_cost_min"]) -> BatteryGridSizingProblem: ...
 
 
 @overload
