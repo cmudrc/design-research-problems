@@ -124,18 +124,12 @@ class PillCapsuleMinArea(OptimizationProblem):
         seed: int | None = None,
         maxiter: int = 200,
     ) -> OptimizationResult:
-        """Solve the fixed-volume capsule problem by searching along the feasible manifold.
-
-        The equality constraint permits a one-dimensional parameterization:
-        once the capsule radius is chosen, the cylindrical length is fully
-        determined. This solver uses a deterministic golden-section search over
-        the feasible radius interval and reconstructs the matching length.
+        """Solve the fixed-volume capsule problem with SciPy's SLSQP baseline.
 
         Args:
-            initial_solution: Optional caller-supplied starting point. The
-                radius component is used to seed the search bracket.
+            initial_solution: Optional caller-supplied starting point.
             seed: Optional random seed used when a starting point is generated.
-            maxiter: Maximum golden-section iterations.
+            maxiter: Maximum SLSQP iterations.
 
         Returns:
             Numerically optimized capsule design.
@@ -144,8 +138,7 @@ class PillCapsuleMinArea(OptimizationProblem):
             ValueError: If ``initial_solution`` is provided with the wrong
                 shape.
         """
-        radius_upper = (3.0 * self.required_volume / (4.0 * math.pi)) ** (1.0 / 3.0)
-        radius_lower = max(float(self.bounds.lb[0]), 1e-9)
+        from scipy.optimize import minimize
 
         if initial_solution is None:
             x0 = self.generate_initial_solution(seed=seed)
@@ -153,61 +146,34 @@ class PillCapsuleMinArea(OptimizationProblem):
             x0 = numpy.array(initial_solution, dtype=float, copy=True)
             if x0.shape != (2,):
                 raise ValueError(f"Expected a 2-variable design vector, received shape {x0.shape!r}.")
-        seed_radius = float(numpy.clip(x0[0], radius_lower, min(radius_upper, float(self.bounds.ub[0]))))
-        if seed_radius >= radius_upper:
-            seed_radius = 0.5 * (radius_lower + radius_upper)
+        x0 = numpy.clip(x0, self.bounds.lb, self.bounds.ub)
+        slsqp_bounds = list(zip(self.bounds.lb.tolist(), self.bounds.ub.tolist(), strict=True))
+        raw_result = minimize(
+            self.objective,
+            x0=x0,
+            method="SLSQP",
+            bounds=slsqp_bounds,
+            constraints=(
+                {
+                    "type": "eq",
+                    "fun": lambda values: _pill_volume(float(values[0]), float(values[1])) - self.required_volume,
+                },
+            ),
+            options={"maxiter": maxiter, "ftol": 1e-12, "disp": False},
+        )
 
-        phi = (math.sqrt(5.0) - 1.0) / 2.0
-        left = radius_lower
-        right = radius_upper
-        left_probe = max(left, min(right, seed_radius))
-        right_probe = left + phi * (right - left)
-        if abs(right_probe - left_probe) <= 1e-12:
-            left_probe = left + (1.0 - phi) * (right - left)
-            right_probe = left + phi * (right - left)
-
-        def candidate(radius: float) -> NDArray[numpy.float64]:
-            length = (self.required_volume - 4.0 / 3.0 * math.pi * radius**3) / (math.pi * radius**2)
-            return numpy.array([radius, max(length, 0.0)], dtype=float)
-
-        left_vector = candidate(left_probe)
-        right_vector = candidate(right_probe)
-        left_value = self.objective(left_vector)
-        right_value = self.objective(right_vector)
-        nfev = 2
-        nit = 0
-
-        for _ in range(maxiter):
-            nit += 1
-            if right - left <= 1e-12:
-                break
-            if left_value <= right_value:
-                right = right_probe
-                right_probe = left_probe
-                right_value = left_value
-                left_probe = left + (1.0 - phi) * (right - left)
-                left_vector = candidate(left_probe)
-                left_value = self.objective(left_vector)
-            else:
-                left = left_probe
-                left_probe = right_probe
-                left_value = right_value
-                right_probe = left + phi * (right - left)
-                right_vector = candidate(right_probe)
-                right_value = self.objective(right_vector)
-            nfev += 1
-
-        solution = left_vector if left_value <= right_value else right_vector
-        success = self.max_constraint_violation(solution) <= 1e-9
+        solution = numpy.clip(numpy.array(raw_result.x, dtype=float, copy=True), self.bounds.lb, self.bounds.ub)
+        max_violation = self.max_constraint_violation(solution)
+        success = max_violation <= 1e-9
         if success:
-            message = "Converged golden-section search on the feasible capsule manifold."
+            message = f"Converged SciPy SLSQP baseline (max violation {max_violation:.3g})."
         else:
-            message = "Golden-section search ended with residual constraint error."
+            message = f"SciPy SLSQP returned a best-effort pill design (max violation {max_violation:.3g})."
         return OptimizationResult(
             x=solution,
             fun=self.objective(solution),
             success=success,
             message=message,
-            nit=nit,
-            nfev=nfev,
+            nit=int(getattr(raw_result, "nit", 0) or 0),
+            nfev=int(getattr(raw_result, "nfev", 0) or 0),
         )

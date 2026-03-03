@@ -6,7 +6,7 @@ from design_research_problems import get_problem
 
 
 def main() -> None:
-    """Print a seeded start vector and the feasible-manifold baseline solution."""
+    """Print a seeded start vector and the SciPy SLSQP baseline solution."""
     problem = get_problem("pill_capsule_min_area")
     initial = problem.generate_initial_solution(seed=7)
     print(initial.shape)

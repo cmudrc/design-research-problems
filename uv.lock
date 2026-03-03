@@ -358,6 +358,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },
+    { name = "scipy" },
 ]
 
 [package.optional-dependencies]
@@ -390,6 +391,7 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.2,<9" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=7.0,<8" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6.0,<1" },
+    { name = "scipy", specifier = ">=1.13,<2" },
     { name = "sphinx", marker = "extra == 'dev'", specifier = ">=7.4,<9" },
     { name = "sphinx-rtd-theme", marker = "extra == 'dev'", specifier = ">=2.0,<4" },
     { name = "sphinxcontrib-mermaid", marker = "extra == 'dev'", specifier = ">=1.0,<2" },

@@ -26,6 +26,7 @@ classifiers = [
 ]
 dependencies = [
   "numpy>=1.26,<3",
+  "scipy>=1.13,<2",
 ]
 
 [project.urls]
@@ -114,6 +115,8 @@ strict_equality = true
 
 [[tool.mypy.overrides]]
 module = [
+  "scipy",
+  "scipy.*",
   "trussme",
   "trussme.*",
 ]

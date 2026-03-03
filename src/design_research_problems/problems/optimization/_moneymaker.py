@@ -14,10 +14,8 @@ from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems._optimization import (
     Bounds,
     ConstraintDefinition,
-    LocalSearchResult,
     OptimizationProblem,
     OptimizationResult,
-    bounded_pattern_search,
 )
 
 _HDPE_VOLUME_COST = 3808.0
@@ -76,6 +74,7 @@ _PUBLISHED_TALL_TANK_BASELINES = (
     ("published_max_flow_same_cost_tall_tank", _MAX_FLOW_SAME_COST_TALL_TANK_VECTOR),
 )
 _REDUCED_SOLVER_INDICES = (0, 1, 2, 3, 4, 5, 8)
+_REDUCED_SOLVER_DERIVED_INDICES = (6, 7, 9)
 
 
 def _outer_diameter(inner_diameter: float) -> float:
@@ -379,7 +378,7 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         seed: int | None = None,
         maxiter: int = 200,
     ) -> OptimizationResult:
-        """Solve the reduced MoneyMaker subproblem with deterministic local search.
+        """Solve the reduced MoneyMaker subproblem with SciPy's SLSQP baseline.
 
         The three equality constraints can be satisfied analytically once the
         inlet diameter, cylinder diameter, stroke length, inlet run, handle
@@ -391,7 +390,7 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
             initial_solution: Optional full 10-variable starting point.
             seed: Optional random seed used to generate deterministic restart
                 candidates.
-            maxiter: Maximum local-search sweeps per restart.
+            maxiter: Maximum SLSQP iterations per restart.
 
         Returns:
             Locally optimized feasible pump design.
@@ -400,53 +399,59 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
             ValueError: If ``initial_solution`` is provided with the wrong
                 shape.
         """
+        from scipy.optimize import minimize
+
         restarts = self._solver_start_points(initial_solution=initial_solution, seed=seed)
         reduced_lb = self.bounds.lb[list(_REDUCED_SOLVER_INDICES)]
         reduced_ub = self.bounds.ub[list(_REDUCED_SOLVER_INDICES)]
-        best_search: LocalSearchResult | None = None
+        slsqp_bounds = list(zip(reduced_lb.tolist(), reduced_ub.tolist(), strict=True))
         best_vector: NDArray[numpy.float64] | None = None
+        best_score = math.inf
         total_nit = 0
         total_nfev = 0
 
         for start in restarts:
-            search = bounded_pattern_search(
-                objective=self._solver_merit,
-                lower_bounds=reduced_lb,
-                upper_bounds=reduced_ub,
-                initial_solution=start,
-                maxiter=maxiter,
+            if self._reconstruct_solution(start) is None:
+                continue
+            raw_result = minimize(
+                self._solver_objective,
+                x0=start,
+                method="SLSQP",
+                bounds=slsqp_bounds,
+                constraints=(
+                    {"type": "eq", "fun": self._solver_equality_residuals},
+                    {"type": "ineq", "fun": self._solver_inequality_margins},
+                ),
+                options={"maxiter": maxiter, "ftol": 1e-9, "disp": False},
             )
-            total_nit += search.nit
-            total_nfev += search.nfev
-            candidate = self._reconstruct_solution(search.x)
+            total_nit += int(getattr(raw_result, "nit", 0) or 0)
+            total_nfev += int(getattr(raw_result, "nfev", 0) or 0)
+            reduced_solution = numpy.clip(
+                numpy.array(raw_result.x, dtype=float, copy=True),
+                reduced_lb,
+                reduced_ub,
+            )
+            candidate = self._reconstruct_solution(reduced_solution)
             if candidate is None:
                 continue
-            if best_search is None or search.fun < best_search.fun:
-                best_search = search
+            violation = self.max_constraint_violation(candidate)
+            cost = self.objective(candidate)
+            score = cost + 1e6 * violation**2 + 1e3 * violation
+            if score < best_score:
+                best_score = score
                 best_vector = candidate
 
-        if best_search is None or best_vector is None:
+        if best_vector is None:
             fallback = self.generate_initial_solution(seed=seed)
-            reduced_fallback = fallback[list(_REDUCED_SOLVER_INDICES)]
             best_vector = fallback
-            best_search = LocalSearchResult(
-                x=reduced_fallback,
-                fun=self._solver_merit(reduced_fallback),
-                nit=0,
-                nfev=1,
-            )
-            total_nfev += 1
 
         max_violation = self.max_constraint_violation(best_vector)
         cost = self.objective(best_vector)
         if max_violation <= 1e-6:
-            message = (
-                f"Converged reduced-coordinate pattern search (cost {cost:.2f} USD, max violation {max_violation:.3g})."
-            )
+            message = f"Converged SciPy SLSQP baseline (cost {cost:.2f} USD, max violation {max_violation:.3g})."
         else:
             message = (
-                "Reduced-coordinate pattern search returned a best-effort design "
-                f"(cost {cost:.2f} USD, max violation {max_violation:.3g})."
+                f"SciPy SLSQP returned a best-effort design (cost {cost:.2f} USD, max violation {max_violation:.3g})."
             )
         return OptimizationResult(
             x=numpy.array(best_vector, dtype=float, copy=True),
@@ -456,6 +461,67 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
             nit=total_nit,
             nfev=total_nfev,
         )
+
+    def _solver_objective(self, reduced_variables: NDArray[numpy.float64]) -> float:
+        """Return the reduced SLSQP objective value.
+
+        Args:
+            reduced_variables: Seven free design variables.
+
+        Returns:
+            Cost objective for the reconstructed design, or a large penalty for
+            invalid reconstructions.
+        """
+        candidate = self._reconstruct_solution(reduced_variables)
+        if candidate is None:
+            return 1e12
+        return self.objective(candidate)
+
+    def _solver_equality_residuals(self, reduced_variables: NDArray[numpy.float64]) -> NDArray[numpy.float64]:
+        """Return equality residuals for the reduced SLSQP model.
+
+        Args:
+            reduced_variables: Seven free design variables.
+
+        Returns:
+            Vector of equality residuals.
+        """
+        candidate = self._reconstruct_solution(reduced_variables)
+        if candidate is None:
+            count = sum(constraint.kind == "eq" for constraint in self.constraints)
+            return numpy.ones(count, dtype=float)
+        residuals = [
+            float(constraint.evaluate(candidate) - constraint.target)
+            for constraint in self.constraints
+            if constraint.kind == "eq"
+        ]
+        return numpy.array(residuals, dtype=float)
+
+    def _solver_inequality_margins(self, reduced_variables: NDArray[numpy.float64]) -> NDArray[numpy.float64]:
+        """Return inequality margins for the reduced SLSQP model.
+
+        Args:
+            reduced_variables: Seven free design variables.
+
+        Returns:
+            Vector of inequality margins, each of which must remain nonnegative.
+        """
+        candidate = self._reconstruct_solution(reduced_variables)
+        if candidate is None:
+            count = sum(constraint.kind == "ineq" for constraint in self.constraints) + 2 * len(
+                _REDUCED_SOLVER_DERIVED_INDICES
+            )
+            return -numpy.ones(count, dtype=float)
+
+        margins = [
+            float(constraint.evaluate(candidate) - constraint.target)
+            for constraint in self.constraints
+            if constraint.kind == "ineq"
+        ]
+        for index in _REDUCED_SOLVER_DERIVED_INDICES:
+            margins.append(float(candidate[index] - self.bounds.lb[index]))
+            margins.append(float(self.bounds.ub[index] - candidate[index]))
+        return numpy.array(margins, dtype=float)
 
     def _solver_start_points(
         self,
@@ -535,21 +601,6 @@ class MoneyMakerHipPumpProblem(OptimizationProblem):
         x14 = upstroke_term * _WATER_DENSITY * _GRAVITY * area
         x13 = downstroke_term * _WATER_DENSITY * _GRAVITY * area
         return numpy.array([x1, x3, x5, x6, x8, x9, x13, x14, x15, x16], dtype=float)
-
-    def _solver_merit(self, reduced_variables: NDArray[numpy.float64]) -> float:
-        """Return a penalized merit value for reduced-coordinate search.
-
-        Args:
-            reduced_variables: Seven free design variables.
-
-        Returns:
-            Penalized scalar merit.
-        """
-        candidate = self._reconstruct_solution(reduced_variables)
-        if candidate is None:
-            return 1e12
-        violation = self.constraint_violation(candidate)
-        return float(self.objective(candidate) + 1e6 * violation**2 + 1e3 * violation)
 
     def _hard_constraint_violation(self, variables: NDArray[numpy.float64]) -> float:
         """Return the total violation across inequality constraints only.

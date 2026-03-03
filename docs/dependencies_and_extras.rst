@@ -4,7 +4,7 @@ Dependencies And Extras
 Base install
 ------------
 
-The base package installs only NumPy:
+The base package installs NumPy and SciPy:
 
 .. code-block:: bash
 
@@ -13,8 +13,8 @@ The base package installs only NumPy:
 Optimization baselines
 ----------------------
 
-The representative optimization `solve()` baselines ship in the base install;
-no extra dependency is required.
+The representative optimization `solve()` baselines use SciPy's constrained
+optimizers and ship in the base install; no extra dependency is required.
 
 Grammar support
 ---------------

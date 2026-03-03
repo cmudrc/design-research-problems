@@ -22,7 +22,7 @@ def test_moneymaker_problem_solve_returns_feasible_reduced_coordinate_solution()
     result = problem.solve()
 
     assert result.success is True
-    assert "Converged reduced-coordinate pattern search" in result.message
+    assert "Converged SciPy SLSQP baseline" in result.message
     assert result.x.shape == (10,)
     assert result.fun < problem.objective(initial)
     assert abs(problem.flow_rate_lps(result.x) - problem.target_flow_rate_lps) < 1e-9

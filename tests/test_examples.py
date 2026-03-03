@@ -66,9 +66,10 @@ def test_ide_treadle_pump_example_runs() -> None:
     completed = _run_example("examples/optimization/ide_treadle_pump.py")
     assert completed.returncode == 0, completed.stderr
     assert "IDE-style treadle pump packaged benchmark" in completed.stdout
-    assert "initial flow_lps=2.5" in completed.stdout
-    assert "Converged reduced-coordinate pattern search" in completed.stdout
-    assert "solved flow_lps=2.5" in completed.stdout
+    assert "initial flow_lps=" in completed.stdout
+    assert "violation=" in completed.stdout
+    assert "Converged SciPy SLSQP baseline" in completed.stdout
+    assert "solved flow_lps=2.500" in completed.stdout
 
 
 @pytest.mark.examples_smoke
@@ -77,7 +78,7 @@ def test_pill_optimization_example_runs() -> None:
     completed = _run_example("examples/optimization/pill_problem.py")
     assert completed.returncode == 0, completed.stderr
     assert "(2,)" in completed.stdout
-    assert "Converged golden-section search" in completed.stdout
+    assert "Converged SciPy SLSQP baseline" in completed.stdout
 
 
 @pytest.mark.examples_smoke
@@ -86,7 +87,7 @@ def test_moneymaker_optimization_example_runs() -> None:
     completed = _run_example("examples/optimization/moneymaker_hip_pump.py")
     assert completed.returncode == 0, completed.stderr
     assert "MoneyMaker Hip Pump humanitarian water-lifting benchmark" in completed.stdout
-    assert "Converged reduced-coordinate pattern search" in completed.stdout
+    assert "Converged SciPy SLSQP baseline" in completed.stdout
 
 
 @pytest.mark.trussme_real

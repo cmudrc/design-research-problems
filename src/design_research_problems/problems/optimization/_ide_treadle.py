@@ -13,10 +13,8 @@ from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems._optimization import (
     Bounds,
     ConstraintDefinition,
-    LocalSearchResult,
     OptimizationProblem,
     OptimizationResult,
-    bounded_pattern_search,
 )
 
 _CYLINDER_RADIUS_LB = 0.018
@@ -47,6 +45,7 @@ _HOSE_LENGTH_OFFSET = 2.0
 
 _ZONE_I_BASELINE_VECTOR = numpy.array([0.03382759, 0.01388933, 1.2, 1.9317264], dtype=float)
 _REDUCED_SOLVER_INDICES = (0, 2)
+_REDUCED_SOLVER_DERIVED_INDICES = (1, 3)
 
 
 class IDETreadlePumpMaterialMin(OptimizationProblem):
@@ -223,13 +222,13 @@ class IDETreadlePumpMaterialMin(OptimizationProblem):
         seed: int | None = None,
         maxiter: int = 200,
     ) -> OptimizationResult:
-        """Solve the reduced treadle-pump subproblem with local search.
+        """Solve the reduced treadle-pump subproblem with SciPy's SLSQP baseline.
 
         Args:
             initial_solution: Optional full four-variable starting point.
             seed: Optional random seed used to generate deterministic restart
                 candidates.
-            maxiter: Maximum local-search sweeps per restart.
+            maxiter: Maximum SLSQP iterations per restart.
 
         Returns:
             Locally optimized feasible treadle-pump design.
@@ -238,53 +237,61 @@ class IDETreadlePumpMaterialMin(OptimizationProblem):
             ValueError: If ``initial_solution`` is provided with the wrong
                 shape.
         """
+        from scipy.optimize import minimize
+
         restarts = self._solver_start_points(initial_solution=initial_solution, seed=seed)
         reduced_lb = self.bounds.lb[list(_REDUCED_SOLVER_INDICES)]
         reduced_ub = self.bounds.ub[list(_REDUCED_SOLVER_INDICES)]
-        best_search: LocalSearchResult | None = None
+        slsqp_bounds = list(zip(reduced_lb.tolist(), reduced_ub.tolist(), strict=True))
         best_vector: NDArray[numpy.float64] | None = None
+        best_score = math.inf
         total_nit = 0
         total_nfev = 0
 
         for start in restarts:
-            search = bounded_pattern_search(
-                objective=self._solver_merit,
-                lower_bounds=reduced_lb,
-                upper_bounds=reduced_ub,
-                initial_solution=start,
-                maxiter=maxiter,
+            if self._reconstruct_solution(start) is None:
+                continue
+            raw_result = minimize(
+                self._solver_objective,
+                x0=start,
+                method="SLSQP",
+                bounds=slsqp_bounds,
+                constraints=(
+                    {"type": "eq", "fun": self._solver_equality_residuals},
+                    {"type": "ineq", "fun": self._solver_inequality_margins},
+                ),
+                options={"maxiter": maxiter, "ftol": 1e-9, "disp": False},
             )
-            total_nit += search.nit
-            total_nfev += search.nfev
-            candidate = self._reconstruct_solution(search.x)
+            total_nit += int(getattr(raw_result, "nit", 0) or 0)
+            total_nfev += int(getattr(raw_result, "nfev", 0) or 0)
+            reduced_solution = numpy.clip(
+                numpy.array(raw_result.x, dtype=float, copy=True),
+                reduced_lb,
+                reduced_ub,
+            )
+            candidate = self._reconstruct_solution(reduced_solution)
             if candidate is None:
                 continue
-            if best_search is None or search.fun < best_search.fun:
-                best_search = search
+            violation = self.max_constraint_violation(candidate)
+            material = self.objective(candidate)
+            score = material + 1e5 * violation**2 + 1e2 * violation
+            if score < best_score:
+                best_score = score
                 best_vector = candidate
 
-        if best_search is None or best_vector is None:
+        if best_vector is None:
             fallback = self.generate_initial_solution(seed=seed)
-            reduced_fallback = fallback[list(_REDUCED_SOLVER_INDICES)]
             best_vector = fallback
-            best_search = LocalSearchResult(
-                x=reduced_fallback,
-                fun=self._solver_merit(reduced_fallback),
-                nit=0,
-                nfev=1,
-            )
-            total_nfev += 1
 
         max_violation = self.max_constraint_violation(best_vector)
         material = self.objective(best_vector)
         if max_violation <= 1e-6:
             message = (
-                "Converged reduced-coordinate pattern search "
-                f"(material {material:.4f} m^3, max violation {max_violation:.3g})."
+                f"Converged SciPy SLSQP baseline (material {material:.4f} m^3, max violation {max_violation:.3g})."
             )
         else:
             message = (
-                "Reduced-coordinate pattern search returned a best-effort design "
+                "SciPy SLSQP returned a best-effort design "
                 f"(material {material:.4f} m^3, max violation {max_violation:.3g})."
             )
         return OptimizationResult(
@@ -295,6 +302,67 @@ class IDETreadlePumpMaterialMin(OptimizationProblem):
             nit=total_nit,
             nfev=total_nfev,
         )
+
+    def _solver_objective(self, reduced_variables: NDArray[numpy.float64]) -> float:
+        """Return the reduced SLSQP objective value.
+
+        Args:
+            reduced_variables: Reduced two-variable design vector.
+
+        Returns:
+            Material proxy for the reconstructed design, or a large penalty for
+            invalid reconstructions.
+        """
+        candidate = self._reconstruct_solution(reduced_variables)
+        if candidate is None:
+            return 1e12
+        return self.objective(candidate)
+
+    def _solver_equality_residuals(self, reduced_variables: NDArray[numpy.float64]) -> NDArray[numpy.float64]:
+        """Return equality residuals for the reduced SLSQP model.
+
+        Args:
+            reduced_variables: Reduced two-variable design vector.
+
+        Returns:
+            Vector of equality residuals.
+        """
+        candidate = self._reconstruct_solution(reduced_variables)
+        if candidate is None:
+            count = sum(constraint.kind == "eq" for constraint in self.constraints)
+            return numpy.ones(count, dtype=float)
+        residuals = [
+            float(constraint.evaluate(candidate) - constraint.target)
+            for constraint in self.constraints
+            if constraint.kind == "eq"
+        ]
+        return numpy.array(residuals, dtype=float)
+
+    def _solver_inequality_margins(self, reduced_variables: NDArray[numpy.float64]) -> NDArray[numpy.float64]:
+        """Return inequality margins for the reduced SLSQP model.
+
+        Args:
+            reduced_variables: Reduced two-variable design vector.
+
+        Returns:
+            Vector of inequality margins, each of which must remain nonnegative.
+        """
+        candidate = self._reconstruct_solution(reduced_variables)
+        if candidate is None:
+            count = sum(constraint.kind == "ineq" for constraint in self.constraints) + 2 * len(
+                _REDUCED_SOLVER_DERIVED_INDICES
+            )
+            return -numpy.ones(count, dtype=float)
+
+        margins = [
+            float(constraint.evaluate(candidate) - constraint.target)
+            for constraint in self.constraints
+            if constraint.kind == "ineq"
+        ]
+        for index in _REDUCED_SOLVER_DERIVED_INDICES:
+            margins.append(float(candidate[index] - self.bounds.lb[index]))
+            margins.append(float(self.bounds.ub[index] - candidate[index]))
+        return numpy.array(margins, dtype=float)
 
     def _solver_start_points(
         self,
@@ -362,21 +430,6 @@ class IDETreadlePumpMaterialMin(OptimizationProblem):
             _HOSE_LOSS_COEFFICIENT * self.target_flow_rate_lps / lift_reserve
         )
         return numpy.array([cylinder_radius, hose_radius, treadle_length, step_rate], dtype=float)
-
-    def _solver_merit(self, reduced_variables: NDArray[numpy.float64]) -> float:
-        """Return a penalized merit value for reduced-coordinate search.
-
-        Args:
-            reduced_variables: Reduced two-variable design vector.
-
-        Returns:
-            Penalized scalar merit.
-        """
-        candidate = self._reconstruct_solution(reduced_variables)
-        if candidate is None:
-            return 1e12
-        violation = self.constraint_violation(candidate)
-        return float(self.objective(candidate) + 1e5 * violation**2 + 1e2 * violation)
 
     def _step_rate_margin(self, variables: NDArray[numpy.float64]) -> float:
         """Return the remaining cadence margin before exceeding the operator limit.
