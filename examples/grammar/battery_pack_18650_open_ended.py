@@ -6,7 +6,11 @@ from design_research_problems import MissingOptionalDependencyError, get_problem
 
 
 def main() -> None:
-    """Build a feasible 4S4P-equivalent explicit battery graph and evaluate it."""
+    """Build a feasible 4S4P-equivalent explicit battery graph and evaluate it.
+
+    Raises:
+        RuntimeError: If the constructed example pack evaluates as infeasible.
+    """
 
     # Load the open-ended battery grammar and start from its one-cell seed state.
     problem = get_problem("battery_pack_18650_open_ended")

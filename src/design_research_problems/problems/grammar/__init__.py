@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from importlib import import_module
+from typing import TYPE_CHECKING
 
 from .._grammar import GrammarTransition
 
@@ -36,9 +37,39 @@ __all__ = ["GrammarTransition", *_LAZY_EXPORTS]
 
 
 def __getattr__(name: str) -> object:
-    """Resolve one lazily exported grammar implementation."""
+    """Resolve one lazily exported grammar implementation.
+
+    Args:
+        name: Public attribute name requested from this package.
+
+    Returns:
+        Exported grammar object referenced by ``name``.
+
+    Raises:
+        AttributeError: If ``name`` is not a supported lazy export.
+    """
     target = _LAZY_EXPORTS.get(name)
     if target is None:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
     module_path, _, attr_name = target.partition(":")
     return getattr(import_module(module_path), attr_name)
+
+
+if TYPE_CHECKING:
+    from .._domains.battery_circuit import BatteryCellInstance as BatteryCellInstance
+    from .._domains.battery_circuit import BatteryCircuitEvaluation as BatteryCircuitEvaluation
+    from .._domains.battery_circuit import BatteryCircuitState as BatteryCircuitState
+    from .._domains.battery_circuit import BatteryConnection as BatteryConnection
+    from .._domains.battery_layout import BatteryCellPlacement as BatteryCellPlacement
+    from ._battery_pack_open import BatteryPack18650OpenEndedProblem as BatteryPack18650OpenEndedProblem
+    from ._battery_pack_sp import (
+        BatteryPack18650SeriesParallelProblem as BatteryPack18650SeriesParallelProblem,
+    )
+    from ._battery_pack_sp import SeriesParallelBatteryEvaluation as SeriesParallelBatteryEvaluation
+    from ._battery_pack_sp import SeriesParallelBatteryState as SeriesParallelBatteryState
+    from ._planar_truss import PlanarJoint as PlanarJoint
+    from ._planar_truss import PlanarLoad as PlanarLoad
+    from ._planar_truss import PlanarMember as PlanarMember
+    from ._planar_truss import PlanarTrussEvaluation as PlanarTrussEvaluation
+    from ._planar_truss import PlanarTrussSpanProblem as PlanarTrussSpanProblem
+    from ._planar_truss import PlanarTrussState as PlanarTrussState

@@ -6,7 +6,11 @@ from design_research_problems import MissingOptionalDependencyError, get_problem
 
 
 def main() -> None:
-    """Build the constrained feasible 4S4P case and evaluate it when ``pybamm`` is installed."""
+    """Build the constrained feasible 4S4P case and evaluate it when ``pybamm`` is installed.
+
+    Raises:
+        RuntimeError: If the constructed example pack evaluates as infeasible.
+    """
 
     # Load the constrained rectangular battery grammar and start from its 1S1P seed pack.
     problem = get_problem("battery_pack_18650_series_parallel")

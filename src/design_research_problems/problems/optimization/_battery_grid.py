@@ -173,7 +173,7 @@ class BatteryGridSizingProblem(OptimizationProblem):
         normalized = numpy.array(variables, dtype=float, copy=True)
         if normalized.shape != (2,):
             raise ValueError(f"Expected a 2-variable design vector, received shape {normalized.shape!r}.")
-        return numpy.clip(normalized, self.bounds.lb, self.bounds.ub)
+        return numpy.array(numpy.clip(normalized, self.bounds.lb, self.bounds.ub), dtype=float, copy=False)
 
     def _normalized_counts(self, variables: NDArray[numpy.float64]) -> tuple[int, int]:
         """Return the rounded, clipped integer counts represented by ``variables``."""

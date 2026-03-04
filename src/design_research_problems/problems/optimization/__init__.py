@@ -20,7 +20,17 @@ __all__ = list(_LAZY_EXPORTS)
 
 
 def __getattr__(name: str) -> object:
-    """Resolve one lazily exported optimization implementation."""
+    """Resolve one lazily exported optimization implementation.
+
+    Args:
+        name: Public attribute name requested from this package.
+
+    Returns:
+        Exported optimization object referenced by ``name``.
+
+    Raises:
+        AttributeError: If ``name`` is not a supported lazy export.
+    """
     target = _LAZY_EXPORTS.get(name)
     if target is None:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

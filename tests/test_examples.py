@@ -128,6 +128,17 @@ def test_battery_grammar_example_runs() -> None:
     assert completed.stdout.splitlines()[-1].split()[0] == "True"
 
 
+@pytest.mark.examples_smoke
+def test_battery_grammar_to_optimizer_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_grammar_to_optimizer.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "battery_pack_18650_series_parallel" in completed.stdout
+    assert "battery_pack_18650_series_parallel_cost_min" in completed.stdout
+    if "pybamm is required for battery grammar evaluation" in completed.stdout:
+        return
+    assert completed.stdout.splitlines()[-1].split()[0] == "solve"
+
+
 @pytest.mark.trussme_real
 def test_grammar_example_runs_when_trussme_is_installed() -> None:
     completed = _run_example("examples/grammar/planar_truss_span.py")
