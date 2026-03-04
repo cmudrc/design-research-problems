@@ -365,6 +365,43 @@ def test_canonical_4s4p_graph_is_recognized_and_feasible() -> None:
     assert evaluation.delivered_capacity_ah == pytest.approx(10.0)
 
 
+def test_extended_simulation_can_run_past_required_capacity_and_stay_feasible() -> None:
+    state = _two_cell_parallel_state()
+    requirements = _relaxed_requirements(target_voltage_v=3.7, minimum_capacity_ah=1.0, minimum_current_a=10.0)
+
+    baseline = evaluate_battery_circuit(
+        state=state,
+        requirements=requirements,
+        load_cell_model=_static_cell_model,
+    )
+    extended = evaluate_battery_circuit(
+        state=state,
+        requirements=requirements,
+        load_cell_model=_static_cell_model,
+        simulate_to_failure=True,
+    )
+
+    assert baseline.is_feasible is True
+    assert baseline.delivered_capacity_ah == pytest.approx(1.0)
+    assert extended.is_feasible is True
+    assert extended.failure_reason is None
+    assert extended.delivered_capacity_ah == pytest.approx(5.0)
+    assert extended.delivered_capacity_ah > baseline.delivered_capacity_ah
+
+
+def test_extended_simulation_still_fails_when_required_capacity_is_not_met() -> None:
+    evaluation = evaluate_battery_circuit(
+        state=_single_cell_state(),
+        requirements=_relaxed_requirements(target_voltage_v=3.7, minimum_capacity_ah=3.0, minimum_current_a=10.0),
+        load_cell_model=_static_cell_model,
+        simulate_to_failure=True,
+    )
+
+    assert evaluation.is_feasible is False
+    assert evaluation.delivered_capacity_ah == pytest.approx(2.5)
+    assert evaluation.failure_reason == "A cell depleted before the required discharge duration completed."
+
+
 def test_load_18650_cell_model_requires_supported_thevenin_factory(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

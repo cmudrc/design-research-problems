@@ -8,6 +8,9 @@ See :doc:`../problem_catalog/optimization` for the generated per-problem catalog
 
 The packaged entries include:
 
+- `battery_pack_18650_open_ended_capacity_max`, an explicit 18650 transition-program
+  co-design problem that maximizes delivered capacity under the shared battery
+  backend.
 - `battery_pack_18650_series_parallel_cost_min`, a fixed-topology integer sizing
   problem over canonical rectangular 18650 battery packs that reuses the shared
   battery backend.

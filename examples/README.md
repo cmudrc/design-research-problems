@@ -10,7 +10,8 @@
 - `optimization/pill_problem.py`: sample and optionally solve the pill problem.
 - `grammar/battery_pack_18650_open_ended.py`: build a 4S4P-equivalent explicit battery graph and evaluate it when `pybamm` is installed.
 - `grammar/battery_pack_18650_series_parallel.py`: build the constrained rectangular 4S4P battery grammar state and evaluate it when `pybamm` is installed.
-- `optimization/battery_grammar_to_optimizer.py`: seed the battery sizing optimizer from a grammar-derived 4S4P layout while staying in the optimization-family API.
+- `optimization/battery_grammar_to_optimizer.py`: inspect the packaged rectangular battery sizing optimizer with a seeded start and solved design.
+- `optimization/battery_open_ended_capacity_max.py`: inspect the packaged open-ended battery co-design optimizer with a seeded explicit graph and a baseline solved design.
 - `optimization/ide_treadle_pump.py`: inspect the packaged IDE-style treadle pump baseline and solver.
 - `optimization/moneymaker_hip_pump.py`: inspect the MoneyMaker Hip Pump packaged baseline and SciPy SLSQP solver.
 - `optimization/pill_problem.py`: inspect a feasible seeded start and the built-in pill solver.

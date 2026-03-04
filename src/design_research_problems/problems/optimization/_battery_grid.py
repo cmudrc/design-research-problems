@@ -92,20 +92,43 @@ class BatteryGridSizingProblem(OptimizationProblem):
 
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
         """Return a deterministic near-feasible starting point."""
-        del seed
-        target_series = self._default_series_count()
+        baseline = self._baseline_initial_solution()
+        if seed is None:
+            return baseline
+
+        baseline_series, baseline_parallel = self._normalized_counts(baseline)
         max_parallel = self._max_parallel_count()
-        for parallel_count in range(1, max_parallel + 1):
-            vector = numpy.array([float(target_series), float(parallel_count)], dtype=float)
-            if self.max_constraint_violation(vector) <= 1e-9:
-                return vector
-        return numpy.array([float(target_series), 1.0], dtype=float)
+        if max_parallel > 1:
+            parallel_count = 1 + ((abs(seed) + baseline_parallel - 1) % max_parallel)
+            if parallel_count == baseline_parallel:
+                parallel_count = 1 + (parallel_count % max_parallel)
+            return numpy.array([float(baseline_series), float(parallel_count)], dtype=float)
+
+        max_series = self._max_series_count()
+        if max_series > 1:
+            series_count = 1 + ((abs(seed) + baseline_series - 1) % max_series)
+            if series_count == baseline_series:
+                series_count = 1 + (series_count % max_series)
+            return numpy.array([float(series_count), float(baseline_parallel)], dtype=float)
+
+        return baseline
 
     def objective(self, variables: NDArray[numpy.float64]) -> float:
         """Return deterministic pack cost with a fixed infeasibility penalty."""
         evaluation = self._evaluation_from_variables(variables)
         total_violation, _ = series_parallel_requirement_violation(evaluation, self.requirements)
         return evaluation.design_cost + (_INFEASIBILITY_PENALTY_SCALE * total_violation)
+
+    def objective_components(self, variables: NDArray[numpy.float64]) -> dict[str, float]:
+        """Return the main reported pack metrics for one design vector."""
+        evaluation = self._evaluation_from_variables(variables)
+        return {
+            "cost_usd": evaluation.design_cost,
+            "voltage_v": evaluation.design_voltage,
+            "capacity_ah": evaluation.design_capacity,
+            "current_limit_a": evaluation.analytic_current_limit,
+            "cell_count": float(evaluation.cell_count),
+        }
 
     def solve(
         self,
@@ -234,6 +257,16 @@ class BatteryGridSizingProblem(OptimizationProblem):
         target = self.requirements.target_voltage_v / CELL_SPEC_18650.nominal_voltage_v
         rounded = round(target)
         return max(1, min(rounded, self._max_series_count()))
+
+    def _baseline_initial_solution(self) -> NDArray[numpy.float64]:
+        """Return the deterministic smallest feasible rectangular baseline."""
+        target_series = self._default_series_count()
+        max_parallel = self._max_parallel_count()
+        for parallel_count in range(1, max_parallel + 1):
+            vector = numpy.array([float(target_series), float(parallel_count)], dtype=float)
+            if self.max_constraint_violation(vector) <= 1e-9:
+                return vector
+        return numpy.array([float(target_series), 1.0], dtype=float)
 
     def _max_series_count(self) -> int:
         """Return the largest legal series count under the configured bounds."""

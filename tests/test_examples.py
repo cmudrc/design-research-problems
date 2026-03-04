@@ -132,10 +132,24 @@ def test_battery_grammar_example_runs() -> None:
 def test_battery_grammar_to_optimizer_example_runs() -> None:
     completed = _run_example("examples/optimization/battery_grammar_to_optimizer.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_pack_18650_series_parallel_cost_min" in completed.stdout
+    assert "Rectangular battery packaged benchmark" in completed.stdout
     if "pybamm is required for battery grammar evaluation" in completed.stdout:
         return
-    assert completed.stdout.splitlines()[-1].split()[0] == "solve"
+    assert "initial config=" in completed.stdout
+    assert "\nsolve " in completed.stdout
+    assert "solved config=" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_open_ended_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_open_ended_capacity_max.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "Open-ended battery packaged benchmark" in completed.stdout
+    if "pybamm is required for battery grammar evaluation" in completed.stdout:
+        return
+    assert "initial cell_count=" in completed.stdout
+    assert "\nsolve " in completed.stdout
+    assert "solved cell_count=" in completed.stdout
 
 
 @pytest.mark.trussme_real

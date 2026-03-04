@@ -27,6 +27,7 @@ not by matching catalog capability flags across different kinds.
 The first catalog includes:
 
 - 40 ideation-focused text prompts
+- `battery_pack_18650_open_ended_capacity_max` for explicit 18650 layout-and-wiring capacity maximization under the shared battery backend
 - `pill_capsule_min_area` for constrained continuous optimization
 - `battery_pack_18650_series_parallel_cost_min` for fixed-topology rectangular 18650 pack sizing under the shared battery backend
 - `planar_truss_span_mass_min`, `planar_truss_span_deflection_min`, and `planar_truss_span_fos_max` for fixed-joint planar truss structural optimization under real `trussme` evaluation

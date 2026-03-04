@@ -92,7 +92,8 @@ def test_registry_entries_filter_by_kind() -> None:
     )
     optimization_kinds = registry.by_kind(ProblemKind.OPTIMIZATION)
     optimization_ids = [entry.problem_id for entry in optimization_kinds]
-    assert len(optimization_ids) == 8
+    assert len(optimization_ids) == 9
+    assert "battery_pack_18650_open_ended_capacity_max" in optimization_ids
     assert "battery_pack_18650_series_parallel_cost_min" in optimization_ids
     assert "planar_truss_span_mass_min" in optimization_ids
     assert "planar_truss_span_deflection_min" in optimization_ids
@@ -318,6 +319,7 @@ def test_non_text_problems_are_computable() -> None:
     problem_ids = (
         "decision_laptop_design_profit_maximization",
         "decision_mseval_kitchen_utensil_grip_lightweight",
+        "battery_pack_18650_open_ended_capacity_max",
         "battery_pack_18650_series_parallel_cost_min",
         "pill_capsule_min_area",
         "planar_truss_span",
@@ -332,6 +334,7 @@ def test_registry_search_filters_by_feature_flags() -> None:
     registry = ProblemRegistry()
     matches = registry.search(feature_flags=("baseline solver",))
     assert [entry.problem_id for entry in matches] == [
+        "battery_pack_18650_open_ended_capacity_max",
         "battery_pack_18650_series_parallel_cost_min",
         "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",

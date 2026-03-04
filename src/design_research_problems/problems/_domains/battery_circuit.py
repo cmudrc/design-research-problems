@@ -139,6 +139,7 @@ class BatteryCircuitSimulationResult:
     """Internal simulation result used to build public evaluations."""
 
     pack_terminal_voltage_end: float
+    required_pack_terminal_voltage_end: float
     delivered_capacity_ah: float
     max_cell_current_a: float
     min_cell_voltage_v: float
@@ -515,6 +516,8 @@ def simulate_battery_circuit(
     state: BatteryCircuitState,
     requirements: BatteryRequirements,
     cell_model: BatteryCellModel,
+    *,
+    simulate_to_failure: bool = False,
 ) -> BatteryCircuitSimulationResult:
     """Run a constant-current discharge simulation for one explicit battery circuit."""
     dsu, _ = _build_connection_sets(state)
@@ -525,14 +528,19 @@ def simulate_battery_circuit(
     node_index = {node_id: index for index, node_id in enumerate(solve_node_ids)}
     capacity_ah = CELL_SPEC_18650.nominal_capacity_ah
     duration_seconds = (requirements.minimum_capacity_ah / requirements.minimum_current_a) * 3600.0
-    target_steps = max(1, ceil(duration_seconds))
+    required_steps = max(1, ceil(duration_seconds))
+    hard_step_cap = required_steps
+    if simulate_to_failure and requirements.minimum_current_a > 0.0:
+        capacity_limited_seconds = (float(len(state.cells)) * capacity_ah / requirements.minimum_current_a) * 3600.0
+        hard_step_cap = max(required_steps, ceil(capacity_limited_seconds))
     soc_by_cell_id = {cell.cell_id: 1.0 for cell in state.cells}
     rc_voltage_by_cell_id = {cell.cell_id: 0.0 for cell in state.cells}
     max_cell_current_a = 0.0
     min_cell_voltage_v = float("inf")
     last_pack_voltage = 0.0
+    required_pack_voltage = 0.0
 
-    for step in range(target_steps):
+    for step in range(hard_step_cap):
         matrix = numpy.zeros((len(solve_node_ids), len(solve_node_ids)))
         current_vector = numpy.zeros(len(solve_node_ids))
 
@@ -587,6 +595,7 @@ def simulate_battery_circuit(
         except numpy.linalg.LinAlgError:
             return BatteryCircuitSimulationResult(
                 pack_terminal_voltage_end=last_pack_voltage,
+                required_pack_terminal_voltage_end=required_pack_voltage,
                 delivered_capacity_ah=(requirements.minimum_current_a * float(step)) / 3600.0,
                 max_cell_current_a=max_cell_current_a,
                 min_cell_voltage_v=0.0 if min_cell_voltage_v == float("inf") else min_cell_voltage_v,
@@ -600,6 +609,8 @@ def simulate_battery_circuit(
             node_voltage[node_id] = float(solved_voltages[index])
 
         last_pack_voltage = node_voltage[pack_positive_net_id] - node_voltage[reference_id]
+        if (step + 1) == required_steps:
+            required_pack_voltage = last_pack_voltage
         for cell in state.cells:
             (
                 open_circuit_voltage_v,
@@ -617,8 +628,20 @@ def simulate_battery_circuit(
             min_cell_voltage_v = min(min_cell_voltage_v, terminal_voltage)
             if terminal_voltage + 1.0e-9 < CELL_SPEC_18650.min_voltage_v:
                 delivered_capacity = (requirements.minimum_current_a * float(step + 1)) / 3600.0
+                if simulate_to_failure and (step + 1) > required_steps:
+                    return BatteryCircuitSimulationResult(
+                        pack_terminal_voltage_end=last_pack_voltage,
+                        required_pack_terminal_voltage_end=required_pack_voltage,
+                        delivered_capacity_ah=delivered_capacity,
+                        max_cell_current_a=max_cell_current_a,
+                        min_cell_voltage_v=min_cell_voltage_v,
+                        solver_steps=step + 1,
+                        is_feasible=True,
+                        failure_reason=None,
+                    )
                 return BatteryCircuitSimulationResult(
                     pack_terminal_voltage_end=last_pack_voltage,
+                    required_pack_terminal_voltage_end=required_pack_voltage,
                     delivered_capacity_ah=delivered_capacity,
                     max_cell_current_a=max_cell_current_a,
                     min_cell_voltage_v=min_cell_voltage_v,
@@ -637,10 +660,22 @@ def simulate_battery_circuit(
                 )
             else:
                 rc_voltage_by_cell_id[cell.cell_id] = 0.0
-            if next_soc <= 1.0e-9 and (step + 1) < target_steps:
+            if next_soc <= 1.0e-9:
                 delivered_capacity = (requirements.minimum_current_a * float(step + 1)) / 3600.0
+                if (step + 1) >= required_steps:
+                    return BatteryCircuitSimulationResult(
+                        pack_terminal_voltage_end=last_pack_voltage,
+                        required_pack_terminal_voltage_end=required_pack_voltage,
+                        delivered_capacity_ah=delivered_capacity,
+                        max_cell_current_a=max_cell_current_a,
+                        min_cell_voltage_v=min_cell_voltage_v,
+                        solver_steps=step + 1,
+                        is_feasible=True,
+                        failure_reason=None,
+                    )
                 return BatteryCircuitSimulationResult(
                     pack_terminal_voltage_end=last_pack_voltage,
+                    required_pack_terminal_voltage_end=required_pack_voltage,
                     delivered_capacity_ah=delivered_capacity,
                     max_cell_current_a=max_cell_current_a,
                     min_cell_voltage_v=min_cell_voltage_v,
@@ -649,13 +684,14 @@ def simulate_battery_circuit(
                     failure_reason="A cell depleted before the required discharge duration completed.",
                 )
 
-    delivered_capacity_ah = (requirements.minimum_current_a * float(target_steps)) / 3600.0
+    delivered_capacity_ah = (requirements.minimum_current_a * float(hard_step_cap)) / 3600.0
     return BatteryCircuitSimulationResult(
         pack_terminal_voltage_end=last_pack_voltage,
+        required_pack_terminal_voltage_end=required_pack_voltage,
         delivered_capacity_ah=delivered_capacity_ah,
         max_cell_current_a=max_cell_current_a,
         min_cell_voltage_v=0.0 if min_cell_voltage_v == float("inf") else min_cell_voltage_v,
-        solver_steps=target_steps,
+        solver_steps=hard_step_cap,
         is_feasible=True,
         failure_reason=None,
     )
@@ -665,6 +701,8 @@ def evaluate_battery_circuit(
     state: BatteryCircuitState,
     requirements: BatteryRequirements,
     load_cell_model: Callable[[], BatteryCellModel],
+    *,
+    simulate_to_failure: bool = False,
 ) -> BatteryCircuitEvaluation:
     """Evaluate one explicit battery circuit using deterministic checks and the shared solver."""
     layout = compute_layout_summary(state.cells)
@@ -690,7 +728,12 @@ def evaluate_battery_circuit(
         )
 
     cell_model = load_cell_model()
-    simulation = simulate_battery_circuit(state, requirements, cell_model)
+    simulation = simulate_battery_circuit(
+        state,
+        requirements,
+        cell_model,
+        simulate_to_failure=simulate_to_failure,
+    )
     required_voltage_floor = (
         0.0
         if analysis.minimum_series_cells is None
@@ -701,7 +744,7 @@ def evaluate_battery_circuit(
     if is_feasible and simulation.delivered_capacity_ah + 1.0e-9 < requirements.minimum_capacity_ah:
         is_feasible = False
         failure_reason = "Delivered capacity is below the minimum required capacity."
-    if is_feasible and simulation.pack_terminal_voltage_end + 1.0e-9 < required_voltage_floor:
+    if is_feasible and simulation.required_pack_terminal_voltage_end + 1.0e-9 < required_voltage_floor:
         is_feasible = False
         failure_reason = "Pack terminal voltage fell below the minimum required floor."
 
