@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import warnings
+
 from design_research_problems import MissingOptionalDependencyError, get_problem
 from design_research_problems.problems._domains.space_truss import evaluate_space_truss_state
 
@@ -13,10 +15,12 @@ def main() -> None:
     print(problem.metadata.problem_id)
     print("variables", initial.shape[0])
     try:
-        initial_evaluation = problem.evaluate(initial)
-        result = problem.solve(maxiter=64)
-        final_state = problem.decode_candidate(result.x)
-        structural = evaluate_space_truss_state(final_state)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=RuntimeWarning, module=r"trussme\\.components")
+            initial_evaluation = problem.evaluate(initial)
+            result = problem.solve(maxiter=64)
+            final_state = problem.decode_candidate(result.x)
+            structural = evaluate_space_truss_state(final_state)
     except MissingOptionalDependencyError as exc:
         print(exc)
         return

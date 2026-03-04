@@ -132,7 +132,6 @@ def test_battery_grammar_example_runs() -> None:
 def test_battery_grammar_to_optimizer_example_runs() -> None:
     completed = _run_example("examples/optimization/battery_grammar_to_optimizer.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_pack_18650_series_parallel" in completed.stdout
     assert "battery_pack_18650_series_parallel_cost_min" in completed.stdout
     if "pybamm is required for battery grammar evaluation" in completed.stdout:
         return

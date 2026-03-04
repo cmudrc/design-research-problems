@@ -38,12 +38,26 @@ class Problem:
 
     @staticmethod
     def resource_bundle_from_manifest(manifest: ProblemManifest) -> PackageResourceBundle:
-        """Build a package-resource loader rooted at one manifest entry."""
+        """Build a package-resource loader rooted at one manifest entry.
+
+        Args:
+            manifest: Parsed manifest describing the packaged resource location.
+
+        Returns:
+            Resource bundle rooted at the manifest's package directory.
+        """
         return PackageResourceBundle("design_research_problems", manifest.resource_dir)
 
     @classmethod
     def from_manifest(cls: type[_ProblemT], manifest: ProblemManifest) -> _ProblemT:
-        """Construct one problem directly from a manifest entry."""
+        """Construct one problem directly from a manifest entry.
+
+        Args:
+            manifest: Parsed manifest used to initialize the problem instance.
+
+        Returns:
+            Problem instance of ``cls`` populated from the manifest data.
+        """
         return cls(
             metadata=manifest.metadata,
             statement_markdown=manifest.statement_markdown,
@@ -55,7 +69,16 @@ class Problem:
         include_citation: bool = True,
         citation_mode: Literal["summary", "summary+raw", "raw"] = "summary",
     ) -> str:
-        """Render a human-readable prompt packet."""
+        """Render a human-readable prompt packet.
+
+        Args:
+            include_citation: Whether to append citation content to the packet.
+            citation_mode: Citation rendering mode to include summary text, raw
+                citation text, or both.
+
+        Returns:
+            Markdown packet ready for display or export.
+        """
         statement_body = self.statement_markdown.strip()
         if self._starts_with_h1(statement_body):
             sections = [statement_body]
@@ -71,7 +94,18 @@ class Problem:
         return "\n\n".join(sections)
 
     def read_asset(self, name: str) -> bytes:
-        """Read an asset by logical asset name."""
+        """Read an asset by logical asset name.
+
+        Args:
+            name: Logical asset name declared on the problem metadata.
+
+        Returns:
+            Raw bytes for the requested packaged asset.
+
+        Raises:
+            RuntimeError: If the problem was created without a resource bundle.
+            KeyError: If ``name`` does not match any declared asset.
+        """
         if self.resource_bundle is None:
             raise RuntimeError("Problem has no resource bundle attached.")
         for asset in self.metadata.assets:
@@ -80,7 +114,15 @@ class Problem:
         raise KeyError(f"Unknown asset name: {name}")
 
     def _starts_with_h1(self, statement_body: str) -> bool:
-        """Return whether the statement already includes a top-level title."""
+        """Return whether the statement already includes a top-level title.
+
+        Args:
+            statement_body: Statement Markdown with surrounding whitespace
+                already stripped.
+
+        Returns:
+            ``True`` when the first non-empty line is a Markdown H1 heading.
+        """
         first_nonempty = next((line for line in statement_body.splitlines() if line.strip()), "")
         match = _LEADING_H1_PATTERN.match(first_nonempty)
         if match is None:
@@ -97,7 +139,11 @@ class Problem:
         return True
 
     def _render_citation_summaries(self) -> str:
-        """Render the readable citation list."""
+        """Render the readable citation list.
+
+        Returns:
+            Markdown bullet list of human-readable citation summaries.
+        """
         lines: list[str] = []
         for citation in self.metadata.citations:
             summary = citation.summary_text()
@@ -110,7 +156,11 @@ class Problem:
         return "\n".join(lines)
 
     def _render_citation_raw_blocks(self) -> str:
-        """Render raw citation text in fenced blocks."""
+        """Render raw citation text in fenced blocks.
+
+        Returns:
+            Markdown fenced-code blocks containing the raw citation payloads.
+        """
         blocks: list[str] = []
         for citation in self.metadata.citations:
             info = "bibtex" if citation.kind == "bibtex" else "text"

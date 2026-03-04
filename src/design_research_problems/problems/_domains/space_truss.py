@@ -191,15 +191,23 @@ def build_space_truss_state_from_edges(
             raise ValueError("Selected edges must reference existing joints.")
         included_edges.add(edge)
 
+    ordered_edges = tuple(sorted(included_edges))
+    retained_joint_ids = {joint.joint_id for joint in base_state.joints if joint.support_type != "free"} | {
+        base_state.load_joint_id
+    }
+    retained_joint_ids.update(load.joint_id for load in base_state.additional_loads)
+    for edge in ordered_edges:
+        retained_joint_ids.update(edge)
+    joints = tuple(joint for joint in base_state.joints if joint.joint_id in retained_joint_ids)
     members = tuple(
         SpaceMember(member_id=member_id, start_joint_id=edge[0], end_joint_id=edge[1])
-        for member_id, edge in enumerate(sorted(included_edges))
+        for member_id, edge in enumerate(ordered_edges)
     )
     return SpaceTrussState(
         span=base_state.span,
         width=base_state.width,
         max_height=base_state.max_height,
-        joints=base_state.joints,
+        joints=joints,
         members=members,
         load_joint_id=base_state.load_joint_id,
         load_vector=base_state.load_vector,
@@ -208,14 +216,35 @@ def build_space_truss_state_from_edges(
 
 
 def _space_roller_axis(joint: SpaceJoint, state: SpaceTrussState) -> Axis:
-    """Return a deterministic roller axis for one support joint."""
-    if abs(joint.x) <= 1e-9:
-        return "x" if joint.y > 0.0 else "z"
-    return "y" if joint.y < 0.0 else "z"
+    """Return a deterministic roller axis for one support joint.
+
+    Args:
+        joint: Support joint to classify.
+        state: Space-truss state containing the joint.
+
+    Returns:
+        Axis label used when translating the joint into the shared truss-core
+        records.
+    """
+    del state
+    if joint.joint_id in {1, 2}:
+        return "z"
+    return "y"
 
 
 def evaluate_space_truss_state(state: SpaceTrussState) -> SpaceTrussEvaluation:
-    """Evaluate one 3D state with the lazy TrussMe adapter."""
+    """Evaluate one 3D state with the lazy TrussMe adapter.
+
+    Args:
+        state: Space-truss state to evaluate.
+
+    Returns:
+        Structural evaluation or failure record for ``state``.
+
+    Raises:
+        design_research_problems.MissingOptionalDependencyError: If the optional
+            real evaluator dependency is unavailable.
+    """
     if not state.joints:
         return build_space_truss_failure(state, "At least one joint is required.")
 
@@ -262,7 +291,14 @@ def evaluate_space_truss_state(state: SpaceTrussState) -> SpaceTrussEvaluation:
 
 
 def active_joint_ids(state: SpaceTrussState) -> set[int]:
-    """Return the joint IDs touched by supports, the load joint, or active members."""
+    """Return the joint IDs touched by supports, the load joint, or active members.
+
+    Args:
+        state: Space truss state to inspect.
+
+    Returns:
+        Set of joint IDs that participate in the active load path.
+    """
     active_ids = {joint.joint_id for joint in state.joints if joint.support_type != "free"} | {state.load_joint_id}
     for member in state.members:
         active_ids.add(member.start_joint_id)
@@ -271,7 +307,14 @@ def active_joint_ids(state: SpaceTrussState) -> set[int]:
 
 
 def adjacency_map(state: SpaceTrussState) -> dict[int, set[int]]:
-    """Return an undirected adjacency map for the state's members."""
+    """Return an undirected adjacency map for the state's members.
+
+    Args:
+        state: Space truss state to inspect.
+
+    Returns:
+        Mapping of joint IDs to neighboring joint IDs.
+    """
     joint_ids = {joint.joint_id for joint in state.joints}
     edges = tuple(edge_key(member.start_joint_id, member.end_joint_id) for member in state.members)
     return build_adjacency(joint_ids, edges)

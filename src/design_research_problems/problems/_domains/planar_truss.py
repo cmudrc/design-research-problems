@@ -525,6 +525,13 @@ def build_planar_truss_state_from_edges(
         included_edges.add(mirrored)
 
     ordered_edges = tuple(sorted(included_edges))
+    retained_joint_ids = {joint.joint_id for joint in base_state.joints if joint.support_type != "free"} | {
+        base_state.load_joint_id
+    }
+    retained_joint_ids.update(load.joint_id for load in base_state.additional_loads)
+    for edge in ordered_edges:
+        retained_joint_ids.update(edge)
+    joints = tuple(joint for joint in base_state.joints if joint.joint_id in retained_joint_ids)
     members = tuple(
         PlanarMember(
             member_id=member_id,
@@ -536,7 +543,7 @@ def build_planar_truss_state_from_edges(
     return PlanarTrussState(
         span=base_state.span,
         max_height=base_state.max_height,
-        joints=base_state.joints,
+        joints=joints,
         members=members,
         load_joint_id=base_state.load_joint_id,
         load_vector=base_state.load_vector,
@@ -555,7 +562,14 @@ __all__ += [
 
 
 def active_joint_ids(state: PlanarTrussState) -> set[int]:
-    """Return the joint IDs touched by supports, the load joint, or active members."""
+    """Return the joint IDs touched by supports, the load joint, or active members.
+
+    Args:
+        state: Planar truss state to inspect.
+
+    Returns:
+        Set of joint IDs that participate in the active load path.
+    """
     active_ids = {joint.joint_id for joint in state.joints if joint.support_type != "free"} | {state.load_joint_id}
     for member in state.members:
         active_ids.add(member.start_joint_id)
@@ -564,7 +578,14 @@ def active_joint_ids(state: PlanarTrussState) -> set[int]:
 
 
 def adjacency_map(state: PlanarTrussState) -> dict[int, set[int]]:
-    """Return an undirected adjacency map for the state's members."""
+    """Return an undirected adjacency map for the state's members.
+
+    Args:
+        state: Planar truss state to inspect.
+
+    Returns:
+        Mapping of joint IDs to neighboring joint IDs.
+    """
     joint_ids = {joint.joint_id for joint in state.joints}
     edges = tuple(edge_key(member.start_joint_id, member.end_joint_id) for member in state.members)
     return build_adjacency(joint_ids, edges)

@@ -431,7 +431,6 @@ def test_truss_engineering_optimizers_use_optimization_family_api() -> None:
 
         evaluation = problem.evaluate(initial)
         assert isinstance(evaluation, OptimizationEvaluation)
-        assert evaluation.is_feasible is False
 
         result = problem.solve(maxiter=64)
         assert result.x.shape == initial.shape

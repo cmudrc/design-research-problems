@@ -37,6 +37,8 @@ def test_real_space_truss_integration_if_available() -> None:
     state = problem.add_member(state, start_joint_id=2, end_joint_id=3)
     state = problem.add_member(state, start_joint_id=0, end_joint_id=2)
     state = problem.add_member(state, start_joint_id=1, end_joint_id=3)
+    state = problem.add_member(state, start_joint_id=0, end_joint_id=3)
+    state = problem.add_member(state, start_joint_id=1, end_joint_id=2)
     evaluation = problem.evaluate(state)
-    assert evaluation.number_of_members == 8
+    assert evaluation.number_of_members == 10
     assert evaluation.failure_reason is None

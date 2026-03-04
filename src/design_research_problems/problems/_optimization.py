@@ -171,7 +171,14 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
         self.constraints: list[ConstraintDefinition] = []
 
     def evaluate(self, variables: NDArray[numpy.float64]) -> OptimizationEvaluation:
-        """Evaluate one candidate vector without invoking the solver."""
+        """Evaluate one candidate vector without invoking the solver.
+
+        Args:
+            variables: Candidate design vector to score.
+
+        Returns:
+            Standardized optimization evaluation for ``variables``.
+        """
         candidate = numpy.array(variables, dtype=float, copy=True)
         total_violation = self.constraint_violation(candidate)
         max_violation = self.max_constraint_violation(candidate)

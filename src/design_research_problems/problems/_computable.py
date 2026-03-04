@@ -12,4 +12,12 @@ class ComputableProblem[CandidateT, EvaluationT](Problem, ABC):
 
     @abstractmethod
     def evaluate(self, candidate: CandidateT) -> EvaluationT:
-        """Evaluate one candidate in the problem's native representation."""
+        """Evaluate one candidate in the problem's native representation.
+
+        Args:
+            candidate: Candidate value expressed in the problem's native input
+                representation.
+
+        Returns:
+            Problem-specific evaluation result for ``candidate``.
+        """

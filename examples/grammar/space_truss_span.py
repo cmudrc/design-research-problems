@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import warnings
+
 from design_research_problems import MissingOptionalDependencyError, get_problem
 
 
@@ -17,9 +19,13 @@ def main() -> None:
     state = problem.add_member(state, start_joint_id=2, end_joint_id=3)
     state = problem.add_member(state, start_joint_id=0, end_joint_id=2)
     state = problem.add_member(state, start_joint_id=1, end_joint_id=3)
+    state = problem.add_member(state, start_joint_id=0, end_joint_id=3)
+    state = problem.add_member(state, start_joint_id=1, end_joint_id=2)
     print(problem.metadata.problem_id)
     try:
-        evaluation = problem.evaluate(state)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=RuntimeWarning, module=r"trussme\\.components")
+            evaluation = problem.evaluate(state)
     except MissingOptionalDependencyError as exc:
         print(exc)
         return

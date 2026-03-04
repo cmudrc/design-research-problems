@@ -46,7 +46,7 @@ from design_research_problems.problems._domains.space_truss import (
 from design_research_problems.problems._domains.space_truss import (
     adjacency_map as space_adjacency_map,
 )
-from design_research_problems.problems._domains.truss_core import reachable_joint_ids
+from design_research_problems.problems._domains.truss_core import edge_key, reachable_joint_ids
 from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems._optimization import (
     Bounds,
@@ -197,10 +197,21 @@ class _BinaryTrussEngineeringOptimizationProblem(OptimizationProblem):
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
         """Return the all-off binary starting point."""
         del seed
-        return numpy.zeros(len(self._candidate_edges), dtype=float)
+        return numpy.array(self._seed_bits(), dtype=float)
+
+    def _seed_bits(self) -> tuple[int, ...]:
+        """Return the deterministic default binary seed bits."""
+        return tuple(0 for _ in self._candidate_edges)
 
     def objective(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the structural objective plus a large infeasibility penalty."""
+        """Return the structural objective plus a large infeasibility penalty.
+
+        Args:
+            variables: Candidate binary design vector.
+
+        Returns:
+            Penalized scalar objective value for ``variables``.
+        """
         analysis = self._analysis_from_variables(variables)
         if self.objective_metric == "mass-min":
             base_objective = float(analysis.evaluation.mass)
@@ -216,7 +227,19 @@ class _BinaryTrussEngineeringOptimizationProblem(OptimizationProblem):
         seed: int | None = None,
         maxiter: int = 512,
     ) -> OptimizationResult:
-        """Enumerate binary topologies in deterministic neighborhood order."""
+        """Enumerate binary topologies in deterministic neighborhood order.
+
+        Args:
+            initial_solution: Optional binary design vector used as the anchor
+                topology.
+            seed: Unused placeholder to preserve the shared optimization
+                interface.
+            maxiter: Maximum number of candidate topologies to enumerate.
+
+        Returns:
+            Best available baseline optimization result within the enumeration
+            budget.
+        """
         del seed
         if initial_solution is None:
             anchor = self.generate_initial_solution()
@@ -260,7 +283,15 @@ class _BinaryTrussEngineeringOptimizationProblem(OptimizationProblem):
         )
 
     def _candidate_bits(self, anchor_bits: tuple[int, ...], *, limit: int) -> tuple[tuple[int, ...], ...]:
-        """Return at most ``limit`` candidates in increasing Hamming-distance order."""
+        """Return at most ``limit`` candidates in increasing Hamming-distance order.
+
+        Args:
+            anchor_bits: Binary anchor topology used as the enumeration center.
+            limit: Maximum number of bit patterns to return.
+
+        Returns:
+            Candidate bit tuples ordered by increasing Hamming distance.
+        """
         bit_count = len(anchor_bits)
         candidates: list[tuple[int, ...]] = []
         for distance in range(bit_count + 1):
@@ -274,7 +305,18 @@ class _BinaryTrussEngineeringOptimizationProblem(OptimizationProblem):
         return tuple(candidates)
 
     def _normalize_vector(self, variables: NDArray[numpy.float64]) -> NDArray[numpy.float64]:
-        """Return one clipped vector with the expected binary dimension."""
+        """Return one clipped vector with the expected binary dimension.
+
+        Args:
+            variables: Candidate design vector to normalize.
+
+        Returns:
+            Clipped floating-point vector with the expected binary shape.
+
+        Raises:
+            ValueError: If ``variables`` does not match the candidate-edge
+                dimensionality.
+        """
         normalized = numpy.array(variables, dtype=float, copy=True)
         expected_shape = (len(self._candidate_edges),)
         if normalized.shape != expected_shape:
@@ -282,7 +324,14 @@ class _BinaryTrussEngineeringOptimizationProblem(OptimizationProblem):
         return numpy.array(numpy.clip(normalized, self.bounds.lb, self.bounds.ub), dtype=float, copy=False)
 
     def _bit_tuple(self, variables: NDArray[numpy.float64]) -> tuple[int, ...]:
-        """Return the rounded binary tuple represented by one design vector."""
+        """Return the rounded binary tuple represented by one design vector.
+
+        Args:
+            variables: Candidate design vector to round into bits.
+
+        Returns:
+            Rounded binary bit tuple for ``variables``.
+        """
         normalized = self._normalize_vector(variables)
         return tuple(1 if float(value) >= 0.5 else 0 for value in normalized)
 
@@ -298,15 +347,36 @@ class _BinaryTrussEngineeringOptimizationProblem(OptimizationProblem):
         return self._analysis_from_variables(variables).state
 
     def _state_from_variables(self, variables: NDArray[numpy.float64]) -> _SupportedState:
-        """Build one concrete truss state from a binary design vector."""
+        """Build one concrete truss state from a binary design vector.
+
+        Args:
+            variables: Candidate binary design vector.
+
+        Returns:
+            Concrete planar or space-truss state represented by ``variables``.
+        """
         return self.decode_candidate(variables)
 
     def _analysis_from_variables(self, variables: NDArray[numpy.float64]) -> _EngineeringAnalysis:
-        """Return cached graph and structural analysis for one design vector."""
+        """Return cached graph and structural analysis for one design vector.
+
+        Args:
+            variables: Candidate binary design vector.
+
+        Returns:
+            Cached or newly computed engineering analysis for ``variables``.
+        """
         return self._analysis_from_bits(self._bit_tuple(variables))
 
     def _analysis_from_bits(self, bits: tuple[int, ...]) -> _EngineeringAnalysis:
-        """Return cached graph and structural analysis for one bit tuple."""
+        """Return cached graph and structural analysis for one bit tuple.
+
+        Args:
+            bits: Binary topology bit tuple.
+
+        Returns:
+            Cached or newly computed engineering analysis for ``bits``.
+        """
         cached = self._analysis_cache.get(bits)
         if cached is not None:
             return cached
@@ -335,32 +405,74 @@ class _BinaryTrussEngineeringOptimizationProblem(OptimizationProblem):
         return analysis
 
     def _support_connectivity_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return a binary margin for required graph connectivity."""
+        """Return a binary margin for required graph connectivity.
+
+        Args:
+            variables: Candidate binary design vector.
+
+        Returns:
+            Positive value when the required active joints are connected.
+        """
         return 1.0 if self._analysis_from_variables(variables).required_connected else -1.0
 
     def _free_joint_degree_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the minimum active free-joint degree margin above one."""
+        """Return the minimum active free-joint degree margin above one.
+
+        Args:
+            variables: Candidate binary design vector.
+
+        Returns:
+            Signed degree margin for the active free joints.
+        """
         minimum_degree = self._analysis_from_variables(variables).minimum_active_free_joint_degree
         if minimum_degree is None:
             return 1.0
         return float(minimum_degree - 1)
 
     def _crossing_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the non-crossing margin for planar topologies."""
+        """Return the non-crossing margin for planar topologies.
+
+        Args:
+            variables: Candidate binary design vector.
+
+        Returns:
+            Non-crossing margin for the planar topology encoded by ``variables``.
+        """
         return float(-self._analysis_from_variables(variables).crossing_count)
 
     def _minimum_fos_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the remaining factor-of-safety margin."""
+        """Return the remaining factor-of-safety margin.
+
+        Args:
+            variables: Candidate binary design vector.
+
+        Returns:
+            Remaining factor-of-safety margin for ``variables``.
+        """
         assert self.minimum_fos is not None
         return float(self._analysis_from_variables(variables).evaluation.fos - self.minimum_fos)
 
     def _maximum_deflection_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the remaining maximum-deflection margin."""
+        """Return the remaining maximum-deflection margin.
+
+        Args:
+            variables: Candidate binary design vector.
+
+        Returns:
+            Remaining deflection margin for ``variables``.
+        """
         assert self.maximum_deflection is not None
         return float(self.maximum_deflection - self._analysis_from_variables(variables).evaluation.deflection)
 
     def _maximum_mass_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the remaining maximum-mass margin."""
+        """Return the remaining maximum-mass margin.
+
+        Args:
+            variables: Candidate binary design vector.
+
+        Returns:
+            Remaining mass margin for ``variables``.
+        """
         assert self.maximum_mass is not None
         return float(self.maximum_mass - self._analysis_from_variables(variables).evaluation.mass)
 
@@ -384,7 +496,24 @@ class PlanarTrussEngineeringOptimizationProblem(_BinaryTrussEngineeringOptimizat
         maximum_deflection: float | None = 0.20,
         maximum_mass: float | None = None,
     ) -> None:
-        """Initialize one packaged engineer-centered planar truss optimization instance."""
+        """Initialize one packaged engineer-centered planar truss optimization instance.
+
+        Args:
+            metadata: Shared packaged metadata for the problem.
+            statement_markdown: Human-readable problem statement.
+            resource_bundle: Optional package-resource loader.
+            span: Support span for the seed truss.
+            max_height: Maximum allowable truss height.
+            load_magnitude: Downward load applied at the load joint.
+            candidate_point_fractions: Fractional coordinates for optional
+                interior candidate joints.
+            enforce_symmetry: Whether to restrict the scaffold to a symmetric
+                joint layout.
+            objective_metric: Structural metric optimized by the baseline.
+            minimum_fos: Optional minimum factor-of-safety threshold.
+            maximum_deflection: Optional maximum deflection threshold.
+            maximum_mass: Optional maximum mass threshold.
+        """
         self.span = span
         self.max_height = max_height
         self.load_magnitude = load_magnitude
@@ -420,7 +549,14 @@ class PlanarTrussEngineeringOptimizationProblem(_BinaryTrussEngineeringOptimizat
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> PlanarTrussEngineeringOptimizationProblem:
-        """Construct one packaged planar truss optimization instance from manifest data."""
+        """Construct one packaged planar truss optimization instance from manifest data.
+
+        Args:
+            manifest: Parsed problem manifest.
+
+        Returns:
+            Loaded planar truss engineering optimization problem.
+        """
         return cls(
             metadata=manifest.metadata,
             statement_markdown=manifest.statement_markdown,
@@ -435,6 +571,15 @@ class PlanarTrussEngineeringOptimizationProblem(_BinaryTrussEngineeringOptimizat
             maximum_deflection=_coerce_optional_float(manifest.parameters.get("maximum_deflection")),
             maximum_mass=_coerce_optional_float(manifest.parameters.get("maximum_mass")),
         )
+
+    def _seed_bits(self) -> tuple[int, ...]:
+        """Return a simple triangular load path as the default planar seed.
+
+        Returns:
+            Default planar seed bit tuple.
+        """
+        seed_edges = {edge_key(0, 1), edge_key(0, 2), edge_key(1, 2)}
+        return tuple(1 if edge in seed_edges else 0 for edge in self._candidate_edges)
 
 
 class SpaceTrussEngineeringOptimizationProblem(_BinaryTrussEngineeringOptimizationProblem):
@@ -455,7 +600,22 @@ class SpaceTrussEngineeringOptimizationProblem(_BinaryTrussEngineeringOptimizati
         minimum_fos: float | None = 1.0,
         maximum_deflection: float | None = 0.20,
     ) -> None:
-        """Initialize one packaged engineer-centered space-truss optimization instance."""
+        """Initialize one packaged engineer-centered space-truss optimization instance.
+
+        Args:
+            metadata: Shared packaged metadata for the problem.
+            statement_markdown: Human-readable problem statement.
+            resource_bundle: Optional package-resource loader.
+            span: Support span for the seed truss.
+            width: Lateral width of the seed truss.
+            max_height: Maximum allowable truss height.
+            load_magnitude: Downward load applied at the load joint.
+            candidate_point_fractions_3d: Fractional coordinates for optional
+                interior candidate joints.
+            objective_metric: Structural metric optimized by the baseline.
+            minimum_fos: Optional minimum factor-of-safety threshold.
+            maximum_deflection: Optional maximum deflection threshold.
+        """
         self.span = span
         self.width = width
         self.max_height = max_height
@@ -491,7 +651,14 @@ class SpaceTrussEngineeringOptimizationProblem(_BinaryTrussEngineeringOptimizati
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> SpaceTrussEngineeringOptimizationProblem:
-        """Construct one packaged 3D space-truss optimization instance from manifest data."""
+        """Construct one packaged 3D space-truss optimization instance from manifest data.
+
+        Args:
+            manifest: Parsed problem manifest.
+
+        Returns:
+            Loaded space-truss engineering optimization problem.
+        """
         return cls(
             metadata=manifest.metadata,
             statement_markdown=manifest.statement_markdown,
@@ -507,6 +674,26 @@ class SpaceTrussEngineeringOptimizationProblem(_BinaryTrussEngineeringOptimizati
             minimum_fos=_coerce_optional_float(manifest.parameters.get("minimum_fos")),
             maximum_deflection=_coerce_optional_float(manifest.parameters.get("maximum_deflection")),
         )
+
+    def _seed_bits(self) -> tuple[int, ...]:
+        """Return a bridge-like braced pyramid as the default 3D seed.
+
+        Returns:
+            Default space-truss seed bit tuple.
+        """
+        seed_edges = {
+            edge_key(0, 4),
+            edge_key(1, 4),
+            edge_key(2, 4),
+            edge_key(3, 4),
+            edge_key(0, 1),
+            edge_key(2, 3),
+            edge_key(0, 2),
+            edge_key(1, 3),
+            edge_key(0, 3),
+            edge_key(1, 2),
+        }
+        return tuple(1 if edge in seed_edges else 0 for edge in self._candidate_edges)
 
 
 __all__ = [

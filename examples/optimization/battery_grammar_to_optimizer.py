@@ -1,4 +1,4 @@
-"""Bridge the rectangular battery grammar to its optimization-family sibling."""
+"""Use a grammar-derived battery layout as an optimizer-style starting point."""
 
 from __future__ import annotations
 
@@ -25,27 +25,27 @@ def _build_feasible_4s4p_state() -> object:
 
 
 def main() -> None:
-    """Compare one explicit grammar design to the optimization-family wrapper."""
-    grammar_problem = get_problem("battery_pack_18650_series_parallel")
+    """Start from a grammar-owned 4S4P layout, then stay in the optimization API."""
     optimization_problem = get_problem("battery_pack_18650_series_parallel_cost_min")
     state = _build_feasible_4s4p_state()
     candidate = numpy.array([float(state.series_count), float(state.parallel_count)], dtype=float)
 
-    print(grammar_problem.metadata.problem_id)
     print(optimization_problem.metadata.problem_id)
-    print(f"bridge {state.series_count}S{state.parallel_count}P")
+    print(f"seed-from-grammar {state.series_count}S{state.parallel_count}P")
 
     try:
-        grammar_evaluation = grammar_problem.evaluate(state)
-        optimization_evaluation = optimization_problem.evaluate(candidate)
-        solved = optimization_problem.solve(maxiter=25)
+        seeded_evaluation = optimization_problem.evaluate(candidate)
+        default_initial = optimization_problem.generate_initial_solution()
+        default_evaluation = optimization_problem.evaluate(default_initial)
+        solved = optimization_problem.solve(initial_solution=candidate, maxiter=25)
+        solved_state = optimization_problem.decode_candidate(solved.x)
     except MissingOptionalDependencyError as exc:
         print(exc)
         return
 
-    print("grammar", round(grammar_evaluation.design_cost, 2), grammar_evaluation.is_feasible)
-    print("optimizer", round(float(optimization_evaluation.objective_value), 2), optimization_evaluation.is_feasible)
-    print("solve", int(solved.x[0]), int(solved.x[1]), bool(solved.success))
+    print("default", int(default_initial[0]), int(default_initial[1]), bool(default_evaluation.is_feasible))
+    print("seeded", round(float(seeded_evaluation.objective_value), 2), seeded_evaluation.is_feasible)
+    print("solve", solved_state.series_count, solved_state.parallel_count, bool(solved.success))
 
 
 if __name__ == "__main__":

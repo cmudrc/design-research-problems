@@ -259,6 +259,24 @@ def _has_explicit_raise(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
     return _contains_node_type(node, (ast.Raise,))
 
 
+def _is_overload_decorator(decorator: ast.expr) -> bool:
+    """Return whether one decorator expression resolves to ``@overload``.
+
+    Args:
+        decorator: Decorator AST expression.
+
+    Returns:
+        True when the decorator is an ``overload`` marker.
+    """
+    if isinstance(decorator, ast.Call):
+        return _is_overload_decorator(decorator.func)
+    if isinstance(decorator, ast.Name):
+        return decorator.id == "overload"
+    if isinstance(decorator, ast.Attribute):
+        return decorator.attr == "overload"
+    return False
+
+
 def _normalized_annotation(annotation: ast.expr | None) -> str:
     """Normalize return annotation into comparable text.
 
@@ -507,6 +525,9 @@ def _validate_callable_docstring(node: ast.FunctionDef | ast.AsyncFunctionDef, r
     Returns:
         Violations found for the callable.
     """
+    if any(_is_overload_decorator(decorator) for decorator in node.decorator_list):
+        return []
+
     violations: list[Violation] = []
     callable_docstring = ast.get_docstring(node, clean=True)
     if not callable_docstring:

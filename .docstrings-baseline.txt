@@ -1,25 +1,3 @@
-src/design_research_problems/_catalog/_registry.py:242: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:247: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:250: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:253: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:256: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:259: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:269: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:272: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:275: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:281: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:334: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:338: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:342: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:346: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:350: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:354: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:364: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:368: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:372: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:376: DGS005 Missing callable docstring.
-src/design_research_problems/problems/_computable.py:14: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_computable.py:14: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_decision.py:332: DGS010 Callable with explicit raise statements must include a Raises section.
 src/design_research_problems/problems/_decision.py:623: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_decision.py:623: DGS009 Callable must include a Returns section for non-None return annotations.
@@ -182,10 +160,6 @@ src/design_research_problems/problems/_domains/planar_truss.py:206: DGS009 Calla
 src/design_research_problems/problems/_domains/planar_truss.py:229: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/planar_truss.py:229: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/planar_truss.py:229: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/_domains/planar_truss.py:557: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:557: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:566: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:566: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/space_truss.py:24: DGS011 Dataclass field 'joint_id' must include an inline docstring.
 src/design_research_problems/problems/_domains/space_truss.py:25: DGS011 Dataclass field 'x' must include an inline docstring.
 src/design_research_problems/problems/_domains/space_truss.py:26: DGS011 Dataclass field 'y' must include an inline docstring.
@@ -226,15 +200,6 @@ src/design_research_problems/problems/_domains/space_truss.py:167: DGS009 Callab
 src/design_research_problems/problems/_domains/space_truss.py:181: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/space_truss.py:181: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/space_truss.py:181: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/_domains/space_truss.py:210: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/space_truss.py:210: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/space_truss.py:217: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/space_truss.py:217: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/space_truss.py:217: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/_domains/space_truss.py:264: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/space_truss.py:264: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/space_truss.py:273: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/space_truss.py:273: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/truss_core.py:20: DGS011 Dataclass field 'joint_id' must include an inline docstring.
 src/design_research_problems/problems/_domains/truss_core.py:21: DGS011 Dataclass field 'coordinates' must include an inline docstring.
 src/design_research_problems/problems/_domains/truss_core.py:22: DGS011 Dataclass field 'support_type' must include an inline docstring.
@@ -258,21 +223,6 @@ src/design_research_problems/problems/_domains/truss_core.py:77: DGS009 Callable
 src/design_research_problems/problems/_domains/truss_core.py:89: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/truss_core.py:89: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/truss_core.py:89: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/_optimization.py:173: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_optimization.py:173: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_problem.py:40: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_problem.py:40: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_problem.py:45: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_problem.py:45: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_problem.py:53: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_problem.py:53: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_problem.py:73: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_problem.py:73: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_problem.py:73: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/_problem.py:82: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_problem.py:82: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_problem.py:99: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_problem.py:112: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:34: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:34: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:34: DGS010 Callable with explicit raise statements must include a Raises section.
@@ -442,38 +392,4 @@ src/design_research_problems/problems/optimization/_truss_topology.py:126: DGS01
 src/design_research_problems/problems/optimization/_truss_topology.py:140: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/optimization/_truss_topology.py:197: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/optimization/_truss_topology.py:197: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:202: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/optimization/_truss_topology.py:202: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:213: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:213: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:262: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:262: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:276: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:276: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:276: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/optimization/_truss_topology.py:284: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:284: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:300: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:300: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:304: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:304: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:308: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:308: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:337: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:337: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:341: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:341: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:348: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:348: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:352: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:352: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:357: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:357: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:362: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:362: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:371: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:422: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:422: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_truss_topology.py:443: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:493: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_truss_topology.py:493: DGS009 Callable must include a Returns section for non-None return annotations.
