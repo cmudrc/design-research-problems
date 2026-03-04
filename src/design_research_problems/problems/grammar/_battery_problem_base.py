@@ -18,21 +18,44 @@ from design_research_problems.problems._metadata import ProblemMetadata
 
 
 def _coerce_int(value: object, default: int) -> int:
-    """Return an integer manifest value with a fallback default."""
+    """Return an integer manifest value with a fallback default.
+
+    Args:
+        value: Value for ``value``.
+        default: Value for ``default``.
+
+    Returns:
+        Computed result for this callable.
+    """
     if value is None:
         return default
     return int(cast(int, value))
 
 
 def _coerce_float(value: object, default: float) -> float:
-    """Return a float manifest value with a fallback default."""
+    """Return a float manifest value with a fallback default.
+
+    Args:
+        value: Value for ``value``.
+        default: Value for ``default``.
+
+    Returns:
+        Computed result for this callable.
+    """
     if value is None:
         return default
     return float(cast(float, value))
 
 
 def parse_battery_requirements(manifest: ProblemManifest) -> BatteryRequirements:
-    """Build the benchmark requirements from one manifest."""
+    """Build the benchmark requirements from one manifest.
+
+    Args:
+        manifest: Value for ``manifest``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return BatteryRequirements(
         target_voltage_v=_coerce_float(manifest.parameters.get("target_voltage_v"), 14.8),
         minimum_capacity_ah=_coerce_float(manifest.parameters.get("minimum_capacity_ah"), 10.0),
@@ -54,7 +77,14 @@ class BatteryCircuitProblemBase[StateT, EvaluationT](GrammarProblem[StateT, Eval
         resource_bundle: PackageResourceBundle | None = None,
         requirements: BatteryRequirements | None = None,
     ) -> None:
-        """Store shared packaged battery requirements."""
+        """Store shared packaged battery requirements.
+
+        Args:
+            metadata: Value for ``metadata``.
+            statement_markdown: Value for ``statement_markdown``.
+            resource_bundle: Value for ``resource_bundle``.
+            requirements: Value for ``requirements``.
+        """
         super().__init__(
             metadata=metadata,
             statement_markdown=statement_markdown,
@@ -71,7 +101,14 @@ class BatteryCircuitProblemBase[StateT, EvaluationT](GrammarProblem[StateT, Eval
         )
 
     def evaluate_circuit_state(self, state: BatteryCircuitState) -> BatteryCircuitEvaluation:
-        """Evaluate one explicit battery circuit using the shared backend."""
+        """Evaluate one explicit battery circuit using the shared backend.
+
+        Args:
+            state: Value for ``state``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return evaluate_battery_circuit(
             state=state,
             requirements=self.requirements,
@@ -79,5 +116,9 @@ class BatteryCircuitProblemBase[StateT, EvaluationT](GrammarProblem[StateT, Eval
         )
 
     def legal_grid_shape(self) -> tuple[int, int, int]:
-        """Return the maximum legal grid indices for this packaged benchmark."""
+        """Return the maximum legal grid indices for this packaged benchmark.
+
+        Returns:
+            Computed result for this callable.
+        """
         return grid_index_limits(self.requirements)

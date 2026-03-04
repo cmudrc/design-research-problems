@@ -49,6 +49,7 @@ def test_family_subpackage_exports_resolve() -> None:
     assert (
         optimization.PlanarTrussEngineeringOptimizationProblem is optimization.PlanarTrussEngineeringOptimizationProblem
     )
+    assert optimization.GMPBOptimizationProblem is optimization.GMPBOptimizationProblem
     assert (
         optimization.SpaceTrussEngineeringOptimizationProblem is optimization.SpaceTrussEngineeringOptimizationProblem
     )

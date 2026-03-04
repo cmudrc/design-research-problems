@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import sys
+import warnings
 from itertools import islice
 from types import ModuleType
 from typing import cast
 
 import numpy
 import pytest
+from gmpb import GMPBConfig
 
 from design_research_problems import (
     ComputableProblem,
@@ -27,6 +29,7 @@ from design_research_problems.problems import DecisionOption
 from design_research_problems.problems.grammar._battery_cell_model import BatteryCellModel
 from design_research_problems.problems.optimization import (
     BatteryGridSizingProblem,
+    GMPBOptimizationProblem,
     PlanarTrussEngineeringOptimizationProblem,
     SpaceTrussEngineeringOptimizationProblem,
 )
@@ -92,9 +95,10 @@ def test_registry_entries_filter_by_kind() -> None:
     )
     optimization_kinds = registry.by_kind(ProblemKind.OPTIMIZATION)
     optimization_ids = [entry.problem_id for entry in optimization_kinds]
-    assert len(optimization_ids) == 9
+    assert len(optimization_ids) == 10
     assert "battery_pack_18650_open_ended_capacity_max" in optimization_ids
     assert "battery_pack_18650_series_parallel_cost_min" in optimization_ids
+    assert "gmpb_default_dynamic_min" in optimization_ids
     assert "planar_truss_span_mass_min" in optimization_ids
     assert "planar_truss_span_deflection_min" in optimization_ids
     assert "planar_truss_span_fos_max" in optimization_ids
@@ -336,6 +340,7 @@ def test_registry_search_filters_by_feature_flags() -> None:
     assert [entry.problem_id for entry in matches] == [
         "battery_pack_18650_open_ended_capacity_max",
         "battery_pack_18650_series_parallel_cost_min",
+        "gmpb_default_dynamic_min",
         "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",
         "planar_truss_span_deflection_min",
@@ -404,6 +409,62 @@ def test_battery_grid_sizing_problem_uses_optimization_family_api() -> None:
     assert isinstance(result.fun, float)
 
 
+def test_gmpb_problem_uses_optimization_family_api() -> None:
+    problem = get_problem("gmpb_default_dynamic_min")
+    assert isinstance(problem, OptimizationProblem)
+    assert isinstance(problem, GMPBOptimizationProblem)
+
+    initial = problem.generate_initial_solution(seed=7)
+    assert initial.shape == (5,)
+    assert numpy.all(initial >= problem.bounds.lb)
+    assert numpy.all(initial <= problem.bounds.ub)
+
+    starting_environment = problem.current_environment_index()
+    starting_evaluations = problem.evaluations_in_environment()
+    evaluation = problem.evaluate(initial)
+    assert isinstance(evaluation, OptimizationEvaluation)
+    assert evaluation.is_feasible is True
+    assert evaluation.total_constraint_violation == 0.0
+    assert evaluation.max_constraint_violation == 0.0
+    assert problem.current_environment_index() == starting_environment
+    assert problem.evaluations_in_environment() == starting_evaluations + 1
+
+    state = problem.current_state()
+    assert state.t == problem.current_environment_index()
+    assert len(state.components) == problem.config.m
+
+    problem.reset(seed=7)
+    assert problem.current_environment_index() == 0
+    assert problem.evaluations_in_environment() == 0
+
+    result = problem.solve(seed=3, maxiter=6)
+    assert result.x.shape == (5,)
+    assert numpy.isfinite(result.fun)
+    assert result.nfev == 6
+    assert "dynamic random-search baseline" in result.message
+
+
+def test_gmpb_problem_auto_steps_after_change_frequency() -> None:
+    metadata = get_problem("gmpb_default_dynamic_min").metadata
+    problem = GMPBOptimizationProblem(
+        metadata=metadata,
+        config=GMPBConfig(d=2, m=3, change_frequency=2, auto_step=True),
+        seed=11,
+    )
+
+    candidate = numpy.zeros(2, dtype=float)
+    assert problem.current_environment_index() == 0
+    problem.evaluate(candidate)
+    assert problem.current_environment_index() == 0
+    problem.evaluate(candidate)
+    assert problem.current_environment_index() == 1
+    assert problem.evaluations_in_environment() == 0
+
+    problem.reset(seed=11)
+    assert problem.current_environment_index() == 0
+    assert problem.evaluations_in_environment() == 0
+
+
 def test_battery_grid_and_grammar_share_series_parallel_backend() -> None:
     optimization_problem = get_problem("battery_pack_18650_series_parallel_cost_min")
     grammar_problem = get_problem("battery_pack_18650_series_parallel")
@@ -432,10 +493,14 @@ def test_truss_engineering_optimizers_use_optimization_family_api() -> None:
         assert initial.ndim == 1
         assert initial.shape[0] > 0
 
-        evaluation = problem.evaluate(initial)
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always", RuntimeWarning)
+            evaluation = problem.evaluate(initial)
+            result = problem.solve(maxiter=64)
         assert isinstance(evaluation, OptimizationEvaluation)
+        runtime_warnings = [item for item in caught if issubclass(item.category, RuntimeWarning)]
+        assert runtime_warnings == []
 
-        result = problem.solve(maxiter=64)
         assert result.x.shape == initial.shape
         assert isinstance(result.fun, float)
         assert result.success is (problem.max_constraint_violation(result.x) <= 1e-9)

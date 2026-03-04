@@ -109,6 +109,15 @@ def test_moneymaker_optimization_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
+def test_gmpb_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/gmpb_dynamic_problem.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "gmpb_default_dynamic_min" in completed.stdout
+    assert "before env=0 evals=0" in completed.stdout
+    assert "after env=0 evals=1" in completed.stdout
+
+
+@pytest.mark.examples_smoke
 def test_open_ended_battery_grammar_example_runs() -> None:
     completed = _run_example("examples/grammar/battery_pack_18650_open_ended.py")
     assert completed.returncode == 0, completed.stderr

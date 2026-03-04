@@ -25,6 +25,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
+  "gmpb>=0.1.0,<1",
   "numpy>=1.26,<3",
   "scipy>=1.13,<2",
 ]

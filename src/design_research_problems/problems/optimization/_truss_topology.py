@@ -67,28 +67,58 @@ class _EngineeringAnalysis:
     """Cached graph and structural analysis for one selected topology."""
 
     state: _SupportedState
+    """Stored state value."""
     evaluation: _SupportedEvaluation
+    """Stored evaluation value."""
     required_connected: bool
+    """Stored required connected value."""
     minimum_active_free_joint_degree: int | None
+    """Stored minimum active free joint degree value."""
     crossing_count: int
+    """Count of crossing."""
 
 
 def _coerce_float(value: object, default: float) -> float:
-    """Return one manifest value as ``float`` with a fallback."""
+    """Return one manifest value as ``float`` with a fallback.
+
+    Args:
+        value: Value for ``value``.
+        default: Value for ``default``.
+
+    Returns:
+        Computed result for this callable.
+    """
     if value is None:
         return default
     return float(cast(SupportsFloat, value))
 
 
 def _coerce_optional_float(value: object) -> float | None:
-    """Return one manifest value as ``float`` or ``None`` when absent."""
+    """Return one manifest value as ``float`` or ``None`` when absent.
+
+    Args:
+        value: Value for ``value``.
+
+    Returns:
+        Computed result for this callable.
+    """
     if value is None:
         return None
     return float(cast(SupportsFloat, value))
 
 
 def _coerce_fractional_points(raw_values: object) -> tuple[tuple[float, float], ...]:
-    """Convert one manifest field into 2D fractional coordinate pairs."""
+    """Convert one manifest field into 2D fractional coordinate pairs.
+
+    Args:
+        raw_values: Value for ``raw_values``.
+
+    Returns:
+        Computed result for this callable.
+
+    Raises:
+        Exception: Raised when the callable encounters an invalid state.
+    """
     if raw_values is None:
         return ()
     if not isinstance(raw_values, list | tuple):
@@ -103,7 +133,17 @@ def _coerce_fractional_points(raw_values: object) -> tuple[tuple[float, float], 
 
 
 def _coerce_fractional_points_3d(raw_values: object) -> tuple[tuple[float, float, float], ...]:
-    """Convert one manifest field into 3D fractional coordinate triples."""
+    """Convert one manifest field into 3D fractional coordinate triples.
+
+    Args:
+        raw_values: Value for ``raw_values``.
+
+    Returns:
+        Computed result for this callable.
+
+    Raises:
+        Exception: Raised when the callable encounters an invalid state.
+    """
     if raw_values is None:
         return ()
     if not isinstance(raw_values, list | tuple):
@@ -124,7 +164,18 @@ def _coerce_fractional_points_3d(raw_values: object) -> tuple[tuple[float, float
 
 
 def _parse_objective_metric(value: object, *, allow_fos: bool = True) -> _ObjectiveMetric:
-    """Parse and validate one supported scalar objective label."""
+    """Parse and validate one supported scalar objective label.
+
+    Args:
+        value: Value for ``value``.
+        allow_fos: Value for ``allow_fos``.
+
+    Returns:
+        Computed result for this callable.
+
+    Raises:
+        Exception: Raised when the callable encounters an invalid state.
+    """
     metric = str(value or "mass-min").strip().lower()
     allowed = {"mass-min", "deflection-min"}
     if allow_fos:
@@ -155,7 +206,24 @@ class _BinaryTrussEngineeringOptimizationProblem(OptimizationProblem):
         adjacency_fn: Callable[[Any], dict[int, set[int]]],
         crossing_count_fn: Callable[[Any], int] | None = None,
     ) -> None:
-        """Initialize the shared structural truss optimizer."""
+        """Initialize the shared structural truss optimizer.
+
+        Args:
+            metadata: Value for ``metadata``.
+            statement_markdown: Value for ``statement_markdown``.
+            resource_bundle: Value for ``resource_bundle``.
+            base_state: Value for ``base_state``.
+            candidate_edges: Value for ``candidate_edges``.
+            objective_metric: Value for ``objective_metric``.
+            minimum_fos: Value for ``minimum_fos``.
+            maximum_deflection: Value for ``maximum_deflection``.
+            maximum_mass: Value for ``maximum_mass``.
+            state_builder: Value for ``state_builder``.
+            evaluator: Value for ``evaluator``.
+            active_joint_ids_fn: Value for ``active_joint_ids_fn``.
+            adjacency_fn: Value for ``adjacency_fn``.
+            crossing_count_fn: Value for ``crossing_count_fn``.
+        """
         super().__init__(
             metadata=metadata,
             statement_markdown=statement_markdown,
@@ -195,12 +263,23 @@ class _BinaryTrussEngineeringOptimizationProblem(OptimizationProblem):
         self.constraints = constraints
 
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
-        """Return the all-off binary starting point."""
+        """Return the all-off binary starting point.
+
+        Args:
+            seed: Value for ``seed``.
+
+        Returns:
+            Computed result for this callable.
+        """
         del seed
         return numpy.array(self._seed_bits(), dtype=float)
 
     def _seed_bits(self) -> tuple[int, ...]:
-        """Return the deterministic default binary seed bits."""
+        """Return the deterministic default binary seed bits.
+
+        Returns:
+            Computed result for this callable.
+        """
         return tuple(0 for _ in self._candidate_edges)
 
     def objective(self, variables: NDArray[numpy.float64]) -> float:

@@ -94,7 +94,16 @@ def build_canonical_series_parallel_state(
     *,
     z_layer: int = 0,
 ) -> SeriesParallelBatteryState:
-    """Build the deterministic rectangular state for one ``S x P`` battery pack."""
+    """Build the deterministic rectangular state for one ``S x P`` battery pack.
+
+    Args:
+        series_count: Value for ``series_count``.
+        parallel_count: Value for ``parallel_count``.
+        z_layer: Value for ``z_layer``.
+
+    Returns:
+        Computed result for this callable.
+    """
     cells = tuple(
         BatteryCellPlacement(
             cell_id=(
@@ -117,7 +126,14 @@ def build_canonical_series_parallel_state(
 
 
 def build_circuit_state_from_series_parallel(state: SeriesParallelBatteryState) -> BatteryCircuitState:
-    """Translate a rectangular ``S x P`` state into the shared explicit-circuit representation."""
+    """Translate a rectangular ``S x P`` state into the shared explicit-circuit representation.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+    """
     ordered_cells = sorted(state.cells, key=lambda cell: (cell.stage_index, cell.branch_index, cell.cell_id))
     circuit_cells: list[BatteryCellInstance] = []
     bus_members: list[list[int]] = [[] for _ in range(state.series_count + 1)]
@@ -177,7 +193,23 @@ def evaluation_from_summary(
     cell_model_source: str | None = None,
     cell_model_warning: str | None = None,
 ) -> SeriesParallelBatteryEvaluation:
-    """Build one structured evaluation object from computed summary metrics."""
+    """Build one structured evaluation object from computed summary metrics.
+
+    Args:
+        state: Value for ``state``.
+        summary: Value for ``summary``.
+        pybamm_ran: Value for ``pybamm_ran``.
+        pybamm_pack_end_voltage: Value for ``pybamm_pack_end_voltage``.
+        pybamm_delivered_capacity_ah: Value for ``pybamm_delivered_capacity_ah``.
+        pybamm_feasible: Value for ``pybamm_feasible``.
+        is_feasible: Whether to feasible.
+        failure_reason: Value for ``failure_reason``.
+        cell_model_source: Value for ``cell_model_source``.
+        cell_model_warning: Value for ``cell_model_warning``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return SeriesParallelBatteryEvaluation(
         series_count=state.series_count,
         parallel_count=state.parallel_count,
@@ -210,7 +242,16 @@ def evaluate_series_parallel_state(
     requirements: BatteryRequirements,
     evaluate_circuit_state: Callable[[BatteryCircuitState], BatteryCircuitEvaluation],
 ) -> SeriesParallelBatteryEvaluation:
-    """Evaluate one rectangular ``S x P`` battery pack using the shared circuit backend."""
+    """Evaluate one rectangular ``S x P`` battery pack using the shared circuit backend.
+
+    Args:
+        state: Value for ``state``.
+        requirements: Value for ``requirements``.
+        evaluate_circuit_state: Value for ``evaluate_circuit_state``.
+
+    Returns:
+        Computed result for this callable.
+    """
     summary = compute_metric_summary(state, requirements)
     topology_failure = validate_rectangular_topology(state)
     if topology_failure is not None:
@@ -370,7 +411,15 @@ def series_parallel_requirement_violation(
     evaluation: SeriesParallelBatteryEvaluation,
     requirements: BatteryRequirements,
 ) -> tuple[float, float]:
-    """Return total and maximum requirement violation for one series-parallel evaluation."""
+    """Return total and maximum requirement violation for one series-parallel evaluation.
+
+    Args:
+        evaluation: Value for ``evaluation``.
+        requirements: Value for ``requirements``.
+
+    Returns:
+        Computed result for this callable.
+    """
     components = [
         max(evaluation.design_width - requirements.max_width_mm, 0.0),
         max(evaluation.design_depth - requirements.max_depth_mm, 0.0),

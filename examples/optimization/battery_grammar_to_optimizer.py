@@ -6,7 +6,15 @@ from design_research_problems import MissingOptionalDependencyError, get_problem
 
 
 def _format_config(problem: object, variables: object) -> str:
-    """Return the rounded ``SxP`` label for one battery design vector."""
+    """Return the rounded ``SxP`` label for one battery design vector.
+
+    Args:
+        problem: Optimization problem exposing ``decode_candidate``.
+        variables: Candidate design vector to decode.
+
+    Returns:
+        Short ``SxP`` battery-pack label.
+    """
     state = problem.decode_candidate(variables)
     return f"{state.series_count}S{state.parallel_count}P"
 

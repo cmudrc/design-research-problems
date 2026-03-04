@@ -330,7 +330,11 @@ class DecisionEvaluation:
     """Number of valid respondents included in the aggregate."""
 
     def __post_init__(self) -> None:
-        """Normalize textual and numeric outputs."""
+        """Normalize textual and numeric outputs.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         candidate_label = self.candidate_label.strip()
         if not candidate_label:
             raise ValueError("DecisionEvaluation requires a non-empty candidate_label.")
@@ -621,7 +625,14 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> DecisionProblem:
-        """Construct the problem directly from a packaged manifest."""
+        """Construct the problem directly from a packaged manifest.
+
+        Args:
+            manifest: Value for ``manifest``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return cls(
             metadata=manifest.metadata,
             statement_markdown=manifest.statement_markdown,
@@ -637,7 +648,17 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
         parameters: Mapping[str, object],
         resource_bundle: PackageResourceBundle | None = None,
     ) -> None:
-        """Parse the structured decision payload and cache shared lookups."""
+        """Parse the structured decision payload and cache shared lookups.
+
+        Args:
+            metadata: Value for ``metadata``.
+            statement_markdown: Value for ``statement_markdown``.
+            parameters: Value for ``parameters``.
+            resource_bundle: Value for ``resource_bundle``.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         super().__init__(
             metadata=metadata,
             statement_markdown=statement_markdown,
@@ -676,7 +697,11 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
 
     @property
     def candidate_kind(self) -> DecisionCandidateKind:
-        """Return the active decision-candidate mode."""
+        """Return the active decision-candidate mode.
+
+        Returns:
+            Computed result for this callable.
+        """
         return self._candidate_kind
 
     @property
@@ -791,13 +816,21 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
 
     @property
     def candidate_count(self) -> int:
-        """Return the number of candidates exposed by the active decision mode."""
+        """Return the number of candidates exposed by the active decision mode.
+
+        Returns:
+            Computed result for this callable.
+        """
         if self.candidate_kind == "discrete-option":
             return self.option_count
         return len(self.choice_benchmarks)
 
     def iter_candidates(self) -> Iterator[DecisionOption | str]:
-        """Yield candidates in deterministic source order."""
+        """Yield candidates in deterministic source order.
+
+        Yields:
+            Generated values from iter candidates.
+        """
         if self.candidate_kind == "discrete-option":
             factor_keys = tuple(factor.key for factor in self.option_factors)
             level_domains = tuple(factor.levels for factor in self.option_factors)
@@ -809,7 +842,17 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
             yield benchmark.key
 
     def evaluate(self, candidate: DecisionCandidate) -> DecisionEvaluation:
-        """Evaluate one candidate using the active decision mode."""
+        """Evaluate one candidate using the active decision mode.
+
+        Args:
+            candidate: Value for ``candidate``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         if self.candidate_kind == "discrete-option":
             if isinstance(candidate, str) or not isinstance(candidate, (DecisionOption, Mapping)):
                 raise TypeError(
@@ -821,7 +864,17 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
         return self._evaluate_choice(candidate)
 
     def iter_evaluations(self, metric: ChoiceMetric | None = None) -> Iterator[DecisionEvaluation]:
-        """Yield evaluations for every candidate in deterministic order."""
+        """Yield evaluations for every candidate in deterministic order.
+
+        Args:
+            metric: Value for ``metric``.
+
+        Yields:
+            Generated values from iter evaluations.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         if self.candidate_kind == "discrete-option":
             if metric is not None:
                 raise ProblemEvaluationError("Discrete-option decision problems do not support metric overrides.")
@@ -834,7 +887,17 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
             yield self._build_choice_evaluation(benchmark, selected_metric)
 
     def rank_evaluations(self, metric: ChoiceMetric | None = None) -> tuple[DecisionEvaluation, ...]:
-        """Return all candidate evaluations ranked by the active objective."""
+        """Return all candidate evaluations ranked by the active objective.
+
+        Args:
+            metric: Value for ``metric``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         if self.candidate_kind == "discrete-option":
             if metric is not None:
                 raise ProblemEvaluationError("Discrete-option decision problems do not support metric overrides.")
@@ -852,14 +915,34 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
         return tuple(evaluation for _, evaluation in ranked)
 
     def best_evaluation(self, metric: ChoiceMetric | None = None) -> DecisionEvaluation:
-        """Return the highest-ranked evaluation in the active mode."""
+        """Return the highest-ranked evaluation in the active mode.
+
+        Args:
+            metric: Value for ``metric``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         ranked = self.rank_evaluations(metric=metric)
         if not ranked:
             raise ProblemEvaluationError("Decision problem does not define any evaluable candidates.")
         return ranked[0]
 
     def _evaluate_option(self, option: DecisionOption | Mapping[str, float]) -> DecisionEvaluation:
-        """Evaluate one explicit discrete option against the competitor set."""
+        """Evaluate one explicit discrete option against the competitor set.
+
+        Args:
+            option: Value for ``option``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         objective = self._executable_objective()
         if objective.domain != "discrete-option":
             raise ProblemEvaluationError("Decision problem does not define an executable discrete-option objective.")
@@ -888,7 +971,15 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
         choice: str,
         metric: ChoiceMetric | None = None,
     ) -> DecisionEvaluation:
-        """Evaluate one empirical categorical choice option."""
+        """Evaluate one empirical categorical choice option.
+
+        Args:
+            choice: Value for ``choice``.
+            metric: Value for ``metric``.
+
+        Returns:
+            Computed result for this callable.
+        """
         benchmark = self._coerce_choice(choice)
         selected_metric = self._normalize_choice_metric(metric)
         return self._build_choice_evaluation(benchmark, selected_metric)
@@ -898,7 +989,15 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
         benchmark: DecisionChoiceBenchmark,
         metric: ChoiceMetric,
     ) -> DecisionEvaluation:
-        """Build one empirical evaluation payload for a normalized benchmark."""
+        """Build one empirical evaluation payload for a normalized benchmark.
+
+        Args:
+            benchmark: Value for ``benchmark``.
+            metric: Value for ``metric``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return DecisionEvaluation(
             candidate_kind="empirical-choice",
             candidate=benchmark.key,
@@ -918,7 +1017,14 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
         self,
         metric: ChoiceMetric | None = None,
     ) -> tuple[DecisionEvaluation, ...]:
-        """Return all empirical choices ranked by one metric."""
+        """Return all empirical choices ranked by one metric.
+
+        Args:
+            metric: Value for ``metric``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return self.rank_evaluations(metric=metric)
 
     def render_brief(
@@ -1095,7 +1201,14 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
         raise ValueError(f"Unsupported choice metric: {metric!r}")
 
     def _format_option_label(self, option: DecisionOption) -> str:
-        """Render one option in factor order as a stable label."""
+        """Render one option in factor order as a stable label.
+
+        Args:
+            option: Value for ``option``.
+
+        Returns:
+            Computed result for this callable.
+        """
         parts = [f"{factor.key}={_format_number(option.values[factor.key])}" for factor in self.option_factors]
         return ", ".join(parts)
 
@@ -1265,7 +1378,14 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
 
 
 def load_decision_problem(manifest: ProblemManifest) -> DecisionProblem:
-    """Construct one concrete decision problem from a packaged manifest."""
+    """Construct one concrete decision problem from a packaged manifest.
+
+    Args:
+        manifest: Value for ``manifest``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return DecisionProblem.from_manifest(manifest)
 
 

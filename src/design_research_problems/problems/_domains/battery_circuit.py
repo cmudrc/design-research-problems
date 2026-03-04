@@ -139,19 +139,34 @@ class BatteryCircuitSimulationResult:
     """Internal simulation result used to build public evaluations."""
 
     pack_terminal_voltage_end: float
+    """Stored pack terminal voltage end value."""
     required_pack_terminal_voltage_end: float
+    """Stored required pack terminal voltage end value."""
     delivered_capacity_ah: float
+    """Stored delivered capacity ah value."""
     max_cell_current_a: float
+    """Stored max cell current a value."""
     min_cell_voltage_v: float
+    """Stored min cell voltage v value."""
     solver_steps: int
+    """Stored solver steps value."""
     is_feasible: bool
+    """Whether feasible."""
     failure_reason: str | None
+    """Stored failure reason value."""
 
 
 def sort_battery_cells(
     cells: tuple[BatteryCellInstance, ...] | list[BatteryCellInstance],
 ) -> tuple[BatteryCellInstance, ...]:
-    """Return cells sorted deterministically by id and coordinate."""
+    """Return cells sorted deterministically by id and coordinate.
+
+    Args:
+        cells: Value for ``cells``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return tuple(
         sorted(
             cells,
@@ -170,7 +185,14 @@ def sort_battery_cells(
 def sort_battery_connections(
     connections: tuple[BatteryConnection, ...] | list[BatteryConnection],
 ) -> tuple[BatteryConnection, ...]:
-    """Return connections sorted deterministically by id and endpoints."""
+    """Return connections sorted deterministically by id and endpoints.
+
+    Args:
+        connections: Value for ``connections``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return tuple(
         sorted(
             connections,
@@ -184,7 +206,14 @@ def sort_battery_connections(
 
 
 def next_terminal_id(cells: Iterable[BatteryCellInstance]) -> int:
-    """Return the next stable terminal identifier."""
+    """Return the next stable terminal identifier.
+
+    Args:
+        cells: Value for ``cells``.
+
+    Returns:
+        Computed result for this callable.
+    """
     next_id = 0
     for cell in cells:
         next_id = max(next_id, cell.positive_terminal_id + 1, cell.negative_terminal_id + 1)
@@ -192,7 +221,14 @@ def next_terminal_id(cells: Iterable[BatteryCellInstance]) -> int:
 
 
 def next_connection_id(connections: Iterable[BatteryConnection]) -> int:
-    """Return the next stable connection identifier."""
+    """Return the next stable connection identifier.
+
+    Args:
+        connections: Value for ``connections``.
+
+    Returns:
+        Computed result for this callable.
+    """
     next_id = 0
     for connection in connections:
         next_id = max(next_id, connection.connection_id + 1)
@@ -200,7 +236,14 @@ def next_connection_id(connections: Iterable[BatteryConnection]) -> int:
 
 
 def terminal_ids(state: BatteryCircuitState) -> tuple[int, ...]:
-    """Return all terminal identifiers in deterministic order."""
+    """Return all terminal identifiers in deterministic order.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+    """
     ids = {
         terminal_id for cell in state.cells for terminal_id in (cell.negative_terminal_id, cell.positive_terminal_id)
     }
@@ -208,7 +251,15 @@ def terminal_ids(state: BatteryCircuitState) -> tuple[int, ...]:
 
 
 def _pair_key(first: int, second: int) -> tuple[int, int]:
-    """Return the canonical unordered key for one terminal pair."""
+    """Return the canonical unordered key for one terminal pair.
+
+    Args:
+        first: Value for ``first``.
+        second: Value for ``second``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return (first, second) if first <= second else (second, first)
 
 
@@ -216,10 +267,22 @@ class _DisjointSet:
     """Minimal disjoint-set implementation for connection-net reduction."""
 
     def __init__(self, items: Iterable[int]) -> None:
+        """Implement init.
+
+        Args:
+            items: Value for ``items``.
+        """
         self._parent = {item: item for item in items}
 
     def find(self, item: int) -> int:
-        """Return the representative for one item."""
+        """Return the representative for one item.
+
+        Args:
+            item: Value for ``item``.
+
+        Returns:
+            Computed result for this callable.
+        """
         parent = self._parent[item]
         if parent != item:
             parent = self.find(parent)
@@ -227,7 +290,12 @@ class _DisjointSet:
         return parent
 
     def union(self, first: int, second: int) -> None:
-        """Merge two representatives."""
+        """Merge two representatives.
+
+        Args:
+            first: Value for ``first``.
+            second: Value for ``second``.
+        """
         first_root = self.find(first)
         second_root = self.find(second)
         if first_root != second_root:
@@ -235,7 +303,14 @@ class _DisjointSet:
 
 
 def _build_connection_sets(state: BatteryCircuitState) -> tuple[_DisjointSet, dict[int, set[int]]]:
-    """Return wire-equivalence classes and adjacency from explicit connections."""
+    """Return wire-equivalence classes and adjacency from explicit connections.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+    """
     ids = terminal_ids(state)
     dsu = _DisjointSet(ids)
     adjacency: dict[int, set[int]] = {terminal_id: set() for terminal_id in ids}
@@ -250,7 +325,15 @@ def _reachable_nodes(
     adjacency: dict[int, set[int]],
     start: int,
 ) -> set[int]:
-    """Return all nodes reachable from ``start``."""
+    """Return all nodes reachable from ``start``.
+
+    Args:
+        adjacency: Value for ``adjacency``.
+        start: Value for ``start``.
+
+    Returns:
+        Computed result for this callable.
+    """
     visited = {start}
     queue = deque([start])
     while queue:
@@ -268,7 +351,15 @@ def _full_graph_adjacency(
     *,
     skip_cell_id: int | None = None,
 ) -> dict[int, set[int]]:
-    """Return undirected terminal adjacency including cells and interconnects."""
+    """Return undirected terminal adjacency including cells and interconnects.
+
+    Args:
+        state: Value for ``state``.
+        skip_cell_id: Identifier for skip cell.
+
+    Returns:
+        Computed result for this callable.
+    """
     adjacency: dict[int, set[int]] = {terminal_id: set() for terminal_id in terminal_ids(state)}
     for connection in state.connections:
         adjacency[connection.from_terminal_id].add(connection.to_terminal_id)
@@ -285,7 +376,15 @@ def _minimum_series_cells(
     state: BatteryCircuitState,
     dsu: _DisjointSet,
 ) -> int | None:
-    """Return the shortest directed cell-path length from pack negative to pack positive."""
+    """Return the shortest directed cell-path length from pack negative to pack positive.
+
+    Args:
+        state: Value for ``state``.
+        dsu: Value for ``dsu``.
+
+    Returns:
+        Computed result for this callable.
+    """
     start_net = dsu.find(state.pack_negative_terminal_id)
     target_net = dsu.find(state.pack_positive_terminal_id)
     reduced_adjacency: dict[int, set[int]] = defaultdict(set)
@@ -307,7 +406,14 @@ def _minimum_series_cells(
 
 
 def analyze_battery_topology(state: BatteryCircuitState) -> BatteryTopologyAnalysis:
-    """Classify the reduced circuit topology."""
+    """Classify the reduced circuit topology.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+    """
     dsu, _ = _build_connection_sets(state)
     minimum_series_cells = _minimum_series_cells(state, dsu)
     if minimum_series_cells is None:
@@ -433,7 +539,15 @@ def validate_battery_circuit_state(
     state: BatteryCircuitState,
     requirements: BatteryRequirements,
 ) -> str | None:
-    """Return a deterministic validation failure, or ``None`` when valid."""
+    """Return a deterministic validation failure, or ``None`` when valid.
+
+    Args:
+        state: Value for ``state``.
+        requirements: Value for ``requirements``.
+
+    Returns:
+        Computed result for this callable.
+    """
     if not state.cells:
         return "At least one battery cell is required."
 
@@ -519,7 +633,17 @@ def simulate_battery_circuit(
     *,
     simulate_to_failure: bool = False,
 ) -> BatteryCircuitSimulationResult:
-    """Run a constant-current discharge simulation for one explicit battery circuit."""
+    """Run a constant-current discharge simulation for one explicit battery circuit.
+
+    Args:
+        state: Value for ``state``.
+        requirements: Value for ``requirements``.
+        cell_model: Value for ``cell_model``.
+        simulate_to_failure: Value for ``simulate_to_failure``.
+
+    Returns:
+        Computed result for this callable.
+    """
     dsu, _ = _build_connection_sets(state)
     node_ids = sorted({dsu.find(node_id) for node_id in terminal_ids(state)})
     reference_id = dsu.find(state.pack_negative_terminal_id)
@@ -704,7 +828,17 @@ def evaluate_battery_circuit(
     *,
     simulate_to_failure: bool = False,
 ) -> BatteryCircuitEvaluation:
-    """Evaluate one explicit battery circuit using deterministic checks and the shared solver."""
+    """Evaluate one explicit battery circuit using deterministic checks and the shared solver.
+
+    Args:
+        state: Value for ``state``.
+        requirements: Value for ``requirements``.
+        load_cell_model: Value for ``load_cell_model``.
+        simulate_to_failure: Value for ``simulate_to_failure``.
+
+    Returns:
+        Computed result for this callable.
+    """
     layout = compute_layout_summary(state.cells)
     analysis = analyze_battery_topology(state)
     validation_failure = validate_battery_circuit_state(state, requirements)
@@ -775,7 +909,23 @@ def _evaluation_from_parts(
     is_feasible: bool,
     failure_reason: str | None,
 ) -> BatteryCircuitEvaluation:
-    """Build a public evaluation object from layout and simulation pieces."""
+    """Build a public evaluation object from layout and simulation pieces.
+
+    Args:
+        layout: Value for ``layout``.
+        state: Value for ``state``.
+        analysis: Value for ``analysis``.
+        pack_nominal_voltage: Value for ``pack_nominal_voltage``.
+        pybamm_ran: Value for ``pybamm_ran``.
+        cell_model_source: Value for ``cell_model_source``.
+        cell_model_warning: Value for ``cell_model_warning``.
+        simulation: Value for ``simulation``.
+        is_feasible: Whether to feasible.
+        failure_reason: Value for ``failure_reason``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return BatteryCircuitEvaluation(
         cell_count=layout.cell_count,
         connection_count=len(state.connections),
@@ -812,7 +962,17 @@ def _stamp_resistor(
     node_b: int,
     conductance: float,
 ) -> None:
-    """Stamp one resistor into the conductance matrix."""
+    """Stamp one resistor into the conductance matrix.
+
+    Args:
+        matrix: Value for ``matrix``.
+        current_vector: Value for ``current_vector``.
+        node_index: Value for ``node_index``.
+        reference_id: Identifier for reference.
+        node_a: Value for ``node_a``.
+        node_b: Value for ``node_b``.
+        conductance: Value for ``conductance``.
+    """
     del current_vector
     if node_a != reference_id:
         index_a = node_index[node_a]
@@ -836,7 +996,16 @@ def _stamp_current_source(
     to_node: int,
     current_a: float,
 ) -> None:
-    """Stamp one current source into the RHS vector."""
+    """Stamp one current source into the RHS vector.
+
+    Args:
+        current_vector: Value for ``current_vector``.
+        node_index: Value for ``node_index``.
+        reference_id: Identifier for reference.
+        from_node: Value for ``from_node``.
+        to_node: Value for ``to_node``.
+        current_a: Value for ``current_a``.
+    """
     if from_node != reference_id:
         current_vector[node_index[from_node]] -= current_a
     if to_node != reference_id:

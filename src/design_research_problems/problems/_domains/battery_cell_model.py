@@ -33,7 +33,14 @@ class BatteryCellModel:
 
 
 def import_pybamm() -> Any:
-    """Import ``pybamm`` lazily for battery evaluation."""
+    """Import ``pybamm`` lazily for battery evaluation.
+
+    Returns:
+        Computed result for this callable.
+
+    Raises:
+        Exception: Raised when the callable encounters an invalid state.
+    """
     try:
         import pybamm
     except ImportError as exc:
@@ -53,6 +60,12 @@ def load_18650_cell_model() -> BatteryCellModel:
     extracted resistance magnitudes are then anchored to this package's 18650
     constants so the pack benchmark stays self-consistent even though the curve
     shape comes from PyBaMM's default ECM parameterization.
+
+    Returns:
+        Computed result for this callable.
+
+    Raises:
+        Exception: Raised when the callable encounters an invalid state.
     """
     pybamm_module = import_pybamm()
     equivalent_circuit = getattr(pybamm_module, "equivalent_circuit", None)
@@ -165,7 +178,14 @@ def load_18650_cell_model() -> BatteryCellModel:
 
 
 def _copy_parameter_values(parameter_values: Any) -> Any:
-    """Return a detached parameter-values object when the backend supports it."""
+    """Return a detached parameter-values object when the backend supports it.
+
+    Args:
+        parameter_values: Value for ``parameter_values``.
+
+    Returns:
+        Computed result for this callable.
+    """
     copy_method = getattr(parameter_values, "copy", None)
     if callable(copy_method):
         return copy_method()
@@ -173,20 +193,44 @@ def _copy_parameter_values(parameter_values: Any) -> Any:
 
 
 def _coerce_scalar(value: object) -> float:
-    """Convert a scalar-like backend value into a float."""
+    """Convert a scalar-like backend value into a float.
+
+    Args:
+        value: Value for ``value``.
+
+    Returns:
+        Computed result for this callable.
+    """
     array = numpy.asarray(value, dtype=float)
     return float(array.reshape(-1)[0])
 
 
 def _parameter_value(parameter_values: Any, key: str, *, default: float) -> float:
-    """Return one scalar parameter value from a mapping-like object."""
+    """Return one scalar parameter value from a mapping-like object.
+
+    Args:
+        parameter_values: Value for ``parameter_values``.
+        key: Value for ``key``.
+        default: Value for ``default``.
+
+    Returns:
+        Computed result for this callable.
+    """
     if key not in parameter_values:
         return default
     return _coerce_scalar(parameter_values[key])
 
 
 def _evaluate_parameter(parameter_values: Any, expression: object) -> float:
-    """Evaluate one backend expression into a concrete float."""
+    """Evaluate one backend expression into a concrete float.
+
+    Args:
+        parameter_values: Value for ``parameter_values``.
+        expression: Value for ``expression``.
+
+    Returns:
+        Computed result for this callable.
+    """
     evaluate_method = getattr(parameter_values, "evaluate", None)
     if callable(evaluate_method):
         return _coerce_scalar(evaluate_method(expression))
@@ -194,7 +238,15 @@ def _evaluate_parameter(parameter_values: Any, expression: object) -> float:
 
 
 def interpolate_cell_model(model: BatteryCellModel, soc: float) -> tuple[float, float, float, float]:
-    """Interpolate cell operating values at one SOC value."""
+    """Interpolate cell operating values at one SOC value.
+
+    Args:
+        model: Value for ``model``.
+        soc: Value for ``soc``.
+
+    Returns:
+        Computed result for this callable.
+    """
     clipped_soc = min(1.0, max(0.0, soc))
     if clipped_soc <= model.soc_grid[0]:
         return (

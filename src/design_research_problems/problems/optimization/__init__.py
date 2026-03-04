@@ -12,6 +12,7 @@ _LAZY_EXPORTS = {
     "BatteryOpenEndedCapacityMaxProblem": (
         "design_research_problems.problems.optimization._battery_open_ended:BatteryOpenEndedCapacityMaxProblem"
     ),
+    "GMPBOptimizationProblem": "design_research_problems.problems.optimization._gmpb:GMPBOptimizationProblem",
     "IDETreadlePumpMaterialMin": (
         "design_research_problems.problems.optimization._ide_treadle:IDETreadlePumpMaterialMin"
     ),
@@ -50,6 +51,7 @@ def __getattr__(name: str) -> object:
 if TYPE_CHECKING:
     from ._battery_grid import BatteryGridSizingProblem as BatteryGridSizingProblem
     from ._battery_open_ended import BatteryOpenEndedCapacityMaxProblem as BatteryOpenEndedCapacityMaxProblem
+    from ._gmpb import GMPBOptimizationProblem as GMPBOptimizationProblem
     from ._ide_treadle import IDETreadlePumpMaterialMin as IDETreadlePumpMaterialMin
     from ._moneymaker import MoneyMakerHipPumpProblem as MoneyMakerHipPumpProblem
     from ._pill import PillCapsuleMinArea as PillCapsuleMinArea

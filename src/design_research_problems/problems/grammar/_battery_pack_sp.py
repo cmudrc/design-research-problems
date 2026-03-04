@@ -26,13 +26,30 @@ from design_research_problems.problems.grammar._battery_problem_base import (
 
 
 def _sort_coordinate_key(coordinate: tuple[int, int, int]) -> tuple[int, int, int]:
-    """Return the deterministic enumeration key for one coordinate."""
+    """Return the deterministic enumeration key for one coordinate.
+
+    Args:
+        coordinate: Value for ``coordinate``.
+
+    Returns:
+        Computed result for this callable.
+    """
     x_value, y_value, z_value = coordinate
     return (z_value, y_value, x_value)
 
 
 def _coerce_state(state: object) -> SeriesParallelBatteryState:
-    """Validate and return the typed battery state."""
+    """Validate and return the typed battery state.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+
+    Raises:
+        Exception: Raised when the callable encounters an invalid state.
+    """
     if not isinstance(state, SeriesParallelBatteryState):
         raise TypeError("Expected a SeriesParallelBatteryState.")
     return state
@@ -45,7 +62,14 @@ class BatteryPack18650SeriesParallelProblem(
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> BatteryPack18650SeriesParallelProblem:
-        """Build the benchmark from packaged manifest parameters."""
+        """Build the benchmark from packaged manifest parameters.
+
+        Args:
+            manifest: Value for ``manifest``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return cls(
             metadata=manifest.metadata,
             statement_markdown=manifest.statement_markdown,
@@ -54,7 +78,11 @@ class BatteryPack18650SeriesParallelProblem(
         )
 
     def initial_state(self) -> SeriesParallelBatteryState:
-        """Return a minimal valid 1S1P state."""
+        """Return a minimal valid 1S1P state.
+
+        Returns:
+            Computed result for this callable.
+        """
         return SeriesParallelBatteryState(
             series_count=1,
             parallel_count=1,
@@ -73,7 +101,14 @@ class BatteryPack18650SeriesParallelProblem(
     def enumerate_transitions(
         self, state: SeriesParallelBatteryState
     ) -> tuple[GrammarTransition[SeriesParallelBatteryState], ...]:
-        """Return deterministic move and group-edit transitions."""
+        """Return deterministic move and group-edit transitions.
+
+        Args:
+            state: Value for ``state``.
+
+        Returns:
+            Computed result for this callable.
+        """
         typed_state = _coerce_state(state)
         transitions: list[GrammarTransition[SeriesParallelBatteryState]] = []
         frontier = candidate_frontier_coordinates(typed_state, self.requirements)
@@ -157,7 +192,21 @@ class BatteryPack18650SeriesParallelProblem(
         y: int,
         z: int,
     ) -> SeriesParallelBatteryState:
-        """Move one existing cell to a new coordinate."""
+        """Move one existing cell to a new coordinate.
+
+        Args:
+            state: Value for ``state``.
+            cell_id: Identifier for cell.
+            x: Value for ``x``.
+            y: Value for ``y``.
+            z: Value for ``z``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         occupied = occupied_coordinates(typed_state.cells)
@@ -194,7 +243,18 @@ class BatteryPack18650SeriesParallelProblem(
         *,
         placements: tuple[tuple[int, int, int], ...],
     ) -> SeriesParallelBatteryState:
-        """Append one new series stage using one placement per branch."""
+        """Append one new series stage using one placement per branch.
+
+        Args:
+            state: Value for ``state``.
+            placements: Value for ``placements``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         if len(placements) != typed_state.parallel_count:
@@ -220,7 +280,17 @@ class BatteryPack18650SeriesParallelProblem(
         )
 
     def remove_series_stage(self, state: SeriesParallelBatteryState) -> SeriesParallelBatteryState:
-        """Remove the final series stage."""
+        """Remove the final series stage.
+
+        Args:
+            state: Value for ``state``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         if typed_state.series_count <= 1:
@@ -238,7 +308,18 @@ class BatteryPack18650SeriesParallelProblem(
         *,
         placements: tuple[tuple[int, int, int], ...],
     ) -> SeriesParallelBatteryState:
-        """Append one new parallel branch using one placement per stage."""
+        """Append one new parallel branch using one placement per stage.
+
+        Args:
+            state: Value for ``state``.
+            placements: Value for ``placements``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         if len(placements) != typed_state.series_count:
@@ -264,7 +345,17 @@ class BatteryPack18650SeriesParallelProblem(
         )
 
     def remove_parallel_branch(self, state: SeriesParallelBatteryState) -> SeriesParallelBatteryState:
-        """Remove the final parallel branch."""
+        """Remove the final parallel branch.
+
+        Args:
+            state: Value for ``state``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         if typed_state.parallel_count <= 1:
@@ -281,7 +372,15 @@ class BatteryPack18650SeriesParallelProblem(
         state: SeriesParallelBatteryState,
         placements: tuple[tuple[int, int, int], ...],
     ) -> None:
-        """Validate coordinates used by one grouped add action."""
+        """Validate coordinates used by one grouped add action.
+
+        Args:
+            state: Value for ``state``.
+            placements: Value for ``placements``.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         if len(set(placements)) != len(placements):
             raise ValueError("Grouped placement coordinates must be unique.")
         occupied = occupied_coordinates(state.cells)
@@ -292,7 +391,14 @@ class BatteryPack18650SeriesParallelProblem(
                 raise ValueError("Grouped placement collides with an occupied coordinate.")
 
     def evaluate(self, state: object) -> SeriesParallelBatteryEvaluation:
-        """Evaluate one battery-pack state using deterministic checks and the shared circuit backend."""
+        """Evaluate one battery-pack state using deterministic checks and the shared circuit backend.
+
+        Args:
+            state: Value for ``state``.
+
+        Returns:
+            Computed result for this callable.
+        """
         typed_state = _coerce_state(state)
         return evaluate_series_parallel_state(
             typed_state,

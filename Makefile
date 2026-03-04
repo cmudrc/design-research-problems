@@ -68,7 +68,7 @@ test: check-python
 qa: lint fmt-check type test
 
 docstrings-check: check-python
-	$(PYTHON) scripts/check_google_docstrings.py --baseline .docstrings-baseline.txt
+	$(PYTHON) scripts/check_google_docstrings.py
 
 coverage: check-python
 	mkdir -p artifacts/coverage

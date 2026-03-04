@@ -104,37 +104,92 @@ class PlanarTrussEvaluation:
 
 
 def edge_key(start_joint_id: int, end_joint_id: int) -> tuple[int, int]:
-    """Normalize a member edge into an undirected key."""
+    """Normalize a member edge into an undirected key.
+
+    Args:
+        start_joint_id: Identifier for start joint.
+        end_joint_id: Identifier for end joint.
+
+    Returns:
+        Computed result for this callable.
+    """
     return _shared_edge_key(start_joint_id, end_joint_id)
 
 
 def float_matches(left: float, right: float) -> bool:
-    """Return whether two coordinates should be treated as equal."""
+    """Return whether two coordinates should be treated as equal.
+
+    Args:
+        left: Value for ``left``.
+        right: Value for ``right``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return math.isclose(left, right, rel_tol=1e-9, abs_tol=1e-9)
 
 
 def point_in_collection(points: set[tuple[float, float]], x_value: float, y_value: float) -> bool:
-    """Return whether one coordinate pair is already occupied."""
+    """Return whether one coordinate pair is already occupied.
+
+    Args:
+        points: Value for ``points``.
+        x_value: Value for ``x_value``.
+        y_value: Value for ``y_value``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return any(float_matches(px, x_value) and float_matches(py, y_value) for px, py in points)
 
 
 def roofline_y(x_fraction: float, max_height: float) -> float:
-    """Return the y-coordinate for a simple gable roof profile."""
+    """Return the y-coordinate for a simple gable roof profile.
+
+    Args:
+        x_fraction: Value for ``x_fraction``.
+        max_height: Value for ``max_height``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return max_height * (1.0 - abs((2.0 * x_fraction) - 1.0))
 
 
 def joint_map(state: PlanarTrussState) -> dict[int, PlanarJoint]:
-    """Return one ID-indexed joint lookup table."""
+    """Return one ID-indexed joint lookup table.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return {joint.joint_id: joint for joint in state.joints}
 
 
 def member_lookup(state: PlanarTrussState) -> dict[tuple[int, int], PlanarMember]:
-    """Return one edge-indexed member lookup table."""
+    """Return one edge-indexed member lookup table.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return {edge_key(member.start_joint_id, member.end_joint_id): member for member in state.members}
 
 
 def mirrored_joint_id(state: PlanarTrussState, joint_id: int) -> int | None:
-    """Return the mirrored joint identifier for one symmetric state."""
+    """Return the mirrored joint identifier for one symmetric state.
+
+    Args:
+        state: Value for ``state``.
+        joint_id: Identifier for joint.
+
+    Returns:
+        Computed result for this callable.
+    """
     if state.symmetry_axis_x is None:
         return joint_id
 
@@ -151,7 +206,15 @@ def mirrored_joint_id(state: PlanarTrussState, joint_id: int) -> int | None:
 
 
 def mirrored_edge(state: PlanarTrussState, edge: tuple[int, int]) -> tuple[int, int] | None:
-    """Return the mirrored edge for one symmetric state."""
+    """Return the mirrored edge for one symmetric state.
+
+    Args:
+        state: Value for ``state``.
+        edge: Value for ``edge``.
+
+    Returns:
+        Computed result for this callable.
+    """
     mirrored_start = mirrored_joint_id(state, edge[0])
     mirrored_end = mirrored_joint_id(state, edge[1])
     if mirrored_start is None or mirrored_end is None:
@@ -160,7 +223,15 @@ def mirrored_edge(state: PlanarTrussState, edge: tuple[int, int]) -> tuple[int, 
 
 
 def build_planar_truss_failure(state: PlanarTrussState, reason: str) -> PlanarTrussEvaluation:
-    """Build a deterministic infeasible evaluation payload."""
+    """Build a deterministic infeasible evaluation payload.
+
+    Args:
+        state: Value for ``state``.
+        reason: Value for ``reason``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return PlanarTrussEvaluation(
         mass=0.0,
         fos=0.0,
@@ -175,7 +246,16 @@ def build_planar_truss_failure(state: PlanarTrussState, reason: str) -> PlanarTr
 
 
 def _orientation(point_a: tuple[float, float], point_b: tuple[float, float], point_c: tuple[float, float]) -> float:
-    """Return the signed orientation determinant for three planar points."""
+    """Return the signed orientation determinant for three planar points.
+
+    Args:
+        point_a: Value for ``point_a``.
+        point_b: Value for ``point_b``.
+        point_c: Value for ``point_c``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return ((point_b[0] - point_a[0]) * (point_c[1] - point_a[1])) - (
         (point_b[1] - point_a[1]) * (point_c[0] - point_a[0])
     )
@@ -187,7 +267,17 @@ def _segments_cross(
     second_start: tuple[float, float],
     second_end: tuple[float, float],
 ) -> bool:
-    """Return whether two open line segments intersect away from their endpoints."""
+    """Return whether two open line segments intersect away from their endpoints.
+
+    Args:
+        first_start: Value for ``first_start``.
+        first_end: Value for ``first_end``.
+        second_start: Value for ``second_start``.
+        second_end: Value for ``second_end``.
+
+    Returns:
+        Computed result for this callable.
+    """
     tolerance = 1e-9
     orientation_one = _orientation(first_start, first_end, second_start)
     orientation_two = _orientation(first_start, first_end, second_end)
@@ -204,7 +294,14 @@ def _segments_cross(
 
 
 def count_planar_member_crossings(state: PlanarTrussState) -> int:
-    """Count member crossings that occur away from shared endpoints."""
+    """Count member crossings that occur away from shared endpoints.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+    """
     joints = joint_map(state)
     crossings = 0
     for first_index, first_member in enumerate(state.members):
@@ -227,7 +324,17 @@ def count_planar_member_crossings(state: PlanarTrussState) -> int:
 
 
 def evaluate_planar_truss_state(state: PlanarTrussState) -> PlanarTrussEvaluation:
-    """Evaluate one state with the lazy TrussMe adapter."""
+    """Evaluate one state with the lazy TrussMe adapter.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+
+    Raises:
+        Exception: Raised when the callable encounters an invalid state.
+    """
     try:
         if not state.members:
             evaluate_truss_records(

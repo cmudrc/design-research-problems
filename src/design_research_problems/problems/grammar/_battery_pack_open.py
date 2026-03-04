@@ -32,21 +32,46 @@ from design_research_problems.problems.grammar._battery_problem_base import (
 
 
 def _coerce_state(state: object) -> BatteryCircuitState:
-    """Validate and return the typed explicit battery state."""
+    """Validate and return the typed explicit battery state.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+
+    Raises:
+        Exception: Raised when the callable encounters an invalid state.
+    """
     if not isinstance(state, BatteryCircuitState):
         raise TypeError("Expected a BatteryCircuitState.")
     return state
 
 
 def _connection_pair_key(from_terminal_id: int, to_terminal_id: int) -> tuple[int, int]:
-    """Return a canonical unordered terminal-pair key."""
+    """Return a canonical unordered terminal-pair key.
+
+    Args:
+        from_terminal_id: Identifier for from terminal.
+        to_terminal_id: Identifier for to terminal.
+
+    Returns:
+        Computed result for this callable.
+    """
     return (
         (from_terminal_id, to_terminal_id) if from_terminal_id <= to_terminal_id else (to_terminal_id, from_terminal_id)
     )
 
 
 def _next_cell_id(cells: tuple[BatteryCellInstance, ...]) -> int:
-    """Return the next stable cell identifier."""
+    """Return the next stable cell identifier.
+
+    Args:
+        cells: Value for ``cells``.
+
+    Returns:
+        Computed result for this callable.
+    """
     next_id = 0
     for cell in cells:
         next_id = max(next_id, cell.cell_id + 1)
@@ -65,7 +90,15 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
         requirements: BatteryRequirements | None = None,
         max_cell_count: int = 16,
     ) -> None:
-        """Store the shared requirements and open-ended cell-count bound."""
+        """Store the shared requirements and open-ended cell-count bound.
+
+        Args:
+            metadata: Value for ``metadata``.
+            statement_markdown: Value for ``statement_markdown``.
+            resource_bundle: Value for ``resource_bundle``.
+            requirements: Value for ``requirements``.
+            max_cell_count: Value for ``max_cell_count``.
+        """
         super().__init__(
             metadata=metadata,
             statement_markdown=statement_markdown,
@@ -76,7 +109,14 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> BatteryPack18650OpenEndedProblem:
-        """Build the open-ended benchmark from packaged manifest parameters."""
+        """Build the open-ended benchmark from packaged manifest parameters.
+
+        Args:
+            manifest: Value for ``manifest``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return cls(
             metadata=manifest.metadata,
             statement_markdown=manifest.statement_markdown,
@@ -86,7 +126,11 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
         )
 
     def initial_state(self) -> BatteryCircuitState:
-        """Return a one-cell explicit-circuit starting state."""
+        """Return a one-cell explicit-circuit starting state.
+
+        Returns:
+            Computed result for this callable.
+        """
         return BatteryCircuitState(
             cells=(
                 BatteryCellInstance(
@@ -104,7 +148,14 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
         )
 
     def enumerate_transitions(self, state: BatteryCircuitState) -> tuple[GrammarTransition[BatteryCircuitState], ...]:
-        """Return deterministic open-ended cell, wire, and terminal transitions."""
+        """Return deterministic open-ended cell, wire, and terminal transitions.
+
+        Args:
+            state: Value for ``state``.
+
+        Returns:
+            Computed result for this callable.
+        """
         typed_state = _coerce_state(state)
         transitions: list[GrammarTransition[BatteryCircuitState]] = []
         frontier = candidate_frontier_coordinates_from_cells(typed_state.cells, self.requirements)
@@ -277,7 +328,24 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
         use_negative_as_pack_terminal: bool = False,
         use_positive_as_pack_terminal: bool = False,
     ) -> BatteryCircuitState:
-        """Add one new connected cell at a free physical coordinate."""
+        """Add one new connected cell at a free physical coordinate.
+
+        Args:
+            state: Value for ``state``.
+            x: Value for ``x``.
+            y: Value for ``y``.
+            z: Value for ``z``.
+            connect_negative_to_terminal_id: Identifier for connect negative to terminal.
+            connect_positive_to_terminal_id: Identifier for connect positive to terminal.
+            use_negative_as_pack_terminal: Value for ``use_negative_as_pack_terminal``.
+            use_positive_as_pack_terminal: Value for ``use_positive_as_pack_terminal``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         connections = list(typed_state.connections)
@@ -361,7 +429,18 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
         )
 
     def remove_cell(self, state: BatteryCircuitState, *, cell_id: int) -> BatteryCircuitState:
-        """Remove one existing cell and any incident interconnects."""
+        """Remove one existing cell and any incident interconnects.
+
+        Args:
+            state: Value for ``state``.
+            cell_id: Identifier for cell.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         connections = list(typed_state.connections)
@@ -407,7 +486,21 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
         y: int,
         z: int,
     ) -> BatteryCircuitState:
-        """Move one existing cell to a new coordinate."""
+        """Move one existing cell to a new coordinate.
+
+        Args:
+            state: Value for ``state``.
+            cell_id: Identifier for cell.
+            x: Value for ``x``.
+            y: Value for ``y``.
+            z: Value for ``z``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         connections = list(typed_state.connections)
@@ -449,7 +542,19 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
         from_terminal_id: int,
         to_terminal_id: int,
     ) -> BatteryCircuitState:
-        """Add one interconnect between two existing terminals."""
+        """Add one interconnect between two existing terminals.
+
+        Args:
+            state: Value for ``state``.
+            from_terminal_id: Identifier for from terminal.
+            to_terminal_id: Identifier for to terminal.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         connections = list(typed_state.connections)
@@ -478,7 +583,18 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
         )
 
     def remove_connection(self, state: BatteryCircuitState, *, connection_id: int) -> BatteryCircuitState:
-        """Remove one existing interconnect."""
+        """Remove one existing interconnect.
+
+        Args:
+            state: Value for ``state``.
+            connection_id: Identifier for connection.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         connections = list(typed_state.connections)
@@ -499,7 +615,19 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
         positive_terminal_id: int,
         negative_terminal_id: int,
     ) -> BatteryCircuitState:
-        """Select the explicit output terminals for the pack."""
+        """Select the explicit output terminals for the pack.
+
+        Args:
+            state: Value for ``state``.
+            positive_terminal_id: Identifier for positive terminal.
+            negative_terminal_id: Identifier for negative terminal.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         cells = list(typed_state.cells)
         connections = list(typed_state.connections)
@@ -516,7 +644,14 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
         )
 
     def evaluate(self, state: object) -> BatteryCircuitEvaluation:
-        """Evaluate one explicit open-ended battery circuit."""
+        """Evaluate one explicit open-ended battery circuit.
+
+        Args:
+            state: Value for ``state``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return self.evaluate_circuit_state(_coerce_state(state))
 
 

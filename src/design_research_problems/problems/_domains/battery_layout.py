@@ -111,17 +111,29 @@ class BatteryCoordinateLike(Protocol):
 
     @property
     def x(self) -> int:
-        """Return the grid x-coordinate."""
+        """Return the grid x-coordinate.
+
+        Returns:
+            Computed result for this callable.
+        """
         ...
 
     @property
     def y(self) -> int:
-        """Return the grid y-coordinate."""
+        """Return the grid y-coordinate.
+
+        Returns:
+            Computed result for this callable.
+        """
         ...
 
     @property
     def z(self) -> int:
-        """Return the grid z-coordinate."""
+        """Return the grid z-coordinate.
+
+        Returns:
+            Computed result for this callable.
+        """
         ...
 
 
@@ -130,7 +142,11 @@ class BatteryStateWithCells(Protocol):
 
     @property
     def cells(self) -> tuple[BatteryCoordinateLike, ...]:
-        """Return all battery cell placements."""
+        """Return all battery cell placements.
+
+        Returns:
+            Computed result for this callable.
+        """
         ...
 
 
@@ -160,14 +176,28 @@ DEFAULT_INTERCONNECT_RESISTANCE_OHM = 1.0e-4
 
 
 def coordinate_key(cell: BatteryCoordinateLike) -> tuple[int, int, int]:
-    """Return the physical coordinate key for one cell."""
+    """Return the physical coordinate key for one cell.
+
+    Args:
+        cell: Value for ``cell``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return (cell.x, cell.y, cell.z)
 
 
 def sort_cell_placements(
     cells: tuple[BatteryCellPlacement, ...] | list[BatteryCellPlacement],
 ) -> tuple[BatteryCellPlacement, ...]:
-    """Return cells sorted by logical slot and then coordinate."""
+    """Return cells sorted by logical slot and then coordinate.
+
+    Args:
+        cells: Value for ``cells``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return tuple(
         sorted(
             cells,
@@ -177,7 +207,14 @@ def sort_cell_placements(
 
 
 def next_cell_id(cells: Iterable[BatteryCellPlacement]) -> int:
-    """Return the next stable cell identifier."""
+    """Return the next stable cell identifier.
+
+    Args:
+        cells: Value for ``cells``.
+
+    Returns:
+        Computed result for this callable.
+    """
     next_id = 0
     for cell in cells:
         next_id = max(next_id, cell.cell_id + 1)
@@ -185,12 +222,26 @@ def next_cell_id(cells: Iterable[BatteryCellPlacement]) -> int:
 
 
 def occupied_coordinates(cells: Iterable[BatteryCoordinateLike]) -> set[tuple[int, int, int]]:
-    """Return all occupied grid coordinates."""
+    """Return all occupied grid coordinates.
+
+    Args:
+        cells: Value for ``cells``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return {coordinate_key(cell) for cell in cells}
 
 
 def grid_index_limits(requirements: BatteryRequirements) -> tuple[int, int, int]:
-    """Return the maximum in-bounds grid indices allowed by the benchmark envelope."""
+    """Return the maximum in-bounds grid indices allowed by the benchmark envelope.
+
+    Args:
+        requirements: Value for ``requirements``.
+
+    Returns:
+        Computed result for this callable.
+    """
     max_x = floor(
         (requirements.max_width_mm - CELL_SPEC_18650.diameter_mm - (2.0 * SAFETY_MARGIN_MM)) / HEX_X_SPACING_MM
     )
@@ -208,7 +259,15 @@ def coordinate_is_in_bounds(
     coordinate: tuple[int, int, int],
     requirements: BatteryRequirements,
 ) -> bool:
-    """Return whether one coordinate lies inside the legal grid envelope."""
+    """Return whether one coordinate lies inside the legal grid envelope.
+
+    Args:
+        coordinate: Value for ``coordinate``.
+        requirements: Value for ``requirements``.
+
+    Returns:
+        Computed result for this callable.
+    """
     x_value, y_value, z_value = coordinate
     if x_value < 0 or y_value < 0 or z_value < 0:
         return False
@@ -217,7 +276,14 @@ def coordinate_is_in_bounds(
 
 
 def coordinate_to_physical_mm(coordinate: tuple[int, int, int]) -> tuple[float, float, float]:
-    """Convert one grid coordinate into the physical center position in millimeters."""
+    """Convert one grid coordinate into the physical center position in millimeters.
+
+    Args:
+        coordinate: Value for ``coordinate``.
+
+    Returns:
+        Computed result for this callable.
+    """
     x_value, y_value, z_value = coordinate
     x_offset = HEX_OFFSET_X_MM if (y_value % 2 == 1) else 0.0
     physical_x = (x_value * HEX_X_SPACING_MM) + x_offset + SAFETY_MARGIN_MM + CELL_RADIUS_MM
@@ -230,7 +296,15 @@ def candidate_frontier_coordinates_from_cells(
     cells: Iterable[BatteryCoordinateLike],
     requirements: BatteryRequirements,
 ) -> tuple[tuple[int, int, int], ...]:
-    """Return a finite deterministic set of free coordinates near the occupied region."""
+    """Return a finite deterministic set of free coordinates near the occupied region.
+
+    Args:
+        cells: Value for ``cells``.
+        requirements: Value for ``requirements``.
+
+    Returns:
+        Computed result for this callable.
+    """
     cells_tuple = tuple(cells)
     occupied = occupied_coordinates(cells_tuple)
     max_grid_x, max_grid_y, max_grid_z = grid_index_limits(requirements)
@@ -255,12 +329,27 @@ def candidate_frontier_coordinates(
     state: BatteryStateWithCells,
     requirements: BatteryRequirements,
 ) -> tuple[tuple[int, int, int], ...]:
-    """Return frontier coordinates for any battery state with cells."""
+    """Return frontier coordinates for any battery state with cells.
+
+    Args:
+        state: Value for ``state``.
+        requirements: Value for ``requirements``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return candidate_frontier_coordinates_from_cells(state.cells, requirements)
 
 
 def compute_layout_summary(cells: Iterable[BatteryCoordinateLike]) -> BatteryLayoutSummary:
-    """Compute deterministic layout, cost, and coarse inertial metrics."""
+    """Compute deterministic layout, cost, and coarse inertial metrics.
+
+    Args:
+        cells: Value for ``cells``.
+
+    Returns:
+        Computed result for this callable.
+    """
     cells_tuple = tuple(cells)
     if not cells_tuple:
         return BatteryLayoutSummary(

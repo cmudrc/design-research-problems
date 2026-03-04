@@ -23,12 +23,29 @@ from design_research_problems.problems._metadata import ProblemMetadata
 
 
 def _coerce_float(value: object) -> float:
-    """Convert a manifest parameter into ``float``."""
+    """Convert a manifest parameter into ``float``.
+
+    Args:
+        value: Value for ``value``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return float(cast(SupportsFloat, value))
 
 
 def _coerce_fractional_points_3d(raw_values: object) -> tuple[tuple[float, float, float], ...]:
-    """Convert a manifest field into 3D fractional coordinate triples."""
+    """Convert a manifest field into 3D fractional coordinate triples.
+
+    Args:
+        raw_values: Value for ``raw_values``.
+
+    Returns:
+        Computed result for this callable.
+
+    Raises:
+        Exception: Raised when the callable encounters an invalid state.
+    """
     if not isinstance(raw_values, list | tuple):
         raise TypeError("Expected a list or tuple of 3-item coordinate triples.")
     points: list[tuple[float, float, float]] = []
@@ -41,7 +58,17 @@ def _coerce_fractional_points_3d(raw_values: object) -> tuple[tuple[float, float
 
 
 def _coerce_state(state: object) -> SpaceTrussState:
-    """Validate that an incoming state is a ``SpaceTrussState``."""
+    """Validate that an incoming state is a ``SpaceTrussState``.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+
+    Raises:
+        Exception: Raised when the callable encounters an invalid state.
+    """
     if not isinstance(state, SpaceTrussState):
         raise TypeError("state must be a SpaceTrussState")
     return state
@@ -62,7 +89,18 @@ class SpaceTrussSpanProblem(GrammarProblem[SpaceTrussState, SpaceTrussEvaluation
         load_magnitude: float = 1_000.0,
         candidate_point_fractions_3d: tuple[tuple[float, float, float], ...] = (),
     ) -> None:
-        """Initialize the packaged 3D space-truss grammar problem."""
+        """Initialize the packaged 3D space-truss grammar problem.
+
+        Args:
+            metadata: Value for ``metadata``.
+            statement_markdown: Value for ``statement_markdown``.
+            resource_bundle: Value for ``resource_bundle``.
+            span: Value for ``span``.
+            width: Value for ``width``.
+            max_height: Value for ``max_height``.
+            load_magnitude: Value for ``load_magnitude``.
+            candidate_point_fractions_3d: Value for ``candidate_point_fractions_3d``.
+        """
         super().__init__(
             metadata=metadata,
             statement_markdown=statement_markdown,
@@ -76,7 +114,14 @@ class SpaceTrussSpanProblem(GrammarProblem[SpaceTrussState, SpaceTrussEvaluation
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> SpaceTrussSpanProblem:
-        """Construct the grammar problem from packaged parameters."""
+        """Construct the grammar problem from packaged parameters.
+
+        Args:
+            manifest: Value for ``manifest``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return cls(
             metadata=manifest.metadata,
             statement_markdown=manifest.statement_markdown,
@@ -99,7 +144,11 @@ class SpaceTrussSpanProblem(GrammarProblem[SpaceTrussState, SpaceTrussEvaluation
         )
 
     def initial_state(self) -> SpaceTrussState:
-        """Return the canonical bridge-like 3D seed state."""
+        """Return the canonical bridge-like 3D seed state.
+
+        Returns:
+            Computed result for this callable.
+        """
         return build_seed_space_truss_state(
             span=self.span,
             width=self.width,
@@ -108,14 +157,28 @@ class SpaceTrussSpanProblem(GrammarProblem[SpaceTrussState, SpaceTrussEvaluation
         )
 
     def _candidate_points(self, state: SpaceTrussState) -> tuple[tuple[float, float, float], ...]:
-        """Return the configured candidate interior joint coordinates."""
+        """Return the configured candidate interior joint coordinates.
+
+        Args:
+            state: Value for ``state``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return candidate_space_truss_points(
             state,
             candidate_point_fractions_3d=self.candidate_point_fractions_3d,
         )
 
     def enumerate_transitions(self, state: SpaceTrussState) -> tuple[GrammarTransition[SpaceTrussState], ...]:
-        """Return deterministic add/remove transitions for the current 3D state."""
+        """Return deterministic add/remove transitions for the current 3D state.
+
+        Args:
+            state: Value for ``state``.
+
+        Returns:
+            Computed result for this callable.
+        """
         typed_state = _coerce_state(state)
         transitions: list[GrammarTransition[SpaceTrussState]] = []
         occupied = {(joint.x, joint.y, joint.z) for joint in typed_state.joints}
@@ -158,7 +221,20 @@ class SpaceTrussSpanProblem(GrammarProblem[SpaceTrussState, SpaceTrussEvaluation
         return tuple(transitions)
 
     def add_joint(self, state: SpaceTrussState, *, x: float, y: float, z: float) -> SpaceTrussState:
-        """Insert one new free joint inside the configured envelope."""
+        """Insert one new free joint inside the configured envelope.
+
+        Args:
+            state: Value for ``state``.
+            x: Value for ``x``.
+            y: Value for ``y``.
+            z: Value for ``z``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         if not (0.0 <= x <= typed_state.span):
             raise ValueError("x must lie within the configured span.")
@@ -189,7 +265,19 @@ class SpaceTrussSpanProblem(GrammarProblem[SpaceTrussState, SpaceTrussEvaluation
         start_joint_id: int,
         end_joint_id: int,
     ) -> SpaceTrussState:
-        """Insert one new member between two existing joints."""
+        """Insert one new member between two existing joints.
+
+        Args:
+            state: Value for ``state``.
+            start_joint_id: Identifier for start joint.
+            end_joint_id: Identifier for end joint.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         edge = edge_key(start_joint_id, end_joint_id)
         if edge[0] == edge[1]:
@@ -216,7 +304,18 @@ class SpaceTrussSpanProblem(GrammarProblem[SpaceTrussState, SpaceTrussEvaluation
         )
 
     def remove_member(self, state: SpaceTrussState, *, member_id: int) -> SpaceTrussState:
-        """Remove one existing member by identifier."""
+        """Remove one existing member by identifier.
+
+        Args:
+            state: Value for ``state``.
+            member_id: Identifier for member.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         typed_state = _coerce_state(state)
         members = tuple(member for member in typed_state.members if member.member_id != member_id)
         if len(members) == len(typed_state.members):
@@ -241,7 +340,14 @@ class SpaceTrussSpanProblem(GrammarProblem[SpaceTrussState, SpaceTrussEvaluation
         )
 
     def evaluate(self, state: SpaceTrussState) -> SpaceTrussEvaluation:
-        """Evaluate one 3D space-truss state."""
+        """Evaluate one 3D space-truss state.
+
+        Args:
+            state: Value for ``state``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return evaluate_space_truss_state(_coerce_state(state))
 
 

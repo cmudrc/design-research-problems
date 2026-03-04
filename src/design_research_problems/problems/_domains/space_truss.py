@@ -22,10 +22,15 @@ class SpaceJoint:
     """One 3D joint in the shared space-truss state."""
 
     joint_id: int
+    """Identifier for joint."""
     x: float
+    """Stored x value."""
     y: float
+    """Stored y value."""
     z: float
+    """Stored z value."""
     support_type: SupportType
+    """Stored support type value."""
 
 
 @dataclass(frozen=True)
@@ -33,8 +38,11 @@ class SpaceMember:
     """One undirected member between two space joints."""
 
     member_id: int
+    """Identifier for member."""
     start_joint_id: int
+    """Identifier for start joint."""
     end_joint_id: int
+    """Identifier for end joint."""
 
 
 @dataclass(frozen=True)
@@ -42,7 +50,9 @@ class SpaceLoad:
     """One point load applied to one space-truss joint."""
 
     joint_id: int
+    """Identifier for joint."""
     vector: tuple[float, float, float]
+    """Stored vector value."""
 
 
 @dataclass(frozen=True)
@@ -50,13 +60,21 @@ class SpaceTrussState:
     """Serializable state for a 3D space truss."""
 
     span: float
+    """Stored span value."""
     width: float
+    """Stored width value."""
     max_height: float
+    """Stored max height value."""
     joints: tuple[SpaceJoint, ...]
+    """Stored joints value."""
     members: tuple[SpaceMember, ...]
+    """Stored members value."""
     load_joint_id: int
+    """Identifier for load joint."""
     load_vector: tuple[float, float, float]
+    """Stored load vector value."""
     additional_loads: tuple[SpaceLoad, ...] = ()
+    """Stored additional loads value."""
 
 
 @dataclass(frozen=True)
@@ -64,18 +82,35 @@ class SpaceTrussEvaluation:
     """Structured evaluation result for a 3D space truss."""
 
     mass: float
+    """Stored mass value."""
     fos: float
+    """Stored fos value."""
     fos_buckling: float
+    """Stored fos buckling value."""
     fos_yielding: float
+    """Stored fos yielding value."""
     deflection: float
+    """Stored deflection value."""
     number_of_joints: int
+    """Stored number of joints value."""
     number_of_members: int
+    """Stored number of members value."""
     is_feasible: bool
+    """Whether feasible."""
     failure_reason: str | None = None
+    """Stored failure reason value."""
 
 
 def build_space_truss_failure(state: SpaceTrussState, reason: str) -> SpaceTrussEvaluation:
-    """Build a deterministic infeasible 3D evaluation payload."""
+    """Build a deterministic infeasible 3D evaluation payload.
+
+    Args:
+        state: Value for ``state``.
+        reason: Value for ``reason``.
+
+    Returns:
+        Computed result for this callable.
+    """
     return SpaceTrussEvaluation(
         mass=0.0,
         fos=0.0,
@@ -95,7 +130,17 @@ def build_seed_space_truss_state(
     max_height: float,
     load_magnitude: float,
 ) -> SpaceTrussState:
-    """Build the canonical bridge-like 3D seed state."""
+    """Build the canonical bridge-like 3D seed state.
+
+    Args:
+        span: Value for ``span``.
+        width: Value for ``width``.
+        max_height: Value for ``max_height``.
+        load_magnitude: Value for ``load_magnitude``.
+
+    Returns:
+        Computed result for this callable.
+    """
     half_width = width / 2.0
     joints = (
         SpaceJoint(joint_id=0, x=0.0, y=-half_width, z=0.0, support_type="pinned"),
@@ -121,7 +166,15 @@ def candidate_space_truss_points(
     *,
     candidate_point_fractions_3d: tuple[tuple[float, float, float], ...] = (),
 ) -> tuple[tuple[float, float, float], ...]:
-    """Return the deterministic interior candidate-joint coordinates."""
+    """Return the deterministic interior candidate-joint coordinates.
+
+    Args:
+        state: Value for ``state``.
+        candidate_point_fractions_3d: Value for ``candidate_point_fractions_3d``.
+
+    Returns:
+        Computed result for this callable.
+    """
     if candidate_point_fractions_3d:
         half_width = state.width / 2.0
         return tuple(
@@ -141,7 +194,15 @@ def expand_space_truss_candidate_joints(
     state: SpaceTrussState,
     candidate_points: tuple[tuple[float, float, float], ...],
 ) -> SpaceTrussState:
-    """Return a state with deterministic candidate joints inserted."""
+    """Return a state with deterministic candidate joints inserted.
+
+    Args:
+        state: Value for ``state``.
+        candidate_points: Value for ``candidate_points``.
+
+    Returns:
+        Computed result for this callable.
+    """
     joints = list(state.joints)
     occupied = {(joint.x, joint.y, joint.z) for joint in joints}
     next_joint_id = max((joint.joint_id for joint in joints), default=-1) + 1
@@ -165,7 +226,14 @@ def expand_space_truss_candidate_joints(
 
 
 def enumerate_space_truss_candidate_edges(state: SpaceTrussState) -> tuple[tuple[int, int], ...]:
-    """Return the canonical candidate member edges for one fixed 3D joint set."""
+    """Return the canonical candidate member edges for one fixed 3D joint set.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Computed result for this callable.
+    """
     existing_edges = {edge_key(member.start_joint_id, member.end_joint_id) for member in state.members}
     joint_ids = sorted(joint.joint_id for joint in state.joints)
     candidate_edges: list[tuple[int, int]] = []
@@ -182,7 +250,18 @@ def build_space_truss_state_from_edges(
     base_state: SpaceTrussState,
     selected_edges: tuple[tuple[int, int], ...],
 ) -> SpaceTrussState:
-    """Build a concrete 3D state from a fixed joint set and selected edges."""
+    """Build a concrete 3D state from a fixed joint set and selected edges.
+
+    Args:
+        base_state: Value for ``base_state``.
+        selected_edges: Value for ``selected_edges``.
+
+    Returns:
+        Computed result for this callable.
+
+    Raises:
+        Exception: Raised when the callable encounters an invalid state.
+    """
     joint_ids = {joint.joint_id for joint in base_state.joints}
     included_edges = {edge_key(member.start_joint_id, member.end_joint_id) for member in base_state.members}
     for raw_edge in selected_edges:

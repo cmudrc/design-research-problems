@@ -49,7 +49,14 @@ class BatteryGridSizingProblem(OptimizationProblem):
         resource_bundle: PackageResourceBundle | None = None,
         requirements: BatteryRequirements | None = None,
     ) -> None:
-        """Initialize the packaged battery-grid sizing instance."""
+        """Initialize the packaged battery-grid sizing instance.
+
+        Args:
+            metadata: Value for ``metadata``.
+            statement_markdown: Value for ``statement_markdown``.
+            resource_bundle: Value for ``resource_bundle``.
+            requirements: Value for ``requirements``.
+        """
         super().__init__(
             metadata=metadata,
             statement_markdown=statement_markdown,
@@ -82,7 +89,14 @@ class BatteryGridSizingProblem(OptimizationProblem):
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> BatteryGridSizingProblem:
-        """Construct an instance from packaged manifest data."""
+        """Construct an instance from packaged manifest data.
+
+        Args:
+            manifest: Value for ``manifest``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return cls(
             metadata=manifest.metadata,
             statement_markdown=manifest.statement_markdown,
@@ -91,7 +105,14 @@ class BatteryGridSizingProblem(OptimizationProblem):
         )
 
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
-        """Return a deterministic near-feasible starting point."""
+        """Return a deterministic near-feasible starting point.
+
+        Args:
+            seed: Value for ``seed``.
+
+        Returns:
+            Computed result for this callable.
+        """
         baseline = self._baseline_initial_solution()
         if seed is None:
             return baseline
@@ -114,13 +135,27 @@ class BatteryGridSizingProblem(OptimizationProblem):
         return baseline
 
     def objective(self, variables: NDArray[numpy.float64]) -> float:
-        """Return deterministic pack cost with a fixed infeasibility penalty."""
+        """Return deterministic pack cost with a fixed infeasibility penalty.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         evaluation = self._evaluation_from_variables(variables)
         total_violation, _ = series_parallel_requirement_violation(evaluation, self.requirements)
         return evaluation.design_cost + (_INFEASIBILITY_PENALTY_SCALE * total_violation)
 
     def objective_components(self, variables: NDArray[numpy.float64]) -> dict[str, float]:
-        """Return the main reported pack metrics for one design vector."""
+        """Return the main reported pack metrics for one design vector.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         evaluation = self._evaluation_from_variables(variables)
         return {
             "cost_usd": evaluation.design_cost,
@@ -136,7 +171,19 @@ class BatteryGridSizingProblem(OptimizationProblem):
         seed: int | None = None,
         maxiter: int = 200,
     ) -> OptimizationResult:
-        """Search the discrete ``S x P`` grid in deterministic nearest-first order."""
+        """Search the discrete ``S x P`` grid in deterministic nearest-first order.
+
+        Args:
+            initial_solution: Value for ``initial_solution``.
+            seed: Value for ``seed``.
+            maxiter: Value for ``maxiter``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         if initial_solution is None:
             anchor = self.generate_initial_solution(seed=seed)
         else:
@@ -192,14 +239,31 @@ class BatteryGridSizingProblem(OptimizationProblem):
         )
 
     def _normalize_vector(self, variables: NDArray[numpy.float64]) -> NDArray[numpy.float64]:
-        """Return a clipped two-variable vector."""
+        """Return a clipped two-variable vector.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+
+        Raises:
+            Exception: Raised when the callable encounters an invalid state.
+        """
         normalized = numpy.array(variables, dtype=float, copy=True)
         if normalized.shape != (2,):
             raise ValueError(f"Expected a 2-variable design vector, received shape {normalized.shape!r}.")
         return numpy.array(numpy.clip(normalized, self.bounds.lb, self.bounds.ub), dtype=float, copy=False)
 
     def _normalized_counts(self, variables: NDArray[numpy.float64]) -> tuple[int, int]:
-        """Return the rounded, clipped integer counts represented by ``variables``."""
+        """Return the rounded, clipped integer counts represented by ``variables``.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         normalized = self._normalize_vector(variables)
         series_count = round(float(normalized[0]))
         parallel_count = round(float(normalized[1]))
@@ -220,11 +284,25 @@ class BatteryGridSizingProblem(OptimizationProblem):
         return build_canonical_series_parallel_state(series_count, parallel_count)
 
     def _state_from_variables(self, variables: NDArray[numpy.float64]) -> SeriesParallelBatteryState:
-        """Translate the optimization vector into the canonical rectangular battery state."""
+        """Translate the optimization vector into the canonical rectangular battery state.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return self.decode_candidate(variables)
 
     def _evaluate_circuit_state(self, state: BatteryCircuitState) -> BatteryCircuitEvaluation:
-        """Evaluate one explicit battery circuit using the shared backend."""
+        """Evaluate one explicit battery circuit using the shared backend.
+
+        Args:
+            state: Value for ``state``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return evaluate_battery_circuit(
             state=state,
             requirements=self.requirements,
@@ -232,7 +310,15 @@ class BatteryGridSizingProblem(OptimizationProblem):
         )
 
     def _evaluation_for_counts(self, series_count: int, parallel_count: int) -> SeriesParallelBatteryEvaluation:
-        """Return the cached series-parallel evaluation for one integer ``S x P`` design."""
+        """Return the cached series-parallel evaluation for one integer ``S x P`` design.
+
+        Args:
+            series_count: Value for ``series_count``.
+            parallel_count: Value for ``parallel_count``.
+
+        Returns:
+            Computed result for this callable.
+        """
         key = (series_count, parallel_count)
         cached = self._evaluation_cache.get(key)
         if cached is not None:
@@ -248,18 +334,33 @@ class BatteryGridSizingProblem(OptimizationProblem):
         return evaluation
 
     def _evaluation_from_variables(self, variables: NDArray[numpy.float64]) -> SeriesParallelBatteryEvaluation:
-        """Return the shared series-parallel evaluation for the rounded design vector."""
+        """Return the shared series-parallel evaluation for the rounded design vector.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         series_count, parallel_count = self._normalized_counts(variables)
         return self._evaluation_for_counts(series_count, parallel_count)
 
     def _default_series_count(self) -> int:
-        """Return the nominal series count nearest the target pack voltage."""
+        """Return the nominal series count nearest the target pack voltage.
+
+        Returns:
+            Computed result for this callable.
+        """
         target = self.requirements.target_voltage_v / CELL_SPEC_18650.nominal_voltage_v
         rounded = round(target)
         return max(1, min(rounded, self._max_series_count()))
 
     def _baseline_initial_solution(self) -> NDArray[numpy.float64]:
-        """Return the deterministic smallest feasible rectangular baseline."""
+        """Return the deterministic smallest feasible rectangular baseline.
+
+        Returns:
+            Computed result for this callable.
+        """
         target_series = self._default_series_count()
         max_parallel = self._max_parallel_count()
         for parallel_count in range(1, max_parallel + 1):
@@ -269,41 +370,98 @@ class BatteryGridSizingProblem(OptimizationProblem):
         return numpy.array([float(target_series), 1.0], dtype=float)
 
     def _max_series_count(self) -> int:
-        """Return the largest legal series count under the configured bounds."""
+        """Return the largest legal series count under the configured bounds.
+
+        Returns:
+            Computed result for this callable.
+        """
         return round(float(self.bounds.ub[0]))
 
     def _max_parallel_count(self) -> int:
-        """Return the largest legal parallel count under the configured bounds."""
+        """Return the largest legal parallel count under the configured bounds.
+
+        Returns:
+            Computed result for this callable.
+        """
         return round(float(self.bounds.ub[1]))
 
     def _width_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the remaining width margin in millimeters."""
+        """Return the remaining width margin in millimeters.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return self.requirements.max_width_mm - self._evaluation_from_variables(variables).design_width
 
     def _depth_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the remaining depth margin in millimeters."""
+        """Return the remaining depth margin in millimeters.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return self.requirements.max_depth_mm - self._evaluation_from_variables(variables).design_depth
 
     def _height_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the remaining height margin in millimeters."""
+        """Return the remaining height margin in millimeters.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return self.requirements.max_height_mm - self._evaluation_from_variables(variables).design_height
 
     def _voltage_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the allowed remaining voltage error margin in volts."""
+        """Return the allowed remaining voltage error margin in volts.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         evaluation = self._evaluation_from_variables(variables)
         voltage_error = abs(evaluation.design_voltage - self.requirements.target_voltage_v)
         return self.requirements.voltage_tolerance_v - voltage_error
 
     def _capacity_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the remaining capacity margin in amp-hours."""
+        """Return the remaining capacity margin in amp-hours.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return self._evaluation_from_variables(variables).design_capacity - self.requirements.minimum_capacity_ah
 
     def _current_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the remaining analytic current margin in amps."""
+        """Return the remaining analytic current margin in amps.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return self._evaluation_from_variables(variables).analytic_current_limit - self.requirements.minimum_current_a
 
     def _backend_feasibility_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return a binary margin indicating whether the shared backend accepted the design."""
+        """Return a binary margin indicating whether the shared backend accepted the design.
+
+        Args:
+            variables: Value for ``variables``.
+
+        Returns:
+            Computed result for this callable.
+        """
         return 1.0 if self._evaluation_from_variables(variables).is_feasible else -1.0
 
 

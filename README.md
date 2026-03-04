@@ -28,6 +28,7 @@ The first catalog includes:
 
 - 40 ideation-focused text prompts
 - `battery_pack_18650_open_ended_capacity_max` for explicit 18650 layout-and-wiring capacity maximization under the shared battery backend
+- `gmpb_default_dynamic_min` for a stateful dynamic minimization wrapper around the Generalized Moving Peaks Benchmark
 - `pill_capsule_min_area` for constrained continuous optimization
 - `battery_pack_18650_series_parallel_cost_min` for fixed-topology rectangular 18650 pack sizing under the shared battery backend
 - `planar_truss_span_mass_min`, `planar_truss_span_deflection_min`, and `planar_truss_span_fos_max` for fixed-joint planar truss structural optimization under real `trussme` evaluation
@@ -66,6 +67,8 @@ pip install "design-research-problems[solvers]"
 The smooth continuous benchmarks continue to use SciPy baselines, while the
 open-ended battery co-design optimizer will automatically prefer `pymoo`, then
 `nevergrad`, and finally fall back to the built-in deterministic local search.
+The GMPB wrapper instead uses a simple random-search baseline because each
+evaluation advances a dynamic benchmark state.
 
 Then inspect the catalog directly from the installed package:
 

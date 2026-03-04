@@ -50,7 +50,15 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         requirements: BatteryRequirements | None = None,
         max_cell_count: int = 24,
     ) -> None:
-        """Initialize the packaged open-ended capacity-maximization benchmark."""
+        """Initialize the packaged open-ended capacity-maximization benchmark.
+
+        Args:
+            metadata: Shared packaged metadata.
+            statement_markdown: Human-readable problem statement.
+            resource_bundle: Optional package-resource loader.
+            requirements: Optional battery-pack requirements override.
+            max_cell_count: Maximum allowed cell count in generated states.
+        """
         super().__init__(
             metadata=metadata,
             statement_markdown=statement_markdown,
@@ -87,7 +95,14 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> BatteryOpenEndedCapacityMaxProblem:
-        """Construct an instance from packaged manifest data."""
+        """Construct an instance from packaged manifest data.
+
+        Args:
+            manifest: Parsed packaged manifest.
+
+        Returns:
+            Initialized open-ended battery optimization problem.
+        """
         return cls(
             metadata=manifest.metadata,
             statement_markdown=manifest.statement_markdown,
@@ -97,7 +112,14 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         )
 
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
-        """Return the canonical 4S6P build program, optionally with seeded tail noise."""
+        """Return the canonical 4S6P build program, optionally with seeded tail noise.
+
+        Args:
+            seed: Optional seed used to randomize the unused tail tokens.
+
+        Returns:
+            Fixed-length transition-program vector.
+        """
         baseline = numpy.array(self._baseline_program, dtype=float)
         if seed is None:
             return baseline
@@ -109,11 +131,25 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         return baseline
 
     def decode_candidate(self, variables: NDArray[numpy.float64]) -> BatteryCircuitState:
-        """Decode one transition program into an explicit battery circuit state."""
+        """Decode one transition program into an explicit battery circuit state.
+
+        Args:
+            variables: Candidate transition-program vector.
+
+        Returns:
+            Decoded explicit battery-circuit state.
+        """
         return self._state_from_genes(self._normalized_genes(variables))
 
     def objective_components(self, variables: NDArray[numpy.float64]) -> dict[str, float]:
-        """Return the main reported performance metrics for one transition program."""
+        """Return the main reported performance metrics for one transition program.
+
+        Args:
+            variables: Candidate transition-program vector.
+
+        Returns:
+            Reported scalar metrics for the decoded battery design.
+        """
         evaluation = self._evaluation_from_variables(variables)
         return {
             "delivered_capacity_ah": (
@@ -128,7 +164,14 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         }
 
     def objective(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the scalarized capacity-maximization objective."""
+        """Return the scalarized capacity-maximization objective.
+
+        Args:
+            variables: Candidate transition-program vector.
+
+        Returns:
+            Scalar minimization objective for the candidate.
+        """
         evaluation = self._evaluation_from_variables(variables)
         delivered_capacity = 0.0 if evaluation.delivered_capacity_ah is None else evaluation.delivered_capacity_ah
         penalty = _INFEASIBILITY_PENALTY_SCALE * self.constraint_violation(self._normalize_vector(variables))
@@ -146,7 +189,20 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         maxiter: int = 200,
         solver_backend: str = "auto",
     ) -> OptimizationResult:
-        """Solve the transition-program search with optional external backends."""
+        """Solve the transition-program search with optional external backends.
+
+        Args:
+            initial_solution: Optional starting transition program.
+            seed: Optional random seed for stochastic backends.
+            maxiter: Maximum optimization iterations or evaluations.
+            solver_backend: Requested solver backend or ``"auto"``.
+
+        Returns:
+            Best optimization result returned by the selected backend.
+
+        Raises:
+            ValueError: If ``solver_backend`` is unsupported.
+        """
         start = (
             self.generate_initial_solution(seed=seed)
             if initial_solution is None
@@ -204,7 +260,18 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         seed: int | None,
         maxiter: int,
     ) -> OptimizationResult:
-        """Dispatch to one concrete solver backend."""
+        """Dispatch to one concrete solver backend.
+
+        Args:
+            solver_backend: Concrete backend name.
+            initial_solution: Starting transition program.
+            initial_solution_supplied: Whether the caller explicitly supplied the start.
+            seed: Optional random seed.
+            maxiter: Optimization budget.
+
+        Returns:
+            Optimization result from the selected backend.
+        """
         if solver_backend == "pymoo":
             return self._solve_with_pymoo(
                 initial_solution=initial_solution,
@@ -227,7 +294,15 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         initial_solution: NDArray[numpy.float64],
         maxiter: int,
     ) -> OptimizationResult:
-        """Run the built-in deterministic hill-climbing baseline."""
+        """Run the built-in deterministic hill-climbing baseline.
+
+        Args:
+            initial_solution: Starting transition program.
+            maxiter: Maximum hill-climbing sweeps.
+
+        Returns:
+            Best result found by the local baseline.
+        """
         current = initial_solution.copy()
         current_score = self.objective(current)
         nfev = 1
@@ -269,10 +344,25 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         seed: int | None,
         maxiter: int,
     ) -> OptimizationResult:
-        """Run a mixed-integer `pymoo` genetic baseline when available."""
+        """Run a mixed-integer `pymoo` genetic baseline when available.
+
+        Args:
+            initial_solution: Starting transition program.
+            initial_solution_supplied: Whether the caller explicitly supplied the start.
+            seed: Optional random seed.
+            maxiter: Optimization budget.
+
+        Returns:
+            Best result found by the pymoo baseline.
+        """
         elementwise_problem_cls, ga_cls, rounding_repair_cls, minimize = self._import_pymoo_namespace()
 
         def _problem_init(instance: object) -> None:
+            """Initialize one pymoo elementwise problem wrapper.
+
+            Args:
+                instance: Dynamically created pymoo problem instance.
+            """
             elementwise_problem_cls.__init__(
                 instance,
                 n_var=_TRANSITION_PROGRAM_LENGTH,
@@ -290,6 +380,15 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             *args: object,
             **kwargs: object,
         ) -> None:
+            """Evaluate one transition program for the pymoo adapter.
+
+            Args:
+                instance: Dynamically created pymoo problem instance.
+                x: Candidate transition-program vector.
+                out: Mutable pymoo output mapping.
+                *args: Unused positional adapter arguments.
+                **kwargs: Unused keyword adapter arguments.
+            """
             del instance, args, kwargs
             candidate = self._normalize_vector(numpy.asarray(x, dtype=float))
             out["F"] = self.objective(candidate)
@@ -356,7 +455,17 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         seed: int | None,
         maxiter: int,
     ) -> OptimizationResult:
-        """Run a derivative-free `nevergrad` baseline when available."""
+        """Run a derivative-free `nevergrad` baseline when available.
+
+        Args:
+            initial_solution: Starting transition program.
+            initial_solution_supplied: Whether the caller explicitly supplied the start.
+            seed: Optional random seed.
+            maxiter: Evaluation budget.
+
+        Returns:
+            Best result found by the Nevergrad baseline.
+        """
         nevergrad: Any = self._import_nevergrad_namespace()
         parametrization = (
             nevergrad.p.Array(shape=(_TRANSITION_PROGRAM_LENGTH,))
@@ -409,7 +518,18 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         nfev: int,
         solver_backend: str,
     ) -> OptimizationResult:
-        """Return one normalized optimization result with a backend-specific message."""
+        """Return one normalized optimization result with a backend-specific message.
+
+        Args:
+            x: Candidate transition program.
+            fun: Objective value at ``x``.
+            nit: Iteration count reported by the backend.
+            nfev: Objective evaluations consumed.
+            solver_backend: Backend label used for messaging.
+
+        Returns:
+            Normalized optimization result payload.
+        """
         best_x = self._normalize_vector(x)
         best_fun = float(fun)
         max_violation = self.max_constraint_violation(best_x)
@@ -447,7 +567,15 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         initial_solution: NDArray[numpy.float64],
         initial_solution_supplied: bool,
     ) -> tuple[NDArray[numpy.float64], float, int]:
-        """Return the starting incumbent for optional external solvers."""
+        """Return the starting incumbent for optional external solvers.
+
+        Args:
+            initial_solution: Starting transition program.
+            initial_solution_supplied: Whether the caller explicitly supplied the start.
+
+        Returns:
+            Current incumbent vector, objective, and evaluation count.
+        """
         incumbent = initial_solution.copy()
         incumbent_fun = self.objective(incumbent)
         nfev = 1
@@ -464,7 +592,14 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         return (incumbent, incumbent_fun, nfev)
 
     def _import_pymoo_namespace(self) -> tuple[Any, Any, Any, Any]:
-        """Import the supported `pymoo` classes lazily."""
+        """Import the supported `pymoo` classes lazily.
+
+        Returns:
+            Imported pymoo classes and helper function.
+
+        Raises:
+            MissingOptionalDependencyError: If pymoo is unavailable or incomplete.
+        """
         try:
             elementwise_problem_module = import_module("pymoo.core.problem")
             ga_module = import_module("pymoo.algorithms.soo.nonconvex.ga")
@@ -483,7 +618,14 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         return (elementwise_problem, ga, rounding_repair, minimize)
 
     def _import_nevergrad_namespace(self) -> Any:
-        """Import `nevergrad` lazily for the derivative-free baseline."""
+        """Import `nevergrad` lazily for the derivative-free baseline.
+
+        Returns:
+            Imported ``nevergrad`` module namespace.
+
+        Raises:
+            MissingOptionalDependencyError: If nevergrad is unavailable.
+        """
         try:
             return import_module("nevergrad")
         except ImportError as exc:
@@ -493,7 +635,17 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             ) from exc
 
     def _normalize_vector(self, variables: NDArray[numpy.float64]) -> NDArray[numpy.float64]:
-        """Return a clipped fixed-length transition vector."""
+        """Return a clipped fixed-length transition vector.
+
+        Args:
+            variables: Candidate transition-program vector.
+
+        Returns:
+            Clipped fixed-length transition vector.
+
+        Raises:
+            ValueError: If ``variables`` has the wrong shape.
+        """
         normalized = numpy.array(variables, dtype=float, copy=True)
         if normalized.shape != (_TRANSITION_PROGRAM_LENGTH,):
             raise ValueError(
@@ -502,7 +654,14 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         return numpy.array(numpy.clip(normalized, self.bounds.lb, self.bounds.ub), dtype=float, copy=False)
 
     def _normalized_genes(self, variables: NDArray[numpy.float64]) -> tuple[int, ...]:
-        """Return the rounded integer transition program represented by ``variables``."""
+        """Return the rounded integer transition program represented by ``variables``.
+
+        Args:
+            variables: Candidate transition-program vector.
+
+        Returns:
+            Rounded integer transition genes.
+        """
         normalized = self._normalize_vector(variables)
         return tuple(
             int(
@@ -515,7 +674,14 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         )
 
     def _state_from_genes(self, genes: tuple[int, ...]) -> BatteryCircuitState:
-        """Decode one normalized transition program into a cached explicit state."""
+        """Decode one normalized transition program into a cached explicit state.
+
+        Args:
+            genes: Rounded transition-program genes.
+
+        Returns:
+            Decoded explicit battery-circuit state.
+        """
         cached = self._state_cache.get(genes)
         if cached is not None:
             return cached
@@ -536,7 +702,14 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         return state
 
     def _evaluate_state(self, state: BatteryCircuitState) -> BatteryCircuitEvaluation:
-        """Evaluate one explicit battery state using the shared backend."""
+        """Evaluate one explicit battery state using the shared backend.
+
+        Args:
+            state: Explicit battery-circuit state.
+
+        Returns:
+            Shared-backend evaluation for the state.
+        """
         return evaluate_battery_circuit(
             state=state,
             requirements=self.requirements,
@@ -545,7 +718,14 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         )
 
     def _evaluation_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryCircuitEvaluation:
-        """Return the cached evaluation for one transition program."""
+        """Return the cached evaluation for one transition program.
+
+        Args:
+            variables: Candidate transition-program vector.
+
+        Returns:
+            Cached or freshly computed backend evaluation.
+        """
         genes = self._normalized_genes(variables)
         cached = self._evaluation_cache.get(genes)
         if cached is not None:
@@ -557,7 +737,14 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         return evaluation
 
     def _build_canonical_seed_program(self) -> tuple[int, ...]:
-        """Return the exact public-transition 4S6P canonical build program."""
+        """Return the exact public-transition 4S6P canonical build program.
+
+        Returns:
+            Canonical fixed-length transition-program genes.
+
+        Raises:
+            RuntimeError: If the canonical build no longer has the expected length.
+        """
         state = self._grammar_helper.initial_state()
         genes: list[int] = []
         global_negative_terminal_id = state.pack_negative_terminal_id
@@ -621,7 +808,24 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         use_negative_as_pack_terminal: bool = False,
         use_positive_as_pack_terminal: bool = False,
     ) -> tuple[int, BatteryCircuitState]:
-        """Return the gene that selects one exact add-cell transition and the resulting state."""
+        """Return the gene that selects one exact add-cell transition and the resulting state.
+
+        Args:
+            state: Current battery-circuit state.
+            x: Cell x-index.
+            y: Cell y-index.
+            z: Cell z-index.
+            connect_negative_to_terminal_id: Optional negative-terminal connection.
+            connect_positive_to_terminal_id: Optional positive-terminal connection.
+            use_negative_as_pack_terminal: Whether to promote the negative terminal.
+            use_positive_as_pack_terminal: Whether to promote the positive terminal.
+
+        Returns:
+            Transition gene and the resulting next state.
+
+        Raises:
+            RuntimeError: If the requested transition cannot be found.
+        """
         parameters = (
             ("x", x),
             ("y", y),
@@ -638,7 +842,14 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         raise RuntimeError(f"Unable to find the requested add_cell transition for parameters {parameters!r}.")
 
     def _voltage_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the remaining nominal-voltage tolerance margin."""
+        """Return the remaining nominal-voltage tolerance margin.
+
+        Args:
+            variables: Candidate transition-program vector.
+
+        Returns:
+            Remaining voltage margin relative to the packaged tolerance.
+        """
         evaluation = self._evaluation_from_variables(variables)
         voltage_error = abs(evaluation.pack_nominal_voltage - self.requirements.target_voltage_v)
         return self.requirements.voltage_tolerance_v - voltage_error
@@ -650,7 +861,19 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         positive_terminal_id: int,
         negative_terminal_id: int,
     ) -> tuple[int, BatteryCircuitState]:
-        """Return the gene that selects one exact pack-terminal reassignment."""
+        """Return the gene that selects one exact pack-terminal reassignment.
+
+        Args:
+            state: Current battery-circuit state.
+            positive_terminal_id: Requested positive terminal id.
+            negative_terminal_id: Requested negative terminal id.
+
+        Returns:
+            Transition gene and the resulting next state.
+
+        Raises:
+            RuntimeError: If the requested transition cannot be found.
+        """
         parameters = (
             ("positive_terminal_id", positive_terminal_id),
             ("negative_terminal_id", negative_terminal_id),
@@ -662,12 +885,26 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         raise RuntimeError(f"Unable to find the requested set_pack_terminals transition for {parameters!r}.")
 
     def _capacity_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return the remaining delivered-capacity margin in amp-hours."""
+        """Return the remaining delivered-capacity margin in amp-hours.
+
+        Args:
+            variables: Candidate transition-program vector.
+
+        Returns:
+            Remaining delivered-capacity margin.
+        """
         delivered_capacity = self._evaluation_from_variables(variables).delivered_capacity_ah
         return (0.0 if delivered_capacity is None else delivered_capacity) - self.requirements.minimum_capacity_ah
 
     def _backend_feasibility_margin(self, variables: NDArray[numpy.float64]) -> float:
-        """Return a binary margin indicating whether the shared backend accepted the design."""
+        """Return a binary margin indicating whether the shared backend accepted the design.
+
+        Args:
+            variables: Candidate transition-program vector.
+
+        Returns:
+            ``1.0`` for feasible designs and ``-1.0`` otherwise.
+        """
         return 1.0 if self._evaluation_from_variables(variables).is_feasible else -1.0
 
 

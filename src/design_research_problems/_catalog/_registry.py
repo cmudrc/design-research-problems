@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     from design_research_problems.problems.optimization import (
         BatteryGridSizingProblem,
         BatteryOpenEndedCapacityMaxProblem,
+        GMPBOptimizationProblem,
         PlanarTrussEngineeringOptimizationProblem,
         SpaceTrussEngineeringOptimizationProblem,
     )
@@ -67,6 +68,7 @@ type _DecisionProblemId = Literal["decision_laptop_design_profit_maximization"] 
 type _OptimizationProblemId = Literal[
     "battery_pack_18650_series_parallel_cost_min",
     "battery_pack_18650_open_ended_capacity_max",
+    "gmpb_default_dynamic_min",
     "pill_capsule_min_area",
     "moneymaker_hip_pump_cost_min",
     "planar_truss_span_mass_min",
@@ -260,6 +262,9 @@ class ProblemRegistry:
     ) -> BatteryOpenEndedCapacityMaxProblem: ...
 
     @overload
+    def get(self, problem_id: Literal["gmpb_default_dynamic_min"]) -> GMPBOptimizationProblem: ...
+
+    @overload
     def get(self, problem_id: _SpaceTrussProblemId) -> SpaceTrussSpanProblem: ...
 
     @overload
@@ -357,6 +362,10 @@ def get_problem(problem_id: Literal["battery_pack_18650_series_parallel_cost_min
 def get_problem(
     problem_id: Literal["battery_pack_18650_open_ended_capacity_max"],
 ) -> BatteryOpenEndedCapacityMaxProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["gmpb_default_dynamic_min"]) -> GMPBOptimizationProblem: ...
 
 
 @overload
