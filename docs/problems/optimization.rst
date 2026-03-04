@@ -4,6 +4,12 @@ Optimization Problems
 Optimization problems expose typed bounds, solver-independent constraints, and
 problem-specific representative baseline `solve()` implementations.
 
+The smooth continuous packaged benchmarks in this family continue to use SciPy
+baselines. If you install ``design-research-problems[solvers]``, the
+open-ended battery co-design optimizer will automatically prefer a ``pymoo``
+genetic search, then a ``nevergrad`` derivative-free search, and otherwise
+fall back to the built-in deterministic local search.
+
 See :doc:`../problem_catalog/optimization` for the generated per-problem catalog pages.
 
 The packaged entries include:

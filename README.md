@@ -57,6 +57,16 @@ pip install "design-research-problems[grammar]"
 
 The representative optimization baselines are included in the base install.
 
+Install the optional external optimization backends with:
+
+```bash
+pip install "design-research-problems[solvers]"
+```
+
+The smooth continuous benchmarks continue to use SciPy baselines, while the
+open-ended battery co-design optimizer will automatically prefer `pymoo`, then
+`nevergrad`, and finally fall back to the built-in deterministic local search.
+
 Then inspect the catalog directly from the installed package:
 
 ```bash

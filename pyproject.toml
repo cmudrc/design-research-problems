@@ -39,6 +39,7 @@ Issues = "https://github.com/cmudrc/design-research-problems/issues"
 grammar = ["trussme>=0.1.0"]
 battery = ["pybamm>=25.12,<26"]
 opt = ["scipy>=1.11,<2"]
+solvers = ["nevergrad>=1.0,<2", "pymoo>=0.6,<1"]
 pandas = ["pandas>=2.2,<3"]
 dev = [
   "build>=1.2,<2",
@@ -122,6 +123,10 @@ strict_equality = true
 module = [
   "pybamm",
   "pybamm.*",
+  "nevergrad",
+  "nevergrad.*",
+  "pymoo",
+  "pymoo.*",
   "scipy",
   "scipy.*",
   "trussme",

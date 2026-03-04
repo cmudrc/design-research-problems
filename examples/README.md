@@ -1,5 +1,8 @@
 # Examples
 
+Install `design-research-problems[solvers]` if you want the open-ended battery
+optimizer example to use the optional `pymoo` or `nevergrad` solver backends.
+
 - `catalog/list_and_load.py`: list the packaged catalog and load each seed problem.
 - `catalog/ideation_catalog.py`: inspect prompt, variant, family, and study counts.
 - `catalog/ideation_dataframe.py`: export prompt rows to pandas when the optional extra is installed.

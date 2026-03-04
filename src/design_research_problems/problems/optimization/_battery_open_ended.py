@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from typing import cast
+import math
+from importlib import import_module
+from typing import Any, cast
 
 import numpy
 from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
+from design_research_problems._exceptions import MissingOptionalDependencyError
 from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._domains.battery_cell_model import load_18650_cell_model
 from design_research_problems.problems._domains.battery_circuit import (
@@ -33,6 +36,7 @@ _CELL_TIE_BREAK_SCALE = 1.0e-3
 _CONNECTION_TIE_BREAK_SCALE = 1.0e-4
 _VOLUME_TIE_BREAK_SCALE = 1.0e-8
 _SEARCH_DELTAS = (-64, -16, -4, -1, 1, 4, 16, 64)
+_AUTO_SOLVER_ORDER = ("pymoo", "nevergrad", "local")
 
 
 class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
@@ -140,13 +144,91 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         initial_solution: NDArray[numpy.float64] | None = None,
         seed: int | None = None,
         maxiter: int = 200,
+        solver_backend: str = "auto",
     ) -> OptimizationResult:
-        """Run a deterministic hill-climbing search over transition programs."""
-        current = (
+        """Solve the transition-program search with optional external backends."""
+        start = (
             self.generate_initial_solution(seed=seed)
             if initial_solution is None
             else self._normalize_vector(initial_solution)
         )
+        if maxiter <= 0:
+            return self._build_result(
+                x=start,
+                fun=self.objective(start),
+                nit=0,
+                nfev=1,
+                solver_backend="local",
+            )
+
+        normalized_backend = solver_backend.strip().lower()
+        if normalized_backend == "auto":
+            for candidate_backend in _AUTO_SOLVER_ORDER:
+                try:
+                    return self._solve_with_backend(
+                        solver_backend=candidate_backend,
+                        initial_solution=start,
+                        initial_solution_supplied=initial_solution is not None,
+                        seed=seed,
+                        maxiter=maxiter,
+                    )
+                except MissingOptionalDependencyError:
+                    continue
+            return self._solve_with_backend(
+                solver_backend="local",
+                initial_solution=start,
+                initial_solution_supplied=initial_solution is not None,
+                seed=seed,
+                maxiter=maxiter,
+            )
+
+        if normalized_backend not in {"local", "pymoo", "nevergrad"}:
+            raise ValueError(
+                "Unsupported solver backend "
+                f"{solver_backend!r}. Expected one of 'auto', 'local', 'pymoo', or 'nevergrad'."
+            )
+        return self._solve_with_backend(
+            solver_backend=normalized_backend,
+            initial_solution=start,
+            initial_solution_supplied=initial_solution is not None,
+            seed=seed,
+            maxiter=maxiter,
+        )
+
+    def _solve_with_backend(
+        self,
+        *,
+        solver_backend: str,
+        initial_solution: NDArray[numpy.float64],
+        initial_solution_supplied: bool,
+        seed: int | None,
+        maxiter: int,
+    ) -> OptimizationResult:
+        """Dispatch to one concrete solver backend."""
+        if solver_backend == "pymoo":
+            return self._solve_with_pymoo(
+                initial_solution=initial_solution,
+                initial_solution_supplied=initial_solution_supplied,
+                seed=seed,
+                maxiter=maxiter,
+            )
+        if solver_backend == "nevergrad":
+            return self._solve_with_nevergrad(
+                initial_solution=initial_solution,
+                initial_solution_supplied=initial_solution_supplied,
+                seed=seed,
+                maxiter=maxiter,
+            )
+        return self._solve_with_local_search(initial_solution=initial_solution, maxiter=maxiter)
+
+    def _solve_with_local_search(
+        self,
+        *,
+        initial_solution: NDArray[numpy.float64],
+        maxiter: int,
+    ) -> OptimizationResult:
+        """Run the built-in deterministic hill-climbing baseline."""
+        current = initial_solution.copy()
         current_score = self.objective(current)
         nfev = 1
         nit = 0
@@ -171,29 +253,244 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
                 break
             current = best_candidate
             current_score = best_score
+        return self._build_result(
+            x=current,
+            fun=current_score,
+            nit=nit,
+            nfev=nfev,
+            solver_backend="local",
+        )
 
-        max_violation = self.max_constraint_violation(current)
-        evaluation = self._evaluation_from_variables(current)
+    def _solve_with_pymoo(
+        self,
+        *,
+        initial_solution: NDArray[numpy.float64],
+        initial_solution_supplied: bool,
+        seed: int | None,
+        maxiter: int,
+    ) -> OptimizationResult:
+        """Run a mixed-integer `pymoo` genetic baseline when available."""
+        elementwise_problem_cls, ga_cls, rounding_repair_cls, minimize = self._import_pymoo_namespace()
+
+        def _problem_init(instance: object) -> None:
+            elementwise_problem_cls.__init__(
+                instance,
+                n_var=_TRANSITION_PROGRAM_LENGTH,
+                n_obj=1,
+                n_ieq_constr=len(self.constraints),
+                xl=self.bounds.lb,
+                xu=self.bounds.ub,
+                vtype=int,
+            )
+
+        def _problem_evaluate(
+            instance: object,
+            x: NDArray[numpy.float64],
+            out: dict[str, object],
+            *args: object,
+            **kwargs: object,
+        ) -> None:
+            del instance, args, kwargs
+            candidate = self._normalize_vector(numpy.asarray(x, dtype=float))
+            out["F"] = self.objective(candidate)
+            out["G"] = numpy.array(
+                [-constraint.evaluate(candidate) for constraint in self.constraints],
+                dtype=float,
+            )
+
+        transition_problem_cls = cast(
+            type[Any],
+            type(
+                "_TransitionProgramProblem",
+                (elementwise_problem_cls,),
+                {
+                    "__init__": _problem_init,
+                    "_evaluate": _problem_evaluate,
+                },
+            ),
+        )
+
+        pop_size = max(8, min(32, maxiter))
+        generations = max(1, math.ceil(maxiter / pop_size))
+        algorithm = ga_cls(
+            pop_size=pop_size,
+            eliminate_duplicates=True,
+            repair=rounding_repair_cls(),
+        )
+        raw_result = minimize(
+            transition_problem_cls(),
+            algorithm,
+            ("n_gen", generations),
+            seed=seed,
+            verbose=False,
+        )
+        best_x, best_fun, nfev = self._solver_incumbent(
+            initial_solution=initial_solution,
+            initial_solution_supplied=initial_solution_supplied,
+        )
+        raw_x = getattr(raw_result, "X", None)
+        if raw_x is not None:
+            candidate = self._normalize_vector(numpy.asarray(raw_x, dtype=float))
+            candidate_fun = self.objective(candidate)
+            nfev += 1
+            if candidate_fun < best_fun:
+                best_x = candidate
+                best_fun = candidate_fun
+        evaluator = getattr(getattr(raw_result, "algorithm", None), "evaluator", None)
+        if evaluator is not None:
+            nfev += int(getattr(evaluator, "n_eval", 0) or 0)
+        nit = int(getattr(getattr(raw_result, "algorithm", None), "n_gen", 0) or generations)
+        return self._build_result(
+            x=best_x,
+            fun=best_fun,
+            nit=nit,
+            nfev=nfev,
+            solver_backend="pymoo",
+        )
+
+    def _solve_with_nevergrad(
+        self,
+        *,
+        initial_solution: NDArray[numpy.float64],
+        initial_solution_supplied: bool,
+        seed: int | None,
+        maxiter: int,
+    ) -> OptimizationResult:
+        """Run a derivative-free `nevergrad` baseline when available."""
+        nevergrad: Any = self._import_nevergrad_namespace()
+        parametrization = (
+            nevergrad.p.Array(shape=(_TRANSITION_PROGRAM_LENGTH,))
+            .set_bounds(0.0, float(_MAX_TRANSITION_TOKEN))
+            .set_integer_casting()
+        )
+        optimizer = nevergrad.optimizers.NGOpt(
+            parametrization=parametrization,
+            budget=maxiter,
+            num_workers=1,
+        )
+        random_state = getattr(getattr(optimizer, "parametrization", None), "random_state", None)
+        if seed is not None and random_state is not None:
+            random_state.seed(seed)
+
+        best_x, best_fun, nfev = self._solver_incumbent(
+            initial_solution=initial_solution,
+            initial_solution_supplied=initial_solution_supplied,
+        )
+        for _ in range(maxiter):
+            candidate = optimizer.ask()
+            candidate_x = self._normalize_vector(numpy.asarray(candidate.value, dtype=float))
+            candidate_fun = self.objective(candidate_x)
+            optimizer.tell(candidate, candidate_fun)
+            nfev += 1
+            if candidate_fun < best_fun:
+                best_x = candidate_x
+                best_fun = candidate_fun
+        recommendation = optimizer.provide_recommendation()
+        recommended_x = self._normalize_vector(numpy.asarray(recommendation.value, dtype=float))
+        recommended_fun = self.objective(recommended_x)
+        nfev += 1
+        if recommended_fun < best_fun:
+            best_x = recommended_x
+            best_fun = recommended_fun
+        return self._build_result(
+            x=best_x,
+            fun=best_fun,
+            nit=maxiter,
+            nfev=nfev,
+            solver_backend="nevergrad",
+        )
+
+    def _build_result(
+        self,
+        *,
+        x: NDArray[numpy.float64],
+        fun: float,
+        nit: int,
+        nfev: int,
+        solver_backend: str,
+    ) -> OptimizationResult:
+        """Return one normalized optimization result with a backend-specific message."""
+        best_x = self._normalize_vector(x)
+        best_fun = float(fun)
+        max_violation = self.max_constraint_violation(best_x)
+        evaluation = self._evaluation_from_variables(best_x)
         delivered_capacity = 0.0 if evaluation.delivered_capacity_ah is None else evaluation.delivered_capacity_ah
-        action = "Evaluated" if nit == 0 else "Improved"
+        action = "Evaluated" if nit == 0 else "Optimized"
+        backend_label = {
+            "local": "the built-in deterministic local baseline",
+            "pymoo": "the pymoo genetic baseline",
+            "nevergrad": "the Nevergrad NGOpt baseline",
+        }[solver_backend]
         if max_violation <= 1.0e-9:
             message = (
-                f"{action} the explicit battery transition program to a feasible design "
+                f"{action} the explicit battery transition program with {backend_label} "
                 f"(delivered capacity {delivered_capacity:.3f} Ah)."
             )
         else:
             message = (
-                f"{action} the explicit battery transition program and returned a best-effort design "
-                f"(delivered capacity {delivered_capacity:.3f} Ah, max violation {max_violation:.3g})."
+                f"{action} the explicit battery transition program with {backend_label} and returned "
+                f"a best-effort design (delivered capacity {delivered_capacity:.3f} Ah, "
+                f"max violation {max_violation:.3g})."
             )
         return OptimizationResult(
-            x=current.copy(),
-            fun=current_score,
+            x=best_x.copy(),
+            fun=best_fun,
             success=max_violation <= 1.0e-9,
             message=message,
             nit=nit,
             nfev=nfev,
         )
+
+    def _solver_incumbent(
+        self,
+        *,
+        initial_solution: NDArray[numpy.float64],
+        initial_solution_supplied: bool,
+    ) -> tuple[NDArray[numpy.float64], float, int]:
+        """Return the starting incumbent for optional external solvers."""
+        incumbent = initial_solution.copy()
+        incumbent_fun = self.objective(incumbent)
+        nfev = 1
+        if initial_solution_supplied:
+            return (incumbent, incumbent_fun, nfev)
+
+        baseline = self.generate_initial_solution()
+        if not numpy.array_equal(baseline, incumbent):
+            baseline_fun = self.objective(baseline)
+            nfev += 1
+            if baseline_fun < incumbent_fun:
+                incumbent = baseline
+                incumbent_fun = baseline_fun
+        return (incumbent, incumbent_fun, nfev)
+
+    def _import_pymoo_namespace(self) -> tuple[Any, Any, Any, Any]:
+        """Import the supported `pymoo` classes lazily."""
+        try:
+            elementwise_problem_module = import_module("pymoo.core.problem")
+            ga_module = import_module("pymoo.algorithms.soo.nonconvex.ga")
+            rounding_repair_module = import_module("pymoo.operators.repair.rounding")
+            optimize_module = import_module("pymoo.optimize")
+            elementwise_problem = elementwise_problem_module.ElementwiseProblem
+            ga = ga_module.GA
+            rounding_repair = rounding_repair_module.RoundingRepair
+            minimize = optimize_module.minimize
+        except (AttributeError, ImportError) as exc:
+            raise MissingOptionalDependencyError(
+                "pymoo is required for the open-ended battery genetic baseline. "
+                "Install it with: pip install design-research-problems[solvers]"
+            ) from exc
+
+        return (elementwise_problem, ga, rounding_repair, minimize)
+
+    def _import_nevergrad_namespace(self) -> Any:
+        """Import `nevergrad` lazily for the derivative-free baseline."""
+        try:
+            return import_module("nevergrad")
+        except ImportError as exc:
+            raise MissingOptionalDependencyError(
+                "nevergrad is required for the open-ended battery derivative-free baseline. "
+                "Install it with: pip install design-research-problems[solvers]"
+            ) from exc
 
     def _normalize_vector(self, variables: NDArray[numpy.float64]) -> NDArray[numpy.float64]:
         """Return a clipped fixed-length transition vector."""
@@ -227,7 +524,10 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         for gene in genes:
             if gene == 0:
                 break
-            transitions = self._grammar_helper.enumerate_transitions(state)
+            try:
+                transitions = self._grammar_helper.enumerate_transitions(state)
+            except ValueError:
+                break
             if not transitions:
                 break
             state = transitions[(gene - 1) % len(transitions)].next_state
