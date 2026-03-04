@@ -34,17 +34,29 @@ class SeriesParallelStateLike(Protocol):
 
     @property
     def series_count(self) -> int:
-        """Return the series-stage count."""
+        """Return the series-stage count.
+
+        Returns:
+            Number of stages wired in series.
+        """
         ...
 
     @property
     def parallel_count(self) -> int:
-        """Return the parallel-branch count."""
+        """Return the parallel-branch count.
+
+        Returns:
+            Number of branches wired in parallel.
+        """
         ...
 
     @property
     def cells(self) -> tuple[BatteryCellPlacement, ...]:
-        """Return all battery cell placements."""
+        """Return all battery cell placements.
+
+        Returns:
+            Immutable battery cell placement records.
+        """
         ...
 
 
@@ -87,7 +99,14 @@ class BatteryMetricSummary:
 
 
 def validate_rectangular_topology(state: SeriesParallelStateLike) -> str | None:
-    """Return a failure reason when the state violates rectangular SxP topology."""
+    """Return a failure reason when the state violates rectangular SxP topology.
+
+    Args:
+        state: Candidate pack state to validate.
+
+    Returns:
+        Human-readable validation error, or ``None`` when the layout is valid.
+    """
     if state.series_count < 1:
         return "Series count must be at least 1."
     if state.parallel_count < 1:
@@ -109,7 +128,15 @@ def compute_metric_summary(
     state: SeriesParallelStateLike,
     requirements: BatteryRequirements,
 ) -> BatteryMetricSummary:
-    """Compute deterministic legacy metrics for one rectangular series-parallel pack."""
+    """Compute deterministic legacy metrics for one rectangular series-parallel pack.
+
+    Args:
+        state: Candidate pack state with a rectangular SxP topology.
+        requirements: Pack requirements retained for API compatibility.
+
+    Returns:
+        Legacy metric summary derived from the shared layout helpers.
+    """
     layout = compute_layout_summary(state.cells)
     design_voltage = float(state.series_count) * CELL_SPEC_18650.nominal_voltage_v
     design_capacity = float(state.parallel_count) * CELL_SPEC_18650.nominal_capacity_ah
@@ -140,7 +167,15 @@ def compute_analytic_current_limit(
     *,
     parallel_count: int,
 ) -> float:
-    """Return the legacy coarse thermal current estimate."""
+    """Return the legacy coarse thermal current estimate.
+
+    Args:
+        layout: Precomputed pack layout summary.
+        parallel_count: Number of cells sharing current in each stage.
+
+    Returns:
+        Estimated current limit in amps.
+    """
     if layout.cell_count <= 0:
         return 0.0
     max_thermal = layout.surface_area * 1e-6 * 10000.0
@@ -156,7 +191,17 @@ def simulate_series_parallel_pack(
     series_count: int,
     parallel_count: int,
 ) -> tuple[float, float, bool]:
-    """Compatibility wrapper that evaluates a canonical rectangular pack with the shared solver."""
+    """Evaluate a canonical rectangular pack with the shared circuit solver.
+
+    Args:
+        pybamm_module: Compatibility placeholder retained for the legacy API.
+        requirements: Target pack requirements.
+        series_count: Number of stages wired in series.
+        parallel_count: Number of branches wired in parallel.
+
+    Returns:
+        Terminal voltage, delivered capacity, and feasibility flag.
+    """
     del pybamm_module
     from design_research_problems.problems._domains.battery_circuit import (
         BatteryCellInstance,

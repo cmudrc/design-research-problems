@@ -390,7 +390,21 @@ class PlanarTrussSpanProblem(GrammarProblem[PlanarTrussState, PlanarTrussEvaluat
         right_x: float,
         right_y: float,
     ) -> PlanarTrussState:
-        """Add one mirrored pair of joints and return the new immutable state."""
+        """Add one mirrored pair of joints and return the new immutable state.
+
+        Args:
+            state: Current grammar state.
+            left_x: X-coordinate for the left-side joint.
+            left_y: Y-coordinate for the left-side joint.
+            right_x: X-coordinate for the mirrored right-side joint.
+            right_y: Y-coordinate for the mirrored right-side joint.
+
+        Returns:
+            Updated grammar state.
+
+        Raises:
+            ValueError: If the action would violate symmetry or reuse coordinates.
+        """
         typed_state = _coerce_state(state)
         if typed_state.symmetry_axis_x is None:
             raise ValueError("AddJointPair requires a symmetric state.")
@@ -429,7 +443,19 @@ class PlanarTrussSpanProblem(GrammarProblem[PlanarTrussState, PlanarTrussEvaluat
         start_joint_id: int,
         end_joint_id: int,
     ) -> PlanarTrussState:
-        """Add one member and return the new immutable state."""
+        """Add one member and return the new immutable state.
+
+        Args:
+            state: Current grammar state.
+            start_joint_id: First joint connected by the member.
+            end_joint_id: Second joint connected by the member.
+
+        Returns:
+            Updated grammar state.
+
+        Raises:
+            ValueError: If the member is invalid, duplicated, or breaks symmetry.
+        """
         typed_state = _coerce_state(state)
         if start_joint_id == end_joint_id:
             raise ValueError("Members cannot connect a joint to itself.")
@@ -470,7 +496,18 @@ class PlanarTrussSpanProblem(GrammarProblem[PlanarTrussState, PlanarTrussEvaluat
         )
 
     def remove_member(self, state: PlanarTrussState, *, member_id: int) -> PlanarTrussState:
-        """Remove one member and its mirrored counterpart when symmetry is enforced."""
+        """Remove one member and its mirrored counterpart when symmetry is enforced.
+
+        Args:
+            state: Current grammar state.
+            member_id: Identifier of the member to remove.
+
+        Returns:
+            Updated grammar state.
+
+        Raises:
+            ValueError: If the target member is missing or the symmetric state is inconsistent.
+        """
         typed_state = _coerce_state(state)
         existing_lookup = _member_lookup(typed_state)
         target_member = next((member for member in typed_state.members if member.member_id == member_id), None)
