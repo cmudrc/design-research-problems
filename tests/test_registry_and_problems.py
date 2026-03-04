@@ -380,7 +380,8 @@ def _build_feasible_battery_state() -> object:
     return state
 
 
-def test_generic_grammar_family_api_supports_multiple_problems() -> None:
+def test_generic_grammar_family_api_supports_multiple_problems(monkeypatch: pytest.MonkeyPatch) -> None:
+    _install_structural_fake_truss(monkeypatch)
     for problem_id in ("battery_pack_18650_series_parallel", "planar_truss_span", "space_truss_span"):
         problem = get_problem(problem_id)
         assert isinstance(problem, GrammarProblem)
@@ -392,7 +393,11 @@ def test_generic_grammar_family_api_supports_multiple_problems() -> None:
         assert hasattr(evaluation, "is_feasible")
 
 
-def test_battery_grid_sizing_problem_uses_optimization_family_api() -> None:
+def test_battery_grid_sizing_problem_uses_optimization_family_api(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems.optimization import _battery_grid as battery_grid
+
+    monkeypatch.setattr(battery_grid, "load_18650_cell_model", _fake_cell_model)
+
     problem = get_problem("battery_pack_18650_series_parallel_cost_min")
     assert isinstance(problem, OptimizationProblem)
     assert isinstance(problem, BatteryGridSizingProblem)
@@ -465,7 +470,13 @@ def test_gmpb_problem_auto_steps_after_change_frequency() -> None:
     assert problem.evaluations_in_environment() == 0
 
 
-def test_battery_grid_and_grammar_share_series_parallel_backend() -> None:
+def test_battery_grid_and_grammar_share_series_parallel_backend(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems.grammar import _battery_problem_base as battery_problem_base
+    from design_research_problems.problems.optimization import _battery_grid as battery_grid
+
+    monkeypatch.setattr(battery_problem_base, "load_18650_cell_model", _fake_cell_model)
+    monkeypatch.setattr(battery_grid, "load_18650_cell_model", _fake_cell_model)
+
     optimization_problem = get_problem("battery_pack_18650_series_parallel_cost_min")
     grammar_problem = get_problem("battery_pack_18650_series_parallel")
     assert isinstance(optimization_problem, BatteryGridSizingProblem)
@@ -477,7 +488,9 @@ def test_battery_grid_and_grammar_share_series_parallel_backend() -> None:
     assert grammar_problem.evaluate(state) == optimization_problem._evaluation_from_variables(candidate)
 
 
-def test_truss_engineering_optimizers_use_optimization_family_api() -> None:
+def test_truss_engineering_optimizers_use_optimization_family_api(monkeypatch: pytest.MonkeyPatch) -> None:
+    _install_structural_fake_truss(monkeypatch)
+
     for problem_id, expected_type in (
         ("planar_truss_span_mass_min", PlanarTrussEngineeringOptimizationProblem),
         ("planar_truss_span_deflection_min", PlanarTrussEngineeringOptimizationProblem),

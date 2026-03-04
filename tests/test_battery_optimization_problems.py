@@ -42,7 +42,10 @@ class _FakePymooProblem(Protocol):
     def _evaluate(self, x: NDArray[numpy.float64], out: dict[str, object]) -> None: ...
 
 
-def test_battery_grid_seeded_initial_solution_is_deterministic_and_nonbaseline() -> None:
+def test_battery_grid_seeded_initial_solution_is_deterministic_and_nonbaseline(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _patch_battery_loaders(monkeypatch)
     problem = get_problem("battery_pack_18650_series_parallel_cost_min")
 
     baseline = problem.generate_initial_solution()

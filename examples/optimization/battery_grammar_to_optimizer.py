@@ -22,12 +22,12 @@ def _format_config(problem: object, variables: object) -> str:
 def main() -> None:
     """Print a seeded start and the solved rectangular battery design."""
     problem = get_problem("battery_pack_18650_series_parallel_cost_min")
-    initial = problem.generate_initial_solution(seed=1)
 
     print("Rectangular battery packaged benchmark")
     print(problem.metadata.title)
 
     try:
+        initial = problem.generate_initial_solution(seed=1)
         initial_components = problem.objective_components(initial)
         initial_violation = problem.max_constraint_violation(initial)
         result = problem.solve()
