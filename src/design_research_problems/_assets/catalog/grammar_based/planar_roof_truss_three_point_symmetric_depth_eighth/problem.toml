@@ -1,0 +1,44 @@
+problem_id = "planar_roof_truss_three_point_symmetric_depth_eighth"
+title = "Planar roof truss grammar (depth = 1/8 span)"
+summary = "A symmetric three-point roof-truss grammar constrained to the shallow 1/8-span depth variant reported in the structural essay study."
+kind = "grammar"
+statement = '''
+# Planar roof truss grammar (depth = 1/8 span)
+
+This catalog entry approximates the second planar roof-truss formulation from
+the structural essay study: the symmetric three-point loading case with the
+truss depth constrained to approximately one-eighth of the span.
+
+The simplified grammar captures that shallower design envelope by reducing the
+roof rise used to place the fixed load joints and candidate interior joints. It
+keeps the same symmetric edit rules as the base three-point variant.
+'''
+implementation = "design_research_problems.problems.grammar._planar_truss:PlanarTrussSpanProblem"
+capabilities = [
+  "statement-markdown",
+  "serializable-state",
+  "discrete-actions",
+  "optional-evaluator",
+  "external-adapter",
+]
+study_suitability = []
+
+[parameters]
+span = 10.0
+max_height = 1.25
+load_magnitude = 1000.0
+roof_load_x_fractions = [0.25, 0.5, 0.75]
+candidate_point_fractions = [[0.2, 0.22], [0.35, 0.36], [0.5, 0.22]]
+enforce_symmetry = true
+
+[taxonomy]
+formulation = "discrete_grammar"
+convexity = "not_applicable"
+design_variable_type = "discrete"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.25
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "symmetric planar roof-truss topology with a shallow 1/8-span roof rise"
+tags = ["grammar", "truss", "roof", "discrete", "topology", "symmetric", "depth-limited"]

@@ -1,9 +1,9 @@
 problem_id = "ideation_joint_immobilization_mountain_trek"
-title = "Ideation Prompt - Mountain-TREK Joint Immobilization"
+title = "Mountain-TREK Joint Immobilization"
 summary = "The original Mountain-TREK design brief printed in Wilson, Rosen, Nelson, and Yen (2010), preceding the later one-line derivative used by Goucher-Lambert and Cagan (2019)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Mountain-TREK Joint Immobilization
+# Mountain-TREK Joint Immobilization
 
 Mountain-TREK (MTREK) is an outdoor wilderness company that organizes backpacking trips to the
 mountains throughout the year. During these trips, MTREK utilizes trip guides to lead a group of

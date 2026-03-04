@@ -1,9 +1,9 @@
 problem_id = "ideation_powdered_surface_coating_domain_specific"
-title = "Ideation Prompt - Powder Dispersal (Domain-Specific)"
+title = "Powder Dispersal (Domain-Specific)"
 summary = "The domain-specific powder-dispersion brief from Linsey, Wood, and Markman (2008)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Powder Dispersal (Domain-Specific)
+# Powder Dispersal (Domain-Specific)
 
 Design a kitchen utensil to sprinkle flour over a counter.
 '''

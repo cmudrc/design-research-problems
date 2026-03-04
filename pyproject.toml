@@ -25,7 +25,9 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
+  "gmpb>=0.1.0,<1",
   "numpy>=1.26,<3",
+  "scipy>=1.13,<2",
 ]
 
 [project.urls]
@@ -36,7 +38,9 @@ Issues = "https://github.com/cmudrc/design-research-problems/issues"
 
 [project.optional-dependencies]
 grammar = ["trussme>=0.1.0"]
+battery = ["pybamm>=25.12,<26"]
 opt = ["scipy>=1.11,<2"]
+solvers = ["nevergrad>=1.0,<2", "pymoo>=0.6,<1"]
 pandas = ["pandas>=2.2,<3"]
 dev = [
   "build>=1.2,<2",
@@ -45,10 +49,12 @@ dev = [
   "pytest>=8.2,<9",
   "pytest-cov>=7.0,<8",
   "ruff>=0.6.0,<1",
+  "setuptools>=77",
   "sphinx>=7.4,<9",
   "sphinx-rtd-theme>=2.0,<4",
   "sphinxcontrib-mermaid>=1.0,<2",
   "twine>=5.1,<7",
+  "wheel>=0.45",
 ]
 
 [tool.setuptools]
@@ -76,6 +82,7 @@ testpaths = ["tests"]
 markers = [
   "examples_full: deterministic example execution suite",
   "examples_smoke: lightweight example smoke checks",
+  "pybamm_real: tests that require an installed pybamm package",
   "trussme_real: tests that require an installed trussme package",
 ]
 
@@ -115,6 +122,12 @@ strict_equality = true
 
 [[tool.mypy.overrides]]
 module = [
+  "pybamm",
+  "pybamm.*",
+  "nevergrad",
+  "nevergrad.*",
+  "pymoo",
+  "pymoo.*",
   "scipy",
   "scipy.*",
   "trussme",

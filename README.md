@@ -11,18 +11,35 @@ discrete grammar-style problems behind a small, typed Python API.
 
 ## Overview
 
-The initial release centers on three problem families plus a linked ideation metadata catalog:
+The initial release centers on four problem families plus a linked ideation metadata catalog:
 
 - Text problems for human-subjects studies and prompt packets
-- Optimization problems with typed bounds and lazy SciPy-backed solving
+- Decision problems with typed discrete or empirical evaluation interfaces
+- Optimization problems with typed bounds and representative built-in baselines
 - Grammar problems that describe discrete design actions and optional evaluation adapters
 - An ideation catalog with prompt records, variants, families, and study summaries
+
+The public problem model now centers on a shared ``Problem`` documentation base
+and a ``ComputableProblem`` evaluation layer, with family-specific subclasses on
+top. Problem-family interchangeability is defined by those family base classes,
+not by matching catalog capability flags across different kinds.
 
 The first catalog includes:
 
 - 40 ideation-focused text prompts
+- `battery_pack_18650_open_ended_capacity_max` for explicit 18650 layout-and-wiring capacity maximization under the shared battery backend
+- `gmpb_default_dynamic_min` for a stateful dynamic minimization wrapper around the Generalized Moving Peaks Benchmark
 - `pill_capsule_min_area` for constrained continuous optimization
-- `planar_truss_span` for a discrete topology grammar backed by `trussme`
+- `battery_pack_18650_series_parallel_cost_min` for fixed-topology rectangular 18650 pack sizing under the shared battery backend
+- `planar_truss_span_mass_min`, `planar_truss_span_deflection_min`, and `planar_truss_span_fos_max` for fixed-joint planar truss structural optimization under real `trussme` evaluation
+- `space_truss_span_mass_min` for fixed-joint 3D space-truss structural optimization under the same shared truss backend
+- `planar_truss_span` for the original seed planar truss grammar backed by `trussme`
+- `space_truss_span` for a bounded 3D space-truss grammar backed by `trussme`
+- `battery_pack_18650_open_ended` for explicit 18650 cell-by-cell graph-netlist co-design backed by an optional PyBaMM-shaped single-cell surrogate plus a library-owned pack solver
+- `battery_pack_18650_series_parallel` for explicit 18650 series-parallel pack co-design backed by the same optional PyBaMM-shaped single-cell surrogate plus a library-owned pack solver
+- six `planar_roof_truss_*` variants that approximate the roof-truss formulations reported by Shea and Cagan
+- `moneymaker_hip_pump_cost_min` for a citation-backed scalarized pump benchmark
+- `treadle_pump_ide_material_min` for a citation-backed scalarized treadle-pump benchmark
 
 ## Quickstart
 
@@ -33,17 +50,25 @@ Install from PyPI with:
 pip install design-research-problems
 ```
 
-Install the optional optimization solver support with:
-
-```bash
-pip install "design-research-problems[opt]"
-```
-
-Install the optional `trussme` grammar support with:
+Install the optional `trussme` truss support with:
 
 ```bash
 pip install "design-research-problems[grammar]"
 ```
+
+The representative optimization baselines are included in the base install.
+
+Install the optional external optimization backends with:
+
+```bash
+pip install "design-research-problems[solvers]"
+```
+
+The smooth continuous benchmarks continue to use SciPy baselines, while the
+open-ended battery co-design optimizer will automatically prefer `pymoo`, then
+`nevergrad`, and finally fall back to the built-in deterministic local search.
+The GMPB wrapper instead uses a simple random-search baseline because each
+evaluation advances a dynamic benchmark state.
 
 Then inspect the catalog directly from the installed package:
 

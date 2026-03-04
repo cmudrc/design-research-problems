@@ -1,9 +1,9 @@
 problem_id = "ideation_public_place_belongings_securer"
-title = "Ideation Prompt - Public Place Belongings Securer"
+title = "Public Place Belongings Securer"
 summary = "The exact neutrally framed Belongings problem presented in Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Public Place Belongings Securer
+# Public Place Belongings Securer
 
 Working in coffee shops and public places
 has become a common occurrence.

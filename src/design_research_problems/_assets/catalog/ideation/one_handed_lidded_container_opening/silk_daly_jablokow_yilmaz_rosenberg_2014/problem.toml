@@ -1,9 +1,9 @@
 problem_id = "ideation_one_handed_lidded_container_opening_framework"
-title = "Ideation Prompt - One-Handed Lidded Container Opening (Framework)"
+title = "One-Handed Lidded Container Opening (Framework)"
 summary = "The exact neutral Lids prompt shown in Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014)."
 kind = "text"
 statement = '''
-# Ideation Prompt - One-Handed Lidded Container Opening (Framework)
+# One-Handed Lidded Container Opening (Framework)
 
 Design a way for individuals who have limited or no use of one upper extremity
 to open a lidded food container with one hand.

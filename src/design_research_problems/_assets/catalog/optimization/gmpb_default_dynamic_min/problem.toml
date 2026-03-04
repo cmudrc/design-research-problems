@@ -1,0 +1,45 @@
+problem_id = "gmpb_default_dynamic_min"
+title = "Generalized Moving Peaks Benchmark (dynamic minimization wrapper)"
+summary = "A stateful dynamic optimization benchmark that wraps GMPB's native maximization objective and negates it to fit this package's minimization-oriented optimization API."
+kind = "optimization"
+statement = '''
+# Generalized Moving Peaks Benchmark (dynamic minimization wrapper)
+
+This packaged optimization problem wraps the external Generalized Moving Peaks
+Benchmark (GMPB). GMPB is defined as a dynamic maximization benchmark whose
+evaluation counter advances through changing environments.
+
+To fit the optimization API in this package, the wrapper reports the negated
+native GMPB objective, so lower values are better. Evaluations remain stateful:
+each call consumes benchmark budget in the current environment, and the
+environment changes automatically when the configured change frequency is
+exhausted.
+'''
+implementation = "design_research_problems.problems.optimization._gmpb:GMPBOptimizationProblem"
+capabilities = [
+  "statement-markdown",
+  "bounded-variables",
+  "baseline-solver",
+  "external-adapter",
+]
+study_suitability = []
+
+[parameters]
+dimension = 5
+component_count = 10
+environment_count = 100
+change_frequency = 1000
+lower_bound = -100.0
+upper_bound = 100.0
+seed = 7
+
+[taxonomy]
+formulation = "nonlinear_program"
+convexity = "not_guaranteed"
+design_variable_type = "continuous"
+is_dynamic = true
+orientation = "mathematical"
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "five continuous variables bounded on [-100, 100]"
+tags = ["optimization", "continuous", "dynamic", "benchmark", "single-objective"]

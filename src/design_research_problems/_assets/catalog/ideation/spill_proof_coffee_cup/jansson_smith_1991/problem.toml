@@ -1,9 +1,9 @@
 problem_id = "ideation_disposable_spill_proof_coffee_cup"
-title = "Ideation Prompt - Disposable Spill-Proof Coffee Cup"
+title = "Disposable Spill-Proof Coffee Cup"
 summary = "A reconstructed version of the spill-proof coffee-cup problem used in Experiment 3 of Jansson and Smith (1991)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Disposable Spill-Proof Coffee Cup
+# Disposable Spill-Proof Coffee Cup
 
 Design an inexpensive, disposable, spill-proof coffee cup.
 

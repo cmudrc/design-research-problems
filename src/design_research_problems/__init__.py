@@ -8,14 +8,20 @@ from typing import TYPE_CHECKING, Final
 from design_research_problems._lazy_exports import module_dir, resolve_lazy_export
 
 _EXPORTS: Final[dict[str, str]] = {
+    "Problem": "design_research_problems.problems:Problem",
+    "ComputableProblem": "design_research_problems.problems:ComputableProblem",
     "ProblemKind": "design_research_problems.problems:ProblemKind",
     "ProblemMetadata": "design_research_problems.problems:ProblemMetadata",
     "ProblemTaxonomy": "design_research_problems.problems:ProblemTaxonomy",
     "Citation": "design_research_problems.problems:Citation",
     "ProblemAsset": "design_research_problems.problems:ProblemAsset",
     "TextProblem": "design_research_problems.problems:TextProblem",
+    "DecisionEvaluation": "design_research_problems.problems:DecisionEvaluation",
+    "DecisionProblem": "design_research_problems.problems:DecisionProblem",
     "OptimizationProblem": "design_research_problems.problems:OptimizationProblem",
+    "OptimizationEvaluation": "design_research_problems.problems:OptimizationEvaluation",
     "GrammarProblem": "design_research_problems.problems:GrammarProblem",
+    "GrammarTransition": "design_research_problems.problems:GrammarTransition",
     "ProblemRegistry": "design_research_problems._catalog:ProblemRegistry",
     "MissingOptionalDependencyError": "design_research_problems._exceptions:MissingOptionalDependencyError",
     "ProblemEvaluationError": "design_research_problems._exceptions:ProblemEvaluationError",
@@ -78,8 +84,14 @@ if TYPE_CHECKING:
     from .ideation import IdeationStudy as IdeationStudy
     from .ideation import get_ideation_catalog as get_ideation_catalog
     from .problems import Citation as Citation
+    from .problems import ComputableProblem as ComputableProblem
+    from .problems import DecisionEvaluation as DecisionEvaluation
+    from .problems import DecisionProblem as DecisionProblem
     from .problems import GrammarProblem as GrammarProblem
+    from .problems import GrammarTransition as GrammarTransition
+    from .problems import OptimizationEvaluation as OptimizationEvaluation
     from .problems import OptimizationProblem as OptimizationProblem
+    from .problems import Problem as Problem
     from .problems import ProblemAsset as ProblemAsset
     from .problems import ProblemKind as ProblemKind
     from .problems import ProblemMetadata as ProblemMetadata

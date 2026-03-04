@@ -1,9 +1,9 @@
 problem_id = "ideation_chocolate_packaging"
-title = "Ideation Prompt - Chocolate Packaging for Fancy Candies"
+title = "Chocolate Packaging for Fancy Candies"
 summary = "A primary-source ideation brief about packaging round foil-wrapped chocolates sold individually in quantities from three to 50."
 kind = "text"
 statement = '''
-# Ideation Prompt - Chocolate Packaging for Fancy Candies
+# Chocolate Packaging for Fancy Candies
 
 Subjects were asked to design packaging for fancy chocolate candies, sold by the
 unit. The individual candy is round, 2 cm in diameter, and wrapped in

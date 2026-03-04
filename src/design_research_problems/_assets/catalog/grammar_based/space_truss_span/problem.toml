@@ -1,0 +1,49 @@
+problem_id = "space_truss_span"
+title = "Space truss span grammar problem"
+summary = "A bounded 3D space-truss grammar for adding joints and members inside a bridge-like envelope."
+kind = "grammar"
+statement = '''
+# Space truss span grammar problem
+
+Create a stable, lightweight 3D space truss spanning a fixed distance between
+four support joints. The grammar begins with a bridge-like support frame and a
+loaded apex joint. Designers can add interior joints inside a bounded 3D
+envelope, add members, and remove members.
+
+States are evaluated by translating the library-owned grammar state into a
+fresh `trussme.Truss`, applying the load, and attempting a structural
+analysis. Singular or unstable states are treated as infeasible results.
+'''
+implementation = "design_research_problems.problems.grammar._space_truss:SpaceTrussSpanProblem"
+capabilities = [
+  "statement-markdown",
+  "serializable-state",
+  "discrete-actions",
+  "optional-evaluator",
+  "external-adapter",
+]
+study_suitability = []
+
+[parameters]
+span = 10.0
+width = 4.0
+max_height = 5.0
+load_magnitude = 1000.0
+candidate_point_fractions_3d = [
+  [0.25, -1.0, 0.5],
+  [0.25, 1.0, 0.5],
+  [0.75, -1.0, 0.5],
+  [0.75, 1.0, 0.5],
+]
+
+[taxonomy]
+formulation = "discrete_grammar"
+convexity = "not_applicable"
+design_variable_type = "discrete"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.10
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "bounded 3D topology over a fixed span, width, and height envelope"
+tags = ["grammar", "truss", "3d", "discrete", "topology"]

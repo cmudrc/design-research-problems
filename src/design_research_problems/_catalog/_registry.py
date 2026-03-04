@@ -4,14 +4,79 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from importlib import import_module
-from typing import cast
+from typing import TYPE_CHECKING, Literal, cast, overload
 
-from design_research_problems._catalog._loader import load_problem_manifests, load_statement_text
+from design_research_problems._catalog._loader import load_problem_manifests
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import ProblemEvaluationError
-from design_research_problems.problems import GrammarProblem, OptimizationProblem, ProblemKind, TextProblem
-from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems import Problem, ProblemKind, TextProblem
+from design_research_problems.problems._decision import load_decision_problem
 from design_research_problems.problems._metadata import ProblemMetadata
+
+if TYPE_CHECKING:
+    from design_research_problems.problems import (
+        DecisionProblem,
+        OptimizationProblem,
+    )
+    from design_research_problems.problems.grammar import (
+        BatteryPack18650OpenEndedProblem,
+        BatteryPack18650SeriesParallelProblem,
+        PlanarTrussSpanProblem,
+        SpaceTrussSpanProblem,
+    )
+    from design_research_problems.problems.optimization import (
+        BatteryGridSizingProblem,
+        BatteryOpenEndedCapacityMaxProblem,
+        GMPBOptimizationProblem,
+        PlanarTrussEngineeringOptimizationProblem,
+        SpaceTrussEngineeringOptimizationProblem,
+    )
+
+type _PlanarTrussProblemId = Literal[
+    "planar_truss_span",
+    "planar_roof_truss_three_point_symmetric",
+    "planar_roof_truss_three_point_symmetric_depth_sixth",
+    "planar_roof_truss_three_point_symmetric_depth_sixth_discrete_sizing",
+    "planar_roof_truss_three_point_symmetric_depth_eighth",
+    "planar_roof_truss_seven_point_symmetric",
+    "planar_roof_truss_seven_point_asymmetric",
+]
+
+type _SpaceTrussProblemId = Literal["space_truss_span"]
+
+type _MSEvalProblemId = Literal[
+    "decision_mseval_kitchen_utensil_grip_corrosion_resistant",
+    "decision_mseval_kitchen_utensil_grip_high_strength",
+    "decision_mseval_kitchen_utensil_grip_lightweight",
+    "decision_mseval_kitchen_utensil_grip_resistant_to_heat",
+    "decision_mseval_safety_helmet_corrosion_resistant",
+    "decision_mseval_safety_helmet_high_strength",
+    "decision_mseval_safety_helmet_lightweight",
+    "decision_mseval_safety_helmet_resistant_to_heat",
+    "decision_mseval_spacecraft_component_corrosion_resistant",
+    "decision_mseval_spacecraft_component_high_strength",
+    "decision_mseval_spacecraft_component_lightweight",
+    "decision_mseval_spacecraft_component_resistant_to_heat",
+    "decision_mseval_underwater_component_corrosion_resistant",
+    "decision_mseval_underwater_component_high_strength",
+    "decision_mseval_underwater_component_lightweight",
+    "decision_mseval_underwater_component_resistant_to_heat",
+]
+
+type _DecisionProblemId = Literal["decision_laptop_design_profit_maximization"] | _MSEvalProblemId
+
+type _OptimizationProblemId = Literal[
+    "battery_pack_18650_series_parallel_cost_min",
+    "battery_pack_18650_open_ended_capacity_max",
+    "gmpb_default_dynamic_min",
+    "pill_capsule_min_area",
+    "moneymaker_hip_pump_cost_min",
+    "planar_truss_span_mass_min",
+    "planar_truss_span_deflection_min",
+    "planar_truss_span_fos_max",
+    "space_truss_span_mass_min",
+    "treadle_pump_ide_material_min",
+]
 
 
 def _resolve_object(import_path: str) -> object:
@@ -30,9 +95,6 @@ def _resolve_object(import_path: str) -> object:
     if not module_path or not attr_name:
         raise ProblemEvaluationError(f"Invalid implementation path: {import_path!r}")
     return getattr(import_module(module_path), attr_name)
-
-
-ProblemInstance = TextProblem | OptimizationProblem | GrammarProblem
 
 
 class ProblemRegistry:
@@ -180,7 +242,57 @@ class ProblemRegistry:
             matches.append(metadata)
         return tuple(matches)
 
-    def get(self, problem_id: str) -> ProblemInstance:
+    @overload
+    def get(
+        self, problem_id: Literal["battery_pack_18650_series_parallel"]
+    ) -> BatteryPack18650SeriesParallelProblem: ...
+
+    @overload
+    def get(self, problem_id: Literal["battery_pack_18650_open_ended"]) -> BatteryPack18650OpenEndedProblem: ...
+
+    @overload
+    def get(self, problem_id: _PlanarTrussProblemId) -> PlanarTrussSpanProblem: ...
+
+    @overload
+    def get(self, problem_id: Literal["battery_pack_18650_series_parallel_cost_min"]) -> BatteryGridSizingProblem: ...
+
+    @overload
+    def get(
+        self, problem_id: Literal["battery_pack_18650_open_ended_capacity_max"]
+    ) -> BatteryOpenEndedCapacityMaxProblem: ...
+
+    @overload
+    def get(self, problem_id: Literal["gmpb_default_dynamic_min"]) -> GMPBOptimizationProblem: ...
+
+    @overload
+    def get(self, problem_id: _SpaceTrussProblemId) -> SpaceTrussSpanProblem: ...
+
+    @overload
+    def get(
+        self,
+        problem_id: Literal[
+            "planar_truss_span_mass_min",
+            "planar_truss_span_deflection_min",
+            "planar_truss_span_fos_max",
+        ],
+    ) -> PlanarTrussEngineeringOptimizationProblem: ...
+
+    @overload
+    def get(self, problem_id: Literal["space_truss_span_mass_min"]) -> SpaceTrussEngineeringOptimizationProblem: ...
+
+    @overload
+    def get(self, problem_id: _OptimizationProblemId) -> OptimizationProblem: ...
+
+    @overload
+    def get(
+        self,
+        problem_id: _DecisionProblemId,
+    ) -> DecisionProblem: ...
+
+    @overload
+    def get(self, problem_id: str) -> Problem: ...
+
+    def get(self, problem_id: str) -> Problem:
         """Instantiate one problem by ID.
 
         Args:
@@ -197,30 +309,25 @@ class ProblemRegistry:
         if manifest is None:
             raise KeyError(f"Unknown problem id: {problem_id}")
 
-        statement_markdown = load_statement_text(manifest)
-        if manifest.metadata.kind is ProblemKind.TEXT:
-            return TextProblem(
-                metadata=manifest.metadata,
-                statement_markdown=statement_markdown,
-                assets=manifest.metadata.assets,
-                resource_bundle=PackageResourceBundle("design_research_problems", manifest.resource_dir),
-            )
-
         implementation = manifest.metadata.implementation
-        if implementation is None:
-            raise ProblemEvaluationError(f"Problem {problem_id!r} is missing an implementation path.")
+        if implementation is not None:
+            target = _resolve_object(implementation)
+            factory = getattr(target, "from_manifest", None)
+            if callable(factory):
+                manifest_factory = cast(Callable[[ProblemManifest], Problem], factory)
+                return manifest_factory(manifest)
 
-        target = _resolve_object(implementation)
-        factory = getattr(target, "from_manifest", None)
-        if callable(factory):
-            manifest_factory = cast(Callable[[ProblemManifest, str], ProblemInstance], factory)
-            return manifest_factory(manifest, statement_markdown)
+            if callable(target):
+                direct_factory = cast(Callable[[ProblemManifest], Problem], target)
+                return direct_factory(manifest)
 
-        if callable(target):
-            direct_factory = cast(Callable[[object, str], ProblemInstance], target)
-            return direct_factory(manifest.metadata, statement_markdown)
+            raise ProblemEvaluationError(f"Problem implementation for {problem_id!r} is not callable.")
 
-        raise ProblemEvaluationError(f"Problem implementation for {problem_id!r} is not callable.")
+        if manifest.metadata.kind is ProblemKind.TEXT:
+            return TextProblem.from_manifest(manifest)
+        if manifest.metadata.kind is ProblemKind.DECISION:
+            return load_decision_problem(manifest)
+        raise ProblemEvaluationError(f"Problem {problem_id!r} is missing an implementation path.")
 
 
 _DEFAULT_REGISTRY = ProblemRegistry()
@@ -235,7 +342,63 @@ def list_problems() -> tuple[str, ...]:
     return tuple(metadata.problem_id for metadata in _DEFAULT_REGISTRY.list())
 
 
-def get_problem(problem_id: str) -> TextProblem | OptimizationProblem | GrammarProblem:
+@overload
+def get_problem(problem_id: Literal["battery_pack_18650_series_parallel"]) -> BatteryPack18650SeriesParallelProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["battery_pack_18650_open_ended"]) -> BatteryPack18650OpenEndedProblem: ...
+
+
+@overload
+def get_problem(problem_id: _PlanarTrussProblemId) -> PlanarTrussSpanProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["battery_pack_18650_series_parallel_cost_min"]) -> BatteryGridSizingProblem: ...
+
+
+@overload
+def get_problem(
+    problem_id: Literal["battery_pack_18650_open_ended_capacity_max"],
+) -> BatteryOpenEndedCapacityMaxProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["gmpb_default_dynamic_min"]) -> GMPBOptimizationProblem: ...
+
+
+@overload
+def get_problem(problem_id: _SpaceTrussProblemId) -> SpaceTrussSpanProblem: ...
+
+
+@overload
+def get_problem(
+    problem_id: Literal[
+        "planar_truss_span_mass_min",
+        "planar_truss_span_deflection_min",
+        "planar_truss_span_fos_max",
+    ],
+) -> PlanarTrussEngineeringOptimizationProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["space_truss_span_mass_min"]) -> SpaceTrussEngineeringOptimizationProblem: ...
+
+
+@overload
+def get_problem(problem_id: _OptimizationProblemId) -> OptimizationProblem: ...
+
+
+@overload
+def get_problem(problem_id: _DecisionProblemId) -> DecisionProblem: ...
+
+
+@overload
+def get_problem(problem_id: str) -> Problem: ...
+
+
+def get_problem(problem_id: str) -> Problem:
     """Return one problem instance by ID.
 
     Args:

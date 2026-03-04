@@ -1,9 +1,9 @@
 problem_id = "ideation_travel_exercise_device"
-title = "Ideation Prompt - Lightweight Travel Exercise Device"
+title = "Lightweight Travel Exercise Device"
 summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the earlier travel-exercise case framing reproduced by Linsey and Viswanathan (2014)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Lightweight Travel Exercise Device
+# Lightweight Travel Exercise Device
 
 A lightweight exercise device that can be used while traveling.
 '''

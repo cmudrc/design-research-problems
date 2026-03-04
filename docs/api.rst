@@ -4,6 +4,9 @@ API
 The top-level package exports a small curated public API:
 
 - ``Citation``
+- ``ComputableProblem``
+- ``DecisionEvaluation``
+- ``DecisionProblem``
 - ``EvidenceTier``
 - ``GrammarProblem``
 - ``IdeationCatalog``
@@ -12,7 +15,9 @@ The top-level package exports a small curated public API:
 - ``IdeationPromptVariant``
 - ``IdeationStudy``
 - ``MissingOptionalDependencyError``
+- ``OptimizationEvaluation``
 - ``OptimizationProblem``
+- ``Problem``
 - ``ProblemAsset``
 - ``ProblemEvaluationError``
 - ``ProblemKind``

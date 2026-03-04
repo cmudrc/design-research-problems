@@ -1,9 +1,9 @@
 problem_id = "ideation_remote_village_rainwater_access_framework"
-title = "Ideation Prompt - Remote Village Rainwater Access (Framework)"
+title = "Remote Village Rainwater Access (Framework)"
 summary = "The exact neutral Rainwater prompt shown in Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Remote Village Rainwater Access (Framework)
+# Remote Village Rainwater Access (Framework)
 
 Design a way for remote villagers to catch, store, and access rainwater.
 '''

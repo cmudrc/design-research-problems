@@ -1,9 +1,9 @@
 problem_id = "ideation_peanut_shelling_fu_cagan_kotovsky_2010"
-title = "Design Problem - Device to shell peanuts"
+title = "Device to shell peanuts"
 summary = "The full control-group peanut-sheller prompt printed by Fu, Cagan, and Kotovsky (2010), with the underlying task tracing back to the original Linsey, Green, Murphy, Wood, and Markman (2005) study."
 kind = "text"
 statement = '''
-# Design Problem - Device to shell peanuts
+# Device to shell peanuts
 
 In places like Haiti and certain West African countries, peanuts are a
 significant crop. Most peanut farmers shell their peanuts by hand, an

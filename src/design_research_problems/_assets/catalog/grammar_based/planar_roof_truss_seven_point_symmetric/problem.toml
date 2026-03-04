@@ -1,0 +1,44 @@
+problem_id = "planar_roof_truss_seven_point_symmetric"
+title = "Planar roof truss grammar (seven-point symmetric variant)"
+summary = "A roof-truss grammar aligned to the seven-point symmetric loading formulation reported in the structural essay study."
+kind = "grammar"
+statement = '''
+# Planar roof truss grammar (seven-point symmetric variant)
+
+This catalog entry approximates the sixth planar roof-truss formulation from
+the structural essay study: seven uniformly spaced fixed roof load points with
+left-right symmetry enforced.
+
+The state begins with pinned and roller supports plus seven loaded roof joints.
+Interior joints and members are edited through mirrored actions so the topology
+remains symmetric about the roof apex.
+'''
+implementation = "design_research_problems.problems.grammar._planar_truss:PlanarTrussSpanProblem"
+capabilities = [
+  "statement-markdown",
+  "serializable-state",
+  "discrete-actions",
+  "optional-evaluator",
+  "external-adapter",
+]
+study_suitability = []
+
+[parameters]
+span = 10.0
+max_height = 2.5
+load_magnitude = 1000.0
+roof_load_x_fractions = [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875]
+candidate_point_fractions = [[0.18, 0.2], [0.34, 0.32], [0.5, 0.2]]
+enforce_symmetry = true
+
+[taxonomy]
+formulation = "discrete_grammar"
+convexity = "not_applicable"
+design_variable_type = "discrete"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.25
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "symmetric planar roof-truss topology with seven fixed roof load points"
+tags = ["grammar", "truss", "roof", "discrete", "topology", "symmetric"]

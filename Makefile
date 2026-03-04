@@ -8,7 +8,7 @@ BUILD ?= $(PYTHON) -m build
 TWINE ?= $(PYTHON) -m twine
 UV ?= $(if $(wildcard .venv/bin/uv),.venv/bin/uv,uv)
 REPRO_PYTHON ?= $(shell cat .python-version 2>/dev/null || echo 3.12.12)
-REPRO_EXTRAS ?= dev opt
+REPRO_EXTRAS ?= dev
 TRUSSME_SPEC ?= trussme>=0.1.0
 
 .PHONY: help check-python check-uv dev install-dev repro lock \
@@ -16,14 +16,16 @@ TRUSSME_SPEC ?= trussme>=0.1.0
 	docstrings-check \
 	examples-smoke examples-test examples-metrics \
 	docs docs-build docs-check docs-linkcheck \
-	install-trussme dev-truss test-trussme \
+	install-trussme install-pybamm dev-truss dev-battery test-trussme \
 	ci clean
 
 help:
 	@echo "Common targets:"
 	@echo "  dev                  Install project in editable mode with dev dependencies."
 	@echo "  install-trussme      Install the optional trussme grammar dependency."
+	@echo "  install-pybamm       Install the optional pybamm battery dependency."
 	@echo "  dev-truss            Install dev dependencies plus trussme."
+	@echo "  dev-battery          Install dev dependencies plus pybamm."
 	@echo "  test                 Run the default pytest suite."
 	@echo "  test-trussme         Run tests that require an installed trussme package."
 	@echo "  release-check        Build sdist/wheel and run twine metadata checks."
@@ -37,8 +39,8 @@ check-uv:
 	@$(UV) --version >/dev/null 2>&1 || (echo "uv is required for lock/repro targets."; exit 1)
 
 dev:
-	$(PIP) install --upgrade pip
-	$(PIP) install -e ".[dev,opt]"
+	$(PIP) install --upgrade pip setuptools wheel
+	$(PIP) install -e ".[dev]"
 
 install-dev: dev
 
@@ -61,7 +63,7 @@ type: check-python
 	$(MYPY) src
 
 test: check-python
-	PYTHONPATH=src $(PYTEST) -m "not trussme_real" -q
+	PYTHONPATH=src $(PYTEST) -m "not trussme_real and not pybamm_real" -q
 
 qa: lint fmt-check type test
 
@@ -70,11 +72,11 @@ docstrings-check: check-python
 
 coverage: check-python
 	mkdir -p artifacts/coverage
-	PYTHONPATH=src $(PYTEST) -m "not trussme_real" --cov=src/design_research_problems --cov-report=term --cov-report=json:artifacts/coverage/coverage.json -q
+	PYTHONPATH=src $(PYTEST) -m "not trussme_real and not pybamm_real" --cov=src/design_research_problems --cov-report=term --cov-report=json:artifacts/coverage/coverage.json -q
 	$(PYTHON) scripts/check_coverage_thresholds.py --coverage-json artifacts/coverage/coverage.json
 
 release-check: check-python
-	rm -rf dist
+	rm -rf build dist
 	$(BUILD)
 	$(TWINE) check dist/*
 
@@ -90,10 +92,12 @@ examples-metrics: check-python examples-test
 
 docs-build: check-python
 	$(PYTHON) scripts/generate_example_docs.py
+	$(PYTHON) scripts/generate_problem_catalog_docs.py
 	PYTHONPATH=src $(SPHINX) -b html docs docs/_build/html -n -W --keep-going -E
 
 docs-check: check-python
-	$(PYTHON) scripts/generate_example_docs.py --check
+	$(PYTHON) scripts/generate_example_docs.py
+	$(PYTHON) scripts/generate_problem_catalog_docs.py
 	$(PYTHON) scripts/check_docs_consistency.py
 
 docs-linkcheck: check-python
@@ -104,7 +108,12 @@ docs: docs-build
 install-trussme:
 	$(PIP) install "$(TRUSSME_SPEC)"
 
+install-pybamm:
+	$(PIP) install "pybamm>=25.12,<26"
+
 dev-truss: dev install-trussme
+
+dev-battery: dev install-pybamm
 
 test-trussme: check-python
 	PYTHONPATH=src $(PYTEST) -m trussme_real -q

@@ -1,9 +1,9 @@
 problem_id = "ideation_powdered_surface_coating"
-title = "Ideation Prompt - Powdered Surface Coating Device"
+title = "Powdered Surface Coating Device"
 summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), derived from the general powder-dispersion problem statement in Linsey, Wood, and Markman (2008)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Powdered Surface Coating Device
+# Powdered Surface Coating Device
 
 A device that disperses a light coating of a powdered substance over a surface.
 '''

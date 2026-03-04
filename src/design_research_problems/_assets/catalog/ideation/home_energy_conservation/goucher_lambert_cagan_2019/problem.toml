@@ -1,9 +1,9 @@
 problem_id = "ideation_home_energy_conservation"
-title = "Ideation Prompt - Home Energy Conservation"
+title = "Home Energy Conservation"
 summary = "The original training prompt introduced by Goucher-Lambert and Cagan (2019)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Home Energy Conservation
+# Home Energy Conservation
 
 A device that can help a home conserve energy.
 '''

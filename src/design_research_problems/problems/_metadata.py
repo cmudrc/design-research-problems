@@ -10,6 +10,7 @@ class ProblemKind(StrEnum):
     """Supported high-level problem families."""
 
     TEXT = "text"
+    DECISION = "decision"
     OPTIMIZATION = "optimization"
     GRAMMAR = "grammar"
 
@@ -158,10 +159,9 @@ KNOWN_PROBLEM_CAPABILITIES = frozenset(
         "citation-backed",
         "prompt-packet",
         "packaged-assets",
-        "seeded-data-generation",
         "bounded-variables",
         "equality-constraint",
-        "optional-solver",
+        "baseline-solver",
         "discrete-actions",
         "optional-evaluator",
         "external-adapter",

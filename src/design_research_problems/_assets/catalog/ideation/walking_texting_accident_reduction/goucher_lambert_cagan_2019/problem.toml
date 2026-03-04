@@ -1,9 +1,9 @@
 problem_id = "ideation_walking_texting_accident_reduction"
-title = "Ideation Prompt - Reduce Walking and Texting Accidents"
+title = "Reduce Walking and Texting Accidents"
 summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the longer campus pedestrian-safety brief used by Miller, Bailey, and Kirlik (2014)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Reduce Walking and Texting Accidents
+# Reduce Walking and Texting Accidents
 
 A way to minimize accidents from people walking and texting on a cell phone.
 '''

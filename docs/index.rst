@@ -13,8 +13,9 @@ Highlights
 ----------
 
 - A packaged catalog of reusable design research prompts and benchmark problems.
-- Three problem families: text, optimization, and grammar, plus a linked ideation metadata catalog.
-- Lazy optional integrations for SciPy and ``trussme`` so the base install stays light.
+- Four problem families: text, decision, optimization, and grammar, plus a linked ideation metadata catalog.
+- A shared ``Problem`` base plus ``ComputableProblem`` layer for executable entries.
+- Lazy optional integrations for SciPy, ``trussme``, and ``pybamm`` so the base install stays light.
 - Problem-level feature flags plus family-level aggregated feature flags for capability discovery.
 - Typed metadata and a deliberately small public API.
 - Runnable examples and generated docs that stay in sync with the codebase.
@@ -42,8 +43,11 @@ Problem Families
 ``Text``
    Prompt packets, citations, and optional assets for human-subjects studies.
 
+``Decision``
+   Structured decision briefs with either explicit discrete-option or empirical-choice evaluators.
+
 ``Optimization``
-   Structured numerical problems with bounds, constraints, and optional SciPy solving.
+   Structured numerical problems with bounds, constraints, and representative built-in baselines.
 
 ``Grammar``
    Discrete state-and-action problems for constructive design exploration.
@@ -54,8 +58,9 @@ Common Paths
 Choose the path that matches what you want to do next:
 
 - Read :doc:`quickstart` to load the catalog and inspect each problem family.
-- Read :doc:`problems/index` to understand the three problem types.
-- Read :doc:`dependencies_and_extras` before enabling SciPy or ``trussme`` support.
+- Read :doc:`problems/index` to understand the four problem families.
+- Read :doc:`problem_catalog/index` for the full generated problem-by-problem catalog.
+- Read :doc:`dependencies_and_extras` before enabling SciPy, ``trussme``, or ``pybamm`` support.
 - Read :doc:`examples/index` for runnable scripts you can execute immediately.
 - Read :doc:`api` if you want the public surface contract first.
 
@@ -63,8 +68,13 @@ What Is In The Initial Catalog?
 -------------------------------
 
 - 40 ideation-focused text prompts.
+- ``moneymaker_hip_pump_cost_min``: a citation-backed scalarized pump optimization benchmark.
 - ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
-- ``planar_truss_span``: a discrete planar truss topology grammar with a lazy ``trussme`` adapter.
+- ``battery_pack_18650_open_ended``: an explicit 18650 graph-netlist battery grammar with optional PyBaMM-shaped fixed-ambient single-cell surrogates and a library-owned pack solver.
+- ``battery_pack_18650_series_parallel``: a constrained 18650 pack co-design grammar backed by the same optional single-cell surrogate plus the shared pack solver.
+- ``planar_truss_span``, ``space_truss_span``, and six ``planar_roof_truss_*`` entries: discrete truss grammars with a lazy ``trussme`` adapter.
+- ``planar_truss_span_mass_min``, ``planar_truss_span_deflection_min``, ``planar_truss_span_fos_max``, and ``space_truss_span_mass_min``: structural truss optimization benchmarks backed by the same shared ``trussme`` adapter.
+- ``treadle_pump_ide_material_min``: a citation-backed scalarized treadle-pump optimization benchmark.
 
 .. toctree::
    :maxdepth: 2
@@ -74,6 +84,7 @@ What Is In The Initial Catalog?
    quickstart
    dependencies_and_extras
    problems/index
+   problem_catalog/index
    examples/index
 
 .. toctree::

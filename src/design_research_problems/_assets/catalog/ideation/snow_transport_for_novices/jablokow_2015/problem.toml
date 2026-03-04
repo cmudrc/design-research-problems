@@ -1,9 +1,9 @@
 problem_id = "ideation_snow_transport_for_novices"
-title = "Ideation Prompt - Snow Transport for Novices"
+title = "Snow Transport for Novices"
 summary = "A study-specific ASME ideation brief about helping individuals with limited skiing or snowboarding experience transport themselves on snow, with an earlier related framing in Silk et al. (2014) adapted from Chusilp and Jin (2006) and Jin and Chusilp (2006)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Snow Transport for Novices
+# Snow Transport for Novices
 
 A way for individuals with little skill or experience in skiing or snowboarding to transport themselves on snow.
 '''

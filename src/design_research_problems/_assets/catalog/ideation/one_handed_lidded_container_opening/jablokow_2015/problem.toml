@@ -1,9 +1,9 @@
 problem_id = "ideation_one_handed_lidded_container_opening"
-title = "Ideation Prompt - One-Handed Lidded Container Opening"
+title = "One-Handed Lidded Container Opening"
 summary = "A study-specific ASME ideation brief about opening a lidded food container with one hand, with an earlier related framing in Silk et al. (2014) adapted from Lemons et al. (2010)."
 kind = "text"
 statement = '''
-# Ideation Prompt - One-Handed Lidded Container Opening
+# One-Handed Lidded Container Opening
 
 Design a way for individuals who have limited or no use of one upper extremity to open a lidded food container with one hand.
 '''

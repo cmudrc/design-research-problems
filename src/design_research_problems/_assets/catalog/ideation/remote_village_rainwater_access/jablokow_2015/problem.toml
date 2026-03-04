@@ -1,9 +1,9 @@
 problem_id = "ideation_remote_village_rainwater_access"
-title = "Ideation Prompt - Remote Village Rainwater Access"
+title = "Remote Village Rainwater Access"
 summary = "A study-specific ASME ideation brief about helping remote villagers catch, store, and access rainwater, with an earlier related framing in Silk et al. (2014) adapted from Spradlin (2012)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Remote Village Rainwater Access
+# Remote Village Rainwater Access
 
 A way for remote villagers to catch, store, and access rainwater.
 '''
