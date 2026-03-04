@@ -25,7 +25,10 @@ from design_research_problems import (
 )
 from design_research_problems.problems import DecisionOption
 from design_research_problems.problems.grammar._battery_cell_model import BatteryCellModel
-from design_research_problems.problems.optimization import BatteryGridSizingProblem
+from design_research_problems.problems.optimization import (
+    BatteryGridSizingProblem,
+    PlanarTrussTopologyOptimizationProblem,
+)
 from design_research_problems.problems.optimization._pill import _pill_area, _pill_volume
 
 MSEVAL_IDS = (
@@ -88,8 +91,10 @@ def test_registry_entries_filter_by_kind() -> None:
     )
     optimization_kinds = registry.by_kind(ProblemKind.OPTIMIZATION)
     optimization_ids = [entry.problem_id for entry in optimization_kinds]
-    assert len(optimization_ids) == 4
+    assert len(optimization_ids) == 6
     assert "battery_pack_18650_series_parallel_cost_min" in optimization_ids
+    assert "planar_truss_span_member_count_min" in optimization_ids
+    assert "planar_truss_span_total_length_min" in optimization_ids
 
 
 def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
@@ -323,6 +328,8 @@ def test_registry_search_filters_by_feature_flags() -> None:
         "battery_pack_18650_series_parallel_cost_min",
         "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",
+        "planar_truss_span_member_count_min",
+        "planar_truss_span_total_length_min",
         "treadle_pump_ide_material_min",
     ]
     text_matches = registry.search(
@@ -395,6 +402,30 @@ def test_battery_grid_and_grammar_share_series_parallel_backend() -> None:
     state = optimization_problem._state_from_variables(candidate)
     assert state == _build_feasible_battery_state()
     assert grammar_problem.evaluate(state) == optimization_problem._evaluation_from_variables(candidate)
+
+
+def test_planar_truss_topology_optimizers_use_optimization_family_api() -> None:
+    for problem_id in ("planar_truss_span_member_count_min", "planar_truss_span_total_length_min"):
+        problem = get_problem(problem_id)
+        assert isinstance(problem, OptimizationProblem)
+        assert isinstance(problem, PlanarTrussTopologyOptimizationProblem)
+        assert hasattr(problem, "enumerate_transitions") is False
+
+        initial = problem.generate_initial_solution()
+        assert initial.ndim == 1
+        assert initial.shape[0] > 0
+
+        evaluation = problem.evaluate(initial)
+        assert isinstance(evaluation, OptimizationEvaluation)
+        assert evaluation.is_feasible is False
+
+        result = problem.solve(maxiter=512)
+        assert result.x.shape == initial.shape
+        assert isinstance(result.fun, float)
+        assert result.success is True
+
+        state = problem._state_from_variables(result.x)
+        assert len(state.members) >= 3
 
 
 def test_domain_backends_remain_importable_from_legacy_and_new_paths() -> None:

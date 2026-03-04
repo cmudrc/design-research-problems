@@ -247,3 +247,249 @@ __all__ = [
     "point_in_collection",
     "roofline_y",
 ]
+
+
+def build_seed_planar_truss_state(
+    span: float,
+    max_height: float,
+    load_magnitude: float,
+    *,
+    roof_load_x_fractions: tuple[float, ...] = (),
+    enforce_symmetry: bool = False,
+) -> PlanarTrussState:
+    """Build the canonical zero-member planar truss seed state.
+
+    Args:
+        span: Support-to-support span.
+        max_height: Maximum intended design envelope height.
+        load_magnitude: Downward point-load magnitude.
+        roof_load_x_fractions: Optional roofline load locations as span fractions.
+        enforce_symmetry: Whether the state should record a vertical symmetry axis.
+
+    Returns:
+        Seed state containing the supports, one or more loaded joints, and no members.
+    """
+    joints: list[PlanarJoint] = [
+        PlanarJoint(joint_id=0, x=0.0, y=0.0, support_type="pinned"),
+        PlanarJoint(joint_id=1, x=span, y=0.0, support_type="roller"),
+    ]
+    if roof_load_x_fractions:
+        load_joint_ids: list[int] = []
+        for index, x_fraction in enumerate(roof_load_x_fractions, start=2):
+            joints.append(
+                PlanarJoint(
+                    joint_id=index,
+                    x=span * x_fraction,
+                    y=roofline_y(x_fraction, max_height),
+                    support_type="free",
+                )
+            )
+            load_joint_ids.append(index)
+        load_value = load_magnitude / float(len(load_joint_ids))
+        load_vector = (0.0, -load_value, 0.0)
+        additional_loads = tuple(PlanarLoad(joint_id=joint_id, vector=load_vector) for joint_id in load_joint_ids[1:])
+        load_joint_id = load_joint_ids[0]
+    else:
+        joints.append(PlanarJoint(joint_id=2, x=span / 2.0, y=max_height, support_type="free"))
+        load_joint_id = 2
+        load_vector = (0.0, -load_magnitude, 0.0)
+        additional_loads = ()
+
+    return PlanarTrussState(
+        span=span,
+        max_height=max_height,
+        joints=tuple(joints),
+        members=(),
+        load_joint_id=load_joint_id,
+        load_vector=load_vector,
+        additional_loads=additional_loads,
+        symmetry_axis_x=span / 2.0 if enforce_symmetry else None,
+    )
+
+
+def candidate_planar_truss_points(
+    state: PlanarTrussState,
+    *,
+    candidate_point_fractions: tuple[tuple[float, float], ...] = (),
+) -> tuple[tuple[float, float], ...]:
+    """Return the deterministic candidate interior joint coordinates.
+
+    Args:
+        state: Base truss state that defines the span and height scaling.
+        candidate_point_fractions: Optional span- and height-fraction pairs.
+
+    Returns:
+        Candidate interior joint coordinates in deterministic order.
+    """
+    if candidate_point_fractions:
+        return tuple(
+            (state.span * x_fraction, state.max_height * y_fraction)
+            for x_fraction, y_fraction in candidate_point_fractions
+        )
+    return (
+        (state.span * 0.25, state.max_height * 0.5),
+        (state.span * 0.50, state.max_height * 0.5),
+        (state.span * 0.75, state.max_height * 0.5),
+    )
+
+
+def expand_planar_truss_candidate_joints(
+    state: PlanarTrussState,
+    candidate_points: tuple[tuple[float, float], ...],
+) -> PlanarTrussState:
+    """Return a state with all deterministic candidate joints inserted.
+
+    Args:
+        state: Base truss state to extend.
+        candidate_points: Candidate interior joint coordinates.
+
+    Returns:
+        State containing the original joints plus any admissible candidate joints.
+    """
+    joints = list(state.joints)
+    occupied = {(joint.x, joint.y) for joint in joints}
+    next_joint_id = max((joint.joint_id for joint in joints), default=-1) + 1
+
+    if state.symmetry_axis_x is None:
+        for x_value, y_value in candidate_points:
+            if point_in_collection(occupied, x_value, y_value):
+                continue
+            joints.append(PlanarJoint(joint_id=next_joint_id, x=x_value, y=y_value, support_type="free"))
+            occupied.add((x_value, y_value))
+            next_joint_id += 1
+        return PlanarTrussState(
+            span=state.span,
+            max_height=state.max_height,
+            joints=tuple(joints),
+            members=state.members,
+            load_joint_id=state.load_joint_id,
+            load_vector=state.load_vector,
+            additional_loads=state.additional_loads,
+            symmetry_axis_x=state.symmetry_axis_x,
+        )
+
+    processed_points: list[tuple[float, float]] = []
+    assert state.symmetry_axis_x is not None
+    for x_value, y_value in candidate_points:
+        if any(float_matches(px, x_value) and float_matches(py, y_value) for px, py in processed_points):
+            continue
+        if float_matches(x_value, state.symmetry_axis_x):
+            processed_points.append((x_value, y_value))
+            if point_in_collection(occupied, x_value, y_value):
+                continue
+            joints.append(PlanarJoint(joint_id=next_joint_id, x=x_value, y=y_value, support_type="free"))
+            occupied.add((x_value, y_value))
+            next_joint_id += 1
+            continue
+
+        mirrored_x = (2.0 * state.symmetry_axis_x) - x_value
+        processed_points.append((x_value, y_value))
+        processed_points.append((mirrored_x, y_value))
+        if point_in_collection(occupied, x_value, y_value) or point_in_collection(occupied, mirrored_x, y_value):
+            continue
+        left_x, right_x = sorted((x_value, mirrored_x))
+        joints.append(PlanarJoint(joint_id=next_joint_id, x=left_x, y=y_value, support_type="free"))
+        joints.append(PlanarJoint(joint_id=next_joint_id + 1, x=right_x, y=y_value, support_type="free"))
+        occupied.add((left_x, y_value))
+        occupied.add((right_x, y_value))
+        next_joint_id += 2
+
+    return PlanarTrussState(
+        span=state.span,
+        max_height=state.max_height,
+        joints=tuple(joints),
+        members=state.members,
+        load_joint_id=state.load_joint_id,
+        load_vector=state.load_vector,
+        additional_loads=state.additional_loads,
+        symmetry_axis_x=state.symmetry_axis_x,
+    )
+
+
+def enumerate_planar_truss_candidate_edges(state: PlanarTrussState) -> tuple[tuple[int, int], ...]:
+    """Return the canonical candidate member edges for one fixed joint set.
+
+    Args:
+        state: Truss state whose joints define the candidate topology space.
+
+    Returns:
+        Canonical undirected member edges in deterministic order.
+    """
+    existing_edges = set(member_lookup(state))
+    joint_ids = sorted(joint.joint_id for joint in state.joints)
+    candidate_edges: list[tuple[int, int]] = []
+    for index, start_joint_id in enumerate(joint_ids):
+        for end_joint_id in joint_ids[index + 1 :]:
+            edge = edge_key(start_joint_id, end_joint_id)
+            if edge in existing_edges:
+                continue
+            if state.symmetry_axis_x is not None:
+                mirrored = mirrored_edge(state, edge)
+                if mirrored is None:
+                    continue
+                if edge != min(edge, mirrored):
+                    continue
+                if mirrored != edge and mirrored in existing_edges:
+                    continue
+            candidate_edges.append(edge)
+    return tuple(candidate_edges)
+
+
+def build_planar_truss_state_from_edges(
+    base_state: PlanarTrussState,
+    selected_edges: tuple[tuple[int, int], ...],
+) -> PlanarTrussState:
+    """Build a concrete truss state from a fixed joint set and selected edges.
+
+    Args:
+        base_state: Fixed-joint state that supplies joints, loads, and symmetry.
+        selected_edges: Canonical undirected edges selected for inclusion.
+
+    Returns:
+        New state with deterministically numbered members.
+
+    Raises:
+        ValueError: If a selected edge references missing joints or violates symmetry requirements.
+    """
+    joint_ids = {joint.joint_id for joint in base_state.joints}
+    included_edges = {edge_key(member.start_joint_id, member.end_joint_id) for member in base_state.members}
+    for raw_edge in selected_edges:
+        edge = edge_key(raw_edge[0], raw_edge[1])
+        if edge[0] not in joint_ids or edge[1] not in joint_ids:
+            raise ValueError("Selected edges must reference existing joints.")
+        included_edges.add(edge)
+        if base_state.symmetry_axis_x is None:
+            continue
+        mirrored = mirrored_edge(base_state, edge)
+        if mirrored is None:
+            raise ValueError("Symmetric truss states require mirrored joints for every selected edge.")
+        included_edges.add(mirrored)
+
+    ordered_edges = tuple(sorted(included_edges))
+    members = tuple(
+        PlanarMember(
+            member_id=member_id,
+            start_joint_id=edge[0],
+            end_joint_id=edge[1],
+        )
+        for member_id, edge in enumerate(ordered_edges)
+    )
+    return PlanarTrussState(
+        span=base_state.span,
+        max_height=base_state.max_height,
+        joints=base_state.joints,
+        members=members,
+        load_joint_id=base_state.load_joint_id,
+        load_vector=base_state.load_vector,
+        additional_loads=base_state.additional_loads,
+        symmetry_axis_x=base_state.symmetry_axis_x,
+    )
+
+
+__all__ += [
+    "build_planar_truss_state_from_edges",
+    "build_seed_planar_truss_state",
+    "candidate_planar_truss_points",
+    "enumerate_planar_truss_candidate_edges",
+    "expand_planar_truss_candidate_joints",
+]

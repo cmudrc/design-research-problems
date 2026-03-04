@@ -29,6 +29,8 @@ The first catalog includes:
 - 40 ideation-focused text prompts
 - `pill_capsule_min_area` for constrained continuous optimization
 - `battery_pack_18650_series_parallel_cost_min` for fixed-topology rectangular 18650 pack sizing under the shared battery backend
+- `planar_truss_span_member_count_min` for fixed-joint planar truss topology selection with a member-count objective
+- `planar_truss_span_total_length_min` for fixed-joint planar truss topology selection with a total-length objective
 - `planar_truss_span` for the original seed planar truss grammar backed by `trussme`
 - `battery_pack_18650_open_ended` for explicit 18650 cell-by-cell graph-netlist co-design backed by an optional PyBaMM-shaped single-cell surrogate plus a library-owned pack solver
 - `battery_pack_18650_series_parallel` for explicit 18650 series-parallel pack co-design backed by the same optional PyBaMM-shaped single-cell surrogate plus a library-owned pack solver

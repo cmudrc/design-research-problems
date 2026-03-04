@@ -14,6 +14,9 @@ _LAZY_EXPORTS = {
     ),
     "MoneyMakerHipPumpProblem": ("design_research_problems.problems.optimization._moneymaker:MoneyMakerHipPumpProblem"),
     "PillCapsuleMinArea": "design_research_problems.problems.optimization._pill:PillCapsuleMinArea",
+    "PlanarTrussTopologyOptimizationProblem": (
+        "design_research_problems.problems.optimization._truss_topology:PlanarTrussTopologyOptimizationProblem"
+    ),
 }
 
 __all__ = list(_LAZY_EXPORTS)
@@ -43,3 +46,4 @@ if TYPE_CHECKING:
     from ._ide_treadle import IDETreadlePumpMaterialMin as IDETreadlePumpMaterialMin
     from ._moneymaker import MoneyMakerHipPumpProblem as MoneyMakerHipPumpProblem
     from ._pill import PillCapsuleMinArea as PillCapsuleMinArea
+    from ._truss_topology import PlanarTrussTopologyOptimizationProblem as PlanarTrussTopologyOptimizationProblem
