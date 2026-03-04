@@ -4,11 +4,19 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Literal
 
 import numpy
 
-from design_research_problems._exceptions import MissingOptionalDependencyError
+from design_research_problems.problems._domains.truss_core import (
+    TrussJointRecord,
+    TrussLoadRecord,
+    build_adjacency,
+    evaluate_truss_records,
+)
+from design_research_problems.problems._domains.truss_core import (
+    edge_key as _shared_edge_key,
+)
 
 SupportType = Literal["pinned", "roller", "free"]
 
@@ -97,9 +105,7 @@ class PlanarTrussEvaluation:
 
 def edge_key(start_joint_id: int, end_joint_id: int) -> tuple[int, int]:
     """Normalize a member edge into an undirected key."""
-    if start_joint_id <= end_joint_id:
-        return (start_joint_id, end_joint_id)
-    return (end_joint_id, start_joint_id)
+    return _shared_edge_key(start_joint_id, end_joint_id)
 
 
 def float_matches(left: float, right: float) -> bool:
@@ -168,52 +174,102 @@ def build_planar_truss_failure(state: PlanarTrussState, reason: str) -> PlanarTr
     )
 
 
-def _import_trussme() -> Any:
-    """Import ``trussme`` lazily for real planar-truss evaluation."""
-    try:
-        import trussme
-    except ImportError as exc:
-        raise MissingOptionalDependencyError(
-            "trussme is required for grammar evaluation. Install it with: pip install "
-            "design-research-problems[grammar] or run: make install-trussme"
-        ) from exc
-    return trussme
+def _orientation(point_a: tuple[float, float], point_b: tuple[float, float], point_c: tuple[float, float]) -> float:
+    """Return the signed orientation determinant for three planar points."""
+    return ((point_b[0] - point_a[0]) * (point_c[1] - point_a[1])) - (
+        (point_b[1] - point_a[1]) * (point_c[0] - point_a[0])
+    )
+
+
+def _segments_cross(
+    first_start: tuple[float, float],
+    first_end: tuple[float, float],
+    second_start: tuple[float, float],
+    second_end: tuple[float, float],
+) -> bool:
+    """Return whether two open line segments intersect away from their endpoints."""
+    tolerance = 1e-9
+    orientation_one = _orientation(first_start, first_end, second_start)
+    orientation_two = _orientation(first_start, first_end, second_end)
+    orientation_three = _orientation(second_start, second_end, first_start)
+    orientation_four = _orientation(second_start, second_end, first_end)
+    if (
+        abs(orientation_one) <= tolerance
+        or abs(orientation_two) <= tolerance
+        or abs(orientation_three) <= tolerance
+        or abs(orientation_four) <= tolerance
+    ):
+        return False
+    return (orientation_one > 0.0) != (orientation_two > 0.0) and (orientation_three > 0.0) != (orientation_four > 0.0)
+
+
+def count_planar_member_crossings(state: PlanarTrussState) -> int:
+    """Count member crossings that occur away from shared endpoints."""
+    joints = joint_map(state)
+    crossings = 0
+    for first_index, first_member in enumerate(state.members):
+        first_edge = edge_key(first_member.start_joint_id, first_member.end_joint_id)
+        first_points = (
+            (joints[first_edge[0]].x, joints[first_edge[0]].y),
+            (joints[first_edge[1]].x, joints[first_edge[1]].y),
+        )
+        for second_member in state.members[first_index + 1 :]:
+            second_edge = edge_key(second_member.start_joint_id, second_member.end_joint_id)
+            if set(first_edge) & set(second_edge):
+                continue
+            second_points = (
+                (joints[second_edge[0]].x, joints[second_edge[0]].y),
+                (joints[second_edge[1]].x, joints[second_edge[1]].y),
+            )
+            if _segments_cross(first_points[0], first_points[1], second_points[0], second_points[1]):
+                crossings += 1
+    return crossings
 
 
 def evaluate_planar_truss_state(state: PlanarTrussState) -> PlanarTrussEvaluation:
     """Evaluate one state with the lazy TrussMe adapter."""
-    if not state.members:
-        return build_planar_truss_failure(state, "At least one member is required.")
-
     try:
-        trussme = _import_trussme()
-        truss = trussme.Truss()
-        index_map: dict[int, int] = {}
-        for joint in sorted(state.joints, key=lambda item: item.joint_id):
-            coordinates = [joint.x, joint.y, 0.0]
-            if joint.support_type == "pinned":
-                index = truss.add_pinned_joint(coordinates)
-            elif joint.support_type == "roller":
-                index = truss.add_roller_joint(coordinates)
-            else:
-                index = truss.add_free_joint(coordinates)
-            index_map[joint.joint_id] = index
+        if not state.members:
+            evaluate_truss_records(
+                tuple(
+                    TrussJointRecord(
+                        joint_id=joint.joint_id,
+                        coordinates=(joint.x, joint.y, 0.0),
+                        support_type=joint.support_type,
+                    )
+                    for joint in state.joints
+                ),
+                (),
+                TrussLoadRecord(joint_id=state.load_joint_id, vector=state.load_vector),
+                tuple(),
+                out_of_plane_axis="z",
+            )
+            return build_planar_truss_failure(state, "At least one member is required.")
 
-        truss.add_out_of_plane_support("z")
-        for member in sorted(state.members, key=lambda item: item.member_id):
-            truss.add_member(index_map[member.start_joint_id], index_map[member.end_joint_id])
-
-        truss.set_load(index_map[state.load_joint_id], list(state.load_vector))
-        for load in state.additional_loads:
-            truss.set_load(index_map[load.joint_id], list(load.vector))
-        truss.analyze()
-        fos = float(truss.fos)
+        metrics = evaluate_truss_records(
+            tuple(
+                TrussJointRecord(
+                    joint_id=joint.joint_id,
+                    coordinates=(joint.x, joint.y, 0.0),
+                    support_type=joint.support_type,
+                )
+                for joint in state.joints
+            ),
+            tuple(
+                edge_key(member.start_joint_id, member.end_joint_id)
+                for member in sorted(state.members, key=lambda item: item.member_id)
+            ),
+            TrussLoadRecord(joint_id=state.load_joint_id, vector=state.load_vector),
+            tuple(TrussLoadRecord(joint_id=load.joint_id, vector=load.vector) for load in state.additional_loads),
+            out_of_plane_axis="z",
+        )
+        fos = metrics.fos
         return PlanarTrussEvaluation(
-            mass=float(truss.mass),
+            mass=metrics.mass,
             fos=fos,
-            fos_buckling=float(truss.fos_buckling),
-            fos_yielding=float(truss.fos_yielding),
-            deflection=float(truss.deflection),
+            fos_buckling=metrics.fos_buckling,
+            fos_yielding=metrics.fos_yielding,
+            deflection=metrics.deflection,
             number_of_joints=len(state.joints),
             number_of_members=len(state.members),
             is_feasible=fos >= 1.0,
@@ -223,9 +279,11 @@ def evaluate_planar_truss_state(state: PlanarTrussState) -> PlanarTrussEvaluatio
         return build_planar_truss_failure(state, f"Linear solve failed: {exc}")
     except (IndexError, ValueError, KeyError) as exc:
         return build_planar_truss_failure(state, str(exc))
-    except MissingOptionalDependencyError:
-        raise
     except Exception as exc:  # pragma: no cover - defensive guard for optional integration.
+        from design_research_problems._exceptions import MissingOptionalDependencyError
+
+        if isinstance(exc, MissingOptionalDependencyError):
+            raise
         return build_planar_truss_failure(state, f"{type(exc).__name__}: {exc}")
 
 
@@ -237,6 +295,7 @@ __all__ = [
     "PlanarTrussState",
     "SupportType",
     "build_planar_truss_failure",
+    "count_planar_member_crossings",
     "edge_key",
     "evaluate_planar_truss_state",
     "float_matches",
@@ -493,3 +552,22 @@ __all__ += [
     "enumerate_planar_truss_candidate_edges",
     "expand_planar_truss_candidate_joints",
 ]
+
+
+def active_joint_ids(state: PlanarTrussState) -> set[int]:
+    """Return the joint IDs touched by supports, the load joint, or active members."""
+    active_ids = {joint.joint_id for joint in state.joints if joint.support_type != "free"} | {state.load_joint_id}
+    for member in state.members:
+        active_ids.add(member.start_joint_id)
+        active_ids.add(member.end_joint_id)
+    return active_ids
+
+
+def adjacency_map(state: PlanarTrussState) -> dict[int, set[int]]:
+    """Return an undirected adjacency map for the state's members."""
+    joint_ids = {joint.joint_id for joint in state.joints}
+    edges = tuple(edge_key(member.start_joint_id, member.end_joint_id) for member in state.members)
+    return build_adjacency(joint_ids, edges)
+
+
+__all__ += ["active_joint_ids", "adjacency_map"]

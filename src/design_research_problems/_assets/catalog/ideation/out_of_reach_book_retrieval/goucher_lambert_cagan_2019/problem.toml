@@ -1,9 +1,9 @@
 problem_id = "ideation_out_of_reach_book_retrieval"
-title = "Ideation Prompt - Out-of-Reach Book Retrieval"
+title = "Out-of-Reach Book Retrieval"
 summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the longer library-shelf retrieval brief in Cardoso and Badke-Schaub (2011)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Out-of-Reach Book Retrieval
+# Out-of-Reach Book Retrieval
 
 A device that allows people to get a book that is out of reach.
 '''

@@ -31,7 +31,7 @@ The optimization problem can be instantiated through the registry:
    treadle = get_problem("treadle_pump_ide_material_min")
    print(treadle.solve().message)
 
-The grammar problem exposes a serializable starting state and a lazy `trussme`
+The grammar problems expose serializable starting states and a lazy `trussme`
 adapter:
 
 .. code-block:: python

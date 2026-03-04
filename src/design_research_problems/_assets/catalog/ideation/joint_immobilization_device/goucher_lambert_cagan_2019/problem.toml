@@ -1,9 +1,9 @@
 problem_id = "ideation_joint_immobilization_device"
-title = "Ideation Prompt - Joint Immobilization Device"
+title = "Joint Immobilization Device"
 summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the Mountain-TREK design brief in Wilson, Rosen, Nelson, and Yen (2010)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Joint Immobilization Device
+# Joint Immobilization Device
 
 A device to immobilize a human joint.
 '''

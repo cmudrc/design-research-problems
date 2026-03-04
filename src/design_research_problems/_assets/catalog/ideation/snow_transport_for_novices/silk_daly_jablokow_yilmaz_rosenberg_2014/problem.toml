@@ -1,9 +1,9 @@
 problem_id = "ideation_snow_transport_for_novices_framework"
-title = "Ideation Prompt - Snow Transport for Novices (Framework)"
+title = "Snow Transport for Novices (Framework)"
 summary = "The exact neutral Snow prompt shown in Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Snow Transport for Novices (Framework)
+# Snow Transport for Novices (Framework)
 
 Design a way for individuals without lots of skill and experience skiing or
 snowboarding to transport themselves on snow.

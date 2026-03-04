@@ -1,9 +1,9 @@
 problem_id = "ideation_car_mounted_bicycle_rack"
-title = "Ideation Prompt - Car-Mounted Bicycle Rack"
+title = "Car-Mounted Bicycle Rack"
 summary = "A reconstructed version of the bicycle-rack problem used in Experiment 1 of Jansson and Smith (1991)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Car-Mounted Bicycle Rack
+# Car-Mounted Bicycle Rack
 
 Design a car-mounted bicycle rack.
 

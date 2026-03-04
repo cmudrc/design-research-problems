@@ -1,9 +1,9 @@
 problem_id = "ideation_human_motion_energy_harvesting_rural_communities"
-title = "Ideation Prompt - Human Motion Energy for Rural Communities"
+title = "Human Motion Energy for Rural Communities"
 summary = "The full participant-facing design brief printed in Fu et al. (2013) for the human-motion energy harvesting task, with the underlying task introduced in Chan et al. (2011)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Human Motion Energy for Rural Communities
+# Human Motion Energy for Rural Communities
 
 Design a device to collect energy from human motion for use in
 developing and impoverished rural communities in places like India

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import design_research_problems as drp
+from design_research_problems.problems import grammar, optimization
 
 EXPECTED_PUBLIC_API = [
     "__version__",
@@ -40,3 +41,14 @@ def test_top_level_exports_match_curated_contract() -> None:
 def test_top_level_exports_resolve() -> None:
     for symbol_name in drp.__all__:
         assert getattr(drp, symbol_name) is getattr(drp, symbol_name)
+
+
+def test_family_subpackage_exports_resolve() -> None:
+    assert grammar.SpaceTrussSpanProblem is grammar.SpaceTrussSpanProblem
+    assert grammar.SpaceTrussState is grammar.SpaceTrussState
+    assert (
+        optimization.PlanarTrussEngineeringOptimizationProblem is optimization.PlanarTrussEngineeringOptimizationProblem
+    )
+    assert (
+        optimization.SpaceTrussEngineeringOptimizationProblem is optimization.SpaceTrussEngineeringOptimizationProblem
+    )

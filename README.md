@@ -29,9 +29,10 @@ The first catalog includes:
 - 40 ideation-focused text prompts
 - `pill_capsule_min_area` for constrained continuous optimization
 - `battery_pack_18650_series_parallel_cost_min` for fixed-topology rectangular 18650 pack sizing under the shared battery backend
-- `planar_truss_span_member_count_min` for fixed-joint planar truss topology selection with a member-count objective
-- `planar_truss_span_total_length_min` for fixed-joint planar truss topology selection with a total-length objective
+- `planar_truss_span_mass_min`, `planar_truss_span_deflection_min`, and `planar_truss_span_fos_max` for fixed-joint planar truss structural optimization under real `trussme` evaluation
+- `space_truss_span_mass_min` for fixed-joint 3D space-truss structural optimization under the same shared truss backend
 - `planar_truss_span` for the original seed planar truss grammar backed by `trussme`
+- `space_truss_span` for a bounded 3D space-truss grammar backed by `trussme`
 - `battery_pack_18650_open_ended` for explicit 18650 cell-by-cell graph-netlist co-design backed by an optional PyBaMM-shaped single-cell surrogate plus a library-owned pack solver
 - `battery_pack_18650_series_parallel` for explicit 18650 series-parallel pack co-design backed by the same optional PyBaMM-shaped single-cell surrogate plus a library-owned pack solver
 - six `planar_roof_truss_*` variants that approximate the roof-truss formulations reported by Shea and Cagan
@@ -47,7 +48,7 @@ Install from PyPI with:
 pip install design-research-problems
 ```
 
-Install the optional `trussme` grammar support with:
+Install the optional `trussme` truss support with:
 
 ```bash
 pip install "design-research-problems[grammar]"

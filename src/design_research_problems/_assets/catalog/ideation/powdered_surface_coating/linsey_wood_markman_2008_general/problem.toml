@@ -1,9 +1,9 @@
 problem_id = "ideation_powdered_surface_coating_general"
-title = "Ideation Prompt - Powder Dispersal (General)"
+title = "Powder Dispersal (General)"
 summary = "The general powder-dispersion brief from Linsey, Wood, and Markman (2008)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Powder Dispersal (General)
+# Powder Dispersal (General)
 
 Design a device to disperse a light coating of a powdered substance that forms
 clumps over a surface.

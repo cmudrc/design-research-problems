@@ -1,25 +1,25 @@
-examples/grammar/battery_pack_18650_open_ended.py:9: DGS010 Callable with explicit raise statements must include a Raises section.
-examples/grammar/battery_pack_18650_series_parallel.py:9: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/_catalog/_registry.py:231: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:236: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:239: DGS005 Missing callable docstring.
 src/design_research_problems/_catalog/_registry.py:242: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:245: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:248: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:254: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:307: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:311: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:315: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:319: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:323: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:327: DGS005 Missing callable docstring.
-src/design_research_problems/_catalog/_registry.py:331: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:247: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:250: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:253: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:256: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:259: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:269: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:272: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:275: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:281: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:334: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:338: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:342: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:346: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:350: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:354: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:364: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:368: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:372: DGS005 Missing callable docstring.
+src/design_research_problems/_catalog/_registry.py:376: DGS005 Missing callable docstring.
 src/design_research_problems/problems/_computable.py:14: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_computable.py:14: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_decision.py:1097: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_decision.py:1097: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_decision.py:1267: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_decision.py:1267: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_decision.py:332: DGS010 Callable with explicit raise statements must include a Raises section.
 src/design_research_problems/problems/_decision.py:623: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_decision.py:623: DGS009 Callable must include a Returns section for non-None return annotations.
@@ -49,6 +49,14 @@ src/design_research_problems/problems/_decision.py:896: DGS006 Callable with par
 src/design_research_problems/problems/_decision.py:896: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_decision.py:917: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_decision.py:917: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_decision.py:1097: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_decision.py:1097: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_decision.py:1267: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_decision.py:1267: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/battery_cell_model.py:35: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/battery_cell_model.py:35: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/_domains/battery_cell_model.py:48: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/battery_cell_model.py:48: DGS010 Callable with explicit raise statements must include a Raises section.
 src/design_research_problems/problems/_domains/battery_cell_model.py:167: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/battery_cell_model.py:167: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_cell_model.py:175: DGS006 Callable with parameters must include an Args section.
@@ -59,10 +67,6 @@ src/design_research_problems/problems/_domains/battery_cell_model.py:188: DGS006
 src/design_research_problems/problems/_domains/battery_cell_model.py:188: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_cell_model.py:196: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/battery_cell_model.py:196: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/battery_cell_model.py:35: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/battery_cell_model.py:35: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/_domains/battery_cell_model.py:48: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/battery_cell_model.py:48: DGS010 Callable with explicit raise statements must include a Raises section.
 src/design_research_problems/problems/_domains/battery_circuit.py:141: DGS011 Dataclass field 'pack_terminal_voltage_end' must include an inline docstring.
 src/design_research_problems/problems/_domains/battery_circuit.py:142: DGS011 Dataclass field 'delivered_capacity_ah' must include an inline docstring.
 src/design_research_problems/problems/_domains/battery_circuit.py:143: DGS011 Dataclass field 'max_cell_current_a' must include an inline docstring.
@@ -106,17 +110,17 @@ src/design_research_problems/problems/_domains/battery_circuit.py:722: DGS006 Ca
 src/design_research_problems/problems/_domains/battery_circuit.py:722: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_circuit.py:763: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/battery_circuit.py:787: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/battery_core.py:36: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/battery_core.py:41: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/battery_core.py:46: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/battery_core.py:89: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/battery_core.py:89: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_core.py:108: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/battery_core.py:108: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_core.py:138: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/battery_core.py:138: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_core.py:153: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/battery_core.py:153: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/battery_core.py:36: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/battery_core.py:41: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/battery_core.py:46: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/battery_core.py:89: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/battery_core.py:89: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_layout.py:113: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_layout.py:118: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_layout.py:123: DGS009 Callable must include a Returns section for non-None return annotations.
@@ -141,6 +145,8 @@ src/design_research_problems/problems/_domains/battery_layout.py:254: DGS006 Cal
 src/design_research_problems/problems/_domains/battery_layout.py:254: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_layout.py:262: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/battery_layout.py:262: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/battery_series_parallel.py:91: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/battery_series_parallel.py:91: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_series_parallel.py:119: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/battery_series_parallel.py:119: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_series_parallel.py:167: DGS006 Callable with parameters must include an Args section.
@@ -149,34 +155,111 @@ src/design_research_problems/problems/_domains/battery_series_parallel.py:208: D
 src/design_research_problems/problems/_domains/battery_series_parallel.py:208: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_domains/battery_series_parallel.py:369: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_domains/battery_series_parallel.py:369: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/battery_series_parallel.py:91: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/battery_series_parallel.py:91: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:105: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:105: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:110: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:110: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:115: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:115: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:120: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:120: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:125: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:125: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:130: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:130: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:147: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:147: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:156: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:156: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:171: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:171: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/_domains/planar_truss.py:183: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:183: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_domains/planar_truss.py:183: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/_domains/planar_truss.py:98: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/_domains/planar_truss.py:98: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:106: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:106: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:111: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:111: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:116: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:116: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:121: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:121: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:126: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:126: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:131: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:131: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:136: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:136: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:153: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:153: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:162: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:162: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:177: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:177: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:184: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:184: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:206: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:206: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:229: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:229: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:229: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/_domains/planar_truss.py:557: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:557: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/planar_truss.py:566: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/planar_truss.py:566: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/space_truss.py:24: DGS011 Dataclass field 'joint_id' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:25: DGS011 Dataclass field 'x' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:26: DGS011 Dataclass field 'y' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:27: DGS011 Dataclass field 'z' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:28: DGS011 Dataclass field 'support_type' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:35: DGS011 Dataclass field 'member_id' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:36: DGS011 Dataclass field 'start_joint_id' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:37: DGS011 Dataclass field 'end_joint_id' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:44: DGS011 Dataclass field 'joint_id' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:45: DGS011 Dataclass field 'vector' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:52: DGS011 Dataclass field 'span' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:53: DGS011 Dataclass field 'width' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:54: DGS011 Dataclass field 'max_height' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:55: DGS011 Dataclass field 'joints' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:56: DGS011 Dataclass field 'members' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:57: DGS011 Dataclass field 'load_joint_id' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:58: DGS011 Dataclass field 'load_vector' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:59: DGS011 Dataclass field 'additional_loads' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:66: DGS011 Dataclass field 'mass' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:67: DGS011 Dataclass field 'fos' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:68: DGS011 Dataclass field 'fos_buckling' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:69: DGS011 Dataclass field 'fos_yielding' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:70: DGS011 Dataclass field 'deflection' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:71: DGS011 Dataclass field 'number_of_joints' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:72: DGS011 Dataclass field 'number_of_members' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:73: DGS011 Dataclass field 'is_feasible' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:74: DGS011 Dataclass field 'failure_reason' must include an inline docstring.
+src/design_research_problems/problems/_domains/space_truss.py:77: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/space_truss.py:77: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/space_truss.py:92: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/space_truss.py:92: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/space_truss.py:119: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/space_truss.py:119: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/space_truss.py:140: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/space_truss.py:140: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/space_truss.py:167: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/space_truss.py:167: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/space_truss.py:181: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/space_truss.py:181: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/space_truss.py:181: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/_domains/space_truss.py:210: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/space_truss.py:210: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/space_truss.py:217: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/space_truss.py:217: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/space_truss.py:217: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/_domains/space_truss.py:264: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/space_truss.py:264: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/space_truss.py:273: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/space_truss.py:273: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/truss_core.py:20: DGS011 Dataclass field 'joint_id' must include an inline docstring.
+src/design_research_problems/problems/_domains/truss_core.py:21: DGS011 Dataclass field 'coordinates' must include an inline docstring.
+src/design_research_problems/problems/_domains/truss_core.py:22: DGS011 Dataclass field 'support_type' must include an inline docstring.
+src/design_research_problems/problems/_domains/truss_core.py:23: DGS011 Dataclass field 'roller_axis' must include an inline docstring.
+src/design_research_problems/problems/_domains/truss_core.py:30: DGS011 Dataclass field 'joint_id' must include an inline docstring.
+src/design_research_problems/problems/_domains/truss_core.py:31: DGS011 Dataclass field 'vector' must include an inline docstring.
+src/design_research_problems/problems/_domains/truss_core.py:38: DGS011 Dataclass field 'mass' must include an inline docstring.
+src/design_research_problems/problems/_domains/truss_core.py:39: DGS011 Dataclass field 'fos' must include an inline docstring.
+src/design_research_problems/problems/_domains/truss_core.py:40: DGS011 Dataclass field 'fos_buckling' must include an inline docstring.
+src/design_research_problems/problems/_domains/truss_core.py:41: DGS011 Dataclass field 'fos_yielding' must include an inline docstring.
+src/design_research_problems/problems/_domains/truss_core.py:42: DGS011 Dataclass field 'deflection' must include an inline docstring.
+src/design_research_problems/problems/_domains/truss_core.py:45: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/truss_core.py:45: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/truss_core.py:52: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/truss_core.py:52: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/truss_core.py:52: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/_domains/truss_core.py:64: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/truss_core.py:64: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/truss_core.py:77: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/truss_core.py:77: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/truss_core.py:89: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/_domains/truss_core.py:89: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/_domains/truss_core.py:89: DGS010 Callable with explicit raise statements must include a Raises section.
 src/design_research_problems/problems/_optimization.py:173: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_optimization.py:173: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/_problem.py:112: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_problem.py:40: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_problem.py:40: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_problem.py:45: DGS006 Callable with parameters must include an Args section.
@@ -189,156 +272,50 @@ src/design_research_problems/problems/_problem.py:73: DGS010 Callable with expli
 src/design_research_problems/problems/_problem.py:82: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/_problem.py:82: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/_problem.py:99: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:167: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:167: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:175: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:175: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:181: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:181: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:188: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:188: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:196: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:196: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:35: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:35: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:48: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_cell_model.py:48: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:141: DGS011 Dataclass field 'pack_terminal_voltage_end' must include an inline docstring.
-src/design_research_problems/problems/grammar/_battery_circuit.py:142: DGS011 Dataclass field 'delivered_capacity_ah' must include an inline docstring.
-src/design_research_problems/problems/grammar/_battery_circuit.py:143: DGS011 Dataclass field 'max_cell_current_a' must include an inline docstring.
-src/design_research_problems/problems/grammar/_battery_circuit.py:144: DGS011 Dataclass field 'min_cell_voltage_v' must include an inline docstring.
-src/design_research_problems/problems/grammar/_battery_circuit.py:145: DGS011 Dataclass field 'solver_steps' must include an inline docstring.
-src/design_research_problems/problems/grammar/_battery_circuit.py:146: DGS011 Dataclass field 'is_feasible' must include an inline docstring.
-src/design_research_problems/problems/grammar/_battery_circuit.py:147: DGS011 Dataclass field 'failure_reason' must include an inline docstring.
-src/design_research_problems/problems/grammar/_battery_circuit.py:150: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:150: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:169: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:169: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:185: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:185: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:193: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:193: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:201: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:201: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:209: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:209: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:217: DGS005 Missing callable docstring.
-src/design_research_problems/problems/grammar/_battery_circuit.py:220: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:220: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:228: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:236: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:236: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:248: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:248: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:265: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:265: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:283: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:283: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:308: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:308: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:431: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:431: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:514: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:514: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:664: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:664: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:722: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:722: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_circuit.py:763: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_circuit.py:787: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_core.py:108: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_core.py:108: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_core.py:138: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_core.py:138: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_core.py:153: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_core.py:153: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_core.py:36: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_core.py:41: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_core.py:46: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_core.py:89: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_core.py:89: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:113: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:118: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:123: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:132: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:162: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_layout.py:162: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:167: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_layout.py:167: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:179: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_layout.py:179: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:187: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_layout.py:187: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:192: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_layout.py:192: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:207: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_layout.py:207: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:219: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_layout.py:219: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:229: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_layout.py:229: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:254: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_layout.py:254: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_layout.py:262: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_layout.py:262: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:105: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:105: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:106: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:106: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:116: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:133: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:133: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:146: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:164: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:164: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:243: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:243: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:243: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:268: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:268: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:268: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/_problem.py:112: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:34: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:34: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:34: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:41: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:41: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:48: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:48: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:59: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:78: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:78: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:88: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:106: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:106: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:268: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:268: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_battery_pack_open.py:268: DGS010 Callable with explicit raise statements must include a Raises section.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:363: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:363: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:363: DGS010 Callable with explicit raise statements must include a Raises section.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:401: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:401: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:401: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:41: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:41: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:445: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:445: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:445: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:458: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:458: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:480: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:480: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:480: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:48: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:48: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:495: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:495: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:495: DGS010 Callable with explicit raise statements must include a Raises section.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:518: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_open.py:518: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:59: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:78: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:78: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:88: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:91: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:91: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:91: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:98: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_open.py:98: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:137: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:137: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:143: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:143: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:143: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:150: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:150: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_battery_pack_sp.py:28: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_battery_pack_sp.py:28: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_battery_pack_sp.py:34: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_battery_pack_sp.py:34: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_battery_pack_sp.py:34: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/grammar/_battery_pack_sp.py:47: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_battery_pack_sp.py:47: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_battery_pack_sp.py:56: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_battery_pack_sp.py:73: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_battery_pack_sp.py:73: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:151: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:151: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:151: DGS010 Callable with explicit raise statements must include a Raises section.
@@ -351,54 +328,22 @@ src/design_research_problems/problems/grammar/_battery_pack_sp.py:222: DGS010 Ca
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:235: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:235: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:235: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:243: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:243: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:255: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:266: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:266: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:266: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:272: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:272: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:279: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:279: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:28: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:28: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:294: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_pack_sp.py:294: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:313: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:313: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:313: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:34: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:34: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:34: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:417: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:417: DGS010 Callable with explicit raise statements must include a Raises section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:432: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:432: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:47: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:47: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:56: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:73: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_pack_sp.py:73: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_problem_base.py:19: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_problem_base.py:19: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_problem_base.py:20: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_problem_base.py:20: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_problem_base.py:26: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_problem_base.py:26: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_problem_base.py:27: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_problem_base.py:27: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_problem_base.py:33: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_problem_base.py:33: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_problem_base.py:34: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_problem_base.py:34: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_problem_base.py:49: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_problem_base.py:50: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_problem_base.py:67: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/grammar/_battery_problem_base.py:67: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_problem_base.py:73: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_battery_problem_base.py:73: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/grammar/_battery_problem_base.py:75: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_battery_problem_base.py:81: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_planar_truss.py:384: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_planar_truss.py:384: DGS009 Callable must include a Returns section for non-None return annotations.
@@ -409,6 +354,38 @@ src/design_research_problems/problems/grammar/_planar_truss.py:425: DGS010 Calla
 src/design_research_problems/problems/grammar/_planar_truss.py:472: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/grammar/_planar_truss.py:472: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/grammar/_planar_truss.py:472: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/grammar/_space_truss.py:25: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_space_truss.py:25: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_space_truss.py:30: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_space_truss.py:30: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_space_truss.py:30: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/grammar/_space_truss.py:43: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_space_truss.py:43: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_space_truss.py:43: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/grammar/_space_truss.py:53: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_space_truss.py:78: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_space_truss.py:78: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_space_truss.py:101: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_space_truss.py:110: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_space_truss.py:110: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_space_truss.py:117: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_space_truss.py:117: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_space_truss.py:160: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_space_truss.py:160: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_space_truss.py:160: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/grammar/_space_truss.py:185: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_space_truss.py:185: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_space_truss.py:185: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/grammar/_space_truss.py:218: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_space_truss.py:218: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/grammar/_space_truss.py:218: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/grammar/_space_truss.py:243: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/grammar/_space_truss.py:243: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:45: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:84: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:84: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:93: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:93: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/optimization/_battery_grid.py:104: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/optimization/_battery_grid.py:104: DGS009 Callable must include a Returns section for non-None return annotations.
 src/design_research_problems/problems/optimization/_battery_grid.py:110: DGS006 Callable with parameters must include an Args section.
@@ -419,33 +396,84 @@ src/design_research_problems/problems/optimization/_battery_grid.py:171: DGS009 
 src/design_research_problems/problems/optimization/_battery_grid.py:171: DGS010 Callable with explicit raise statements must include a Raises section.
 src/design_research_problems/problems/optimization/_battery_grid.py:178: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/optimization/_battery_grid.py:178: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:187: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:187: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:192: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:192: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:200: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:200: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:216: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:216: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:221: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:199: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:199: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:203: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:203: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:211: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:211: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:227: DGS006 Callable with parameters must include an Args section.
 src/design_research_problems/problems/optimization/_battery_grid.py:227: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:231: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:235: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:235: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:239: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:239: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:243: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:243: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:247: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:247: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:253: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:253: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:257: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:257: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:261: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:261: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:45: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:84: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:84: DGS009 Callable must include a Returns section for non-None return annotations.
-src/design_research_problems/problems/optimization/_battery_grid.py:93: DGS006 Callable with parameters must include an Args section.
-src/design_research_problems/problems/optimization/_battery_grid.py:93: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:232: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:238: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:242: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:246: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:246: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:250: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:250: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:254: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:254: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:258: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:258: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:264: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:264: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:268: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:268: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_battery_grid.py:272: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_battery_grid.py:272: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:69: DGS011 Dataclass field 'state' must include an inline docstring.
+src/design_research_problems/problems/optimization/_truss_topology.py:70: DGS011 Dataclass field 'evaluation' must include an inline docstring.
+src/design_research_problems/problems/optimization/_truss_topology.py:71: DGS011 Dataclass field 'required_connected' must include an inline docstring.
+src/design_research_problems/problems/optimization/_truss_topology.py:72: DGS011 Dataclass field 'minimum_active_free_joint_degree' must include an inline docstring.
+src/design_research_problems/problems/optimization/_truss_topology.py:73: DGS011 Dataclass field 'crossing_count' must include an inline docstring.
+src/design_research_problems/problems/optimization/_truss_topology.py:76: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:76: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:83: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:83: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:90: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:90: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:90: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/optimization/_truss_topology.py:105: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:105: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:105: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/optimization/_truss_topology.py:126: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:126: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:126: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/optimization/_truss_topology.py:140: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:197: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:197: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:202: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:202: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:213: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:213: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:262: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:262: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:276: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:276: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:276: DGS010 Callable with explicit raise statements must include a Raises section.
+src/design_research_problems/problems/optimization/_truss_topology.py:284: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:284: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:300: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:300: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:304: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:304: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:308: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:308: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:337: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:337: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:341: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:341: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:348: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:348: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:352: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:352: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:357: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:357: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:362: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:362: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:371: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:422: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:422: DGS009 Callable must include a Returns section for non-None return annotations.
+src/design_research_problems/problems/optimization/_truss_topology.py:443: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:493: DGS006 Callable with parameters must include an Args section.
+src/design_research_problems/problems/optimization/_truss_topology.py:493: DGS009 Callable must include a Returns section for non-None return annotations.

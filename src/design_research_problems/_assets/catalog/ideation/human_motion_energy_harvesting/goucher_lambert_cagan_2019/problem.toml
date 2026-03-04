@@ -1,9 +1,9 @@
 problem_id = "ideation_human_motion_energy_harvesting"
-title = "Ideation Prompt - Energy from Human Motion"
+title = "Energy from Human Motion"
 summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019) summarizing the earlier human-motion energy task."
 kind = "text"
 statement = '''
-# Ideation Prompt - Energy from Human Motion
+# Energy from Human Motion
 
 A device that can collect energy from human motion.
 '''

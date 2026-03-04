@@ -1,9 +1,9 @@
 problem_id = "ideation_accessible_drinking_fountain_derivative"
-title = "Ideation Prompt - Accessible Drinking Fountain (Derivative)"
+title = "Accessible Drinking Fountain (Derivative)"
 summary = "A single-sentence derivative framing from Goucher-Lambert and Cagan (2019), adapted from Goldschmidt and Smolkov (2006), for the public-fountain design problem."
 kind = "text"
 statement = '''
-# Ideation Prompt - Accessible Drinking Fountain (Derivative)
+# Accessible Drinking Fountain (Derivative)
 
 A way to make drinking fountains accessible for all people.
 '''

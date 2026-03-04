@@ -1,9 +1,9 @@
 problem_id = "ideation_measuring_cup_for_blind_users"
-title = "Ideation Prompt - Measuring Cup for Blind Users"
+title = "Measuring Cup for Blind Users"
 summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the original measuring-cup brief studied in Jansson and Smith (1991) and later reused by Purcell, Williams, Gero, and Colbron (1993)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Measuring Cup for Blind Users
+# Measuring Cup for Blind Users
 
 A measuring cup for the blind.
 '''

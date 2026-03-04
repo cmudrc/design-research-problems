@@ -25,6 +25,12 @@ _LAZY_EXPORTS = {
     "PlanarTrussEvaluation": ("design_research_problems.problems.grammar._planar_truss:PlanarTrussEvaluation"),
     "PlanarTrussSpanProblem": "design_research_problems.problems.grammar._planar_truss:PlanarTrussSpanProblem",
     "PlanarTrussState": "design_research_problems.problems.grammar._planar_truss:PlanarTrussState",
+    "SpaceJoint": "design_research_problems.problems.grammar._space_truss:SpaceJoint",
+    "SpaceLoad": "design_research_problems.problems.grammar._space_truss:SpaceLoad",
+    "SpaceMember": "design_research_problems.problems.grammar._space_truss:SpaceMember",
+    "SpaceTrussEvaluation": "design_research_problems.problems.grammar._space_truss:SpaceTrussEvaluation",
+    "SpaceTrussSpanProblem": "design_research_problems.problems.grammar._space_truss:SpaceTrussSpanProblem",
+    "SpaceTrussState": "design_research_problems.problems.grammar._space_truss:SpaceTrussState",
     "SeriesParallelBatteryEvaluation": (
         "design_research_problems.problems.grammar._battery_pack_sp:SeriesParallelBatteryEvaluation"
     ),
@@ -73,3 +79,9 @@ if TYPE_CHECKING:
     from ._planar_truss import PlanarTrussEvaluation as PlanarTrussEvaluation
     from ._planar_truss import PlanarTrussSpanProblem as PlanarTrussSpanProblem
     from ._planar_truss import PlanarTrussState as PlanarTrussState
+    from ._space_truss import SpaceJoint as SpaceJoint
+    from ._space_truss import SpaceLoad as SpaceLoad
+    from ._space_truss import SpaceMember as SpaceMember
+    from ._space_truss import SpaceTrussEvaluation as SpaceTrussEvaluation
+    from ._space_truss import SpaceTrussSpanProblem as SpaceTrussSpanProblem
+    from ._space_truss import SpaceTrussState as SpaceTrussState

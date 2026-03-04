@@ -4,6 +4,8 @@ Text Problems
 Text problems package human-readable prompt packets, citations, and optional
 supporting assets for design studies.
 
+See :doc:`../problem_catalog/text` for the generated per-problem catalog pages.
+
 The catalog now includes an ideation-focused text corpus:
 
 - 12 Goucher-Lambert derivative one-line ideation prompts,

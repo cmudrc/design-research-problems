@@ -1,9 +1,9 @@
 problem_id = "ideation_small_towel_folding"
-title = "Ideation Prompt - Small Towel Folding Device"
+title = "Small Towel Folding Device"
 summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), attributed there to Linsey et al. (2012), with the task family tracing back to the WordTree case study in Linsey, Wood, and Markman (2008)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Small Towel Folding Device
+# Small Towel Folding Device
 
 A device to fold washcloths, hand towels, and small bath towels.
 '''

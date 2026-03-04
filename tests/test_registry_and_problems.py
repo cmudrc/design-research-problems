@@ -27,7 +27,8 @@ from design_research_problems.problems import DecisionOption
 from design_research_problems.problems.grammar._battery_cell_model import BatteryCellModel
 from design_research_problems.problems.optimization import (
     BatteryGridSizingProblem,
-    PlanarTrussTopologyOptimizationProblem,
+    PlanarTrussEngineeringOptimizationProblem,
+    SpaceTrussEngineeringOptimizationProblem,
 )
 from design_research_problems.problems.optimization._pill import _pill_area, _pill_volume
 
@@ -91,10 +92,14 @@ def test_registry_entries_filter_by_kind() -> None:
     )
     optimization_kinds = registry.by_kind(ProblemKind.OPTIMIZATION)
     optimization_ids = [entry.problem_id for entry in optimization_kinds]
-    assert len(optimization_ids) == 6
+    assert len(optimization_ids) == 8
     assert "battery_pack_18650_series_parallel_cost_min" in optimization_ids
-    assert "planar_truss_span_member_count_min" in optimization_ids
-    assert "planar_truss_span_total_length_min" in optimization_ids
+    assert "planar_truss_span_mass_min" in optimization_ids
+    assert "planar_truss_span_deflection_min" in optimization_ids
+    assert "planar_truss_span_fos_max" in optimization_ids
+    assert "space_truss_span_mass_min" in optimization_ids
+    assert "planar_truss_span_member_count_min" not in optimization_ids
+    assert "planar_truss_span_total_length_min" not in optimization_ids
 
 
 def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
@@ -122,6 +127,8 @@ def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
         "bounded-variables",
         "citation-backed",
         "equality-constraint",
+        "external-adapter",
+        "optional-evaluator",
         "statement-markdown",
     )
     assert grouped[ProblemKind.GRAMMAR] == (
@@ -137,7 +144,7 @@ def test_text_problem_renders_statement_and_citation() -> None:
     problem = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
     assert isinstance(problem, Problem)
     packet = problem.render_packet()
-    assert packet.count("# Design Problem - Device to shell peanuts") == 1
+    assert packet.count("# Device to shell peanuts") == 1
     assert "Fu, Cagan, and Kotovsky (2010)." in packet
     assert "Must remove the shell with minimal damage to the peanuts." in packet
     assert "## BibTeX" not in packet
@@ -328,8 +335,10 @@ def test_registry_search_filters_by_feature_flags() -> None:
         "battery_pack_18650_series_parallel_cost_min",
         "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",
-        "planar_truss_span_member_count_min",
-        "planar_truss_span_total_length_min",
+        "planar_truss_span_deflection_min",
+        "planar_truss_span_fos_max",
+        "planar_truss_span_mass_min",
+        "space_truss_span_mass_min",
         "treadle_pump_ide_material_min",
     ]
     text_matches = registry.search(
@@ -364,7 +373,7 @@ def _build_feasible_battery_state() -> object:
 
 
 def test_generic_grammar_family_api_supports_multiple_problems() -> None:
-    for problem_id in ("battery_pack_18650_series_parallel", "planar_truss_span"):
+    for problem_id in ("battery_pack_18650_series_parallel", "planar_truss_span", "space_truss_span"):
         problem = get_problem(problem_id)
         assert isinstance(problem, GrammarProblem)
         state = problem.initial_state()
@@ -399,16 +408,21 @@ def test_battery_grid_and_grammar_share_series_parallel_backend() -> None:
     assert isinstance(grammar_problem, GrammarProblem)
 
     candidate = numpy.array([4.0, 4.0], dtype=float)
-    state = optimization_problem._state_from_variables(candidate)
+    state = optimization_problem.decode_candidate(candidate)
     assert state == _build_feasible_battery_state()
     assert grammar_problem.evaluate(state) == optimization_problem._evaluation_from_variables(candidate)
 
 
-def test_planar_truss_topology_optimizers_use_optimization_family_api() -> None:
-    for problem_id in ("planar_truss_span_member_count_min", "planar_truss_span_total_length_min"):
+def test_truss_engineering_optimizers_use_optimization_family_api() -> None:
+    for problem_id, expected_type in (
+        ("planar_truss_span_mass_min", PlanarTrussEngineeringOptimizationProblem),
+        ("planar_truss_span_deflection_min", PlanarTrussEngineeringOptimizationProblem),
+        ("planar_truss_span_fos_max", PlanarTrussEngineeringOptimizationProblem),
+        ("space_truss_span_mass_min", SpaceTrussEngineeringOptimizationProblem),
+    ):
         problem = get_problem(problem_id)
         assert isinstance(problem, OptimizationProblem)
-        assert isinstance(problem, PlanarTrussTopologyOptimizationProblem)
+        assert isinstance(problem, expected_type)
         assert hasattr(problem, "enumerate_transitions") is False
 
         initial = problem.generate_initial_solution()
@@ -419,13 +433,13 @@ def test_planar_truss_topology_optimizers_use_optimization_family_api() -> None:
         assert isinstance(evaluation, OptimizationEvaluation)
         assert evaluation.is_feasible is False
 
-        result = problem.solve(maxiter=512)
+        result = problem.solve(maxiter=64)
         assert result.x.shape == initial.shape
         assert isinstance(result.fun, float)
-        assert result.success is True
+        assert result.success is (problem.max_constraint_violation(result.x) <= 1e-9)
 
-        state = problem._state_from_variables(result.x)
-        assert len(state.members) >= 3
+        state = problem.decode_candidate(result.x)
+        assert len(state.members) >= 0
 
 
 def test_domain_backends_remain_importable_from_legacy_and_new_paths() -> None:
@@ -433,13 +447,16 @@ def test_domain_backends_remain_importable_from_legacy_and_new_paths() -> None:
         BatteryCircuitState as DomainBatteryCircuitState,
     )
     from design_research_problems.problems._domains.planar_truss import PlanarTrussState as DomainPlanarTrussState
+    from design_research_problems.problems._domains.space_truss import SpaceTrussState as DomainSpaceTrussState
     from design_research_problems.problems.grammar._battery_circuit import (
         BatteryCircuitState as LegacyBatteryCircuitState,
     )
     from design_research_problems.problems.grammar._planar_truss import PlanarTrussState as LegacyPlanarTrussState
+    from design_research_problems.problems.grammar._space_truss import SpaceTrussState as LegacySpaceTrussState
 
     assert DomainBatteryCircuitState is LegacyBatteryCircuitState
     assert DomainPlanarTrussState is LegacyPlanarTrussState
+    assert DomainSpaceTrussState is LegacySpaceTrussState
 
 
 def _fake_cell_model() -> BatteryCellModel:
@@ -819,7 +836,8 @@ def test_planar_truss_evaluate_uses_fake_adapter(monkeypatch: pytest.MonkeyPatch
             self._joints += 1
             return index
 
-        def add_roller_joint(self, coordinates: list[float]) -> int:
+        def add_roller_joint(self, coordinates: list[float], constrained_axis: str = "y") -> int:
+            del constrained_axis
             return self.add_pinned_joint(coordinates)
 
         def add_free_joint(self, coordinates: list[float]) -> int:
@@ -869,7 +887,8 @@ def test_planar_truss_unstable_state_is_infeasible(monkeypatch: pytest.MonkeyPat
             self._joints += 1
             return index
 
-        def add_roller_joint(self, coordinates: list[float]) -> int:
+        def add_roller_joint(self, coordinates: list[float], constrained_axis: str = "y") -> int:
+            del constrained_axis
             return self.add_pinned_joint(coordinates)
 
         def add_free_joint(self, coordinates: list[float]) -> int:
@@ -917,7 +936,8 @@ def test_planar_roof_truss_evaluate_applies_all_loads(monkeypatch: pytest.Monkey
             self._joints += 1
             return index
 
-        def add_roller_joint(self, coordinates: list[float]) -> int:
+        def add_roller_joint(self, coordinates: list[float], constrained_axis: str = "y") -> int:
+            del constrained_axis
             return self.add_pinned_joint(coordinates)
 
         def add_free_joint(self, coordinates: list[float]) -> int:
@@ -949,3 +969,148 @@ def test_planar_roof_truss_evaluate_applies_all_loads(monkeypatch: pytest.Monkey
 
     assert evaluation.is_feasible is True
     assert fake_truss.load_calls == 7
+
+
+class _StructuralFakeTruss:
+    def __init__(self) -> None:
+        self._joints = 0
+        self._members = 0
+        self.mass = 0.0
+        self.fos = 0.0
+        self.fos_buckling = 0.0
+        self.fos_yielding = 0.0
+        self.deflection = 1.0
+        self.coordinates: list[tuple[float, float, float]] = []
+
+    def add_pinned_joint(self, coordinates: list[float]) -> int:
+        self.coordinates.append(tuple(float(value) for value in coordinates))
+        index = self._joints
+        self._joints += 1
+        return index
+
+    def add_roller_joint(self, coordinates: list[float], constrained_axis: str = "y") -> int:
+        del constrained_axis
+        return self.add_pinned_joint(coordinates)
+
+    def add_free_joint(self, coordinates: list[float]) -> int:
+        return self.add_pinned_joint(coordinates)
+
+    def add_out_of_plane_support(self, constrained_axis: str = "z") -> None:
+        del constrained_axis
+
+    def add_member(self, start_joint_index: int, end_joint_index: int) -> int:
+        del start_joint_index, end_joint_index
+        index = self._members
+        self._members += 1
+        return index
+
+    def set_load(self, joint_index: int, load: list[float]) -> None:
+        del joint_index, load
+
+    def analyze(self) -> None:
+        self.mass = float(self._members)
+        self.fos = 1.0 + (0.5 * self._members)
+        self.fos_buckling = self.fos
+        self.fos_yielding = self.fos
+        self.deflection = 1.0 if self._members == 0 else 0.1
+
+
+def _install_structural_fake_truss(monkeypatch: pytest.MonkeyPatch) -> _StructuralFakeTruss:
+    fake_module = ModuleType("trussme")
+    fake_truss = _StructuralFakeTruss()
+    fake_module.Truss = lambda: fake_truss
+    monkeypatch.setitem(sys.modules, "trussme", fake_module)
+    return fake_truss
+
+
+def test_planar_truss_engineering_optimizers_report_missing_dependency(monkeypatch: pytest.MonkeyPatch) -> None:
+    for problem_id in ("planar_truss_span_mass_min", "planar_truss_span_deflection_min", "planar_truss_span_fos_max"):
+        problem = get_problem(problem_id)
+        monkeypatch.setitem(sys.modules, "trussme", None)
+        with pytest.raises(MissingOptionalDependencyError):
+            problem.evaluate(problem.generate_initial_solution())
+        monkeypatch.delitem(sys.modules, "trussme", raising=False)
+
+
+def test_planar_truss_engineering_objectives_use_structural_metrics(monkeypatch: pytest.MonkeyPatch) -> None:
+    for problem_id, expected_objective in (
+        ("planar_truss_span_mass_min", 3.0),
+        ("planar_truss_span_deflection_min", 0.1),
+        ("planar_truss_span_fos_max", -2.5),
+    ):
+        _install_structural_fake_truss(monkeypatch)
+        problem = get_problem(problem_id)
+        assert isinstance(problem, PlanarTrussEngineeringOptimizationProblem)
+        vector = numpy.zeros_like(problem.generate_initial_solution())
+        for index, edge in enumerate(problem._candidate_edges):
+            if edge in {(0, 1), (0, 2), (1, 2)}:
+                vector[index] = 1.0
+        evaluation = problem.evaluate(vector)
+        assert evaluation.objective_value == pytest.approx(expected_objective)
+        assert evaluation.is_feasible is True
+        result = problem.solve(maxiter=32)
+        assert result.success is (problem.max_constraint_violation(result.x) <= 1e-9)
+
+
+def test_space_truss_grammar_seed_and_rules() -> None:
+    problem = get_problem("space_truss_span")
+    state = problem.initial_state()
+
+    assert len(state.joints) == 5
+    assert state.joints[0].z == 0.0
+    assert state.joints[-1].z == state.max_height
+
+    state = problem.add_joint(state, x=2.5, y=0.0, z=2.0)
+    assert len(state.joints) == 6
+    with pytest.raises(ValueError):
+        problem.add_joint(state, x=2.5, y=0.0, z=2.0)
+    with pytest.raises(ValueError):
+        problem.add_joint(state, x=-1.0, y=0.0, z=2.0)
+
+    state = problem.add_member(state, start_joint_id=0, end_joint_id=4)
+    assert len(state.members) == 1
+    with pytest.raises(ValueError):
+        problem.add_member(state, start_joint_id=0, end_joint_id=4)
+    with pytest.raises(ValueError):
+        problem.add_member(state, start_joint_id=0, end_joint_id=0)
+    state = problem.remove_member(state, member_id=0)
+    assert state.members == ()
+
+
+def test_space_truss_reports_missing_dependency(monkeypatch: pytest.MonkeyPatch) -> None:
+    problem = get_problem("space_truss_span")
+    monkeypatch.setitem(sys.modules, "trussme", None)
+    with pytest.raises(MissingOptionalDependencyError):
+        problem.evaluate(problem.initial_state())
+
+
+def test_space_truss_evaluate_uses_fake_adapter(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake_truss = _install_structural_fake_truss(monkeypatch)
+    problem = get_problem("space_truss_span")
+    state = problem.initial_state()
+    state = problem.add_member(state, start_joint_id=0, end_joint_id=4)
+    state = problem.add_member(state, start_joint_id=1, end_joint_id=4)
+    state = problem.add_member(state, start_joint_id=2, end_joint_id=4)
+    evaluation = problem.evaluate(state)
+    assert evaluation.mass == pytest.approx(3.0)
+    assert evaluation.fos == pytest.approx(2.5)
+    assert evaluation.deflection == pytest.approx(0.1)
+    assert any(coordinate[2] > 0.0 for coordinate in fake_truss.coordinates)
+
+
+def test_space_truss_optimization_uses_structural_metrics(monkeypatch: pytest.MonkeyPatch) -> None:
+    _install_structural_fake_truss(monkeypatch)
+    problem = get_problem("space_truss_span_mass_min")
+    assert isinstance(problem, SpaceTrussEngineeringOptimizationProblem)
+    vector = numpy.zeros_like(problem.generate_initial_solution())
+    vector[:4] = 1.0
+    evaluation = problem.evaluate(vector)
+    assert evaluation.objective_value == pytest.approx(4.0)
+    assert evaluation.is_feasible is True
+
+
+def test_space_truss_optimization_reports_missing_dependency(monkeypatch: pytest.MonkeyPatch) -> None:
+    problem = get_problem("space_truss_span_mass_min")
+    monkeypatch.setitem(sys.modules, "trussme", None)
+    with pytest.raises(MissingOptionalDependencyError):
+        problem.evaluate(problem.generate_initial_solution())

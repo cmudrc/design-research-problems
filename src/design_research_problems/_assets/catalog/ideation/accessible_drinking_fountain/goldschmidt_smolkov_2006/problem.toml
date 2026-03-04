@@ -1,9 +1,9 @@
 problem_id = "ideation_accessible_drinking_fountain"
-title = "Ideation Prompt - Drinking Fountain for a Public Park"
+title = "Drinking Fountain for a Public Park"
 summary = "A primary-source ideation brief about designing a public-park drinking fountain for adults and children while controlling runoff."
 kind = "text"
 statement = '''
-# Ideation Prompt - Drinking Fountain for a Public Park
+# Drinking Fountain for a Public Park
 
 Subjects were asked to design a drinking fountain for a picnic area in
 a public park. Subjects were requested to take into account the different

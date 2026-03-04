@@ -92,10 +92,12 @@ examples-metrics: check-python examples-test
 
 docs-build: check-python
 	$(PYTHON) scripts/generate_example_docs.py
+	$(PYTHON) scripts/generate_problem_catalog_docs.py
 	PYTHONPATH=src $(SPHINX) -b html docs docs/_build/html -n -W --keep-going -E
 
 docs-check: check-python
-	$(PYTHON) scripts/generate_example_docs.py --check
+	$(PYTHON) scripts/generate_example_docs.py
+	$(PYTHON) scripts/generate_problem_catalog_docs.py
 	$(PYTHON) scripts/check_docs_consistency.py
 
 docs-linkcheck: check-python

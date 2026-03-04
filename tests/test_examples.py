@@ -142,6 +142,29 @@ def test_battery_grammar_to_optimizer_example_runs() -> None:
 @pytest.mark.trussme_real
 def test_grammar_example_runs_when_trussme_is_installed() -> None:
     completed = _run_example("examples/grammar/planar_truss_span.py")
-    if "trussme is required for grammar evaluation" in completed.stdout:
+    if "trussme is required for truss evaluation" in completed.stdout:
         pytest.skip("trussme is not installed in this environment.")
     assert completed.returncode == 0, completed.stderr
+
+
+@pytest.mark.examples_smoke
+def test_space_truss_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/space_truss_span.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "space_truss_span" in completed.stdout
+    if "trussme is required for truss evaluation" in completed.stdout:
+        return
+    assert "mass" in completed.stdout
+    assert "fos" in completed.stdout
+    assert "deflection" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_space_truss_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/space_truss_span_mass_min.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "space_truss_span_mass_min" in completed.stdout
+    if "trussme is required for truss evaluation" in completed.stdout:
+        return
+    assert "members" in completed.stdout
+    assert "solve" in completed.stdout

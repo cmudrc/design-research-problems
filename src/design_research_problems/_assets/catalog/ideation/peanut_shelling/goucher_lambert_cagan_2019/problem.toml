@@ -1,9 +1,9 @@
 problem_id = "ideation_peanut_shelling"
-title = "Ideation Prompt - Peanut Shelling without Electricity"
+title = "Peanut Shelling without Electricity"
 summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), tracing through Viswanathan and Linsey (2013) to the original peanut-shelling study in Linsey, Green, Murphy, Wood, and Markman (2005)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Peanut Shelling without Electricity
+# Peanut Shelling without Electricity
 
 A device to remove the shell from a peanut in areas with no electricity.
 '''

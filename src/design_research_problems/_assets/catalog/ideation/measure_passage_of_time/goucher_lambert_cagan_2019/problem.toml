@@ -1,9 +1,9 @@
 problem_id = "ideation_measure_passage_of_time"
-title = "Ideation Prompt - Measure the Passage of Time"
+title = "Measure the Passage of Time"
 summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the original room-based time-measurement brief in Tseng, Moss, Cagan, and Kotovsky (2008)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Measure the Passage of Time
+# Measure the Passage of Time
 
 A new way to measure the passage of time.
 '''

@@ -29,11 +29,13 @@ not available:
 
    pip install design-research-problems[battery]
 
-Grammar support
----------------
+Truss support
+-------------
 
-The grammar problem can evaluate states only when the optional `trussme`
-dependency is installed:
+The planar and 3D truss grammar problems can evaluate states only when the
+optional `trussme` dependency is installed. The packaged truss optimization
+problems also require `trussme` because their objectives and constraints are
+structural:
 
 .. code-block:: bash
 

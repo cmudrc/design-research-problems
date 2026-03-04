@@ -1,9 +1,9 @@
 problem_id = "ideation_milk_frothing_product"
-title = "Ideation Prompt - Milk Frothing Product"
+title = "Milk Frothing Product"
 summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the original milk-frothing brief in Toh and Miller (2014)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Milk Frothing Product
+# Milk Frothing Product
 
 An innovative product to froth milk.
 '''

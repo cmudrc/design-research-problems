@@ -6,8 +6,12 @@ Generic grammar-family tooling should use the shared `GrammarProblem` contract:
 `initial_state()`, `enumerate_transitions()`, `enumerate_next_states()`, and
 `evaluate()`. Concrete rule methods remain problem-specific conveniences.
 
+See :doc:`../problem_catalog/grammar` for the generated per-problem catalog pages.
+
 The catalog includes `planar_truss_span`, which translates a serializable
 planar topology state into a fresh `trussme.Truss` for evaluation. It also
+includes `space_truss_span`, which applies the same evaluation pattern to a
+bounded 3D space-truss state. It also
 includes `battery_pack_18650_series_parallel`, which models a complete
 rectangular series-parallel battery pack with explicit cell coordinates,
 whole-stage and whole-branch edits, and an optional evaluation path that uses
@@ -27,4 +31,4 @@ Optional evaluators:
 - `trussme` is available as the `grammar` extra.
 - `pybamm` is available as the `battery` extra.
 - It is not installed in default CI.
-- It is required only for real grammar evaluation.
+- It is required for real planar and 3D truss grammar evaluation.

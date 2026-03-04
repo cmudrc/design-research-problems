@@ -1,9 +1,9 @@
 problem_id = "ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011"
-title = "Ideation Prompt - Out-of-Reach Book Retrieval (Original)"
+title = "Out-of-Reach Book Retrieval (Original)"
 summary = "The original library-shelf retrieval brief used by Cardoso and Badke-Schaub (2011)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Out-of-Reach Book Retrieval (Original)
+# Out-of-Reach Book Retrieval (Original)
 
 Design a device that allows people to pickup a book from a shelf (e.g. in a
 library) that is out of their reach, for instance, above their head.

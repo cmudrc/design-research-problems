@@ -184,10 +184,21 @@ class BatteryGridSizingProblem(OptimizationProblem):
         parallel_count = max(1, min(parallel_count, self._max_parallel_count()))
         return (series_count, parallel_count)
 
-    def _state_from_variables(self, variables: NDArray[numpy.float64]) -> SeriesParallelBatteryState:
-        """Translate the optimization vector into the canonical rectangular battery state."""
+    def decode_candidate(self, variables: NDArray[numpy.float64]) -> SeriesParallelBatteryState:
+        """Translate one optimization vector into the canonical rectangular battery state.
+
+        Args:
+            variables: Two-variable ``(series_count, parallel_count)`` candidate vector.
+
+        Returns:
+            Canonical shared series-parallel battery state for the rounded design.
+        """
         series_count, parallel_count = self._normalized_counts(variables)
         return build_canonical_series_parallel_state(series_count, parallel_count)
+
+    def _state_from_variables(self, variables: NDArray[numpy.float64]) -> SeriesParallelBatteryState:
+        """Translate the optimization vector into the canonical rectangular battery state."""
+        return self.decode_candidate(variables)
 
     def _evaluate_circuit_state(self, state: BatteryCircuitState) -> BatteryCircuitEvaluation:
         """Evaluate one explicit battery circuit using the shared backend."""

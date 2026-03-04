@@ -1,9 +1,9 @@
 problem_id = "ideation_measure_passage_of_time_room_clock"
-title = "Ideation Prompt - Room-Based Time Measurement"
+title = "Room-Based Time Measurement"
 summary = "The original room-based time-measurement brief printed in Tseng, Moss, Cagan, and Kotovsky (2008), preceding the later one-line derivative used by Goucher-Lambert and Cagan (2019)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Room-Based Time Measurement
+# Room-Based Time Measurement
 
 The clock is one of the oldest human inventions, requiring a physical process that will proceed at a
 known rate and a way to gauge how long that process has run. As the seasons and the phases of the

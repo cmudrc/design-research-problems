@@ -22,8 +22,13 @@ if TYPE_CHECKING:
         BatteryPack18650OpenEndedProblem,
         BatteryPack18650SeriesParallelProblem,
         PlanarTrussSpanProblem,
+        SpaceTrussSpanProblem,
     )
-    from design_research_problems.problems.optimization import BatteryGridSizingProblem
+    from design_research_problems.problems.optimization import (
+        BatteryGridSizingProblem,
+        PlanarTrussEngineeringOptimizationProblem,
+        SpaceTrussEngineeringOptimizationProblem,
+    )
 
 type _PlanarTrussProblemId = Literal[
     "planar_truss_span",
@@ -34,6 +39,8 @@ type _PlanarTrussProblemId = Literal[
     "planar_roof_truss_seven_point_symmetric",
     "planar_roof_truss_seven_point_asymmetric",
 ]
+
+type _SpaceTrussProblemId = Literal["space_truss_span"]
 
 type _MSEvalProblemId = Literal[
     "decision_mseval_kitchen_utensil_grip_corrosion_resistant",
@@ -60,6 +67,10 @@ type _OptimizationProblemId = Literal[
     "battery_pack_18650_series_parallel_cost_min",
     "pill_capsule_min_area",
     "moneymaker_hip_pump_cost_min",
+    "planar_truss_span_mass_min",
+    "planar_truss_span_deflection_min",
+    "planar_truss_span_fos_max",
+    "space_truss_span_mass_min",
     "treadle_pump_ide_material_min",
 ]
 
@@ -242,6 +253,22 @@ class ProblemRegistry:
     def get(self, problem_id: Literal["battery_pack_18650_series_parallel_cost_min"]) -> BatteryGridSizingProblem: ...
 
     @overload
+    def get(self, problem_id: _SpaceTrussProblemId) -> SpaceTrussSpanProblem: ...
+
+    @overload
+    def get(
+        self,
+        problem_id: Literal[
+            "planar_truss_span_mass_min",
+            "planar_truss_span_deflection_min",
+            "planar_truss_span_fos_max",
+        ],
+    ) -> PlanarTrussEngineeringOptimizationProblem: ...
+
+    @overload
+    def get(self, problem_id: Literal["space_truss_span_mass_min"]) -> SpaceTrussEngineeringOptimizationProblem: ...
+
+    @overload
     def get(self, problem_id: _OptimizationProblemId) -> OptimizationProblem: ...
 
     @overload
@@ -317,6 +344,24 @@ def get_problem(problem_id: _PlanarTrussProblemId) -> PlanarTrussSpanProblem: ..
 
 @overload
 def get_problem(problem_id: Literal["battery_pack_18650_series_parallel_cost_min"]) -> BatteryGridSizingProblem: ...
+
+
+@overload
+def get_problem(problem_id: _SpaceTrussProblemId) -> SpaceTrussSpanProblem: ...
+
+
+@overload
+def get_problem(
+    problem_id: Literal[
+        "planar_truss_span_mass_min",
+        "planar_truss_span_deflection_min",
+        "planar_truss_span_fos_max",
+    ],
+) -> PlanarTrussEngineeringOptimizationProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["space_truss_span_mass_min"]) -> SpaceTrussEngineeringOptimizationProblem: ...
 
 
 @overload

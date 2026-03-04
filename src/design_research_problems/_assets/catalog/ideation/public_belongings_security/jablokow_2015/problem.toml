@@ -1,9 +1,9 @@
 problem_id = "ideation_public_belongings_security"
-title = "Ideation Prompt - Public Belongings Security"
+title = "Public Belongings Security"
 summary = "A study-specific ASME ideation brief about securing several belongings safely in a public area without disrupting the space, with an earlier exact neutral framing in Silk et al. (2014)."
 kind = "text"
 statement = '''
-# Ideation Prompt - Public Belongings Security
+# Public Belongings Security
 
 A way for someone to secure several of his/her belongings in a public area safely without disrupting the space.
 '''

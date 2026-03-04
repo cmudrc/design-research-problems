@@ -59,6 +59,7 @@ Choose the path that matches what you want to do next:
 
 - Read :doc:`quickstart` to load the catalog and inspect each problem family.
 - Read :doc:`problems/index` to understand the four problem families.
+- Read :doc:`problem_catalog/index` for the full generated problem-by-problem catalog.
 - Read :doc:`dependencies_and_extras` before enabling SciPy, ``trussme``, or ``pybamm`` support.
 - Read :doc:`examples/index` for runnable scripts you can execute immediately.
 - Read :doc:`api` if you want the public surface contract first.
@@ -71,9 +72,9 @@ What Is In The Initial Catalog?
 - ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
 - ``battery_pack_18650_open_ended``: an explicit 18650 graph-netlist battery grammar with optional PyBaMM-shaped fixed-ambient single-cell surrogates and a library-owned pack solver.
 - ``battery_pack_18650_series_parallel``: a constrained 18650 pack co-design grammar backed by the same optional single-cell surrogate plus the shared pack solver.
-- ``planar_truss_span`` plus six ``planar_roof_truss_*`` entries: discrete truss grammars with a lazy ``trussme`` adapter.
+- ``planar_truss_span``, ``space_truss_span``, and six ``planar_roof_truss_*`` entries: discrete truss grammars with a lazy ``trussme`` adapter.
+- ``planar_truss_span_mass_min``, ``planar_truss_span_deflection_min``, ``planar_truss_span_fos_max``, and ``space_truss_span_mass_min``: structural truss optimization benchmarks backed by the same shared ``trussme`` adapter.
 - ``treadle_pump_ide_material_min``: a citation-backed scalarized treadle-pump optimization benchmark.
-- ``planar_truss_span``: a discrete planar truss topology grammar with a lazy ``trussme`` adapter.
 
 .. toctree::
    :maxdepth: 2
@@ -83,6 +84,7 @@ What Is In The Initial Catalog?
    quickstart
    dependencies_and_extras
    problems/index
+   problem_catalog/index
    examples/index
 
 .. toctree::
