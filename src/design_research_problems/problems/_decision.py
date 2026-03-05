@@ -12,9 +12,17 @@ from typing import TYPE_CHECKING, Literal, cast
 from design_research_problems._exceptions import ProblemEvaluationError
 from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._computable import ComputableProblem
+from design_research_problems.problems._mcp import (
+    create_fastmcp_server,
+    normalized_optional_text,
+    register_design_brief_resource,
+    to_json_value,
+)
 from design_research_problems.problems._metadata import ProblemMetadata
 
 if TYPE_CHECKING:
+    from mcp.server.fastmcp import FastMCP
+
     from design_research_problems._catalog._manifest import ProblemManifest
 
 _DISCRETE_MARKET_SIZE = 1_600_000.0
@@ -1093,6 +1101,93 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
                 sections.append(self._render_citation_raw_blocks())
 
         return "\n\n".join(sections)
+
+    def to_mcp_server(
+        self,
+        *,
+        server_name: str | None = None,
+        include_citation: bool = True,
+        citation_mode: Literal["summary", "summary+raw", "raw"] = "summary",
+    ) -> FastMCP:
+        """Expose this decision problem through FastMCP.
+
+        The exported server exposes:
+        - ``problem://design-brief`` resource (structured decision brief)
+        - ``problem://decision-candidates`` resource (deterministic index mapping)
+        - ``final_answer(choice_index, justification?)`` tool
+
+        Args:
+            server_name: Optional explicit server name.
+            include_citation: Whether the brief includes citation sections.
+            citation_mode: Citation rendering mode for the brief resource.
+
+        Returns:
+            Configured FastMCP server.
+        """
+        server = create_fastmcp_server(self, server_name=server_name)
+        register_design_brief_resource(
+            server,
+            brief_text=self.render_brief(include_citation=include_citation, citation_mode=citation_mode),
+        )
+
+        indexed_candidates = tuple(enumerate(self.iter_candidates()))
+
+        @server.resource(
+            "problem://decision-candidates",
+            name="decision-candidates",
+            title="Decision Candidates",
+            description="Deterministic zero-based candidate index mapping.",
+            mime_type="application/json",
+        )
+        def decision_candidates() -> dict[str, object]:
+            """Return the deterministic decision-candidate index mapping."""
+            entries: list[dict[str, object]] = []
+            for index, candidate in indexed_candidates:
+                if isinstance(candidate, str):
+                    label = self._coerce_choice(candidate).label
+                else:
+                    label = self._format_option_label(candidate)
+                entries.append(
+                    {
+                        "choice_index": index,
+                        "candidate": to_json_value(candidate),
+                        "candidate_label": label,
+                    }
+                )
+
+            return {
+                "problem_id": self.metadata.problem_id,
+                "candidate_kind": self.candidate_kind,
+                "candidate_count": len(indexed_candidates),
+                "candidates": entries,
+            }
+
+        def final_answer(choice_index: int, justification: str | None = None) -> dict[str, object]:
+            """Submit one indexed final decision answer."""
+            if choice_index < 0 or choice_index >= len(indexed_candidates):
+                raise ValueError(
+                    f"choice_index must be in [0, {len(indexed_candidates) - 1}] for this decision problem."
+                )
+            candidate = indexed_candidates[choice_index][1]
+            evaluation = self.evaluate(candidate)
+            return {
+                "problem_id": self.metadata.problem_id,
+                "problem_kind": self.metadata.kind.value,
+                "candidate_kind": self.candidate_kind,
+                "choice_index": choice_index,
+                "candidate": to_json_value(candidate),
+                "candidate_label": evaluation.candidate_label,
+                "justification": normalized_optional_text(justification),
+                "evaluation": to_json_value(evaluation),
+            }
+
+        server.add_tool(
+            final_answer,
+            name="final_answer",
+            title="Submit Final Answer",
+            description="Submit the final answer by zero-based candidate index.",
+        )
+        return server
 
     def _coerce_option(self, option: DecisionOption | Mapping[str, float]) -> DecisionOption:
         """Normalize one caller-supplied option to the declared factor space.

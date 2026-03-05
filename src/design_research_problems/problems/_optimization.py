@@ -5,14 +5,23 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import numpy
 from numpy.typing import NDArray
 
 from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._computable import ComputableProblem
+from design_research_problems.problems._mcp import (
+    create_fastmcp_server,
+    normalized_optional_text,
+    register_design_brief_resource,
+    to_json_value,
+)
 from design_research_problems.problems._metadata import ProblemMetadata
+
+if TYPE_CHECKING:
+    from mcp.server.fastmcp import FastMCP
 
 
 @dataclass(frozen=True)
@@ -189,6 +198,114 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
             max_constraint_violation=max_violation,
             is_feasible=max_violation <= 1e-9,
         )
+
+    def to_mcp_server(
+        self,
+        *,
+        server_name: str | None = None,
+        include_citation: bool = True,
+        citation_mode: Literal["summary", "summary+raw", "raw"] = "summary",
+    ) -> FastMCP:
+        """Expose this optimization problem through FastMCP.
+
+        The exported server exposes:
+        - ``problem://design-brief`` resource
+        - ``evaluate(x)`` tool for stateless candidate scoring
+        - ``final_answer(final_x, justification?)`` tool
+
+        Args:
+            server_name: Optional explicit server name.
+            include_citation: Whether the design brief includes citations.
+            citation_mode: Citation rendering mode for the design brief.
+
+        Returns:
+            Configured FastMCP server.
+        """
+        server = create_fastmcp_server(self, server_name=server_name)
+        register_design_brief_resource(
+            server,
+            brief_text=self.render_packet(include_citation=include_citation, citation_mode=citation_mode),
+        )
+
+        def evaluate_tool(x: list[float]) -> dict[str, object]:
+            """Evaluate one candidate vector and return a complete report."""
+            return self._mcp_evaluation_report(x)
+
+        def final_answer(final_x: list[float], justification: str | None = None) -> dict[str, object]:
+            """Submit one final optimization vector with an optional justification."""
+            report = self._mcp_evaluation_report(final_x)
+            return {
+                "problem_id": self.metadata.problem_id,
+                "problem_kind": self.metadata.kind.value,
+                "final_x": report["candidate_x"],
+                "justification": normalized_optional_text(justification),
+                "report": report,
+            }
+
+        server.add_tool(
+            evaluate_tool,
+            name="evaluate",
+            title="Evaluate Design",
+            description="Evaluate a candidate vector and return feasibility/objective metrics.",
+        )
+        server.add_tool(
+            final_answer,
+            name="final_answer",
+            title="Submit Final Answer",
+            description="Submit the final candidate vector with optional justification.",
+        )
+        return server
+
+    def _mcp_evaluation_report(self, x: list[float]) -> dict[str, object]:
+        """Return one MCP-facing optimization report.
+
+        Args:
+            x: Candidate design vector.
+
+        Returns:
+            JSON-safe report containing standardized evaluation fields and
+            available problem-specific extras.
+        """
+        vector = self._coerce_mcp_vector(x)
+        evaluation = self.evaluate(vector)
+        report: dict[str, object] = {
+            "problem_id": self.metadata.problem_id,
+            "candidate_x": to_json_value(vector),
+            "evaluation": to_json_value(evaluation),
+        }
+
+        objective_components = getattr(self, "objective_components", None)
+        if callable(objective_components):
+            report["objective_components"] = to_json_value(objective_components(vector))
+
+        decode_candidate = getattr(self, "decode_candidate", None)
+        if callable(decode_candidate):
+            report["decoded_candidate"] = to_json_value(decode_candidate(vector))
+
+        return report
+
+    def _coerce_mcp_vector(self, x: list[float]) -> NDArray[numpy.float64]:
+        """Validate and normalize one MCP-provided vector.
+
+        Args:
+            x: Candidate vector from the MCP tool input.
+
+        Returns:
+            Float numpy vector with the expected shape.
+
+        Raises:
+            ValueError: If ``x`` is not a one-dimensional vector matching the
+                problem dimensionality.
+        """
+        candidate = numpy.array(x, dtype=float, copy=True)
+        if candidate.ndim != 1:
+            raise ValueError("x must be a one-dimensional numeric vector.")
+        expected_shape = self.bounds.lb.shape
+        if candidate.shape != expected_shape:
+            raise ValueError(
+                f"Expected a {expected_shape[0]}-variable design vector, received shape {candidate.shape!r}."
+            )
+        return candidate
 
     def bound_violation(self, variables: NDArray[numpy.float64]) -> float:
         """Return the total amount by which bounds are violated.

@@ -7,9 +7,15 @@ import warnings
 from typing import TYPE_CHECKING, Literal, TypeVar
 
 from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._mcp import (
+    create_fastmcp_server,
+    register_design_brief_resource,
+)
 from design_research_problems.problems._metadata import ProblemMetadata
 
 if TYPE_CHECKING:
+    from mcp.server.fastmcp import FastMCP
+
     from design_research_problems._catalog._manifest import ProblemManifest
 
 _LEADING_H1_PATTERN = re.compile(r"^\s*#\s+(.+?)\s*$", re.MULTILINE)
@@ -92,6 +98,51 @@ class Problem:
                 sections.append("## BibTeX")
                 sections.append(self._render_citation_raw_blocks())
         return "\n\n".join(sections)
+
+    def to_mcp_server(
+        self,
+        *,
+        server_name: str | None = None,
+        include_citation: bool = True,
+        citation_mode: Literal["summary", "summary+raw", "raw"] = "summary",
+    ) -> FastMCP:
+        """Expose the problem through a minimal FastMCP interface.
+
+        This default implementation fits text-style problems:
+        one design-brief resource plus one free-text ``final_answer`` tool.
+
+        Args:
+            server_name: Optional explicit server name.
+            include_citation: Whether the design brief includes citations.
+            citation_mode: Citation rendering mode used for the design brief.
+
+        Returns:
+            Configured FastMCP server.
+        """
+        server = create_fastmcp_server(self, server_name=server_name)
+        register_design_brief_resource(
+            server,
+            brief_text=self.render_packet(include_citation=include_citation, citation_mode=citation_mode),
+        )
+
+        def final_answer(answer: str) -> dict[str, object]:
+            """Submit one free-text final answer."""
+            normalized_answer = answer.strip()
+            if not normalized_answer:
+                raise ValueError("answer must be a non-empty string.")
+            return {
+                "problem_id": self.metadata.problem_id,
+                "problem_kind": self.metadata.kind.value,
+                "answer": normalized_answer,
+            }
+
+        server.add_tool(
+            final_answer,
+            name="final_answer",
+            title="Submit Final Answer",
+            description="Submit a free-text final answer for this design brief.",
+        )
+        return server
 
     def read_asset(self, name: str) -> bytes:
         """Read an asset by logical asset name.

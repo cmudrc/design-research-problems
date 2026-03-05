@@ -53,3 +53,13 @@ For the battery evaluator:
 .. code-block:: bash
 
    make install-pybamm
+
+MCP export support
+------------------
+
+Problem-level ``to_mcp_server()`` export requires the optional ``mcp``
+dependency:
+
+.. code-block:: bash
+
+   pip install design-research-problems[mcp]
