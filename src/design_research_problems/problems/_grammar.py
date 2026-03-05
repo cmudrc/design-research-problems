@@ -122,7 +122,11 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
         current_state = self.initial_state()
 
         def get_design() -> dict[str, object]:
-            """Return the current grammar design state."""
+            """Return the current grammar design state.
+
+            Returns:
+                MCP-ready payload describing the current design state.
+            """
             return {
                 "problem_id": self.metadata.problem_id,
                 "problem_kind": self.metadata.kind.value,
@@ -130,13 +134,21 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
             }
 
         def reset_design() -> dict[str, object]:
-            """Reset and return the canonical initial grammar state."""
+            """Reset and return the canonical initial grammar state.
+
+            Returns:
+                MCP-ready payload describing the reset design state.
+            """
             nonlocal current_state
             current_state = self.initial_state()
             return get_design()
 
         def list_transitions() -> dict[str, object]:
-            """List deterministic legal transitions for the current state."""
+            """List deterministic legal transitions for the current state.
+
+            Returns:
+                MCP-ready payload listing the available transitions.
+            """
             transitions = self.enumerate_transitions(current_state)
             serialized = [
                 {
@@ -153,7 +165,11 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
             }
 
         def evaluate_tool() -> dict[str, object]:
-            """Evaluate and return metrics for the current state."""
+            """Evaluate and return metrics for the current state.
+
+            Returns:
+                MCP-ready evaluation payload for the current design.
+            """
             evaluation = self.evaluate(current_state)
             return {
                 "problem_id": self.metadata.problem_id,
@@ -163,7 +179,11 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
             }
 
         def final_answer() -> dict[str, object]:
-            """Submit the current state as the final grammar design."""
+            """Submit the current state as the final grammar design.
+
+            Returns:
+                MCP-ready submission payload for the current design.
+            """
             return {
                 "problem_id": self.metadata.problem_id,
                 "problem_kind": self.metadata.kind.value,
@@ -171,12 +191,20 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
             }
 
         def _set_current_state(state: StateT) -> None:
-            """Update the mutable current-state closure."""
+            """Update the mutable current-state closure.
+
+            Args:
+                state: New grammar state to store.
+            """
             nonlocal current_state
             current_state = state
 
         def _get_current_state() -> StateT:
-            """Return the mutable current-state closure."""
+            """Return the mutable current-state closure.
+
+            Returns:
+                Current grammar state.
+            """
             return current_state
 
         if include_grammar_helpers:
@@ -300,7 +328,14 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
         tool_signature = inspect.Signature(parameters=tool_parameters, return_annotation=dict[str, object])
 
         def rule_tool(**kwargs: object) -> dict[str, object]:
-            """Apply the wrapped grammar rule and update the current state."""
+            """Apply the wrapped grammar rule and update the current state.
+
+            Args:
+                **kwargs: Keyword arguments forwarded to the grammar rule.
+
+            Returns:
+                MCP-ready payload describing the updated design.
+            """
             next_state = rule_method(get_state(), **kwargs)
             set_state(next_state)
             return {

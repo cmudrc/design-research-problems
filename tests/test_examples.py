@@ -61,6 +61,18 @@ def test_text_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
+def test_mcp_example_runs() -> None:
+    completed = _run_example("examples/mcp/peanut_sheller_server.py")
+    assert completed.returncode == 0, completed.stderr
+    if "Install the optional MCP dependency with:" in completed.stdout:
+        pytest.skip("mcp is not installed in this environment.")
+    assert "Problem id: ideation_peanut_shelling_fu_cagan_kotovsky_2010" in completed.stdout
+    assert "Tool count: 1" in completed.stdout
+    assert "Tools: final_answer" in completed.stdout
+    assert "final_answer answer:" in completed.stdout
+
+
+@pytest.mark.examples_smoke
 def test_decision_laptop_example_runs() -> None:
     completed = _run_example("examples/decision/laptop_design.py")
     assert completed.returncode == 0, completed.stderr

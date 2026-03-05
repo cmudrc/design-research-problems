@@ -228,11 +228,26 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
         )
 
         def evaluate_tool(x: list[float]) -> dict[str, object]:
-            """Evaluate one candidate vector and return a complete report."""
+            """Evaluate one candidate vector and return a complete report.
+
+            Args:
+                x: Candidate design vector.
+
+            Returns:
+                MCP-ready evaluation report for the candidate vector.
+            """
             return self._mcp_evaluation_report(x)
 
         def final_answer(final_x: list[float], justification: str | None = None) -> dict[str, object]:
-            """Submit one final optimization vector with an optional justification."""
+            """Submit one final optimization vector with an optional justification.
+
+            Args:
+                final_x: Final candidate design vector.
+                justification: Optional justification text.
+
+            Returns:
+                MCP-ready submission payload for the final candidate.
+            """
             report = self._mcp_evaluation_report(final_x)
             return {
                 "problem_id": self.metadata.problem_id,

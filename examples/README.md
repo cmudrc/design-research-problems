@@ -21,3 +21,4 @@ optimizer example to use the optional `pymoo` or `nevergrad` solver backends.
 - `grammar/planar_truss_span.py`: build a simple truss grammar state and evaluate it when `trussme` is installed.
 - `grammar/space_truss_span.py`: build a simple 3D space-truss grammar state and evaluate it when `trussme` is installed.
 - `optimization/space_truss_span_mass_min.py`: inspect the packaged 3D space-truss structural optimizer and its chosen topology.
+- `mcp/peanut_sheller_server.py`: spin up a local MCP stdio server and call `final_answer` through an MCP client session.

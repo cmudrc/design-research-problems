@@ -68,7 +68,11 @@ def register_design_brief_resource(server: FastMCP, *, brief_text: str) -> None:
         mime_type="text/markdown",
     )
     def design_brief() -> str:
-        """Return the canonical design brief."""
+        """Return the canonical design brief.
+
+        Returns:
+            Markdown design brief payload.
+        """
         return brief_text
 
 

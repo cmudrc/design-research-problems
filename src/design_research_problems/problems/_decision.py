@@ -1140,7 +1140,11 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
             mime_type="application/json",
         )
         def decision_candidates() -> dict[str, object]:
-            """Return the deterministic decision-candidate index mapping."""
+            """Return the deterministic decision-candidate index mapping.
+
+            Returns:
+                MCP-ready payload describing the indexed candidates.
+            """
             entries: list[dict[str, object]] = []
             for index, candidate in indexed_candidates:
                 if isinstance(candidate, str):
@@ -1163,7 +1167,18 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
             }
 
         def final_answer(choice_index: int, justification: str | None = None) -> dict[str, object]:
-            """Submit one indexed final decision answer."""
+            """Submit one indexed final decision answer.
+
+            Args:
+                choice_index: Zero-based index of the selected candidate.
+                justification: Optional justification text.
+
+            Returns:
+                MCP-ready submission payload for the selected candidate.
+
+            Raises:
+                ValueError: If ``choice_index`` is outside the valid range.
+            """
             if choice_index < 0 or choice_index >= len(indexed_candidates):
                 raise ValueError(
                     f"choice_index must be in [0, {len(indexed_candidates) - 1}] for this decision problem."

@@ -126,7 +126,17 @@ class Problem:
         )
 
         def final_answer(answer: str) -> dict[str, object]:
-            """Submit one free-text final answer."""
+            """Submit one free-text final answer.
+
+            Args:
+                answer: Free-text final answer string.
+
+            Returns:
+                MCP-ready submission payload for the provided answer.
+
+            Raises:
+                ValueError: If the answer is empty after trimming whitespace.
+            """
             normalized_answer = answer.strip()
             if not normalized_answer:
                 raise ValueError("answer must be a non-empty string.")
