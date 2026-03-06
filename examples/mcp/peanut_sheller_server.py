@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import os
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
-
-import anyio
 
 from design_research_problems import MissingOptionalDependencyError, get_problem
 
@@ -139,7 +138,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     try:
-        summary = anyio.run(run_roundtrip)
+        summary = asyncio.run(run_roundtrip())
     except (MissingOptionalDependencyError, ModuleNotFoundError) as exc:
         print(exc)
         print("Install the optional MCP dependency with: pip install design-research-problems[mcp]")

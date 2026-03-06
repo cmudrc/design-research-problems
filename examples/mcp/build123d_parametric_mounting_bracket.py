@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from collections.abc import Sequence
 from textwrap import dedent
 from typing import TYPE_CHECKING, Any, cast
-
-import anyio
 
 from design_research_problems import MissingOptionalDependencyError, get_problem
 
@@ -181,7 +180,7 @@ def main() -> int:
 
     try:
         server = create_server()
-        summary = anyio.run(run_summary, server)
+        summary = asyncio.run(run_summary(server))
     except (MissingOptionalDependencyError, ModuleNotFoundError) as exc:
         print(exc)
         print("Install the optional MCP dependency with: pip install design-research-problems[mcp]")
