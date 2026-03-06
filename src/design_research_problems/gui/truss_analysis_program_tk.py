@@ -30,9 +30,12 @@ class TrussAPApp:
         self._joint_index_to_id: list[int] = []
         self._member_index_to_id: list[int] = []
         self._support_vars = [tk.BooleanVar(value=True), tk.BooleanVar(value=True), tk.BooleanVar(value=True)]
+        self._joint_canvas_positions: dict[int, tuple[float, float]] = {}
+        self._joint_hit_radius_px = 12.0
+        self._last_canvas_size: tuple[int, int] = (0, 0)
 
         self._build_layout()
-        self._refresh()
+        self.root.after_idle(self._refresh)
 
     def _build_layout(self) -> None:
         main = ttk.Frame(self.root, padding=8)
@@ -46,6 +49,7 @@ class TrussAPApp:
         self.canvas = tk.Canvas(left, width=920, height=560, background="#f6f8fb", highlightthickness=1)
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.canvas.bind("<Button-1>", self._on_canvas_click)
+        self.canvas.bind("<Configure>", self._on_canvas_configure)
 
         ttk.Label(right, text="Canvas Click Mode").pack(anchor=tk.W)
         ttk.Combobox(
@@ -59,6 +63,7 @@ class TrussAPApp:
         ttk.Label(right, text="Joints").pack(anchor=tk.W)
         self.joint_listbox = tk.Listbox(right, height=10, width=36, selectmode=tk.EXTENDED, exportselection=False)
         self.joint_listbox.pack(anchor=tk.W, fill=tk.X)
+        self.joint_listbox.bind("<<ListboxSelect>>", self._on_joint_list_selection)
 
         ttk.Label(right, text="Members").pack(anchor=tk.W, pady=(8, 0))
         self.member_listbox = tk.Listbox(right, height=10, width=36, exportselection=False)
@@ -118,6 +123,21 @@ class TrussAPApp:
         hint = "Select joints/members from the lists; click canvas to add or move joints."
         ttk.Label(right, text=hint, wraplength=280, justify=tk.LEFT).pack(anchor=tk.W, pady=(10, 0))
 
+    def _on_canvas_configure(self, event: tk.Event[tk.Misc]) -> None:
+        """Redraw when canvas dimensions change to keep initial scaling stable."""
+        width = int(getattr(event, "width", 0))
+        height = int(getattr(event, "height", 0))
+        next_size = (width, height)
+        if next_size == self._last_canvas_size:
+            return
+        self._last_canvas_size = next_size
+        if width > 1 and height > 1:
+            self._draw()
+
+    def _on_joint_list_selection(self, _event: tk.Event[tk.Misc]) -> None:
+        """Refresh visual highlight when listbox selection changes."""
+        self._draw()
+
     def _world_to_canvas(self, x_value: float, y_value: float) -> tuple[float, float]:
         x_min, x_max, y_min, y_max = self.state.design_bounds
         width = max(self.canvas.winfo_width(), 200)
@@ -159,6 +179,7 @@ class TrussAPApp:
 
     def _draw(self) -> None:
         self.canvas.delete("all")
+        self._joint_canvas_positions = {}
         x_min, x_max, y_min, y_max = self.state.design_bounds
 
         # Outer bounds and centerline.
@@ -186,10 +207,24 @@ class TrussAPApp:
                 continue
             self._draw_load_arrow(joint.x, joint.y, load.direction)
 
+        selected_joint_ids = set(self._selected_joint_ids())
         for joint in self.state.joints:
             x_pos, y_pos = self._world_to_canvas(joint.x, joint.y)
+            self._joint_canvas_positions[joint.joint_id] = (x_pos, y_pos)
             fill = "#7f8c8d" if joint.is_fixed else "#2563eb"
-            self.canvas.create_oval(x_pos - 6, y_pos - 6, x_pos + 6, y_pos + 6, fill=fill, outline="#0f172a")
+            is_selected = joint.joint_id in selected_joint_ids
+            outline = "#f59e0b" if is_selected else "#0f172a"
+            radius = 7 if is_selected else 6
+            line_width = 2 if is_selected else 1
+            self.canvas.create_oval(
+                x_pos - radius,
+                y_pos - radius,
+                x_pos + radius,
+                y_pos + radius,
+                fill=fill,
+                outline=outline,
+                width=line_width,
+            )
             self.canvas.create_text(
                 x_pos + 12,
                 y_pos - 10,
@@ -199,7 +234,9 @@ class TrussAPApp:
             )
 
     def _refresh(self) -> None:
-        self._draw()
+        selected_joint_ids = set(self._selected_joint_ids())
+        selected_member_id = self._selected_member_id()
+
         self._joint_index_to_id = [joint.joint_id for joint in self.state.joints]
         self._member_index_to_id = [member.member_id for member in self.state.members]
 
@@ -210,6 +247,10 @@ class TrussAPApp:
                 tk.END,
                 f"J{joint.joint_id}: ({joint.x:.3f}, {joint.y:.3f}) {fixed_text}",
             )
+        self.joint_listbox.selection_clear(0, tk.END)
+        for index, joint_id in enumerate(self._joint_index_to_id):
+            if joint_id in selected_joint_ids:
+                self.joint_listbox.selection_set(index)
 
         self.member_listbox.delete(0, tk.END)
         for member in self.state.members:
@@ -217,9 +258,16 @@ class TrussAPApp:
                 tk.END,
                 f"M{member.member_id}: J{member.start_joint_id}-J{member.end_joint_id} size={member.size_index}",
             )
+        self.member_listbox.selection_clear(0, tk.END)
+        if selected_member_id is not None:
+            for index, member_id in enumerate(self._member_index_to_id):
+                if member_id == selected_member_id:
+                    self.member_listbox.selection_set(index)
+                    break
 
         for index, value in enumerate(self.state.support_enabled):
             self._support_vars[index].set(value)
+        self._draw()
 
     def _selected_joint_ids(self) -> list[int]:
         return [self._joint_index_to_id[index] for index in self.joint_listbox.curselection()]
@@ -230,9 +278,44 @@ class TrussAPApp:
             return None
         return self._member_index_to_id[selection[0]]
 
+    def _nearest_joint_id(self, canvas_x: float, canvas_y: float) -> int | None:
+        """Return nearest joint under one canvas click, using a hit area."""
+        best_joint_id: int | None = None
+        best_distance_sq = self._joint_hit_radius_px**2
+        for joint_id, (joint_x, joint_y) in self._joint_canvas_positions.items():
+            distance_sq = (joint_x - canvas_x) ** 2 + (joint_y - canvas_y) ** 2
+            if distance_sq <= best_distance_sq:
+                best_distance_sq = distance_sq
+                best_joint_id = joint_id
+        return best_joint_id
+
+    def _select_joint_by_id(self, joint_id: int) -> None:
+        """Select one joint in the listbox by identifier."""
+        target_index = next((index for index, item in enumerate(self._joint_index_to_id) if item == joint_id), None)
+        if target_index is None:
+            return
+        self.joint_listbox.selection_clear(0, tk.END)
+        self.joint_listbox.selection_set(target_index)
+        self.joint_listbox.activate(target_index)
+        self.joint_listbox.see(target_index)
+        self._draw()
+
     def _on_canvas_click(self, event: tk.Event[tk.Misc]) -> None:
-        x_value, y_value = self._canvas_to_world(float(event.x), float(event.y))
+        canvas_x = float(event.x)
+        canvas_y = float(event.y)
         mode = self.mode_var.get()
+
+        clicked_joint_id = self._nearest_joint_id(canvas_x, canvas_y)
+        if clicked_joint_id is not None:
+            self._select_joint_by_id(clicked_joint_id)
+            if mode == "move_selected_joint":
+                # In move mode: clicking a joint selects it; clicking empty space moves it.
+                return
+            # In add mode: clicking a joint only selects; click empty space to add.
+            if mode == "add_joint":
+                return
+
+        x_value, y_value = self._canvas_to_world(canvas_x, canvas_y)
 
         try:
             if mode == "add_joint":

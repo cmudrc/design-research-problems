@@ -32,9 +32,12 @@ class IoTHomeCoolingApp:
 
         self._product_index_to_name: list[str] = []
         self._link_index_to_name: list[str] = []
+        self._last_canvas_size: tuple[int, int] = (0, 0)
+        self._product_canvas_positions: dict[str, tuple[float, float]] = {}
+        self._product_hit_radius_px = 12.0
 
         self._build_layout()
-        self._refresh()
+        self.root.after_idle(self._refresh)
 
     def _build_layout(self) -> None:
         main = ttk.Frame(self.root, padding=8)
@@ -48,6 +51,7 @@ class IoTHomeCoolingApp:
         self.canvas = tk.Canvas(left, width=920, height=560, background="#f7f7f7", highlightthickness=1)
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.canvas.bind("<Button-1>", self._on_canvas_click)
+        self.canvas.bind("<Configure>", self._on_canvas_configure)
 
         ttk.Label(right, text="Mode").pack(anchor=tk.W)
         mode_combo = ttk.Combobox(
@@ -84,6 +88,7 @@ class IoTHomeCoolingApp:
         ttk.Label(right, text="Products").pack(anchor=tk.W)
         self.product_listbox = tk.Listbox(right, height=12, width=34, selectmode=tk.EXTENDED, exportselection=False)
         self.product_listbox.pack(anchor=tk.W, fill=tk.X)
+        self.product_listbox.bind("<<ListboxSelect>>", self._on_product_list_selection)
 
         ttk.Label(right, text="Links").pack(anchor=tk.W, pady=(8, 0))
         self.link_listbox = tk.Listbox(right, height=8, width=34, exportselection=False)
@@ -119,6 +124,26 @@ class IoTHomeCoolingApp:
         )
         ttk.Label(right, text=instructions, wraplength=260, justify=tk.LEFT).pack(anchor=tk.W, pady=(10, 0))
 
+    def _on_canvas_configure(self, event: tk.Event[tk.Misc]) -> None:
+        """Redraw when canvas dimensions change to keep initial scaling stable."""
+        width = int(getattr(event, "width", 0))
+        height = int(getattr(event, "height", 0))
+        next_size = (width, height)
+        if next_size == self._last_canvas_size:
+            return
+        self._last_canvas_size = next_size
+        if width > 1 and height > 1:
+            self._draw()
+
+    def _on_product_list_selection(self, _event: tk.Event[tk.Misc]) -> None:
+        """Refresh visual highlight when product selection changes."""
+        selected = self._selected_product_names()
+        if len(selected) == 1:
+            product = next((entry for entry in self.state.products if entry.name == selected[0]), None)
+            if isinstance(product, IoTHomeProduct) and product.product_type == "d":
+                self.processor_var.set(product.name)
+        self._draw()
+
     def _world_bounds(self) -> tuple[float, float, float, float]:
         room_x = [x for room in self.state.house_geometry.rooms for x in room.x]
         room_y = [y for room in self.state.house_geometry.rooms for y in room.y]
@@ -152,6 +177,7 @@ class IoTHomeCoolingApp:
 
     def _draw(self) -> None:
         self.canvas.delete("all")
+        self._product_canvas_positions = {}
 
         for room in self.state.house_geometry.rooms:
             points: list[float] = []
@@ -176,10 +202,24 @@ class IoTHomeCoolingApp:
 
         colors = {"d": "#1951a5", "s": "#1f8a5b", "e": "#cf5d1b", "j": "#7d3c98"}
         labels = {"d": "P", "s": "S", "e": "C", "j": "J"}
+        selected_names = set(self._selected_product_names())
         for product in self.state.products:
             cx, cy = self._world_to_canvas(product.x, product.y)
+            self._product_canvas_positions[product.name] = (cx, cy)
             color = colors.get(product.product_type, "#333")
-            self.canvas.create_oval(cx - 6, cy - 6, cx + 6, cy + 6, fill=color, outline="#111")
+            is_selected = product.name in selected_names
+            outline = "#f59e0b" if is_selected else "#111"
+            radius = 7 if is_selected else 6
+            line_width = 2 if is_selected else 1
+            self.canvas.create_oval(
+                cx - radius,
+                cy - radius,
+                cx + radius,
+                cy + radius,
+                fill=color,
+                outline=outline,
+                width=line_width,
+            )
             self.canvas.create_text(cx, cy - 12, text=product.name, font=("Helvetica", 8), fill="#111")
             self.canvas.create_text(
                 cx,
@@ -190,7 +230,9 @@ class IoTHomeCoolingApp:
             )
 
     def _refresh(self) -> None:
-        self._draw()
+        selected_product_names = set(self._selected_product_names())
+        selected_link_name = self._selected_link_name()
+
         self._product_index_to_name = [product.name for product in self.state.products]
         self._link_index_to_name = [link.name for link in self.state.links]
 
@@ -201,10 +243,20 @@ class IoTHomeCoolingApp:
                 tk.END,
                 f"{product.name} ({product.product_type}) @ ({product.x:.2f}, {product.y:.2f}) {room_text}",
             )
+        self.product_listbox.selection_clear(0, tk.END)
+        for index, product_name in enumerate(self._product_index_to_name):
+            if product_name in selected_product_names:
+                self.product_listbox.selection_set(index)
 
         self.link_listbox.delete(0, tk.END)
         for link in self.state.links:
             self.link_listbox.insert(tk.END, f"{link.name}: {link.init_name} <-> {link.term_name}")
+        self.link_listbox.selection_clear(0, tk.END)
+        if selected_link_name is not None:
+            for index, link_name in enumerate(self._link_index_to_name):
+                if link_name == selected_link_name:
+                    self.link_listbox.selection_set(index)
+                    break
 
         processors = [product.name for product in self.state.products if product.product_type == "d"]
         self.processor_combo["values"] = processors
@@ -212,6 +264,7 @@ class IoTHomeCoolingApp:
             self.processor_var.set(processors[0])
         if not processors:
             self.processor_var.set("")
+        self._draw()
 
     def _selected_product_names(self) -> list[str]:
         return [self._product_index_to_name[index] for index in self.product_listbox.curselection()]
@@ -222,9 +275,52 @@ class IoTHomeCoolingApp:
             return None
         return self._link_index_to_name[selection[0]]
 
+    def _nearest_product_name(self, canvas_x: float, canvas_y: float) -> str | None:
+        """Return nearest product under one canvas click, using a hit area."""
+        best_name: str | None = None
+        best_distance_sq = self._product_hit_radius_px**2
+        for product_name, (product_x, product_y) in self._product_canvas_positions.items():
+            distance_sq = (product_x - canvas_x) ** 2 + (product_y - canvas_y) ** 2
+            if distance_sq <= best_distance_sq:
+                best_distance_sq = distance_sq
+                best_name = product_name
+        return best_name
+
+    def _select_product_by_name(self, product_name: str, *, append: bool = False) -> None:
+        """Select one product in the listbox by identifier."""
+        target_index = next(
+            (index for index, item in enumerate(self._product_index_to_name) if item == product_name),
+            None,
+        )
+        if target_index is None:
+            return
+        if not append:
+            self.product_listbox.selection_clear(0, tk.END)
+        self.product_listbox.selection_set(target_index)
+        self.product_listbox.activate(target_index)
+        self.product_listbox.see(target_index)
+        product = next((entry for entry in self.state.products if entry.name == product_name), None)
+        if isinstance(product, IoTHomeProduct) and product.product_type == "d":
+            self.processor_var.set(product.name)
+        self._draw()
+
     def _on_canvas_click(self, event: tk.Event[tk.Misc]) -> None:
-        world_x, world_y = self._canvas_to_world(float(event.x), float(event.y))
+        canvas_x = float(event.x)
+        canvas_y = float(event.y)
         mode = self.mode_var.get()
+
+        clicked_product_name = self._nearest_product_name(canvas_x, canvas_y)
+        if clicked_product_name is not None:
+            multi_select = bool(int(getattr(event, "state", 0)) & 0x0001)
+            self._select_product_by_name(clicked_product_name, append=multi_select)
+            if mode == "move_selected":
+                # In move mode: clicking a product selects it; clicking empty space moves it.
+                return
+            # In add modes: clicking a product only selects; click empty space to add.
+            if mode in {"add_processor", "add_sensor", "add_cooler"}:
+                return
+
+        world_x, world_y = self._canvas_to_world(canvas_x, canvas_y)
 
         try:
             if mode == "add_processor":
