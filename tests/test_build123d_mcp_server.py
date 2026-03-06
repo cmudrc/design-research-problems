@@ -5,6 +5,8 @@ from typing import Any
 
 import pytest
 
+pytest.importorskip("mcp.server.fastmcp")
+
 from design_research_problems.problems._domains import build123d_mcp_server as backend
 
 
