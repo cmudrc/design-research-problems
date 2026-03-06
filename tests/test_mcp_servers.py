@@ -153,8 +153,12 @@ def test_grammar_problem_to_mcp_server_is_stateful_and_toggleable() -> None:
     transitions = _call_tool_json(server, "list_transitions", {})
     assert transitions["transition_count"] > 0
 
-    final_payload = _call_tool_json(server, "submit_final", {})
-    assert final_payload["design"] == after["design"]
+    try:
+        final_payload = _call_tool_json(server, "submit_final", {})
+    except ToolError as exc:
+        assert "trussme is required for truss evaluation" in str(exc)
+    else:
+        assert final_payload["design"] == after["design"]
 
     no_helpers_server = problem.to_mcp_server(include_grammar_helpers=False)
     no_helper_tool_names = _tool_names(no_helpers_server)
