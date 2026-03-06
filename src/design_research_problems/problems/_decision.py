@@ -314,6 +314,8 @@ class DecisionEvaluation:
     """Objective scalar used for ranking."""
     objective_metric: str
     """Metric or objective identifier used to populate ``objective_value``."""
+    higher_is_better: bool = True
+    """Whether larger objective values are better for ranking."""
     option: DecisionOption | None = None
     """Normalized option that was evaluated when in discrete mode."""
     utility: float | None = None
@@ -354,6 +356,7 @@ class DecisionEvaluation:
         object.__setattr__(self, "candidate_label", candidate_label)
         object.__setattr__(self, "objective_value", float(self.objective_value))
         object.__setattr__(self, "objective_metric", objective_metric)
+        object.__setattr__(self, "higher_is_better", bool(self.higher_is_better))
         if self.utility is not None:
             object.__setattr__(self, "utility", float(self.utility))
         if self.predicted_share is not None:
@@ -1049,7 +1052,7 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
         Returns:
             Markdown brief suitable for review or reuse.
         """
-        sections = [self.render_packet(include_citation=False)]
+        sections = [super().render_brief(include_citation=False)]
 
         context_lines: list[str] = []
         for key, label in (
@@ -1114,7 +1117,9 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
         The exported server exposes:
         - ``problem://design-brief`` resource (structured decision brief)
         - ``problem://decision-candidates`` resource (deterministic index mapping)
-        - ``final_answer(choice_index, justification?)`` tool
+        - ``list_candidates()`` tool for deterministic candidate indexing
+        - ``evaluate(choice_index)`` tool
+        - ``submit_final(choice_index, justification?)`` tool
 
         Args:
             server_name: Optional explicit server name.
@@ -1132,18 +1137,11 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
 
         indexed_candidates = tuple(enumerate(self.iter_candidates()))
 
-        @server.resource(
-            "problem://decision-candidates",
-            name="decision-candidates",
-            title="Decision Candidates",
-            description="Deterministic zero-based candidate index mapping.",
-            mime_type="application/json",
-        )
-        def decision_candidates() -> dict[str, object]:
-            """Return the deterministic decision-candidate index mapping.
+        def _candidate_entries() -> list[dict[str, object]]:
+            """Return deterministic indexed candidate metadata rows.
 
             Returns:
-                MCP-ready payload describing the indexed candidates.
+                Indexed candidate rows for tooling and resources.
             """
             entries: list[dict[str, object]] = []
             for index, candidate in indexed_candidates:
@@ -1158,23 +1156,16 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
                         "candidate_label": label,
                     }
                 )
+            return entries
 
-            return {
-                "problem_id": self.metadata.problem_id,
-                "candidate_kind": self.candidate_kind,
-                "candidate_count": len(indexed_candidates),
-                "candidates": entries,
-            }
-
-        def final_answer(choice_index: int, justification: str | None = None) -> dict[str, object]:
-            """Submit one indexed final decision answer.
+        def _require_choice_index(choice_index: int) -> int:
+            """Validate one zero-based candidate index.
 
             Args:
-                choice_index: Zero-based index of the selected candidate.
-                justification: Optional justification text.
+                choice_index: Candidate index to validate.
 
             Returns:
-                MCP-ready submission payload for the selected candidate.
+                Normalized index.
 
             Raises:
                 ValueError: If ``choice_index`` is outside the valid range.
@@ -1183,6 +1174,50 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
                 raise ValueError(
                     f"choice_index must be in [0, {len(indexed_candidates) - 1}] for this decision problem."
                 )
+            return choice_index
+
+        def _decision_candidates_payload() -> dict[str, object]:
+            """Build the deterministic decision-candidate index mapping payload.
+
+            Returns:
+                MCP-ready payload describing the indexed candidates.
+            """
+            return {
+                "problem_id": self.metadata.problem_id,
+                "candidate_kind": self.candidate_kind,
+                "candidate_count": len(indexed_candidates),
+                "candidates": _candidate_entries(),
+            }
+
+        @server.resource(
+            "problem://decision-candidates",
+            name="decision-candidates",
+            title="Decision Candidates",
+            description="Deterministic zero-based candidate index mapping.",
+            mime_type="application/json",
+        )
+        def decision_candidates() -> dict[str, object]:
+            """Return the deterministic decision-candidate index mapping."""
+            return _decision_candidates_payload()
+
+        def list_candidates() -> dict[str, object]:
+            """Return the deterministic decision-candidate index mapping.
+
+            Returns:
+                MCP-ready payload describing the indexed candidates.
+            """
+            return _decision_candidates_payload()
+
+        def evaluate_tool(choice_index: int) -> dict[str, object]:
+            """Evaluate one indexed decision candidate.
+
+            Args:
+                choice_index: Zero-based index of the selected candidate.
+
+            Returns:
+                MCP-ready evaluation payload for the selected candidate.
+            """
+            choice_index = _require_choice_index(choice_index)
             candidate = indexed_candidates[choice_index][1]
             evaluation = self.evaluate(candidate)
             return {
@@ -1192,13 +1227,42 @@ class DecisionProblem(ComputableProblem[DecisionCandidate, DecisionEvaluation]):
                 "choice_index": choice_index,
                 "candidate": to_json_value(candidate),
                 "candidate_label": evaluation.candidate_label,
-                "justification": normalized_optional_text(justification),
                 "evaluation": to_json_value(evaluation),
+                "objective_value": evaluation.objective_value,
+                "higher_is_better": evaluation.higher_is_better,
+                "is_feasible": True,
             }
 
         server.add_tool(
-            final_answer,
-            name="final_answer",
+            list_candidates,
+            name="list_candidates",
+            title="List Candidates",
+            description="List deterministic zero-based decision candidate indices and labels.",
+        )
+        server.add_tool(
+            evaluate_tool,
+            name="evaluate",
+            title="Evaluate Candidate",
+            description="Evaluate a candidate by zero-based index.",
+        )
+
+        def submit_final(choice_index: int, justification: str | None = None) -> dict[str, object]:
+            """Submit one indexed final decision answer.
+
+            Args:
+                choice_index: Zero-based index of the selected candidate.
+                justification: Optional justification text.
+
+            Returns:
+                MCP-ready submission payload for the selected candidate.
+            """
+            payload = evaluate_tool(choice_index)
+            payload["justification"] = normalized_optional_text(justification)
+            return payload
+
+        server.add_tool(
+            submit_final,
+            name="submit_final",
             title="Submit Final Answer",
             description="Submit the final answer by zero-based candidate index.",
         )

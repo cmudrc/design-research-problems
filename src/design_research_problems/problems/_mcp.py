@@ -4,12 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import asdict, is_dataclass
-from importlib import import_module
 from typing import TYPE_CHECKING, Any, cast
 
 import numpy
 
-from design_research_problems._exceptions import MissingOptionalDependencyError
+from design_research_problems._optional import import_optional_module
 
 if TYPE_CHECKING:
     from mcp.server.fastmcp import FastMCP
@@ -29,13 +28,12 @@ def import_fastmcp() -> type[FastMCP]:
     Raises:
         MissingOptionalDependencyError: If the MCP dependency is unavailable.
     """
-    try:
-        module = import_module("mcp.server.fastmcp")
-    except ImportError as exc:
-        raise MissingOptionalDependencyError(
-            "mcp is required for MCP server export and ingestion proxying. "
-            "Install it with: pip install design-research-problems[mcp]"
-        ) from exc
+    module = import_optional_module(
+        "mcp.server.fastmcp",
+        required_for="MCP server export and ingestion proxying",
+        extras=("mcp",),
+        dependency_label="mcp",
+    )
     return cast(type[Any], module.FastMCP)
 
 

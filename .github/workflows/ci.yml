@@ -72,9 +72,24 @@ jobs:
       - name: Run tests
         run: make test
 
+  full-optional:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install full optional dependency set
+        run: make dev-full
+      - name: Run full optional test suite
+        run: make test-full
+
   coverage-badge:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [latest, lowest, locked]
+    needs: [latest, lowest, locked, full-optional]
     runs-on: ubuntu-latest
     concurrency:
       group: coverage-badge-${{ github.ref }}

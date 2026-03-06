@@ -10,13 +10,16 @@ UV ?= $(if $(wildcard .venv/bin/uv),.venv/bin/uv,uv)
 REPRO_PYTHON ?= $(shell cat .python-version 2>/dev/null || echo 3.12.12)
 REPRO_EXTRAS ?= dev
 TRUSSME_SPEC ?= trussme>=0.1.0
+COVERAGE_MINIMUM ?= 75
+FULL_EXTRAS ?= dev,battery,grammar,mcp,cad,pandas,solvers
 
 .PHONY: help check-python check-uv dev install-dev repro lock \
 	lint fmt fmt-check type test qa coverage release-check \
 	docstrings-check \
 	examples-smoke examples-test examples-metrics \
 	docs docs-build docs-check docs-linkcheck \
-	install-trussme install-pybamm dev-truss dev-battery test-trussme \
+	install-trussme install-pybamm dev-truss dev-battery dev-full \
+	test-trussme test-full \
 	ci clean
 
 help:
@@ -26,8 +29,10 @@ help:
 	@echo "  install-pybamm       Install the optional pybamm battery dependency."
 	@echo "  dev-truss            Install dev dependencies plus trussme."
 	@echo "  dev-battery          Install dev dependencies plus pybamm."
+	@echo "  dev-full             Install all optional extras for full local verification."
 	@echo "  test                 Run the default pytest suite."
 	@echo "  test-trussme         Run tests that require an installed trussme package."
+	@echo "  test-full            Run full pytest suite and examples smoke checks."
 	@echo "  release-check        Build sdist/wheel and run twine metadata checks."
 	@echo "  docstrings-check     Enforce Google-style docstring policy."
 	@echo "  ci                   Run the main local CI checks."
@@ -73,7 +78,7 @@ docstrings-check: check-python
 coverage: check-python
 	mkdir -p artifacts/coverage
 	PYTHONPATH=src $(PYTEST) -m "not trussme_real and not pybamm_real" --cov=src/design_research_problems --cov-report=term --cov-report=json:artifacts/coverage/coverage.json -q
-	$(PYTHON) scripts/check_coverage_thresholds.py --coverage-json artifacts/coverage/coverage.json
+	$(PYTHON) scripts/check_coverage_thresholds.py --coverage-json artifacts/coverage/coverage.json --minimum $(COVERAGE_MINIMUM)
 
 release-check: check-python
 	rm -rf build dist
@@ -115,8 +120,16 @@ dev-truss: dev install-trussme
 
 dev-battery: dev install-pybamm
 
+dev-full:
+	$(PIP) install --upgrade pip setuptools wheel
+	$(PIP) install -e ".[${FULL_EXTRAS}]"
+
 test-trussme: check-python
 	PYTHONPATH=src $(PYTEST) -m trussme_real -q
+
+test-full: check-python
+	PYTHONPATH=src $(PYTEST) -q -rs
+	PYTHONPATH=src $(PYTEST) -m examples_smoke -q
 
 ci: qa coverage docstrings-check docs-check examples-smoke release-check
 

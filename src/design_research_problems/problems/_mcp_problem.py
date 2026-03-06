@@ -8,11 +8,11 @@ import sys
 from collections.abc import Mapping, Sequence
 from contextlib import AsyncExitStack
 from dataclasses import dataclass
-from importlib import import_module
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Literal, cast
 
-from design_research_problems._exceptions import MissingOptionalDependencyError, ProblemEvaluationError
+from design_research_problems._exceptions import ProblemEvaluationError
+from design_research_problems._optional import import_optional_module
 from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._mcp import (
     create_fastmcp_server,
@@ -358,7 +358,7 @@ class MCPProblem(Problem):
         server = create_fastmcp_server(self, server_name=server_name)
         register_design_brief_resource(
             server,
-            brief_text=self.render_packet(include_citation=include_citation, citation_mode=citation_mode),
+            brief_text=self.render_brief(include_citation=include_citation, citation_mode=citation_mode),
         )
 
         upstream_tools = self._discover_upstream_tools()
@@ -366,25 +366,37 @@ class MCPProblem(Problem):
             raise ProblemEvaluationError("Upstream MCP tool names must be unique.")
 
         persistent_session = _LoopBoundUpstreamSession(self._stdio_config)
+        upstream_tool_names = {tool.name for tool in upstream_tools}
+        expose_submit_final = "submit_final" in upstream_tool_names or "final_answer" in upstream_tool_names
+        exposed_names: set[str] = set()
         for tool in upstream_tools:
             proxy_tool = self._build_proxy_tool(
                 tool_name=tool.name, input_schema=tool.inputSchema, session=persistent_session
             )
             description = (tool.description or "").strip() or f"Proxy call to upstream MCP tool {tool.name!r}."
+            exposed_name = (
+                "submit_final"
+                if tool.name == "final_answer" and "submit_final" not in upstream_tool_names
+                else tool.name
+            )
+            if exposed_name in exposed_names:
+                raise ProblemEvaluationError(f"Duplicate exposed MCP tool name: {exposed_name!r}")
+            exposed_names.add(exposed_name)
             server.add_tool(
                 proxy_tool,
-                name=tool.name,
+                name=exposed_name,
                 title=tool.title,
                 description=description,
             )
 
-        if "final_answer" not in {tool.name for tool in upstream_tools}:
+        if not expose_submit_final:
 
-            def final_answer(answer: str) -> dict[str, object]:
+            def submit_final(answer: str, justification: str | None = None) -> dict[str, object]:
                 """Submit one free-text final answer.
 
                 Args:
                     answer: Free-text final answer string.
+                    justification: Optional rationale for the submission.
 
                 Returns:
                     MCP-ready submission payload for the provided answer.
@@ -399,11 +411,12 @@ class MCPProblem(Problem):
                     "problem_id": self.metadata.problem_id,
                     "problem_kind": self.metadata.kind.value,
                     "answer": normalized_answer,
+                    "justification": None if justification is None else justification.strip() or None,
                 }
 
             server.add_tool(
-                final_answer,
-                name="final_answer",
+                submit_final,
+                name="submit_final",
                 title="Submit Final Answer",
                 description="Submit a free-text final answer for this design brief.",
             )
@@ -536,15 +549,24 @@ def _import_mcp_client_modules() -> tuple[Any, Any, Any]:
     Raises:
         MissingOptionalDependencyError: If optional MCP dependencies are missing.
     """
-    try:
-        anyio_module = import_module("anyio")
-        session_module = import_module("mcp.client.session")
-        stdio_module = import_module("mcp.client.stdio")
-    except ImportError as exc:
-        raise MissingOptionalDependencyError(
-            "mcp is required for MCP server export and ingestion proxying. "
-            "Install it with: pip install design-research-problems[mcp]"
-        ) from exc
+    anyio_module = import_optional_module(
+        "anyio",
+        required_for="MCP server export and ingestion proxying",
+        extras=("mcp",),
+        dependency_label="anyio",
+    )
+    session_module = import_optional_module(
+        "mcp.client.session",
+        required_for="MCP server export and ingestion proxying",
+        extras=("mcp",),
+        dependency_label="mcp",
+    )
+    stdio_module = import_optional_module(
+        "mcp.client.stdio",
+        required_for="MCP server export and ingestion proxying",
+        extras=("mcp",),
+        dependency_label="mcp",
+    )
     return anyio_module, session_module.ClientSession, stdio_module
 
 

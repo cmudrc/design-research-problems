@@ -116,7 +116,7 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
         server = create_fastmcp_server(self, server_name=server_name)
         register_design_brief_resource(
             server,
-            brief_text=self.render_packet(include_citation=include_citation, citation_mode=citation_mode),
+            brief_text=self.render_brief(include_citation=include_citation, citation_mode=citation_mode),
         )
 
         current_state = self.initial_state()
@@ -171,23 +171,34 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
                 MCP-ready evaluation payload for the current design.
             """
             evaluation = self.evaluate(current_state)
+            objective_value, higher_is_better, is_feasible = _evaluation_summary_fields(evaluation)
             return {
                 "problem_id": self.metadata.problem_id,
                 "problem_kind": self.metadata.kind.value,
                 "design": to_json_value(current_state),
                 "evaluation": to_json_value(evaluation),
+                "objective_value": objective_value,
+                "higher_is_better": higher_is_better,
+                "is_feasible": is_feasible,
             }
 
-        def final_answer() -> dict[str, object]:
+        def submit_final(justification: str | None = None) -> dict[str, object]:
             """Submit the current state as the final grammar design.
 
             Returns:
                 MCP-ready submission payload for the current design.
             """
+            evaluation = self.evaluate(current_state)
+            objective_value, higher_is_better, is_feasible = _evaluation_summary_fields(evaluation)
             return {
                 "problem_id": self.metadata.problem_id,
                 "problem_kind": self.metadata.kind.value,
                 "design": to_json_value(current_state),
+                "evaluation": to_json_value(evaluation),
+                "objective_value": objective_value,
+                "higher_is_better": higher_is_better,
+                "is_feasible": is_feasible,
+                "justification": None if justification is None else justification.strip() or None,
             }
 
         def _set_current_state(state: StateT) -> None:
@@ -250,8 +261,8 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
             )
 
         server.add_tool(
-            final_answer,
-            name="final_answer",
+            submit_final,
+            name="submit_final",
             title="Submit Final Answer",
             description="Submit the current grammar design state as the final answer.",
         )
@@ -384,6 +395,39 @@ def _annotation_token(annotation: object) -> str:
     if name:
         return name.strip().replace(" ", "")
     return str(annotation).strip().replace(" ", "")
+
+
+def _evaluation_summary_fields(evaluation: object) -> tuple[float, bool, bool]:
+    """Extract canonical objective and feasibility fields from one evaluation object.
+
+    Args:
+        evaluation: Family-specific evaluation payload.
+
+    Returns:
+        ``(objective_value, higher_is_better, is_feasible)`` tuple.
+    """
+    is_feasible = bool(getattr(evaluation, "is_feasible", True))
+
+    objective_value = getattr(evaluation, "objective_value", None)
+    if isinstance(objective_value, int | float):
+        higher_is_better = bool(getattr(evaluation, "higher_is_better", False))
+        return (float(objective_value), higher_is_better, is_feasible)
+
+    for key, higher in (
+        ("total_cost", False),
+        ("mass", False),
+        ("deflection", False),
+        ("peak_temp_c", False),
+        ("design_cost", False),
+        ("delivered_capacity_ah", True),
+        ("fos", True),
+        ("min_fos", True),
+    ):
+        value = getattr(evaluation, key, None)
+        if isinstance(value, int | float):
+            return (float(value), higher, is_feasible)
+
+    return (0.0, False, is_feasible)
 
 
 __all__ = ["GrammarProblem", "GrammarTransition"]

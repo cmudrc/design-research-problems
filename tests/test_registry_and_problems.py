@@ -155,7 +155,7 @@ def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
 def test_text_problem_renders_statement_and_citation() -> None:
     problem = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
     assert isinstance(problem, Problem)
-    packet = problem.render_packet()
+    packet = problem.render_brief()
     assert packet.count("# Device to shell peanuts") == 1
     assert "Fu, Cagan, and Kotovsky (2010)." in packet
     assert "Must remove the shell with minimal damage to the peanuts." in packet
@@ -166,7 +166,7 @@ def test_text_problem_renders_statement_and_citation() -> None:
 
 def test_text_problem_can_render_summary_and_raw_citations() -> None:
     problem = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
-    packet = problem.render_packet(citation_mode="summary+raw")
+    packet = problem.render_brief(citation_mode="summary+raw")
     assert "## Sources" in packet
     assert "## BibTeX" in packet
     assert "@article{fu2010design," in packet

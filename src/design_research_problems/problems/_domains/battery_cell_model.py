@@ -9,6 +9,7 @@ from typing import Any
 import numpy
 
 from design_research_problems._exceptions import MissingOptionalDependencyError
+from design_research_problems._optional import import_optional_module
 from design_research_problems.problems._domains.battery_layout import CELL_SPEC_18650
 
 
@@ -41,14 +42,12 @@ def import_pybamm() -> Any:
     Raises:
         Exception: Raised when the callable encounters an invalid state.
     """
-    try:
-        import pybamm
-    except ImportError as exc:
-        raise MissingOptionalDependencyError(
-            "pybamm is required for battery grammar evaluation. Install it with: "
-            "pip install design-research-problems[battery] or run: make install-pybamm"
-        ) from exc
-    return pybamm
+    return import_optional_module(
+        "pybamm",
+        required_for="battery grammar evaluation",
+        extras=("battery",),
+        make_target="install-pybamm",
+    )
 
 
 @lru_cache(maxsize=1)

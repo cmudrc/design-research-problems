@@ -141,11 +141,11 @@ async def run_summary(server: FastMCP) -> dict[str, object]:
         evaluation = _extract_structured_payload(eval_payload)
         last_payload = await server.call_tool("describe_last_script_result", {"include_script": False})
         last_result = _extract_structured_payload(last_payload)
-        final_answer_payload = await server.call_tool(
-            "final_answer",
+        submit_final_payload = await server.call_tool(
+            "submit_final",
             {"answer": "Submitted a Build123d script that generates and validates the bracket geometry."},
         )
-        final_answer = _extract_structured_payload(final_answer_payload)
+        submit_final = _extract_structured_payload(submit_final_payload)
     finally:
         close_upstream = getattr(server, "aclose_upstream_session", None)
         if callable(close_upstream):
@@ -163,7 +163,7 @@ async def run_summary(server: FastMCP) -> dict[str, object]:
             "matches_nominal_envelope"
         ),
         "last_result_name": last_result.get("result_name"),
-        "final_answer": final_answer.get("answer", "<missing>"),
+        "submit_final": submit_final.get("answer", "<missing>"),
     }
 
 
@@ -203,7 +203,7 @@ def main() -> int:
     print("Volume (mm^3):", summary["volume_mm3"])
     print("Matches nominal envelope:", summary["matches_nominal_envelope"])
     print("Last result name:", summary["last_result_name"])
-    print("final_answer answer:", summary["final_answer"])
+    print("submit_final answer:", summary["submit_final"])
     return 0
 
 

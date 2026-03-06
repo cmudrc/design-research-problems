@@ -78,6 +78,8 @@ class OptimizationEvaluation:
     """Largest single bound or constraint violation."""
     is_feasible: bool
     """Whether ``x`` is feasible under the default tolerance."""
+    higher_is_better: bool = False
+    """Whether larger objective values are better for ranking."""
 
 
 @dataclass(frozen=True)
@@ -197,6 +199,7 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
             total_constraint_violation=total_violation,
             max_constraint_violation=max_violation,
             is_feasible=max_violation <= 1e-9,
+            higher_is_better=False,
         )
 
     def to_mcp_server(
@@ -211,7 +214,7 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
         The exported server exposes:
         - ``problem://design-brief`` resource
         - ``evaluate(x)`` tool for stateless candidate scoring
-        - ``final_answer(final_x, justification?)`` tool
+        - ``submit_final(final_x, justification?)`` tool
 
         Args:
             server_name: Optional explicit server name.
@@ -224,7 +227,7 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
         server = create_fastmcp_server(self, server_name=server_name)
         register_design_brief_resource(
             server,
-            brief_text=self.render_packet(include_citation=include_citation, citation_mode=citation_mode),
+            brief_text=self.render_brief(include_citation=include_citation, citation_mode=citation_mode),
         )
 
         def evaluate_tool(x: list[float]) -> dict[str, object]:
@@ -238,7 +241,7 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
             """
             return self._mcp_evaluation_report(x)
 
-        def final_answer(final_x: list[float], justification: str | None = None) -> dict[str, object]:
+        def submit_final(final_x: list[float], justification: str | None = None) -> dict[str, object]:
             """Submit one final optimization vector with an optional justification.
 
             Args:
@@ -264,8 +267,8 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
             description="Evaluate a candidate vector and return feasibility/objective metrics.",
         )
         server.add_tool(
-            final_answer,
-            name="final_answer",
+            submit_final,
+            name="submit_final",
             title="Submit Final Answer",
             description="Submit the final candidate vector with optional justification.",
         )
@@ -287,6 +290,9 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
             "problem_id": self.metadata.problem_id,
             "candidate_x": to_json_value(vector),
             "evaluation": to_json_value(evaluation),
+            "objective_value": evaluation.objective_value,
+            "higher_is_better": evaluation.higher_is_better,
+            "is_feasible": evaluation.is_feasible,
         }
 
         objective_components = getattr(self, "objective_components", None)

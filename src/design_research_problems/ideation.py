@@ -8,12 +8,11 @@ import json
 import tomllib
 from dataclasses import dataclass
 from enum import StrEnum
-from importlib import import_module
 from importlib.resources import files
 from typing import Any, cast
 
 from design_research_problems._catalog._registry import ProblemRegistry
-from design_research_problems._exceptions import MissingOptionalDependencyError
+from design_research_problems._optional import import_optional_module
 from design_research_problems.problems._metadata import Citation
 
 _PACKAGE = "design_research_problems"
@@ -499,12 +498,14 @@ class IdeationCatalog:
         Raises:
             MissingOptionalDependencyError: If pandas is not installed.
         """
-        try:
-            pandas_module = cast(Any, import_module("pandas"))
-        except ImportError as exc:
-            raise MissingOptionalDependencyError(
-                "pandas support requires the optional 'design-research-problems[pandas]' extra."
-            ) from exc
+        pandas_module = cast(
+            Any,
+            import_optional_module(
+                "pandas",
+                required_for="ideation catalog DataFrame exports",
+                extras=("pandas",),
+            ),
+        )
         return pandas_module.DataFrame(rows)
 
 

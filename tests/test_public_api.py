@@ -30,6 +30,7 @@ EXPECTED_PUBLIC_API = [
     "IdeationStudy",
     "IdeationCatalog",
     "get_problem",
+    "get_problem_as",
     "list_problems",
     "get_ideation_catalog",
 ]

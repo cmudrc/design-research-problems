@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import ast
+import builtins as _builtins
 import importlib.util
 import math
 from dataclasses import asdict, dataclass
@@ -16,6 +18,17 @@ _FILLET_FALLBACK_STEP_MM = 0.5
 
 _NOMINAL_ENVELOPE_MM = (80.0, 40.0, 46.0)
 _ENVELOPE_TOLERANCE_MM = 0.25
+_ALLOWED_SCRIPT_IMPORT_ROOTS = frozenset({"build123d", "math"})
+_FORBIDDEN_SCRIPT_GLOBAL_NAMES = frozenset(
+    {
+        "__builtins__",
+        "__loader__",
+        "__spec__",
+        "__package__",
+        "__import__",
+    }
+)
+_FORBIDDEN_SCRIPT_CALL_NAMES = frozenset({"eval", "exec", "open", "compile", "input", "breakpoint", "__import__"})
 _SCRIPT_SAFE_BUILTINS = MappingProxyType(
     {
         "abs": abs,
@@ -40,7 +53,6 @@ _SCRIPT_SAFE_BUILTINS = MappingProxyType(
         "Exception": Exception,
         "ValueError": ValueError,
         "RuntimeError": RuntimeError,
-        "__import__": __import__,
         "zip": zip,
     }
 )
@@ -422,6 +434,96 @@ def render_build123d_script(spec: MountingBracketSpec) -> str:
     )
 
 
+def _safe_script_import(
+    name: str,
+    globals: dict[str, object] | None = None,
+    locals: dict[str, object] | None = None,
+    fromlist: tuple[str, ...] | list[str] = (),
+    level: int = 0,
+) -> object:
+    """Import hook that restricts Build123d scripts to safe module roots."""
+    if level != 0:
+        raise ImportError("Relative imports are not allowed in Build123d scripts.")
+    root = name.partition(".")[0]
+    if root not in _ALLOWED_SCRIPT_IMPORT_ROOTS:
+        allowed = ", ".join(sorted(_ALLOWED_SCRIPT_IMPORT_ROOTS))
+        raise ImportError(f"Import {name!r} is not allowed. Allowed imports: {allowed}.")
+    return _builtins.__import__(name, globals, locals, fromlist, level)
+
+
+def _script_restriction_error(message: str, node: ast.AST | None = None) -> ValueError:
+    """Build a script-restriction error with optional line information."""
+    if node is not None and hasattr(node, "lineno"):
+        return ValueError(f"{message} (line {node.lineno}).")
+    return ValueError(message)
+
+
+def _validate_build123d_script(script: str) -> None:
+    """Validate a Build123d script before execution.
+
+    Args:
+        script: Candidate Python source to execute.
+
+    Raises:
+        ValueError: If syntax is invalid or a restricted operation is detected.
+    """
+    try:
+        tree = ast.parse(script, mode="exec")
+    except SyntaxError as exc:
+        if exc.lineno is None:
+            raise ValueError(f"Script has invalid Python syntax: {exc.msg}.") from exc
+        raise ValueError(f"Script has invalid Python syntax: {exc.msg} (line {exc.lineno}).") from exc
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                root = alias.name.partition(".")[0]
+                if root not in _ALLOWED_SCRIPT_IMPORT_ROOTS:
+                    raise _script_restriction_error(
+                        f"Import {alias.name!r} is not allowed in Build123d scripts.",
+                        node,
+                    )
+            continue
+
+        if isinstance(node, ast.ImportFrom):
+            if node.level != 0 or node.module is None:
+                raise _script_restriction_error("Relative imports are not allowed in Build123d scripts.", node)
+            root = node.module.partition(".")[0]
+            if root not in _ALLOWED_SCRIPT_IMPORT_ROOTS:
+                raise _script_restriction_error(
+                    f"Import from {node.module!r} is not allowed in Build123d scripts.",
+                    node,
+                )
+            if any(alias.name == "*" for alias in node.names):
+                raise _script_restriction_error("Wildcard imports are not allowed in Build123d scripts.", node)
+            continue
+
+        if isinstance(node, ast.Call):
+            if isinstance(node.func, ast.Name) and node.func.id in _FORBIDDEN_SCRIPT_CALL_NAMES:
+                raise _script_restriction_error(
+                    f"Call to {node.func.id!r} is not allowed in Build123d scripts.",
+                    node,
+                )
+            if isinstance(node.func, ast.Attribute) and node.func.attr.startswith("__"):
+                raise _script_restriction_error(
+                    "Dunder attribute calls are not allowed in Build123d scripts.",
+                    node,
+                )
+            continue
+
+        if isinstance(node, ast.Attribute) and node.attr.startswith("__"):
+            raise _script_restriction_error("Dunder attribute access is not allowed in Build123d scripts.", node)
+
+        if isinstance(node, ast.Name) and node.id in _FORBIDDEN_SCRIPT_GLOBAL_NAMES:
+            raise _script_restriction_error(
+                f"Use of {node.id!r} is not allowed in Build123d scripts.",
+                node,
+            )
+
+        if isinstance(node, ast.Global | ast.Nonlocal):
+            raise _script_restriction_error("global/nonlocal statements are not allowed in Build123d scripts.", node)
+
+
 def _script_build123d_namespace() -> dict[str, object]:
     """Return globals exposed to script execution."""
     module = import_module("build123d")
@@ -432,8 +534,10 @@ def _script_build123d_namespace() -> dict[str, object]:
     else:
         exported_names = [name for name in dir(module) if not name.startswith("_")]
 
+    builtins_namespace = dict(_SCRIPT_SAFE_BUILTINS)
+    builtins_namespace["__import__"] = _safe_script_import
     namespace: dict[str, object] = {
-        "__builtins__": dict(_SCRIPT_SAFE_BUILTINS),
+        "__builtins__": builtins_namespace,
         "math": math,
         "build123d": module,
     }
@@ -477,6 +581,7 @@ def evaluate_scripted_part(script: str, *, result_name: str = "result") -> dict[
     if not result_name.isidentifier():
         raise ValueError("result_name must be a valid Python identifier.")
 
+    _validate_build123d_script(normalized_script)
     namespace = _script_build123d_namespace()
     try:
         compiled = compile(normalized_script, "<build123d-agent-script>", "exec")

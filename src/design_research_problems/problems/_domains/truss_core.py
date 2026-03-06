@@ -8,7 +8,7 @@ from typing import Any, Literal
 
 import numpy
 
-from design_research_problems._exceptions import MissingOptionalDependencyError
+from design_research_problems._optional import import_optional_module
 
 SupportType = Literal["pinned", "roller", "free"]
 Axis = Literal["x", "y", "z"]
@@ -81,14 +81,12 @@ def import_trussme(required_for: str = "truss evaluation") -> Any:
     Raises:
         Exception: Raised when the callable encounters an invalid state.
     """
-    try:
-        import trussme
-    except ImportError as exc:
-        raise MissingOptionalDependencyError(
-            f"trussme is required for {required_for}. Install it with: pip install "
-            "design-research-problems[grammar] or run: make install-trussme"
-        ) from exc
-    return trussme
+    return import_optional_module(
+        "trussme",
+        required_for=required_for,
+        extras=("grammar",),
+        make_target="install-trussme",
+    )
 
 
 def reachable_joint_ids(adjacency: dict[int, set[int]], start_joint_id: int) -> set[int]:

@@ -158,30 +158,31 @@ def test_mcp_problem_proxies_upstream_tools_and_exposes_design_brief(tmp_path: P
     assert echo_payload["message"] == "hello"
 
 
-def test_mcp_problem_injects_fallback_final_answer_when_upstream_missing(tmp_path: Path) -> None:
+def test_mcp_problem_injects_fallback_submit_final_when_upstream_missing(tmp_path: Path) -> None:
     script = _write_upstream_server(tmp_path, include_final_answer=False)
     problem = _problem_from_server(script, problem_id="mcp_proxy_fallback_final_answer")
     server = problem.to_mcp_server()
 
     tool_names = _tool_names(server)
-    assert "final_answer" in tool_names
-    assert tool_names.count("final_answer") == 1
+    assert "submit_final" in tool_names
+    assert tool_names.count("submit_final") == 1
 
-    payload = _call_tool_json(server, "final_answer", {"answer": "Proxy result summary."})
+    payload = _call_tool_json(server, "submit_final", {"answer": "Proxy result summary."})
     assert payload["problem_id"] == problem.metadata.problem_id
     assert payload["problem_kind"] == "mcp"
     assert payload["answer"] == "Proxy result summary."
 
 
-def test_mcp_problem_uses_upstream_final_answer_when_present(tmp_path: Path) -> None:
+def test_mcp_problem_maps_upstream_final_answer_to_submit_final_when_present(tmp_path: Path) -> None:
     script = _write_upstream_server(tmp_path, include_final_answer=True)
     problem = _problem_from_server(script, problem_id="mcp_proxy_upstream_final_answer")
     server = problem.to_mcp_server()
 
     tool_names = _tool_names(server)
-    assert tool_names.count("final_answer") == 1
+    assert tool_names.count("submit_final") == 1
+    assert "final_answer" not in tool_names
 
-    payload = _call_tool_json(server, "final_answer", {"answer": "Upstream answer"})
+    payload = _call_tool_json(server, "submit_final", {"answer": "Upstream answer"})
     assert payload["source"] == "upstream"
     assert payload["answer"] == "Upstream answer"
     assert "problem_id" not in payload

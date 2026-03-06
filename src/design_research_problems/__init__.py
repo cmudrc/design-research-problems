@@ -33,6 +33,7 @@ _EXPORTS: Final[dict[str, str]] = {
     "IdeationStudy": "design_research_problems.ideation:IdeationStudy",
     "IdeationCatalog": "design_research_problems.ideation:IdeationCatalog",
     "get_problem": "design_research_problems._catalog:get_problem",
+    "get_problem_as": "design_research_problems._catalog:get_problem_as",
     "list_problems": "design_research_problems._catalog:list_problems",
     "get_ideation_catalog": "design_research_problems.ideation:get_ideation_catalog",
 }
@@ -74,6 +75,7 @@ def __dir__() -> list[str]:
 if TYPE_CHECKING:
     from ._catalog import ProblemRegistry as ProblemRegistry
     from ._catalog import get_problem as get_problem
+    from ._catalog import get_problem_as as get_problem_as
     from ._catalog import list_problems as list_problems
     from ._exceptions import MissingOptionalDependencyError as MissingOptionalDependencyError
     from ._exceptions import ProblemEvaluationError as ProblemEvaluationError

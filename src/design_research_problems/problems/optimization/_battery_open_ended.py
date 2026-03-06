@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import math
-from importlib import import_module
 from typing import Any, cast
 
 import numpy
@@ -11,6 +10,7 @@ from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import MissingOptionalDependencyError
+from design_research_problems._optional import import_optional_module
 from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._domains.battery_cell_model import load_18650_cell_model
 from design_research_problems.problems._domains.battery_circuit import (
@@ -600,16 +600,36 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         Raises:
             MissingOptionalDependencyError: If pymoo is unavailable or incomplete.
         """
+        elementwise_problem_module = import_optional_module(
+            "pymoo.core.problem",
+            required_for="the open-ended battery genetic baseline",
+            extras=("solvers",),
+            dependency_label="pymoo",
+        )
+        ga_module = import_optional_module(
+            "pymoo.algorithms.soo.nonconvex.ga",
+            required_for="the open-ended battery genetic baseline",
+            extras=("solvers",),
+            dependency_label="pymoo",
+        )
+        rounding_repair_module = import_optional_module(
+            "pymoo.operators.repair.rounding",
+            required_for="the open-ended battery genetic baseline",
+            extras=("solvers",),
+            dependency_label="pymoo",
+        )
+        optimize_module = import_optional_module(
+            "pymoo.optimize",
+            required_for="the open-ended battery genetic baseline",
+            extras=("solvers",),
+            dependency_label="pymoo",
+        )
         try:
-            elementwise_problem_module = import_module("pymoo.core.problem")
-            ga_module = import_module("pymoo.algorithms.soo.nonconvex.ga")
-            rounding_repair_module = import_module("pymoo.operators.repair.rounding")
-            optimize_module = import_module("pymoo.optimize")
             elementwise_problem = elementwise_problem_module.ElementwiseProblem
             ga = ga_module.GA
             rounding_repair = rounding_repair_module.RoundingRepair
             minimize = optimize_module.minimize
-        except (AttributeError, ImportError) as exc:
+        except AttributeError as exc:
             raise MissingOptionalDependencyError(
                 "pymoo is required for the open-ended battery genetic baseline. "
                 "Install it with: pip install design-research-problems[solvers]"
@@ -626,13 +646,12 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         Raises:
             MissingOptionalDependencyError: If nevergrad is unavailable.
         """
-        try:
-            return import_module("nevergrad")
-        except ImportError as exc:
-            raise MissingOptionalDependencyError(
-                "nevergrad is required for the open-ended battery derivative-free baseline. "
-                "Install it with: pip install design-research-problems[solvers]"
-            ) from exc
+        return import_optional_module(
+            "nevergrad",
+            required_for="the open-ended battery derivative-free baseline",
+            extras=("solvers",),
+            dependency_label="nevergrad",
+        )
 
     def _normalize_vector(self, variables: NDArray[numpy.float64]) -> NDArray[numpy.float64]:
         """Return a clipped fixed-length transition vector.

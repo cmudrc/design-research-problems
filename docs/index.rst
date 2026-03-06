@@ -32,7 +32,7 @@ If you want a five-minute start, copy this:
    print(list_problems())
    print(len(get_ideation_catalog().list_prompts()))
    peanut = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
-   print(peanut.render_packet(include_citation=False))
+   print(peanut.render_brief(include_citation=False))
 
 That gives you the packaged problem IDs, the ideation prompt count, and a
 ready-to-use text prompt packet.

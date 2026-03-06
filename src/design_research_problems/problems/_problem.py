@@ -70,20 +70,20 @@ class Problem:
             resource_bundle=cls.resource_bundle_from_manifest(manifest),
         )
 
-    def render_packet(
+    def render_brief(
         self,
         include_citation: bool = True,
         citation_mode: Literal["summary", "summary+raw", "raw"] = "summary",
     ) -> str:
-        """Render a human-readable prompt packet.
+        """Render a human-readable problem brief.
 
         Args:
-            include_citation: Whether to append citation content to the packet.
+            include_citation: Whether to append citation content to the brief.
             citation_mode: Citation rendering mode to include summary text, raw
                 citation text, or both.
 
         Returns:
-            Markdown packet ready for display or export.
+            Markdown brief ready for display or export.
         """
         statement_body = self.statement_markdown.strip()
         if self._starts_with_h1(statement_body):
@@ -109,7 +109,7 @@ class Problem:
         """Expose the problem through a minimal FastMCP interface.
 
         This default implementation fits text-style problems:
-        one design-brief resource plus one free-text ``final_answer`` tool.
+        one design-brief resource plus one free-text ``submit_final`` tool.
 
         Args:
             server_name: Optional explicit server name.
@@ -122,14 +122,15 @@ class Problem:
         server = create_fastmcp_server(self, server_name=server_name)
         register_design_brief_resource(
             server,
-            brief_text=self.render_packet(include_citation=include_citation, citation_mode=citation_mode),
+            brief_text=self.render_brief(include_citation=include_citation, citation_mode=citation_mode),
         )
 
-        def final_answer(answer: str) -> dict[str, object]:
+        def submit_final(answer: str, justification: str | None = None) -> dict[str, object]:
             """Submit one free-text final answer.
 
             Args:
                 answer: Free-text final answer string.
+                justification: Optional rationale for the submission.
 
             Returns:
                 MCP-ready submission payload for the provided answer.
@@ -144,11 +145,12 @@ class Problem:
                 "problem_id": self.metadata.problem_id,
                 "problem_kind": self.metadata.kind.value,
                 "answer": normalized_answer,
+                "justification": None if justification is None else justification.strip() or None,
             }
 
         server.add_tool(
-            final_answer,
-            name="final_answer",
+            submit_final,
+            name="submit_final",
             title="Submit Final Answer",
             description="Submit a free-text final answer for this design brief.",
         )

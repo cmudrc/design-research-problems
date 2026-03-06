@@ -49,17 +49,17 @@ def _call_tool_json(server: Any, name: str, arguments: dict[str, Any]) -> dict[s
     return cast(dict[str, Any], json.loads(text))
 
 
-def test_text_problem_to_mcp_server_exposes_brief_and_final_answer() -> None:
+def test_text_problem_to_mcp_server_exposes_brief_and_submit_final() -> None:
     problem = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
     server = problem.to_mcp_server()
 
     assert "problem://design-brief" in _resource_uris(server)
-    assert "final_answer" in _tool_names(server)
+    assert "submit_final" in _tool_names(server)
 
     brief = _read_resource_text(server, "problem://design-brief")
     assert "Device to shell peanuts" in brief
 
-    payload = _call_tool_json(server, "final_answer", {"answer": "Use a hand-crank shelling mechanism."})
+    payload = _call_tool_json(server, "submit_final", {"answer": "Use a hand-crank shelling mechanism."})
     assert payload["problem_id"] == problem.metadata.problem_id
     assert payload["answer"] == "Use a hand-crank shelling mechanism."
 
@@ -70,23 +70,34 @@ def test_decision_problem_to_mcp_server_exposes_indexed_candidates() -> None:
 
     assert "problem://design-brief" in _resource_uris(server)
     assert "problem://decision-candidates" in _resource_uris(server)
-    assert "final_answer" in _tool_names(server)
+    assert {"list_candidates", "evaluate", "submit_final"}.issubset(_tool_names(server))
 
     candidates = _read_resource_json(server, "problem://decision-candidates")
     assert candidates["candidate_count"] == problem.candidate_count
     assert candidates["candidates"][0]["choice_index"] == 0
     assert candidates["candidates"][0]["candidate"] == "steel"
 
-    payload = _call_tool_json(server, "final_answer", {"choice_index": 0, "justification": "Good baseline choice."})
+    listed = _call_tool_json(server, "list_candidates", {})
+    assert listed["candidate_count"] == problem.candidate_count
+
+    evaluation = _call_tool_json(server, "evaluate", {"choice_index": 0})
+    assert evaluation["choice_index"] == 0
+    assert evaluation["evaluation"]["candidate_kind"] == "empirical-choice"
+    assert evaluation["higher_is_better"] is True
+    assert evaluation["is_feasible"] is True
+
+    payload = _call_tool_json(server, "submit_final", {"choice_index": 0, "justification": "Good baseline choice."})
     assert payload["choice_index"] == 0
     assert payload["justification"] == "Good baseline choice."
     assert payload["evaluation"]["candidate_kind"] == "empirical-choice"
+    assert payload["higher_is_better"] is True
+    assert payload["is_feasible"] is True
 
     with pytest.raises(ToolError):
-        asyncio.run(server.call_tool("final_answer", {"choice_index": 999}))
+        asyncio.run(server.call_tool("submit_final", {"choice_index": 999}))
 
 
-def test_optimization_problem_to_mcp_server_exposes_evaluate_and_final_answer(
+def test_optimization_problem_to_mcp_server_exposes_evaluate_and_submit_final(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     problem = get_problem("pill_capsule_min_area")
@@ -106,17 +117,19 @@ def test_optimization_problem_to_mcp_server_exposes_evaluate_and_final_answer(
 
     server = problem.to_mcp_server()
     assert "problem://design-brief" in _resource_uris(server)
-    assert {"evaluate", "final_answer"}.issubset(_tool_names(server))
+    assert {"evaluate", "submit_final"}.issubset(_tool_names(server))
 
     candidate = problem.generate_initial_solution(seed=3).tolist()
     report = _call_tool_json(server, "evaluate", {"x": candidate})
     assert report["evaluation"]["is_feasible"] is True
     assert report["objective_components"]["sum"] == pytest.approx(sum(candidate))
     assert report["decoded_candidate"]["radius"] == pytest.approx(candidate[0])
+    assert report["higher_is_better"] is False
+    assert report["objective_value"] == pytest.approx(report["evaluation"]["objective_value"])
 
     submission = _call_tool_json(
         server,
-        "final_answer",
+        "submit_final",
         {"final_x": candidate, "justification": "Compact and feasible solution."},
     )
     assert submission["justification"] == "Compact and feasible solution."
@@ -128,7 +141,7 @@ def test_grammar_problem_to_mcp_server_is_stateful_and_toggleable() -> None:
     server = problem.to_mcp_server()
 
     tool_names = _tool_names(server)
-    assert {"get_design", "reset_design", "list_transitions", "evaluate", "final_answer"}.issubset(tool_names)
+    assert {"get_design", "reset_design", "list_transitions", "evaluate", "submit_final"}.issubset(tool_names)
     assert {"add_member", "add_joint", "remove_member"}.issubset(tool_names)
 
     before = _call_tool_json(server, "get_design", {})
@@ -140,12 +153,12 @@ def test_grammar_problem_to_mcp_server_is_stateful_and_toggleable() -> None:
     transitions = _call_tool_json(server, "list_transitions", {})
     assert transitions["transition_count"] > 0
 
-    final_payload = _call_tool_json(server, "final_answer", {})
+    final_payload = _call_tool_json(server, "submit_final", {})
     assert final_payload["design"] == after["design"]
 
     no_helpers_server = problem.to_mcp_server(include_grammar_helpers=False)
     no_helper_tool_names = _tool_names(no_helpers_server)
-    assert "final_answer" in no_helper_tool_names
+    assert "submit_final" in no_helper_tool_names
     assert {"add_member", "add_joint", "remove_member"}.issubset(no_helper_tool_names)
     assert "get_design" not in no_helper_tool_names
     assert "reset_design" not in no_helper_tool_names
@@ -167,9 +180,18 @@ def test_to_mcp_server_raises_missing_optional_dependency_when_mcp_is_unavailabl
 ) -> None:
     problem = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
 
-    def _missing_module(name: str) -> object:
-        raise ImportError(name)
+    def _missing_import(
+        module_name: str,
+        *,
+        required_for: str,
+        extras: tuple[str, ...],
+        dependency_label: str | None = None,
+        make_target: str | None = None,
+    ) -> object:
+        raise MissingOptionalDependencyError(
+            f"{dependency_label or module_name} is required for {required_for}. extras={extras!r}"
+        )
 
-    monkeypatch.setattr(mcp_helpers, "import_module", _missing_module)
+    monkeypatch.setattr(mcp_helpers, "import_optional_module", _missing_import)
     with pytest.raises(MissingOptionalDependencyError):
         problem.to_mcp_server()

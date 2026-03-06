@@ -12,7 +12,7 @@ catalog entries:
    print(list_problems())
    print(registry.kind_feature_flags())
    peanut = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
-   print(peanut.render_packet(include_citation=False))
+   print(peanut.render_brief(include_citation=False))
 
 The optimization problem can be instantiated through the registry:
 

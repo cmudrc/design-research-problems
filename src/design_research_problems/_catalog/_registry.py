@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from importlib import import_module
-from typing import TYPE_CHECKING, Literal, cast, overload
+from typing import TYPE_CHECKING, Literal, TypeVar, cast, overload
 
 from design_research_problems._catalog._loader import load_problem_manifests
 from design_research_problems._catalog._manifest import ProblemManifest
@@ -82,6 +82,8 @@ type _OptimizationProblemId = Literal[
     "space_truss_span_mass_min",
     "treadle_pump_ide_material_min",
 ]
+
+_ProblemSubT = TypeVar("_ProblemSubT", bound=Problem)
 
 
 def _resolve_object(import_path: str) -> object:
@@ -342,6 +344,26 @@ class ProblemRegistry:
             return MCPProblem.from_manifest(manifest)
         raise ProblemEvaluationError(f"Problem {problem_id!r} is missing an implementation path.")
 
+    def get_as(self, problem_id: str, expected_type: type[_ProblemSubT]) -> _ProblemSubT:
+        """Instantiate one problem by ID and assert the runtime type.
+
+        Args:
+            problem_id: Stable catalog identifier.
+            expected_type: Required runtime problem class.
+
+        Returns:
+            Loaded problem instance narrowed to ``expected_type``.
+
+        Raises:
+            TypeError: If the loaded problem is not an instance of ``expected_type``.
+        """
+        problem = self.get(problem_id)
+        if not isinstance(problem, expected_type):
+            raise TypeError(
+                f"Problem {problem_id!r} resolved to {type(problem).__name__}, expected {expected_type.__name__}."
+            )
+        return problem
+
 
 _DEFAULT_REGISTRY = ProblemRegistry()
 
@@ -429,3 +451,16 @@ def get_problem(problem_id: str) -> Problem:
         Loaded problem instance.
     """
     return _DEFAULT_REGISTRY.get(problem_id)
+
+
+def get_problem_as[ProblemSubT: Problem](problem_id: str, expected_type: type[ProblemSubT]) -> ProblemSubT:
+    """Return one problem instance by ID with an asserted runtime type.
+
+    Args:
+        problem_id: Stable catalog identifier.
+        expected_type: Required runtime problem class.
+
+    Returns:
+        Loaded problem instance narrowed to ``expected_type``.
+    """
+    return _DEFAULT_REGISTRY.get_as(problem_id, expected_type)

@@ -48,7 +48,7 @@ def test_ideation_export_example_runs() -> None:
 def test_ideation_dataframe_example_runs() -> None:
     completed = _run_example("examples/catalog/ideation_dataframe.py")
     assert completed.returncode == 0, completed.stderr
-    if "optional 'design-research-problems[pandas]' extra" in completed.stdout:
+    if "Install it with: pip install design-research-problems[pandas]" in completed.stdout:
         pytest.skip("pandas is not installed in this environment.")
     assert "prompt_id" in completed.stdout
 
@@ -68,8 +68,8 @@ def test_mcp_example_runs() -> None:
         pytest.skip("mcp is not installed in this environment.")
     assert "Problem id: ideation_peanut_shelling_fu_cagan_kotovsky_2010" in completed.stdout
     assert "Tool count: 1" in completed.stdout
-    assert "Tools: final_answer" in completed.stdout
-    assert "final_answer answer:" in completed.stdout
+    assert "Tools: submit_final" in completed.stdout
+    assert "submit_final answer:" in completed.stdout
 
 
 @pytest.mark.examples_smoke
@@ -86,7 +86,7 @@ def test_mcp_build123d_example_runs() -> None:
     assert "evaluate_scripted_part" in completed.stdout
     assert "describe_last_script_result" in completed.stdout
     assert "Resources: problem://design-brief" in completed.stdout
-    assert "final_answer answer:" in completed.stdout
+    assert "submit_final answer:" in completed.stdout
 
 
 @pytest.mark.examples_smoke

@@ -252,6 +252,13 @@ def load_problem_manifests() -> dict[str, ProblemManifest]:
     manifests: dict[str, ProblemManifest] = {}
     for entry, resource_dir in _iter_manifest_directories(_catalog_root()):
         manifest = _load_single_manifest(entry, resource_dir)
+        existing = manifests.get(manifest.metadata.problem_id)
+        if existing is not None:
+            raise ValueError(
+                "Duplicate problem_id detected in packaged catalog: "
+                f"{manifest.metadata.problem_id!r} appears in both "
+                f"{existing.resource_dir!r} and {manifest.resource_dir!r}."
+            )
         manifests[manifest.metadata.problem_id] = manifest
     return manifests
 

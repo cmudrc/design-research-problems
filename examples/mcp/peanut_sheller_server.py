@@ -46,7 +46,7 @@ def _extract_answer(result: CallToolResult) -> str:
     """Extract one human-readable answer string from a tool response.
 
     Args:
-        result: Tool response from ``final_answer``.
+        result: Tool response from ``submit_final``.
 
     Returns:
         Submitted answer text when available, or fallback text.
@@ -104,7 +104,7 @@ async def run_roundtrip() -> dict[str, object]:
             await session.initialize()
             tools_result = await session.list_tools()
             submitted_answer = "A hand-cranked sheller with adjustable rollers and manual sorting."
-            call_result = await session.call_tool("final_answer", {"answer": submitted_answer})
+            call_result = await session.call_tool("submit_final", {"answer": submitted_answer})
 
     tool_names = sorted(tool.name for tool in tools_result.tools)
     return {
@@ -152,7 +152,7 @@ def main(argv: list[str] | None = None) -> int:
     print("Problem id:", summary["problem_id"])
     print("Tool count:", summary["tool_count"])
     print("Tools:", ", ".join(str(name) for name in summary["tool_names"]))
-    print("final_answer answer:", summary["answer"])
+    print("submit_final answer:", summary["answer"])
     return 0
 
 
