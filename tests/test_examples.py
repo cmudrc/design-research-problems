@@ -10,11 +10,11 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-def _run_example(relative_path: str) -> subprocess.CompletedProcess[str]:
+def _run_example(relative_path: str, *args: str) -> subprocess.CompletedProcess[str]:
     env = dict(os.environ)
     env["PYTHONPATH"] = str(REPO_ROOT / "src")
     return subprocess.run(
-        [sys.executable, relative_path],
+        [sys.executable, relative_path, *args],
         cwd=REPO_ROOT,
         env=env,
         capture_output=True,
@@ -226,6 +226,13 @@ def test_truss_ap_grammar_example_runs() -> None:
     assert "truss_analysis_program_design" in completed.stdout
     assert "mass-kg" in completed.stdout
     assert "min-fos" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_gui_launcher_example_help_runs() -> None:
+    completed = _run_example("examples/gui/launch_gui.py", "--help")
+    assert completed.returncode == 0, completed.stderr
+    assert "--app {iot,truss}" in completed.stdout
 
 
 @pytest.mark.examples_smoke
