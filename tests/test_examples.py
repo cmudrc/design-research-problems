@@ -73,6 +73,23 @@ def test_mcp_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
+def test_mcp_build123d_example_runs() -> None:
+    completed = _run_example("examples/mcp/build123d_parametric_mounting_bracket.py")
+    assert completed.returncode == 0, completed.stderr
+    if "Install the optional MCP dependency with:" in completed.stdout:
+        pytest.skip("mcp is not installed in this environment.")
+    if "build123d backend startup failed:" in completed.stdout:
+        pytest.skip("build123d backend could not be started in this environment.")
+    assert "Problem id: mcp_build123d_parametric_mounting_bracket" in completed.stdout
+    assert "Tool count:" in completed.stdout
+    assert "backend_status" in completed.stdout
+    assert "evaluate_scripted_part" in completed.stdout
+    assert "describe_last_script_result" in completed.stdout
+    assert "Resources: problem://design-brief" in completed.stdout
+    assert "final_answer answer:" in completed.stdout
+
+
+@pytest.mark.examples_smoke
 def test_decision_laptop_example_runs() -> None:
     completed = _run_example("examples/decision/laptop_design.py")
     assert completed.returncode == 0, completed.stderr

@@ -19,12 +19,14 @@ FAMILY_TITLES = {
     "decision": "Decision Problem Catalog",
     "optimization": "Optimization Problem Catalog",
     "grammar": "Grammar Problem Catalog",
+    "mcp": "MCP Problem Catalog",
 }
 FAMILY_DESCRIPTIONS = {
     "text": "This page lists all packaged text problems and ideation prompts.",
     "decision": "This page lists all packaged decision problems and their candidate-space summaries.",
     "optimization": "This page lists all packaged optimization benchmarks and their variable counts.",
     "grammar": "This page lists all packaged grammar problems and their initial transition structure.",
+    "mcp": "This page lists all packaged MCP-backed problems and upstream proxy launch settings.",
 }
 STATEMENT_HEADING_CHARS = ("~", "^", '"', "'", "+", "*")
 INLINE_CODE_RE = re.compile(r"(?<!`)`([^`]+)`(?!`)")
@@ -37,6 +39,7 @@ from design_research_problems import ProblemRegistry  # noqa: E402
 from design_research_problems.problems import (  # noqa: E402
     DecisionProblem,
     GrammarProblem,
+    MCPProblem,
     OptimizationProblem,
     Problem,
     ProblemKind,
@@ -707,6 +710,38 @@ def _render_detail_page(metadata: Any, manifest: Any, problem: Problem) -> str:
             ]
         )
 
+    if isinstance(problem, MCPProblem):
+        manifest_command = manifest.parameters.get("command")
+        if isinstance(manifest_command, str) and manifest_command.strip():
+            command_display = manifest_command.strip()
+        else:
+            command_display = problem.command
+        lines.extend(
+            [
+                _heading("Proxy Configuration", "-").rstrip(),
+                "",
+                *_render_list_table(
+                    ("Field", "Value"),
+                    (
+                        ("Transport", problem.transport),
+                        ("Command", f"``{command_display}``"),
+                        ("Args", ", ".join(f"``{arg}``" for arg in problem.args) if problem.args else "none"),
+                        ("CWD", f"``{problem.cwd}``" if problem.cwd else "none"),
+                        ("Env Overrides", str(len(problem.env))),
+                    ),
+                    widths=(30, 70),
+                ),
+                _heading("Library Interface", "-").rstrip(),
+                "",
+                *_render_bullets(
+                    (
+                        "``from_stdio(...)``",
+                        "``to_mcp_server(...)``",
+                    )
+                ),
+            ]
+        )
+
     if metadata.citations:
         lines.extend([_heading("Sources", "-").rstrip(), ""])
         citation_rows = [(f"``{citation.key}``", citation.summary_text()) for citation in metadata.citations]
@@ -788,11 +823,19 @@ def _render_family_page(kind: str, entries: Sequence[dict[str, object]]) -> str:
         "",
         f"For the conceptual overview, see :doc:`../problems/{kind}`.",
         "",
-        ".. toctree::",
-        "   :maxdepth: 1",
-        "",
     ]
-    lines.extend(f"   {entry['detail_doc']}" for entry in entries)
+    if entries:
+        lines.extend(
+            [
+                ".. toctree::",
+                "   :maxdepth: 1",
+                "",
+            ]
+        )
+        lines.extend(f"   {entry['detail_doc']}" for entry in entries)
+    else:
+        lines.append("No packaged entries are currently available in this family.")
+        lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 
@@ -806,6 +849,15 @@ def _render_catalog_index(grouped: Mapping[str, Sequence[dict[str, object]]], to
     Returns:
         Full reStructuredText content for the landing page.
     """
+    family_order = tuple(kind.value for kind in ProblemKind)
+    family_labels = {
+        "text": "Text",
+        "decision": "Decision",
+        "optimization": "Optimization",
+        "grammar": "Grammar",
+        "mcp": "MCP",
+    }
+
     lines = [
         AUTO_COMMENT,
         "",
@@ -815,19 +867,13 @@ def _render_catalog_index(grouped: Mapping[str, Sequence[dict[str, object]]], to
         "",
         "Current counts:",
         "",
-        f"- Text: {len(grouped['text'])}",
-        f"- Decision: {len(grouped['decision'])}",
-        f"- Optimization: {len(grouped['optimization'])}",
-        f"- Grammar: {len(grouped['grammar'])}",
+        *[f"- {family_labels[kind]}: {len(grouped[kind])}" for kind in family_order],
         f"- Total: {total}",
         "",
         ".. toctree::",
         "   :maxdepth: 1",
         "",
-        "   text",
-        "   decision",
-        "   optimization",
-        "   grammar",
+        *[f"   {kind}" for kind in family_order],
         "",
         "For the conceptual problem-family overview, see :doc:`../problems/index`.",
         "",
@@ -842,10 +888,11 @@ def _render_all_files() -> dict[Path, str]:
         Mapping of absolute output paths to rendered file contents.
     """
     grouped, total = _build_catalog_data()
+    family_order = tuple(kind.value for kind in ProblemKind)
     rendered: dict[Path, str] = {
         OUTPUT_ROOT / "index.rst": _render_catalog_index(grouped, total),
     }
-    for kind in ("text", "decision", "optimization", "grammar"):
+    for kind in family_order:
         entries = grouped[kind]
         rendered[OUTPUT_ROOT / f"{kind}.rst"] = _render_family_page(kind, entries)
         for entry in entries:

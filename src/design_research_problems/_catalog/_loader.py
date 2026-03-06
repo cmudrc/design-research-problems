@@ -64,6 +64,8 @@ def _parse_problem_kind(raw_kind: str) -> ProblemKind:
         return ProblemKind.OPTIMIZATION
     if normalized == "grammar":
         return ProblemKind.GRAMMAR
+    if normalized == "mcp":
+        return ProblemKind.MCP
     raise ValueError(f"Unsupported problem kind: {raw_kind!r}")
 
 

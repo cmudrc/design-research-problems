@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from design_research_problems._catalog._loader import load_problem_manifests, load_statement_text
 from design_research_problems.ideation import load_ideation_catalog
 from design_research_problems.problems._decision import parse_structured_decision_payload
+from design_research_problems.problems._mcp_problem import parse_mcp_stdio_parameters
 from design_research_problems.problems._metadata import KNOWN_PROBLEM_CAPABILITIES, KNOWN_STUDY_SUITABILITY
 
 
@@ -73,6 +74,11 @@ def validate_catalog() -> CatalogValidationReport:
                 parse_structured_decision_payload(manifest.parameters)
             except ValueError as exc:
                 errors.append(f"{problem_id}: invalid decision parameters: {exc}")
+        if metadata.kind.value == "mcp":
+            try:
+                parse_mcp_stdio_parameters(manifest.parameters)
+            except ValueError as exc:
+                errors.append(f"{problem_id}: invalid mcp parameters: {exc}")
         for citation in metadata.citations:
             if not citation.key or not citation.title:
                 errors.append(f"{problem_id}: citation entries require key and title")

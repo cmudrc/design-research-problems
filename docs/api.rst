@@ -9,6 +9,7 @@ The top-level package exports a small curated public API:
 - ``DecisionProblem``
 - ``EvidenceTier``
 - ``GrammarProblem``
+- ``MCPProblem``
 - ``IdeationCatalog``
 - ``IdeationPromptFamily``
 - ``IdeationPromptRecord``

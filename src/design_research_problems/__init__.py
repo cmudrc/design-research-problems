@@ -22,6 +22,7 @@ _EXPORTS: Final[dict[str, str]] = {
     "OptimizationEvaluation": "design_research_problems.problems:OptimizationEvaluation",
     "GrammarProblem": "design_research_problems.problems:GrammarProblem",
     "GrammarTransition": "design_research_problems.problems:GrammarTransition",
+    "MCPProblem": "design_research_problems.problems:MCPProblem",
     "ProblemRegistry": "design_research_problems._catalog:ProblemRegistry",
     "MissingOptionalDependencyError": "design_research_problems._exceptions:MissingOptionalDependencyError",
     "ProblemEvaluationError": "design_research_problems._exceptions:ProblemEvaluationError",
@@ -89,6 +90,7 @@ if TYPE_CHECKING:
     from .problems import DecisionProblem as DecisionProblem
     from .problems import GrammarProblem as GrammarProblem
     from .problems import GrammarTransition as GrammarTransition
+    from .problems import MCPProblem as MCPProblem
     from .problems import OptimizationEvaluation as OptimizationEvaluation
     from .problems import OptimizationProblem as OptimizationProblem
     from .problems import Problem as Problem

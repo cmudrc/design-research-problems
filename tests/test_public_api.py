@@ -19,6 +19,7 @@ EXPECTED_PUBLIC_API = [
     "OptimizationEvaluation",
     "GrammarProblem",
     "GrammarTransition",
+    "MCPProblem",
     "ProblemRegistry",
     "MissingOptionalDependencyError",
     "ProblemEvaluationError",

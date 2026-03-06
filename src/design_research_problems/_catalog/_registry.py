@@ -9,13 +9,14 @@ from typing import TYPE_CHECKING, Literal, cast, overload
 from design_research_problems._catalog._loader import load_problem_manifests
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import ProblemEvaluationError
-from design_research_problems.problems import Problem, ProblemKind, TextProblem
+from design_research_problems.problems import MCPProblem, Problem, ProblemKind, TextProblem
 from design_research_problems.problems._decision import load_decision_problem
 from design_research_problems.problems._metadata import ProblemMetadata
 
 if TYPE_CHECKING:
     from design_research_problems.problems import (
         DecisionProblem,
+        MCPProblem,
         OptimizationProblem,
     )
     from design_research_problems.problems.grammar import (
@@ -327,6 +328,8 @@ class ProblemRegistry:
             return TextProblem.from_manifest(manifest)
         if manifest.metadata.kind is ProblemKind.DECISION:
             return load_decision_problem(manifest)
+        if manifest.metadata.kind is ProblemKind.MCP:
+            return MCPProblem.from_manifest(manifest)
         raise ProblemEvaluationError(f"Problem {problem_id!r} is missing an implementation path.")
 
 

@@ -1,7 +1,7 @@
 Problems
 ========
 
-The initial catalog is organized into four problem families:
+The initial catalog is organized into five problem families:
 
 For the generated problem-by-problem inventory, see :doc:`../problem_catalog/index`.
 
@@ -13,3 +13,4 @@ For the generated problem-by-problem inventory, see :doc:`../problem_catalog/ind
    decision
    optimization
    grammar
+   mcp

@@ -13,9 +13,9 @@ Highlights
 ----------
 
 - A packaged catalog of reusable design research prompts and benchmark problems.
-- Four problem families: text, decision, optimization, and grammar, plus a linked ideation metadata catalog.
+- Five problem families: text, decision, optimization, grammar, and mcp, plus a linked ideation metadata catalog.
 - A shared ``Problem`` base plus ``ComputableProblem`` layer for executable entries.
-- Lazy optional integrations for SciPy, ``trussme``, and ``pybamm`` so the base install stays light.
+- Lazy optional integrations for SciPy, ``trussme``, ``pybamm``, and Build123d so the base install stays light.
 - Problem-level feature flags plus family-level aggregated feature flags for capability discovery.
 - Typed metadata and a deliberately small public API.
 - Runnable examples and generated docs that stay in sync with the codebase.
@@ -52,15 +52,18 @@ Problem Families
 ``Grammar``
    Discrete state-and-action problems for constructive design exploration.
 
+``MCP``
+   Proxy-backed problems that ingest upstream MCP tool servers for agent workflows.
+
 Common Paths
 ------------
 
 Choose the path that matches what you want to do next:
 
 - Read :doc:`quickstart` to load the catalog and inspect each problem family.
-- Read :doc:`problems/index` to understand the four problem families.
+- Read :doc:`problems/index` to understand the five problem families.
 - Read :doc:`problem_catalog/index` for the full generated problem-by-problem catalog.
-- Read :doc:`dependencies_and_extras` before enabling SciPy, ``trussme``, or ``pybamm`` support.
+- Read :doc:`dependencies_and_extras` before enabling SciPy, ``trussme``, ``pybamm``, or Build123d support.
 - Read :doc:`examples/index` for runnable scripts you can execute immediately.
 - Read :doc:`api` if you want the public surface contract first.
 
@@ -75,6 +78,7 @@ What Is In The Initial Catalog?
 - ``planar_truss_span``, ``space_truss_span``, and six ``planar_roof_truss_*`` entries: discrete truss grammars with a lazy ``trussme`` adapter.
 - ``planar_truss_span_mass_min``, ``planar_truss_span_deflection_min``, ``planar_truss_span_fos_max``, and ``space_truss_span_mass_min``: structural truss optimization benchmarks backed by the same shared ``trussme`` adapter.
 - ``treadle_pump_ide_material_min``: a citation-backed scalarized treadle-pump optimization benchmark.
+- ``mcp_build123d_parametric_mounting_bracket``: an MCP-ingested CAD workflow problem where agents author and evaluate Build123d scripts through a package-owned backend.
 
 .. toctree::
    :maxdepth: 2

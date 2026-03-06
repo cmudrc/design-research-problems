@@ -13,6 +13,7 @@ class ProblemKind(StrEnum):
     DECISION = "decision"
     OPTIMIZATION = "optimization"
     GRAMMAR = "grammar"
+    MCP = "mcp"
 
 
 @dataclass(frozen=True)

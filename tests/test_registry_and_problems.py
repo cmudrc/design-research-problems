@@ -105,6 +105,9 @@ def test_registry_entries_filter_by_kind() -> None:
     assert "space_truss_span_mass_min" in optimization_ids
     assert "planar_truss_span_member_count_min" not in optimization_ids
     assert "planar_truss_span_total_length_min" not in optimization_ids
+    mcp_kinds = registry.by_kind(ProblemKind.MCP)
+    mcp_ids = [entry.problem_id for entry in mcp_kinds]
+    assert mcp_ids == ["mcp_build123d_parametric_mounting_bracket"]
 
 
 def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
@@ -141,6 +144,10 @@ def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
         "external-adapter",
         "optional-evaluator",
         "serializable-state",
+        "statement-markdown",
+    )
+    assert grouped[ProblemKind.MCP] == (
+        "external-adapter",
         "statement-markdown",
     )
 

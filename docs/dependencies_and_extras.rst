@@ -54,12 +54,28 @@ For the battery evaluator:
 
    make install-pybamm
 
-MCP export support
-------------------
+MCP export and ingestion support
+--------------------------------
 
-Problem-level ``to_mcp_server()`` export requires the optional ``mcp``
-dependency:
+Problem-level ``to_mcp_server()`` export and MCP-ingestion proxy workflows
+require the optional ``mcp`` dependency:
 
 .. code-block:: bash
 
    pip install design-research-problems[mcp]
+
+Build123d CAD backend support
+-----------------------------
+
+The packaged CAD MCP problem ``mcp_build123d_parametric_mounting_bracket`` uses
+a package-owned Build123d backend server. Install ``build123d`` with:
+
+.. code-block:: bash
+
+   pip install design-research-problems[cad]
+
+For full MCP CAD workflows, install both extras:
+
+.. code-block:: bash
+
+   pip install design-research-problems[mcp,cad]

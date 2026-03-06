@@ -13,6 +13,7 @@ from ._decision import (
     DecisionVariableSpec,
 )
 from ._grammar import GrammarProblem, GrammarTransition
+from ._mcp_problem import MCPProblem
 from ._metadata import Citation, ProblemAsset, ProblemKind, ProblemMetadata, ProblemTaxonomy
 from ._optimization import OptimizationEvaluation, OptimizationProblem
 from ._problem import Problem
@@ -32,6 +33,7 @@ __all__ = [
     "DecisionVariableSpec",
     "GrammarProblem",
     "GrammarTransition",
+    "MCPProblem",
     "OptimizationEvaluation",
     "OptimizationProblem",
     "Problem",

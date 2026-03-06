@@ -33,7 +33,8 @@ def import_fastmcp() -> type[FastMCP]:
         module = import_module("mcp.server.fastmcp")
     except ImportError as exc:
         raise MissingOptionalDependencyError(
-            "mcp is required for MCP server export. Install it with: pip install design-research-problems[mcp]"
+            "mcp is required for MCP server export and ingestion proxying. "
+            "Install it with: pip install design-research-problems[mcp]"
         ) from exc
     return cast(type[Any], module.FastMCP)
 

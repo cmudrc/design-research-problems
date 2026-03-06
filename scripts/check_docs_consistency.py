@@ -21,6 +21,7 @@ def main() -> None:
         ROOT / "docs" / "problem_catalog" / "decision.rst",
         ROOT / "docs" / "problem_catalog" / "optimization.rst",
         ROOT / "docs" / "problem_catalog" / "grammar.rst",
+        ROOT / "docs" / "problem_catalog" / "mcp.rst",
     )
     if ":doc:`examples/index`" not in docs_index:
         raise SystemExit("docs/index.rst must reference examples/index.")

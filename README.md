@@ -11,12 +11,13 @@ discrete grammar-style problems behind a small, typed Python API.
 
 ## Overview
 
-The initial release centers on four problem families plus a linked ideation metadata catalog:
+The initial release centers on five problem families plus a linked ideation metadata catalog:
 
 - Text problems for human-subjects studies and prompt packets
 - Decision problems with typed discrete or empirical evaluation interfaces
 - Optimization problems with typed bounds and representative built-in baselines
 - Grammar problems that describe discrete design actions and optional evaluation adapters
+- MCP problems that ingest upstream MCP tool servers for agent-style workflows
 - An ideation catalog with prompt records, variants, families, and study summaries
 
 The public problem model now centers on a shared ``Problem`` documentation base
@@ -40,6 +41,7 @@ The first catalog includes:
 - six `planar_roof_truss_*` variants that approximate the roof-truss formulations reported by Shea and Cagan
 - `moneymaker_hip_pump_cost_min` for a citation-backed scalarized pump benchmark
 - `treadle_pump_ide_material_min` for a citation-backed scalarized treadle-pump benchmark
+- `mcp_build123d_parametric_mounting_bracket` for MCP-ingested CAD workflows where agents author and evaluate Build123d scripts through a package-owned backend
 
 ## Quickstart
 

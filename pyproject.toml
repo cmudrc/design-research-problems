@@ -40,6 +40,7 @@ Issues = "https://github.com/cmudrc/design-research-problems/issues"
 grammar = ["trussme>=0.1.0"]
 battery = ["pybamm>=25.12,<26"]
 mcp = ["mcp>=1,<2"]
+cad = ["build123d>=0.8,<1"]
 opt = ["scipy>=1.11,<2"]
 solvers = ["nevergrad>=1.0,<2", "pymoo>=0.6,<1"]
 pandas = ["pandas>=2.2,<3"]

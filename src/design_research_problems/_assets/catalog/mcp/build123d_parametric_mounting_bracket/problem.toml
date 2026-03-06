@@ -1,0 +1,56 @@
+problem_id = "mcp_build123d_parametric_mounting_bracket"
+title = "Build123d scripted mounting bracket design problem"
+summary = "An MCP-ingested CAD design brief backed by a package-owned Build123d server where the agent writes and evaluates Build123d scripts."
+kind = "mcp"
+statement = '''
+# Build123d scripted mounting bracket design problem
+
+Design a right-angle mounting bracket for a small linear actuator by writing
+Build123d script code and iterating on the script with the packaged backend
+tools.
+
+## Objectives
+
+- Produce a watertight CAD candidate suitable for export and downstream review.
+- Satisfy the dimensional and hole-pattern constraints while preserving a
+  practical mounting layout.
+- Produce explicit scripted CAD logic (not just parameter selections) so model
+  intent is inspectable and editable.
+
+## Constraints
+
+- Base plate footprint: 80 mm x 40 mm.
+- Vertical flange: 40 mm tall and full base width.
+- Nominal wall thickness: 6 mm on both plates.
+- Hole pattern: four 6 mm through-holes on the base, centered 10 mm from each
+  edge; two 6 mm through-holes on the flange centered horizontally and spaced
+  20 mm vertically.
+- Internal corner fillet radius: 4 mm minimum where feasible.
+
+## Deliverable
+
+Return the final Build123d script, summarize your modeling sequence, and note
+any manufacturability tradeoffs.
+'''
+capabilities = [
+  "statement-markdown",
+  "external-adapter",
+]
+study_suitability = []
+
+[parameters]
+transport = "stdio"
+command = "__python_executable__"
+args = ["-m", "design_research_problems.problems._domains.build123d_mcp_server"]
+
+[taxonomy]
+formulation = "mcp_proxy"
+convexity = "not_applicable"
+design_variable_type = "mixed"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.35
+objective_mode = "qualitative"
+constraint_nature = "informal"
+bounds_summary = "Bracket envelope, thickness, hole pattern, and fillet radius constraints enforced via scripted CAD geometry"
+tags = ["mcp", "cad", "build123d", "scripted-cad", "mechanical-design"]
