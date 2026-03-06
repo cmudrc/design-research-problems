@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import math
 import tkinter as tk
 from tkinter import messagebox, ttk
 from typing import cast
 
 from design_research_problems import get_problem
-from design_research_problems.problems._domains.truss_ap import TrussLoadDirection
+from design_research_problems.problems._domains.truss_ap import TrussAPEvaluation, TrussLoadDirection
 
 
 class TrussAPApp:
@@ -21,6 +22,7 @@ class TrussAPApp:
         """
         self.root = root
         self.root.title("Truss Analysis Program Co-Design")
+        self.root.minsize(980, 620)
         self.problem = get_problem("truss_analysis_program_design")
         self.state = self.problem.initial_state()
 
@@ -33,8 +35,11 @@ class TrussAPApp:
         self._member_index_to_id: list[int] = []
         self._support_vars = [tk.BooleanVar(value=True), tk.BooleanVar(value=True), tk.BooleanVar(value=True)]
         self._joint_canvas_positions: dict[int, tuple[float, float]] = {}
+        self._member_canvas_segments: dict[int, tuple[float, float, float, float]] = {}
         self._joint_hit_radius_px = 12.0
+        self._member_hit_radius_px = 10.0
         self._last_canvas_size: tuple[int, int] = (0, 0)
+        self._latest_evaluation: TrussAPEvaluation | None = None
 
         self._build_layout()
         self.root.after_idle(self._refresh)
@@ -45,8 +50,19 @@ class TrussAPApp:
 
         left = ttk.Frame(main)
         left.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        right = ttk.Frame(main)
-        right.pack(side=tk.LEFT, fill=tk.Y, padx=(10, 0))
+
+        sidebar_outer = ttk.Frame(main)
+        sidebar_outer.pack(side=tk.LEFT, fill=tk.Y, padx=(10, 0))
+        self.sidebar_canvas = tk.Canvas(sidebar_outer, width=350, highlightthickness=0, borderwidth=0)
+        sidebar_scrollbar = ttk.Scrollbar(sidebar_outer, orient=tk.VERTICAL, command=self.sidebar_canvas.yview)
+        self.sidebar_canvas.configure(yscrollcommand=sidebar_scrollbar.set)
+        self.sidebar_canvas.pack(side=tk.LEFT, fill=tk.Y)
+        sidebar_scrollbar.pack(side=tk.LEFT, fill=tk.Y)
+
+        right = ttk.Frame(self.sidebar_canvas)
+        self._sidebar_window_id = self.sidebar_canvas.create_window((0, 0), window=right, anchor=tk.NW)
+        right.bind("<Configure>", self._on_sidebar_content_configure)
+        self.sidebar_canvas.bind("<Configure>", self._on_sidebar_canvas_configure)
 
         self.canvas = tk.Canvas(left, width=920, height=560, background="#f6f8fb", highlightthickness=1)
         self.canvas.pack(fill=tk.BOTH, expand=True)
@@ -70,6 +86,7 @@ class TrussAPApp:
         ttk.Label(right, text="Members").pack(anchor=tk.W, pady=(8, 0))
         self.member_listbox = tk.Listbox(right, height=10, width=36, exportselection=False)
         self.member_listbox.pack(anchor=tk.W, fill=tk.X)
+        self.member_listbox.bind("<<ListboxSelect>>", self._on_member_list_selection)
 
         ttk.Label(right, text="Member Size").pack(anchor=tk.W, pady=(8, 0))
         ttk.Combobox(
@@ -118,12 +135,22 @@ class TrussAPApp:
         ttk.Button(right, text="Clear Load (1 joint)", command=self._clear_load).pack(anchor=tk.W, pady=(6, 0))
 
         ttk.Separator(right).pack(fill=tk.X, pady=10)
-        ttk.Button(right, text="Evaluate", command=self._evaluate).pack(anchor=tk.W)
+        ttk.Button(right, text="Re-evaluate now", command=self._evaluate).pack(anchor=tk.W)
         self.metrics_var = tk.StringVar(value="No evaluation yet.")
         ttk.Label(right, textvariable=self.metrics_var, justify=tk.LEFT).pack(anchor=tk.W, pady=(6, 0))
 
-        hint = "Select joints/members from the lists; click canvas to add or move joints."
+        hint = "Select joints/members from the lists or canvas. Member colors and labels show FOS after each change."
         ttk.Label(right, text=hint, wraplength=280, justify=tk.LEFT).pack(anchor=tk.W, pady=(10, 0))
+
+    def _on_sidebar_content_configure(self, _event: tk.Event[tk.Misc]) -> None:
+        """Update sidebar scroll range when content height changes."""
+        self.sidebar_canvas.configure(scrollregion=self.sidebar_canvas.bbox("all"))
+
+    def _on_sidebar_canvas_configure(self, event: tk.Event[tk.Misc]) -> None:
+        """Keep sidebar content width equal to the visible canvas width."""
+        width = int(getattr(event, "width", 0))
+        if width > 0:
+            self.sidebar_canvas.itemconfigure(self._sidebar_window_id, width=width)
 
     def _on_canvas_configure(self, event: tk.Event[tk.Misc]) -> None:
         """Redraw when canvas dimensions change to keep initial scaling stable."""
@@ -140,26 +167,40 @@ class TrussAPApp:
         """Refresh visual highlight when listbox selection changes."""
         self._draw()
 
-    def _world_to_canvas(self, x_value: float, y_value: float) -> tuple[float, float]:
-        x_min, x_max, y_min, y_max = self.state.design_bounds
+    def _on_member_list_selection(self, _event: tk.Event[tk.Misc]) -> None:
+        """Refresh visual highlight when member selection changes."""
+        self._draw()
+
+    def _viewport_transform(
+        self,
+        bounds: tuple[float, float, float, float],
+    ) -> tuple[float, float, float, float, float]:
+        """Return scale/offset terms for an aspect-preserving world-to-canvas map."""
+        x_min, x_max, y_min, y_max = bounds
         width = max(self.canvas.winfo_width(), 200)
         height = max(self.canvas.winfo_height(), 200)
-        margin = 20.0
-        scale_x = (width - 2.0 * margin) / (x_max - x_min)
-        scale_y = (height - 2.0 * margin) / (y_max - y_min)
-        canvas_x = margin + (x_value - x_min) * scale_x
-        canvas_y = height - margin - (y_value - y_min) * scale_y
+        margin = 24.0
+        span_x = max(x_max - x_min, 1e-9)
+        span_y = max(y_max - y_min, 1e-9)
+        usable_width = max(width - 2.0 * margin, 1.0)
+        usable_height = max(height - 2.0 * margin, 1.0)
+        scale = min(usable_width / span_x, usable_height / span_y)
+        draw_width = span_x * scale
+        draw_height = span_y * scale
+        offset_x = (width - draw_width) / 2.0
+        offset_y = (height - draw_height) / 2.0
+        return (scale, offset_x, offset_y, x_min, y_max)
+
+    def _world_to_canvas(self, x_value: float, y_value: float) -> tuple[float, float]:
+        scale, offset_x, offset_y, x_min, y_max = self._viewport_transform(self.state.design_bounds)
+        canvas_x = offset_x + (x_value - x_min) * scale
+        canvas_y = offset_y + (y_max - y_value) * scale
         return (canvas_x, canvas_y)
 
     def _canvas_to_world(self, canvas_x: float, canvas_y: float) -> tuple[float, float]:
-        x_min, x_max, y_min, y_max = self.state.design_bounds
-        width = max(self.canvas.winfo_width(), 200)
-        height = max(self.canvas.winfo_height(), 200)
-        margin = 20.0
-        scale_x = (width - 2.0 * margin) / (x_max - x_min)
-        scale_y = (height - 2.0 * margin) / (y_max - y_min)
-        world_x = x_min + (canvas_x - margin) / scale_x
-        world_y = y_min + (height - margin - canvas_y) / scale_y
+        scale, offset_x, offset_y, x_min, y_max = self._viewport_transform(self.state.design_bounds)
+        world_x = x_min + (canvas_x - offset_x) / scale
+        world_y = y_max - (canvas_y - offset_y) / scale
         return (world_x, world_y)
 
     def _draw_load_arrow(self, x_value: float, y_value: float, direction: str, color: str = "#8b1a1a") -> None:
@@ -179,9 +220,24 @@ class TrussAPApp:
         x1, y1 = self._world_to_canvas(x_value + dx, y_value + dy)
         self.canvas.create_line(x0, y0, x1, y1, fill=color, width=2, arrow=tk.LAST)
 
+    def _format_fos(self, value: float) -> str:
+        if math.isinf(value):
+            return "inf"
+        return f"{value:.2f}"
+
+    def _member_color_for_fos(self, value: float | None) -> str:
+        if value is None or not math.isfinite(value):
+            return "#334155"
+        if value < 1.0:
+            return "#b91c1c"
+        if value < self.state.fos_target:
+            return "#b45309"
+        return "#166534"
+
     def _draw(self) -> None:
         self.canvas.delete("all")
         self._joint_canvas_positions = {}
+        self._member_canvas_segments = {}
         x_min, x_max, y_min, y_max = self.state.design_bounds
 
         # Outer bounds and centerline.
@@ -193,6 +249,13 @@ class TrussAPApp:
         self.canvas.create_line(axis_start[0], axis_start[1], axis_end[0], axis_end[1], fill="#d2dbe3")
 
         joint_by_id = {joint.joint_id: joint for joint in self.state.joints}
+        selected_member_id = self._selected_member_id()
+        fos_by_member_id: dict[int, float] = {}
+        if self._latest_evaluation is not None and (
+            len(self._latest_evaluation.fos_by_member) == len(self.state.members)
+        ):
+            for member, fos_value in zip(self.state.members, self._latest_evaluation.fos_by_member, strict=True):
+                fos_by_member_id[member.member_id] = float(fos_value)
 
         for member in self.state.members:
             start = joint_by_id.get(member.start_joint_id)
@@ -201,7 +264,25 @@ class TrussAPApp:
                 continue
             x0, y0 = self._world_to_canvas(start.x, start.y)
             x1, y1 = self._world_to_canvas(end.x, end.y)
-            self.canvas.create_line(x0, y0, x1, y1, fill="#1f2d3d", width=max(1, int(member.size_index * 0.8)))
+            self._member_canvas_segments[member.member_id] = (x0, y0, x1, y1)
+            member_fos_value = fos_by_member_id.get(member.member_id)
+            color = self._member_color_for_fos(member_fos_value)
+            is_selected = member.member_id == selected_member_id
+            width = max(2, int(member.size_index * 0.8))
+            if is_selected:
+                width += 2
+                color = "#f59e0b"
+            self.canvas.create_line(x0, y0, x1, y1, fill=color, width=width)
+            if member_fos_value is not None:
+                label_x = (x0 + x1) / 2.0
+                label_y = (y0 + y1) / 2.0 - 10.0
+                self.canvas.create_text(
+                    label_x,
+                    label_y,
+                    text=f"FOS {self._format_fos(member_fos_value)}",
+                    fill=color,
+                    font=("Helvetica", 8),
+                )
 
         for load in self.state.loads:
             joint = joint_by_id.get(load.joint_id)
@@ -269,6 +350,7 @@ class TrussAPApp:
 
         for index, value in enumerate(self.state.support_enabled):
             self._support_vars[index].set(value)
+        self._reevaluate_state()
         self._draw()
 
     def _selected_joint_ids(self) -> list[int]:
@@ -297,6 +379,38 @@ class TrussAPApp:
                 best_joint_id = joint_id
         return best_joint_id
 
+    def _distance_sq_to_segment(
+        self,
+        px: float,
+        py: float,
+        x0: float,
+        y0: float,
+        x1: float,
+        y1: float,
+    ) -> float:
+        """Return squared distance from one point to one line segment."""
+        dx = x1 - x0
+        dy = y1 - y0
+        segment_len_sq = dx * dx + dy * dy
+        if segment_len_sq <= 1e-12:
+            return (px - x0) ** 2 + (py - y0) ** 2
+        projection = ((px - x0) * dx + (py - y0) * dy) / segment_len_sq
+        projection = min(1.0, max(0.0, projection))
+        nearest_x = x0 + projection * dx
+        nearest_y = y0 + projection * dy
+        return (px - nearest_x) ** 2 + (py - nearest_y) ** 2
+
+    def _nearest_member_id(self, canvas_x: float, canvas_y: float) -> int | None:
+        """Return nearest member under one canvas click, using a hit area."""
+        best_member_id: int | None = None
+        best_distance_sq = self._member_hit_radius_px**2
+        for member_id, (x0, y0, x1, y1) in self._member_canvas_segments.items():
+            distance_sq = self._distance_sq_to_segment(canvas_x, canvas_y, x0, y0, x1, y1)
+            if distance_sq <= best_distance_sq:
+                best_distance_sq = distance_sq
+                best_member_id = member_id
+        return best_member_id
+
     def _select_joint_by_id(self, joint_id: int, *, append: bool = False) -> None:
         """Select one joint in the listbox by identifier.
 
@@ -317,6 +431,17 @@ class TrussAPApp:
             self.joint_listbox.selection_set(target_index)
         self.joint_listbox.activate(target_index)
         self.joint_listbox.see(target_index)
+        self._draw()
+
+    def _select_member_by_id(self, member_id: int) -> None:
+        """Select one member in the listbox by identifier."""
+        target_index = next((index for index, item in enumerate(self._member_index_to_id) if item == member_id), None)
+        if target_index is None:
+            return
+        self.member_listbox.selection_clear(0, tk.END)
+        self.member_listbox.selection_set(target_index)
+        self.member_listbox.activate(target_index)
+        self.member_listbox.see(target_index)
         self._draw()
 
     def _is_multiselect_event(self, event: tk.Event[tk.Misc]) -> bool:
@@ -345,6 +470,11 @@ class TrussAPApp:
             # In add mode: clicking a joint only selects; click empty space to add.
             if mode == "add_joint":
                 return
+
+        clicked_member_id = self._nearest_member_id(canvas_x, canvas_y)
+        if clicked_member_id is not None:
+            self._select_member_by_id(clicked_member_id)
+            return
 
         x_value, y_value = self._canvas_to_world(canvas_x, canvas_y)
 
@@ -474,25 +604,32 @@ class TrussAPApp:
             return
         self._refresh()
 
-    def _evaluate(self) -> None:
+    def _reevaluate_state(self) -> None:
+        """Run one evaluation pass and update cached metrics/overlay data."""
         try:
             evaluation = self.problem.evaluate(self.state)
         except Exception as exc:
-            messagebox.showerror("Evaluation failed", str(exc))
+            self._latest_evaluation = None
+            self.metrics_var.set(f"evaluation_error: {exc}")
             return
 
-        self.metrics_var.set(
-            "\n".join(
-                (
-                    f"mass_kg: {evaluation.mass_kg:.3f}",
-                    f"min_fos: {evaluation.min_fos:.3f}",
-                    f"is_stable: {evaluation.is_stable}",
-                    f"is_acceptable: {evaluation.is_acceptable}",
-                    f"joints: {evaluation.joint_count}",
-                    f"members: {evaluation.member_count}",
-                )
-            )
-        )
+        self._latest_evaluation = evaluation
+        lines = [
+            f"mass_kg: {evaluation.mass_kg:.3f}",
+            f"min_fos: {evaluation.min_fos:.3f}",
+            f"is_stable: {evaluation.is_stable}",
+            f"is_acceptable: {evaluation.is_acceptable}",
+            f"joints: {evaluation.joint_count}",
+            f"members: {evaluation.member_count}",
+        ]
+        if evaluation.failure_reason:
+            lines.append(f"reason: {evaluation.failure_reason}")
+        self.metrics_var.set("\n".join(lines))
+
+    def _evaluate(self) -> None:
+        """Re-run evaluation on demand (auto-runs after every edit too)."""
+        self._reevaluate_state()
+        self._draw()
 
 
 def main() -> None:

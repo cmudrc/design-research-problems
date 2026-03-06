@@ -108,6 +108,8 @@ class TrussAPEvaluation:
     """Total number of members."""
     force_by_member_n: tuple[float, ...]
     """Axial member-force results in member order."""
+    fos_by_member: tuple[float, ...] = ()
+    """Per-member factor-of-safety values in member order."""
     failure_reason: str | None = None
     """Optional reason when ``is_stable`` is ``False``."""
 
@@ -388,6 +390,7 @@ def _invalid_evaluation(state: TrussAPState, reason: str) -> TrussAPEvaluation:
         joint_count=len(state.joints),
         member_count=len(state.members),
         force_by_member_n=(),
+        fos_by_member=(),
         failure_reason=reason,
     )
 
@@ -636,6 +639,7 @@ def evaluate_truss_ap_state(state: TrussAPState) -> TrussAPEvaluation:
         joint_count=len(state.joints),
         member_count=len(state.members),
         force_by_member_n=forces,
+        fos_by_member=fos_values,
         failure_reason=failure_reason,
     )
 

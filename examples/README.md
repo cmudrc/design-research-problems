@@ -25,7 +25,6 @@ optimizer example to use the optional `pymoo` or `nevergrad` solver backends.
 - `optimization/space_truss_span_mass_min.py`: inspect the packaged 3D space-truss structural optimizer and its chosen topology.
 - `gui/iot_home_cooling_tk.py`: launch a Tkinter desktop GUI for interactive IoT home cooling co-design.
 - `gui/truss_analysis_program_tk.py`: launch a Tkinter desktop GUI for interactive truss design with mass/FOS evaluation.
-- `gui/launch_gui.py`: compatibility wrapper for the packaged launcher (`design_research_problems.gui`).
 - `mcp/peanut_sheller_server.py`: spin up a local MCP stdio server and call `final_answer` through an MCP client session.
 - `mcp/build123d_parametric_mounting_bracket.py`: inspect the MCP-ingested Build123d catalog problem and run a script-authored CAD evaluation through the proxied tools.
 
@@ -36,11 +35,4 @@ From the repository root:
 ```bash
 uv run python -m design_research_problems.gui --app iot
 uv run python -m design_research_problems.gui --app truss
-```
-
-Compatibility wrappers are also available:
-
-```bash
-uv run python examples/gui/launch_gui.py --app iot
-uv run python examples/gui/launch_gui.py --app truss
 ```

@@ -229,13 +229,6 @@ def test_truss_ap_grammar_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
-def test_gui_launcher_example_help_runs() -> None:
-    completed = _run_example("examples/gui/launch_gui.py", "--help")
-    assert completed.returncode == 0, completed.stderr
-    assert "--app {iot,truss}" in completed.stdout
-
-
-@pytest.mark.examples_smoke
 def test_space_truss_optimization_example_runs() -> None:
     completed = _run_example("examples/optimization/space_truss_span_mass_min.py")
     assert completed.returncode == 0, completed.stderr
