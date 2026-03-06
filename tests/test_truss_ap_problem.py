@@ -142,3 +142,32 @@ def test_truss_analysis_program_evaluator_rejects_malformed_state_fields() -> No
     invalid_direction_eval = problem.evaluate(invalid_direction_state)
     assert not invalid_direction_eval.is_stable
     assert invalid_direction_eval.failure_reason == "Load directions must be one of left/down/right/up."
+
+
+def test_truss_analysis_program_top_node_fan_with_bottom_chain_is_stable() -> None:
+    problem = get_problem("truss_analysis_program_design")
+    state = problem.initial_state()
+
+    state = problem.add_joint(state, x=-0.111, y=2.569)
+    top_joint_id = max(joint.joint_id for joint in state.joints)
+
+    for base_joint_id in (1, 2, 3, 4, 5):
+        state = problem.add_member(
+            state,
+            start_joint_id=base_joint_id,
+            end_joint_id=top_joint_id,
+            size_index=5,
+        )
+
+    for start_joint_id, end_joint_id in ((1, 4), (4, 2), (2, 5), (5, 3)):
+        state = problem.add_member(
+            state,
+            start_joint_id=start_joint_id,
+            end_joint_id=end_joint_id,
+            size_index=5,
+        )
+
+    evaluation = problem.evaluate(state)
+    assert evaluation.is_stable
+    assert evaluation.failure_reason is None
+    assert len(evaluation.fos_by_member) == len(state.members)

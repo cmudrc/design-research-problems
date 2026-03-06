@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from collections.abc import Sequence
 from textwrap import dedent
@@ -178,10 +179,8 @@ def main() -> int:
     print("Upstream command:", problem.command)
 
     try:
-        import anyio
-
         server = create_server()
-        summary = anyio.run(run_summary, server)
+        summary = asyncio.run(run_summary(server))
     except (MissingOptionalDependencyError, ModuleNotFoundError) as exc:
         print(exc)
         print("Install the optional MCP dependency with: pip install design-research-problems[mcp]")
