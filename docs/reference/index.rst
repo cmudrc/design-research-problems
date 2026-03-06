@@ -7,3 +7,4 @@ Reference
    problems
    registry
    shared
+   gui

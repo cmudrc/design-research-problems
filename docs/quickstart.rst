@@ -75,3 +75,13 @@ netlist edits:
        len(open_battery_state.connections),
        len(open_battery_problem.enumerate_transitions(open_battery_state)),
    )
+
+The packaged desktop GUIs can be launched from the module entrypoint:
+
+.. code-block:: bash
+
+   python -m design_research_problems.gui --app iot
+   python -m design_research_problems.gui --app truss
+
+The IoT GUI shows a continuous room-temperature colorbar, and the truss GUI
+suppresses structural evaluation while the design remains under-determined.

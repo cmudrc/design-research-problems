@@ -10,11 +10,11 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-def _run_example(relative_path: str) -> subprocess.CompletedProcess[str]:
+def _run_example(relative_path: str, *args: str) -> subprocess.CompletedProcess[str]:
     env = dict(os.environ)
     env["PYTHONPATH"] = str(REPO_ROOT / "src")
     return subprocess.run(
-        [sys.executable, relative_path],
+        [sys.executable, relative_path, *args],
         cwd=REPO_ROOT,
         env=env,
         capture_output=True,

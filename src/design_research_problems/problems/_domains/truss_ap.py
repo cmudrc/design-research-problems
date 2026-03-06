@@ -108,6 +108,8 @@ class TrussAPEvaluation:
     """Total number of members."""
     force_by_member_n: tuple[float, ...]
     """Axial member-force results in member order."""
+    fos_by_member: tuple[float, ...] = ()
+    """Per-member factor-of-safety values in member order."""
     failure_reason: str | None = None
     """Optional reason when ``is_stable`` is ``False``."""
 
@@ -388,6 +390,7 @@ def _invalid_evaluation(state: TrussAPState, reason: str) -> TrussAPEvaluation:
         joint_count=len(state.joints),
         member_count=len(state.members),
         force_by_member_n=(),
+        fos_by_member=(),
         failure_reason=reason,
     )
 
@@ -531,10 +534,11 @@ def _evaluate_st_solver(
             for col_idx in range(6):
                 stiffness[dof[row_idx], dof[col_idx]] += block[row_idx, col_idx]
 
-    displacement_mask = (1.0 - re_matrix).reshape(-1)
+    # MATLAB parity: vectorize 3xN DOF arrays in column-major order.
+    displacement_mask = (1.0 - re_matrix).reshape(-1, order="F")
     free_dofs = numpy.flatnonzero(displacement_mask)
     displacement = displacement_mask.copy()
-    rhs = load.reshape(-1)
+    rhs = load.reshape(-1, order="F")
 
     if free_dofs.size == 0:
         return (False, (), (), "No unconstrained DOFs available for solve.")
@@ -555,7 +559,7 @@ def _evaluate_st_solver(
     except numpy.linalg.LinAlgError:
         return (False, (), (), "Structural solve failed.")
 
-    displacement_matrix = displacement.reshape(3, joint_count)
+    displacement_matrix = displacement.reshape(3, joint_count, order="F")
     force = numpy.sum(
         tj * (displacement_matrix[:, con[1, :]] - displacement_matrix[:, con[0, :]]),
         axis=0,
@@ -636,6 +640,7 @@ def evaluate_truss_ap_state(state: TrussAPState) -> TrussAPEvaluation:
         joint_count=len(state.joints),
         member_count=len(state.members),
         force_by_member_n=forces,
+        fos_by_member=fos_values,
         failure_reason=failure_reason,
     )
 

@@ -84,6 +84,16 @@ And inspect the ideation corpus:
 python3 -c "from design_research_problems import get_ideation_catalog; print(len(get_ideation_catalog().list_prompts()))"
 ```
 
+Launch the packaged desktop GUIs with:
+
+```bash
+python3 -m design_research_problems.gui --app iot
+python3 -m design_research_problems.gui --app truss
+```
+
+The IoT GUI renders a continuous room-temperature colorbar, and the truss GUI
+only evaluates structurally when the design is not under-determined.
+
 For local development, reproducible installs are pinned to Python `3.12.12` in
 `.python-version`:
 

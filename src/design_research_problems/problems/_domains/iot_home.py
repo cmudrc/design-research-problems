@@ -153,6 +153,8 @@ class IoTHomeEvaluation:
     """Max absolute post-warmup temperature deviation from 20C, in Celsius."""
     is_feasible: bool
     """Whether the design passed basic structural validity checks."""
+    room_temperatures_c: tuple[float, ...] = ()
+    """Room temperatures in room-id order at the end of simulation, in Celsius."""
     failure_reason: str | None = None
     """Optional reason when ``is_feasible`` is ``False``."""
 
@@ -696,6 +698,7 @@ def _infeasible_evaluation(reason: str) -> IoTHomeEvaluation:
         capital_cost=float("inf"),
         operation_cost=float("inf"),
         discomfort=float("inf"),
+        room_temperatures_c=(),
         is_feasible=False,
         failure_reason=reason,
     )
@@ -834,6 +837,7 @@ def evaluate_iot_home_state(state: IoTHomeState) -> IoTHomeEvaluation:
         capital_cost=float(capital_cost),
         operation_cost=float(operation_cost),
         discomfort=float(numpy.max(numpy.abs(steady_state_history - 20.0))),
+        room_temperatures_c=tuple(float(room.temperature) for room in rooms),
         is_feasible=True,
     )
 
