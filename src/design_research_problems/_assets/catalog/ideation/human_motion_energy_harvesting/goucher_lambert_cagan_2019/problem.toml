@@ -1,0 +1,104 @@
+problem_id = "ideation_human_motion_energy_harvesting"
+title = "Energy from Human Motion"
+summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019) summarizing the earlier human-motion energy task."
+kind = "text"
+statement = '''
+# Energy from Human Motion
+
+A device that can collect energy from human motion.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "informal"
+tags = ["text", "human-subjects", "ideation", "energy", "wearables"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goucher_lambert_cagan_2019"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
+year = 2019
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "fu_chan_cagan_kotovsky_schunn_wood_2013"
+kind = "bibtex"
+authors = ["Katherine Fu", "Joel Chan", "Jonathan Cagan", "Kenneth Kotovsky", "Christian Schunn", "Kristin Wood"]
+title = "The Meaning of \"Near\" and \"Far\": The Impact of Structuring Design Databases and the Effect of Distance of Analogy on Design Output"
+year = 2013
+venue = "Journal of Mechanical Design, 135(2), 021007"
+doi = "10.1115/1.4023158"
+url = "https://doi.org/10.1115/1.4023158"
+formatted_text = "Fu, Chan, Cagan, Kotovsky, Schunn, and Wood (2013). The Meaning of \"Near\" and \"Far\": The Impact of Structuring Design Databases and the Effect of Distance of Analogy on Design Output. Journal of Mechanical Design, 135(2), 021007."
+raw_text = '''
+@article{10.1115/1.4023158,
+    author = {Fu, Katherine and Chan, Joel and Cagan, Jonathan and Kotovsky, Kenneth and Schunn, Christian and Wood, Kristin},
+    title = {The Meaning of “Near” and “Far”: The Impact of Structuring Design Databases and the Effect of Distance of Analogy on Design Output},
+    journal = {Journal of Mechanical Design},
+    volume = {135},
+    number = {2},
+    pages = {021007},
+    year = {2013},
+    month = {01},
+    issn = {1050-0472},
+    doi = {10.1115/1.4023158},
+    url = {https://doi.org/10.1115/1.4023158},
+    eprint = {https://asmedigitalcollection.asme.org/mechanicaldesign/article-pdf/135/2/021007/6221498/md_135_2_021007.pdf},
+}
+'''
+provisional = false
+
+[[citations]]
+key = "chan_fu_schunn_cagan_wood_kotovsky_2011"
+kind = "bibtex"
+authors = ["Joel Chan", "Katherine Fu", "Christian Schunn", "Jonathan Cagan", "Kristin Wood", "Kenneth Kotovsky"]
+title = "On the Benefits and Pitfalls of Analogies for Innovative Design: Ideation Performance Based on Analogical Distance, Commonness, and Modality of Examples"
+year = 2011
+venue = "Journal of Mechanical Design, 133(8), 081004"
+doi = "10.1115/1.4004396"
+url = "https://doi.org/10.1115/1.4004396"
+formatted_text = "Chan, Fu, Schunn, Cagan, Wood, and Kotovsky (2011). On the Benefits and Pitfalls of Analogies for Innovative Design: Ideation Performance Based on Analogical Distance, Commonness, and Modality of Examples. Journal of Mechanical Design, 133(8), 081004."
+raw_text = '''
+@article{10.1115/1.4004396,
+    author = {Chan, Joel and Fu, Katherine and Schunn, Christian and Cagan, Jonathan and Wood, Kristin and Kotovsky, Kenneth},
+    title = {On the Benefits and Pitfalls of Analogies for Innovative Design: Ideation Performance Based on Analogical Distance, Commonness, and Modality of Examples},
+    journal = {Journal of Mechanical Design},
+    volume = {133},
+    number = {8},
+    pages = {081004},
+    year = {2011},
+    month = {08},
+    issn = {1050-0472},
+    doi = {10.1115/1.4004396},
+    url = {https://doi.org/10.1115/1.4004396},
+    eprint = {https://asmedigitalcollection.asme.org/mechanicaldesign/article-pdf/133/8/081004/5926174/081004_1.pdf},
+}
+'''
+provisional = false

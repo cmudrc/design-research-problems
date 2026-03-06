@@ -40,10 +40,13 @@ def main() -> None:
 
     rendered = _render()
     if args.check:
+        if not OUTPUT.exists():
+            raise SystemExit("docs/examples/index.rst is missing.")
         current = OUTPUT.read_text(encoding="utf-8")
         if current != rendered:
             raise SystemExit("docs/examples/index.rst is out of date.")
         return
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(rendered, encoding="utf-8")
 
 

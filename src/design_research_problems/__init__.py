@@ -8,19 +8,34 @@ from typing import TYPE_CHECKING, Final
 from design_research_problems._lazy_exports import module_dir, resolve_lazy_export
 
 _EXPORTS: Final[dict[str, str]] = {
+    "Problem": "design_research_problems.problems:Problem",
+    "ComputableProblem": "design_research_problems.problems:ComputableProblem",
     "ProblemKind": "design_research_problems.problems:ProblemKind",
     "ProblemMetadata": "design_research_problems.problems:ProblemMetadata",
     "ProblemTaxonomy": "design_research_problems.problems:ProblemTaxonomy",
     "Citation": "design_research_problems.problems:Citation",
     "ProblemAsset": "design_research_problems.problems:ProblemAsset",
     "TextProblem": "design_research_problems.problems:TextProblem",
+    "DecisionEvaluation": "design_research_problems.problems:DecisionEvaluation",
+    "DecisionProblem": "design_research_problems.problems:DecisionProblem",
     "OptimizationProblem": "design_research_problems.problems:OptimizationProblem",
+    "OptimizationEvaluation": "design_research_problems.problems:OptimizationEvaluation",
     "GrammarProblem": "design_research_problems.problems:GrammarProblem",
+    "GrammarTransition": "design_research_problems.problems:GrammarTransition",
+    "MCPProblem": "design_research_problems.problems:MCPProblem",
     "ProblemRegistry": "design_research_problems._catalog:ProblemRegistry",
     "MissingOptionalDependencyError": "design_research_problems._exceptions:MissingOptionalDependencyError",
     "ProblemEvaluationError": "design_research_problems._exceptions:ProblemEvaluationError",
+    "EvidenceTier": "design_research_problems.ideation:EvidenceTier",
+    "IdeationPromptRecord": "design_research_problems.ideation:IdeationPromptRecord",
+    "IdeationPromptVariant": "design_research_problems.ideation:IdeationPromptVariant",
+    "IdeationPromptFamily": "design_research_problems.ideation:IdeationPromptFamily",
+    "IdeationStudy": "design_research_problems.ideation:IdeationStudy",
+    "IdeationCatalog": "design_research_problems.ideation:IdeationCatalog",
     "get_problem": "design_research_problems._catalog:get_problem",
+    "get_problem_as": "design_research_problems._catalog:get_problem_as",
     "list_problems": "design_research_problems._catalog:list_problems",
+    "get_ideation_catalog": "design_research_problems.ideation:get_ideation_catalog",
 }
 
 __all__ = ["__version__", *_EXPORTS.keys()]
@@ -60,12 +75,27 @@ def __dir__() -> list[str]:
 if TYPE_CHECKING:
     from ._catalog import ProblemRegistry as ProblemRegistry
     from ._catalog import get_problem as get_problem
+    from ._catalog import get_problem_as as get_problem_as
     from ._catalog import list_problems as list_problems
     from ._exceptions import MissingOptionalDependencyError as MissingOptionalDependencyError
     from ._exceptions import ProblemEvaluationError as ProblemEvaluationError
+    from .ideation import EvidenceTier as EvidenceTier
+    from .ideation import IdeationCatalog as IdeationCatalog
+    from .ideation import IdeationPromptFamily as IdeationPromptFamily
+    from .ideation import IdeationPromptRecord as IdeationPromptRecord
+    from .ideation import IdeationPromptVariant as IdeationPromptVariant
+    from .ideation import IdeationStudy as IdeationStudy
+    from .ideation import get_ideation_catalog as get_ideation_catalog
     from .problems import Citation as Citation
+    from .problems import ComputableProblem as ComputableProblem
+    from .problems import DecisionEvaluation as DecisionEvaluation
+    from .problems import DecisionProblem as DecisionProblem
     from .problems import GrammarProblem as GrammarProblem
+    from .problems import GrammarTransition as GrammarTransition
+    from .problems import MCPProblem as MCPProblem
+    from .problems import OptimizationEvaluation as OptimizationEvaluation
     from .problems import OptimizationProblem as OptimizationProblem
+    from .problems import Problem as Problem
     from .problems import ProblemAsset as ProblemAsset
     from .problems import ProblemKind as ProblemKind
     from .problems import ProblemMetadata as ProblemMetadata

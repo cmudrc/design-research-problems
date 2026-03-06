@@ -15,7 +15,7 @@ def main() -> None:
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("--coverage-json", required=True)
-    parser.add_argument("--minimum", type=float, default=0.0)
+    parser.add_argument("--minimum", type=float, default=80.0)
     args = parser.parse_args()
 
     payload = json.loads(Path(args.coverage_json).read_text(encoding="utf-8"))

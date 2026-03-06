@@ -1,0 +1,44 @@
+problem_id = "ideation_remote_village_rainwater_access_framework"
+title = "Remote Village Rainwater Access (Framework)"
+summary = "The exact neutral Rainwater prompt shown in Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014)."
+kind = "text"
+statement = '''
+# Remote Village Rainwater Access (Framework)
+
+Design a way for remote villagers to catch, store, and access rainwater.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "water", "rural"]
+deliverable_type = "concepts"
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "silk_daly_jablokow_yilmaz_rosenberg_2014"
+kind = "inline"
+authors = ["Eli M. Silk", "Shanna R. Daly", "Kathryn Jablokow", "Seda Yilmaz", "Meisha Nicole Rosenberg"]
+title = "The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements"
+year = 2014
+venue = "ASEE Annual Conference and Exposition, Paper ID #8781"
+formatted_text = "Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014). The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements."
+raw_text = "Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014). The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements. ASEE Annual Conference and Exposition, Paper ID #8781."
+provisional = true
+
+[[citations]]
+key = "spradlin_2012"
+kind = "inline"
+authors = ["Dwayne Spradlin"]
+title = "Are You Solving the Right Problem? Asking the Right Questions Is Crucial"
+year = 2012
+venue = "Harvard Business Review, 90(9), 84-101"
+formatted_text = "Spradlin (2012). Are You Solving the Right Problem? Asking the Right Questions Is Crucial. Harvard Business Review, 90(9), 84-101."
+raw_text = "Spradlin (2012). Are You Solving the Right Problem? Asking the Right Questions Is Crucial. Harvard Business Review, 90(9), 84-101."
+provisional = false

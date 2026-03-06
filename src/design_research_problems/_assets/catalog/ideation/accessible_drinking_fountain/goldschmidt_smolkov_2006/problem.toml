@@ -1,0 +1,52 @@
+problem_id = "ideation_accessible_drinking_fountain"
+title = "Drinking Fountain for a Public Park"
+summary = "A primary-source ideation brief about designing a public-park drinking fountain for adults and children while controlling runoff."
+kind = "text"
+statement = '''
+# Drinking Fountain for a Public Park
+
+Subjects were asked to design a drinking fountain for a picnic area in
+a public park. Subjects were requested to take into account the different
+heights of adults and children who use the fountain, and to make sure
+that excess water is collected and not spilled around the fountain.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "informal"
+tags = ["text", "human-subjects", "ideation", "accessibility", "infrastructure"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goldschmidt_smolkov_2006"
+kind = "bibtex"
+authors = ["Gabriela Goldschmidt", "Maria Smolkov"]
+title = "Variances in the impact of visual stimuli on design problem solving performance"
+year = 2006
+venue = "Design Studies, 27(5), 549-569"
+doi = "10.1016/j.destud.2006.01.002"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X06000172"
+formatted_text = "Goldschmidt and Smolkov (2006). Variances in the impact of visual stimuli on design problem solving performance. Design Studies, 27(5), 549-569."
+raw_text = '''
+@article{GOLDSCHMIDT2006549,
+title = {Variances in the impact of visual stimuli on design problem solving performance},
+journal = {Design Studies},
+volume = {27},
+number = {5},
+pages = {549-569},
+year = {2006},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2006.01.002},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X06000172},
+author = {Gabriela Goldschmidt and Maria Smolkov}
+}
+'''
+provisional = false

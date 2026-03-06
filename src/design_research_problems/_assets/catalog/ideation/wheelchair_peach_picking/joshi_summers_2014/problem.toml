@@ -1,0 +1,43 @@
+problem_id = "ideation_wheelchair_peach_picking"
+title = "Wheelchair Peach Picking"
+summary = "A study-specific ASME ideation brief about manually picking peaches while staying in a wheelchair."
+kind = "text"
+statement = '''
+# Wheelchair Peach Picking
+
+People in wheel chair have a very limited range of reach
+especially for heights. With this limitation, they cannot
+experience pleasures such as that of picking peaches in
+summer. Design a device that will allow users in wheel
+chair to experience the joy of picking peaches from the tree
+and collect it in a basket while still in the wheel chair. The
+device must be manually operated and prevent damage to
+the fruit while picking it. The fruit should not fall on the
+ground while picking.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly", "requirements-study-ready"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "assistive-design"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "accessibility", "agriculture", "asme"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "requirement-coverage"
+
+[[citations]]
+key = "joshi_summers_2014"
+kind = "inline"
+authors = ["Shraddha Joshi", "Joshua D. Summers"]
+title = "Impact of Requirements Elicitation Activity on Idea Generation: A Designer Study"
+year = 2014
+venue = "ASME IDETC/CIE, DETC2014-35022"
+doi = "10.1115/DETC2014-35022"
+url = "https://doi.org/10.1115/DETC2014-35022"
+formatted_text = "Joshi and Summers (2014). Impact of Requirements Elicitation Activity on Idea Generation: A Designer Study."
+raw_text = "Joshi and Summers (2014). Impact of Requirements Elicitation Activity on Idea Generation: A Designer Study. ASME IDETC/CIE. DOI: 10.1115/DETC2014-35022."

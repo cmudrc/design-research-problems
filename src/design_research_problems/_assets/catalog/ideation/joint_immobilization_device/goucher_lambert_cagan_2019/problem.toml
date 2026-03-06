@@ -1,0 +1,75 @@
+problem_id = "ideation_joint_immobilization_device"
+title = "Joint Immobilization Device"
+summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the Mountain-TREK design brief in Wilson, Rosen, Nelson, and Yen (2010)."
+kind = "text"
+statement = '''
+# Joint Immobilization Device
+
+A device to immobilize a human joint.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "informal"
+tags = ["text", "human-subjects", "ideation", "medical", "mechanical-design"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goucher_lambert_cagan_2019"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
+year = 2019
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "wilson_2010"
+kind = "bibtex"
+authors = ["Jamal O. Wilson", "David Rosen", "Brent A. Nelson", "Jeannette Yen"]
+title = "The effects of biological examples in idea generation"
+year = 2010
+venue = "Design Studies, 31(2), 169-186"
+doi = "10.1016/j.destud.2009.10.003"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X0900074X"
+formatted_text = "Wilson, Rosen, Nelson, and Yen (2010). The effects of biological examples in idea generation. Design Studies, 31(2), 169-186."
+raw_text = '''
+@article{WILSON2010169,
+title = {The effects of biological examples in idea generation},
+journal = {Design Studies},
+volume = {31},
+number = {2},
+pages = {169-186},
+year = {2010},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2009.10.003},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X0900074X},
+author = {Jamal O. Wilson and David Rosen and Brent A. Nelson and Jeannette Yen},
+keywords = {innovation, design techniques, conceptual design, creative design, evaluation}
+}
+'''
+provisional = false

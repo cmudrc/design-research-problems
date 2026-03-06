@@ -1,0 +1,35 @@
+problem_id = "ideation_injured_athlete_campus_mobility"
+title = "Injured Athlete Campus Mobility"
+summary = "A study-specific ASME ideation brief about helping student athletes with leg injuries move around campus."
+kind = "text"
+statement = '''
+# Injured Athlete Campus Mobility
+
+Generate as many concepts as you can for devices that make it easier for student athletes with leg injuries to get around on a university campus.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly", "intervention-ready"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "assistive-design"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "accessibility", "mobility", "asme"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 15
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "hu_booth_reid_2015"
+kind = "inline"
+authors = ["Wan-Lin Hu", "Joran Booth", "Tahira Reid"]
+title = "Reducing Sketch Inhibition During Concept Generation: Psychophysiological Evidence of the Effect of Interventions"
+year = 2015
+venue = "ASME IDETC/CIE, DETC2015-47669"
+doi = "10.1115/DETC2015-47669"
+url = "https://doi.org/10.1115/DETC2015-47669"
+formatted_text = "Hu, Booth, and Reid (2015). Reducing Sketch Inhibition During Concept Generation: Psychophysiological Evidence of the Effect of Interventions."
+raw_text = "Hu, Booth, and Reid (2015). Reducing Sketch Inhibition During Concept Generation: Psychophysiological Evidence of the Effect of Interventions. ASME IDETC/CIE. DOI: 10.1115/DETC2015-47669."

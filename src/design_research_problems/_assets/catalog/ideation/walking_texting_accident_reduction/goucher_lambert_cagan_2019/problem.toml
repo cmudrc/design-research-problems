@@ -1,0 +1,61 @@
+problem_id = "ideation_walking_texting_accident_reduction"
+title = "Reduce Walking and Texting Accidents"
+summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the longer campus pedestrian-safety brief used by Miller, Bailey, and Kirlik (2014)."
+kind = "text"
+statement = '''
+# Reduce Walking and Texting Accidents
+
+A way to minimize accidents from people walking and texting on a cell phone.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "safety-design"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "safety", "consumer"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goucher_lambert_cagan_2019"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
+year = 2019
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "miller_bailey_kirlik_2014"
+kind = "inline"
+authors = ["Scarlett R. Miller", "Brian P. Bailey", "Alex Kirlik"]
+title = "Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge"
+year = 2014
+venue = "Human-Computer Interaction, 29(5-6), 487-515"
+doi = "10.1080/07370024.2013.870393"
+url = "https://doi.org/10.1080/07370024.2013.870393"
+formatted_text = "Miller, Bailey, and Kirlik (2014). Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge. Human-Computer Interaction, 29(5-6), 487-515."
+raw_text = "Miller, Scarlett R., Brian P. Bailey, and Alex Kirlik (2014). Exploring the Utility of Bayesian Truth Serum for Assessing Design Knowledge. Human-Computer Interaction, 29(5-6), 487-515. DOI: 10.1080/07370024.2013.870393."
+provisional = false

@@ -1,0 +1,46 @@
+problem_id = "planar_roof_truss_three_point_symmetric"
+title = "Planar roof truss grammar (three-point symmetric variant)"
+summary = "A simplified roof-truss grammar aligned to the three-point symmetric formulation reported by Shea and Cagan."
+kind = "grammar"
+statement = '''
+# Planar roof truss grammar (three-point symmetric variant)
+
+This catalog entry approximates the first planar roof-truss formulation reported
+in the structural essay study by Shea and Cagan: a symmetric roof truss with
+three roof load points. In the original study, the two outer load points could
+translate along the roofline. This simplified grammar fixes them at quarter-span
+locations while preserving the same symmetric three-point loading topology.
+
+The state begins with pinned and roller supports plus three loaded roof joints.
+Designers add interior joints and members, and mirrored edits are enforced so
+the topology remains symmetric about mid-span.
+'''
+implementation = "design_research_problems.problems.grammar._planar_truss:PlanarTrussSpanProblem"
+capabilities = [
+  "statement-markdown",
+  "serializable-state",
+  "discrete-actions",
+  "optional-evaluator",
+  "external-adapter",
+]
+study_suitability = []
+
+[parameters]
+span = 10.0
+max_height = 2.5
+load_magnitude = 1000.0
+roof_load_x_fractions = [0.25, 0.5, 0.75]
+candidate_point_fractions = [[0.2, 0.2], [0.35, 0.32], [0.5, 0.22]]
+enforce_symmetry = true
+
+[taxonomy]
+formulation = "discrete_grammar"
+convexity = "not_applicable"
+design_variable_type = "discrete"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.25
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "symmetric planar roof-truss topology over a fixed span"
+tags = ["grammar", "truss", "roof", "discrete", "topology", "symmetric"]

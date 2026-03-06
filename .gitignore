@@ -74,6 +74,10 @@ instance/
 # Sphinx documentation
 docs/_build/
 
+# Generated docs pages
+docs/examples/index.rst
+docs/problem_catalog/
+
 # PyBuilder
 .pybuilder/
 target/

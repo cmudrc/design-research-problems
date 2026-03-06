@@ -1,0 +1,4 @@
+[run]
+omit =
+    src/design_research_problems/gui/iot_home_cooling_tk.py
+    src/design_research_problems/gui/truss_analysis_program_tk.py

@@ -1,0 +1,61 @@
+problem_id = "ideation_travel_exercise_device"
+title = "Lightweight Travel Exercise Device"
+summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the earlier travel-exercise case framing reproduced by Linsey and Viswanathan (2014)."
+kind = "text"
+statement = '''
+# Lightweight Travel Exercise Device
+
+A lightweight exercise device that can be used while traveling.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "consumer", "travel"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goucher_lambert_cagan_2019"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
+year = 2019
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "linsey_viswanathan_2014"
+kind = "inline"
+authors = ["Julie S. Linsey", "Vimal K. Viswanathan"]
+title = "Overcoming Cognitive Challenges in Bioinspired Design and Analogy"
+year = 2014
+venue = "Biologically Inspired Design"
+doi = "10.1007/978-1-4471-5248-4_9"
+url = "https://doi.org/10.1007/978-1-4471-5248-4_9"
+formatted_text = "Linsey and Viswanathan (2014). Overcoming Cognitive Challenges in Bioinspired Design and Analogy. In Biologically Inspired Design."
+raw_text = "Linsey, Julie S., and Vimal K. Viswanathan (2014). Overcoming Cognitive Challenges in Bioinspired Design and Analogy. In Biologically Inspired Design. DOI: 10.1007/978-1-4471-5248-4_9."
+provisional = false

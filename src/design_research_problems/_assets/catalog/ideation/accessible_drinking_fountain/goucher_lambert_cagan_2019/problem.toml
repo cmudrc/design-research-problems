@@ -1,0 +1,74 @@
+problem_id = "ideation_accessible_drinking_fountain_derivative"
+title = "Accessible Drinking Fountain (Derivative)"
+summary = "A single-sentence derivative framing from Goucher-Lambert and Cagan (2019), adapted from Goldschmidt and Smolkov (2006), for the public-fountain design problem."
+kind = "text"
+statement = '''
+# Accessible Drinking Fountain (Derivative)
+
+A way to make drinking fountains accessible for all people.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "informal"
+tags = ["text", "human-subjects", "ideation", "accessibility", "infrastructure"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goucher_lambert_cagan_2019"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
+year = 2019
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "goldschmidt_smolkov_2006"
+kind = "bibtex"
+authors = ["Gabriela Goldschmidt", "Maria Smolkov"]
+title = "Variances in the impact of visual stimuli on design problem solving performance"
+year = 2006
+venue = "Design Studies, 27(5), 549-569"
+doi = "10.1016/j.destud.2006.01.002"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X06000172"
+formatted_text = "Goldschmidt and Smolkov (2006). Variances in the impact of visual stimuli on design problem solving performance. Design Studies, 27(5), 549-569."
+raw_text = '''
+@article{GOLDSCHMIDT2006549,
+title = {Variances in the impact of visual stimuli on design problem solving performance},
+journal = {Design Studies},
+volume = {27},
+number = {5},
+pages = {549-569},
+year = {2006},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2006.01.002},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X06000172},
+author = {Gabriela Goldschmidt and Maria Smolkov}
+}
+'''
+provisional = false

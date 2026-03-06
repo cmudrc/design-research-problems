@@ -1,0 +1,47 @@
+problem_id = "ideation_one_handed_lidded_container_opening_framework"
+title = "One-Handed Lidded Container Opening (Framework)"
+summary = "The exact neutral Lids prompt shown in Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014)."
+kind = "text"
+statement = '''
+# One-Handed Lidded Container Opening (Framework)
+
+Design a way for individuals who have limited or no use of one upper extremity
+to open a lidded food container with one hand.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "assistive-design"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "assistive", "food", "containers"]
+deliverable_type = "concepts"
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "silk_daly_jablokow_yilmaz_rosenberg_2014"
+kind = "inline"
+authors = ["Eli M. Silk", "Shanna R. Daly", "Kathryn Jablokow", "Seda Yilmaz", "Meisha Nicole Rosenberg"]
+title = "The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements"
+year = 2014
+venue = "ASEE Annual Conference and Exposition, Paper ID #8781"
+formatted_text = "Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014). The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements."
+raw_text = "Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014). The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements. ASEE Annual Conference and Exposition, Paper ID #8781."
+provisional = true
+
+[[citations]]
+key = "lemons_carberry_swan_jarvin_rogers_2010"
+kind = "inline"
+authors = ["Greg Lemons", "Adam Carberry", "Christopher Swan", "Lauren Jarvin", "Chris Rogers"]
+title = "The benefits of model building in teaching engineering design"
+year = 2010
+venue = "Design Studies, 31(3), 288-309"
+doi = "10.1016/j.destud.2010.02.001"
+url = "https://doi.org/10.1016/j.destud.2010.02.001"
+formatted_text = "Lemons, Carberry, Swan, Jarvin, and Rogers (2010). The benefits of model building in teaching engineering design. Design Studies, 31(3), 288-309."
+raw_text = "Lemons, Carberry, Swan, Jarvin, and Rogers (2010). The benefits of model building in teaching engineering design. Design Studies, 31(3), 288-309."
+provisional = false

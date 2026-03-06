@@ -1,0 +1,74 @@
+problem_id = "ideation_out_of_reach_book_retrieval"
+title = "Out-of-Reach Book Retrieval"
+summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), adapted from the longer library-shelf retrieval brief in Cardoso and Badke-Schaub (2011)."
+kind = "text"
+statement = '''
+# Out-of-Reach Book Retrieval
+
+A device that allows people to get a book that is out of reach.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "assistive-design"
+objective_mode = "qualitative"
+constraint_nature = "informal"
+tags = ["text", "human-subjects", "ideation", "accessibility", "retrieval"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goucher_lambert_cagan_2019"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
+year = 2019
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "cardoso_badke_schaub_2011"
+kind = "bibtex"
+authors = ["Carlos Cardoso", "Petra Badke-Schaub"]
+title = "The Influence of Different Pictorial Representations During Idea Generation"
+year = 2011
+venue = "The Journal of Creative Behavior, 45(2), 130-146"
+doi = "10.1002/j.2162-6057.2011.tb01092.x"
+url = "https://onlinelibrary.wiley.com/doi/10.1002/j.2162-6057.2011.tb01092.x"
+formatted_text = "Cardoso and Badke-Schaub (2011). The Influence of Different Pictorial Representations During Idea Generation. The Journal of Creative Behavior, 45(2), 130-146."
+raw_text = '''
+@article{https://doi.org/10.1002/j.2162-6057.2011.tb01092.x,
+author = {CARDOSO, CARLOS and BADKE-SCHAUB, PETRA},
+title = {The Influence of Different Pictorial Representations During Idea Generation},
+journal = {The Journal of Creative Behavior},
+volume = {45},
+number = {2},
+pages = {130-146},
+doi = {https://doi.org/10.1002/j.2162-6057.2011.tb01092.x},
+url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/j.2162-6057.2011.tb01092.x},
+eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/j.2162-6057.2011.tb01092.x},
+year = {2011}
+}
+'''
+provisional = false

@@ -1,0 +1,54 @@
+problem_id = "ideation_public_place_belongings_securer"
+title = "Public Place Belongings Securer"
+summary = "The exact neutrally framed Belongings problem presented in Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014)."
+kind = "text"
+statement = '''
+# Public Place Belongings Securer
+
+Working in coffee shops and public places
+has become a common occurrence.
+Sometimes, however, it becomes necessary
+to step away for short periods of time to take
+a phone call or use the restroom. Once a
+workspace has been set up, it can be very
+inconvenient to pack it all away for these
+short absences. However, there is a danger
+of theft when leaving items in public places.
+
+Design a way for someone to secure several
+of his or her belongings in a public area to
+prevent theft quickly without disrupting the
+space.
+
+Develop solutions for this problem. Be sure
+to write each solution on a different piece of
+paper, and use drawings to sketch your
+ideas. It's important that you do your best
+and continue working for the full time of the
+activity.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "security", "public-space"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "silk_daly_jablokow_yilmaz_rosenberg_2014"
+kind = "inline"
+authors = ["Eli M. Silk", "Shanna R. Daly", "Kathryn Jablokow", "Seda Yilmaz", "Meisha Nicole Rosenberg"]
+title = "The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements"
+year = 2014
+venue = "ASEE Annual Conference and Exposition, Paper ID #8781"
+formatted_text = "Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014). The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements."
+raw_text = "Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014). The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements. ASEE Annual Conference and Exposition, Paper ID #8781."
+provisional = true

@@ -1,0 +1,44 @@
+problem_id = "planar_truss_span_deflection_min"
+title = "Planar truss span structural optimization (deflection minimization)"
+summary = "A fixed-joint binary optimization problem that selects candidate planar-truss members to minimize deflection subject to factor-of-safety and mass thresholds."
+kind = "optimization"
+statement = '''
+# Planar truss span structural optimization (deflection minimization)
+
+Choose a planar truss topology over a fixed support span and a fixed set of
+candidate joints. Each binary design variable decides whether one candidate
+member is present. The optimizer builds a concrete `PlanarTrussState`, runs the
+real `trussme` structural analysis, and minimizes structural deflection.
+
+Feasible candidates must satisfy a minimum factor of safety and a maximum mass
+threshold. The built-in baseline uses deterministic binary enumeration with
+cheap graph and crossing prechecks plus hard structural thresholds.
+'''
+implementation = "design_research_problems.problems.optimization._truss_topology:PlanarTrussEngineeringOptimizationProblem"
+capabilities = ["statement-markdown", "bounded-variables", "baseline-solver", "optional-evaluator", "external-adapter"]
+study_suitability = []
+
+[parameters]
+span = 10.0
+max_height = 5.0
+load_magnitude = 1000.0
+objective_metric = "deflection-min"
+minimum_fos = 1.0
+maximum_mass = 20.0
+candidate_point_fractions = [
+  [0.25, 0.5],
+  [0.50, 0.5],
+  [0.75, 0.5],
+]
+
+[taxonomy]
+formulation = "binary_optimization"
+convexity = "nonconvex"
+design_variable_type = "discrete"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.05
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "one binary variable per candidate member over a fixed planar truss joint set"
+tags = ["optimization", "truss", "structural", "binary", "deflection"]

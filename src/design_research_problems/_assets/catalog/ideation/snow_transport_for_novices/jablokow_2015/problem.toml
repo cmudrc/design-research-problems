@@ -1,0 +1,75 @@
+problem_id = "ideation_snow_transport_for_novices"
+title = "Snow Transport for Novices"
+summary = "A study-specific ASME ideation brief about helping individuals with limited skiing or snowboarding experience transport themselves on snow, with an earlier related framing in Silk et al. (2014) adapted from Chusilp and Jin (2006) and Jin and Chusilp (2006)."
+kind = "text"
+statement = '''
+# Snow Transport for Novices
+
+A way for individuals with little skill or experience in skiing or snowboarding to transport themselves on snow.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = [
+  "human-subjects-ready",
+  "ideation-friendly",
+  "variety-study-ready",
+  "intervention-ready",
+]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "design-exploration"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "mobility", "snow", "asme"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "variety"
+
+[[citations]]
+key = "jablokow_teerlink_yilmaz_daly_silk_wehr_2015"
+kind = "inline"
+authors = ["Kathryn Jablokow", "Wesley Teerlink", "Seda Yilmaz", "Shanna Daly", "Eli Silk", "Christian Wehr"]
+title = "Ideation Variety in Mechanical Design: Examining the Effects of Cognitive Style and Design Heuristics"
+year = 2015
+venue = "ASME IDETC/CIE, DETC2015-46334"
+doi = "10.1115/DETC2015-46334"
+url = "https://doi.org/10.1115/DETC2015-46334"
+formatted_text = "Jablokow, Teerlink, Yilmaz, Daly, Silk, and Wehr (2015). Ideation Variety in Mechanical Design: Examining the Effects of Cognitive Style and Design Heuristics."
+raw_text = "Jablokow, Teerlink, Yilmaz, Daly, Silk, and Wehr (2015). Ideation Variety in Mechanical Design: Examining the Effects of Cognitive Style and Design Heuristics. ASME IDETC/CIE. DOI: 10.1115/DETC2015-46334."
+
+[[citations]]
+key = "silk_daly_jablokow_yilmaz_rosenberg_2014"
+kind = "inline"
+authors = ["Eli M. Silk", "Shanna R. Daly", "Kathryn Jablokow", "Seda Yilmaz", "Meisha Nicole Rosenberg"]
+title = "The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements"
+year = 2014
+venue = "ASEE Annual Conference and Exposition, Paper ID #8781"
+formatted_text = "Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014). The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements."
+raw_text = "Silk, Daly, Jablokow, Yilmaz, and Rosenberg (2014). The Design Problem Framework: Using Adaption-Innovation Theory to Construct Design Problem Statements. ASEE Annual Conference and Exposition, Paper ID #8781."
+provisional = true
+
+[[citations]]
+key = "chusilp_jin_2006"
+kind = "inline"
+authors = ["Pawat Chusilp", "Yan Jin"]
+title = "Impact of Mental Iteration on Concept Generation"
+year = 2006
+venue = "Journal of Mechanical Design, 128(1), 14-25"
+doi = "10.1115/1.2118707"
+formatted_text = "Chusilp and Jin (2006). Impact of Mental Iteration on Concept Generation. Journal of Mechanical Design, 128(1), 14-25."
+raw_text = "Chusilp and Jin (2006). Impact of Mental Iteration on Concept Generation. Journal of Mechanical Design, 128(1), 14-25. DOI: 10.1115/1.2118707."
+provisional = false
+
+[[citations]]
+key = "jin_chusilp_2006"
+kind = "inline"
+authors = ["Yan Jin", "Pawat Chusilp"]
+title = "Study of mental iteration in different design situations"
+year = 2006
+venue = "Design Studies, 27(1), 25-55"
+doi = "10.1016/j.destud.2005.06.003"
+formatted_text = "Jin and Chusilp (2006). Study of mental iteration in different design situations. Design Studies, 27(1), 25-55."
+raw_text = "Jin and Chusilp (2006). Study of mental iteration in different design situations. Design Studies, 27(1), 25-55. DOI: 10.1016/j.destud.2005.06.003."
+provisional = false

@@ -1,0 +1,78 @@
+problem_id = "ideation_small_towel_folding"
+title = "Small Towel Folding Device"
+summary = "A derivative one-line ideation brief from Goucher-Lambert and Cagan (2019), attributed there to Linsey et al. (2012), with the task family tracing back to the WordTree case study in Linsey, Wood, and Markman (2008)."
+kind = "text"
+statement = '''
+# Small Towel Folding Device
+
+A device to fold washcloths, hand towels, and small bath towels.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "consumer", "automation"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goucher_lambert_cagan_2019"
+kind = "bibtex"
+authors = ["Kosa Goucher-Lambert", "Jonathan Cagan"]
+title = "Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation"
+year = 2019
+venue = "Design Studies, 61, 1-29"
+doi = "10.1016/j.destud.2019.01.001"
+url = "https://www.sciencedirect.com/science/article/pii/S0142694X19300018"
+formatted_text = "Goucher-Lambert and Cagan (2019). Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation. Design Studies, 61, 1-29."
+raw_text = '''
+@article{GOUCHERLAMBERT20191,
+title = {Crowdsourcing inspiration: Using crowd generated inspirational stimuli to support designer ideation},
+journal = {Design Studies},
+volume = {61},
+pages = {1-29},
+year = {2019},
+issn = {0142-694X},
+doi = {https://doi.org/10.1016/j.destud.2019.01.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0142694X19300018},
+author = {Kosa Goucher-Lambert and Jonathan Cagan}
+}
+'''
+provisional = false
+
+[[citations]]
+key = "linsey_2012_towels"
+kind = "inline"
+authors = ["Julie Linsey", "et al."]
+title = "A device to fold washcloths, hand towels, and small bath towels"
+year = 2012
+venue = "Secondary attribution preserved from Goucher-Lambert and Cagan (2019); original 2012 source not yet resolved"
+formatted_text = "Linsey et al. (2012). A device to fold washcloths, hand towels, and small bath towels. Secondary attribution preserved from Goucher-Lambert and Cagan (2019)."
+raw_text = "Linsey et al. (2012). A device to fold washcloths, hand towels, and small bath towels. Secondary attribution preserved from Goucher-Lambert and Cagan (2019); original 2012 source not yet resolved."
+provisional = true
+
+[[citations]]
+key = "linsey_wood_markman_2008_wordtrees"
+kind = "inline"
+authors = ["Julie Linsey", "Kristin Wood", "Arthur Markman"]
+title = "Wordtrees: A method for design by analogy"
+year = 2008
+venue = "2008 Annual Conference & Exposition"
+formatted_text = "Linsey, Wood, and Markman (2008). Wordtrees: A method for design by analogy. 2008 Annual Conference & Exposition."
+raw_text = '''
+@inproceedings{linsey2008wordtrees,
+  title = {Wordtrees: A method for design by analogy},
+  author = {Linsey, Julie and Wood, Kristin and Markman, Arthur},
+  booktitle = {2008 Annual Conference \& Exposition},
+  pages = {13--1407},
+  year = {2008}
+}
+'''
+provisional = false

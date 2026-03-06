@@ -2,25 +2,24 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import zipfile
 from pathlib import Path
 
-import pytest
+from design_research_problems import list_problems
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-
-RESOURCE_FILES = (
-    "design_research_problems/_assets/catalog/peanut_sheller_fu2010/problem.toml",
-    "design_research_problems/_assets/catalog/peanut_sheller_fu2010/statement.md",
-    "design_research_problems/_assets/catalog/peanut_sheller_fu2010/citation.bib",
-    "design_research_problems/_assets/catalog/pill_capsule_min_area/problem.toml",
-    "design_research_problems/_assets/catalog/planar_truss_span/problem.toml",
+PACKAGE_ASSETS_ROOT = REPO_ROOT / "src" / "design_research_problems" / "_assets"
+RESOURCE_FILES = tuple(
+    str(path.relative_to(REPO_ROOT / "src")).replace(os.sep, "/")
+    for path in sorted(PACKAGE_ASSETS_ROOT.rglob("*"))
+    if path.is_file()
 )
 
 
-def _build_wheel(tmp_path: Path) -> Path:
+def _ensure_pip_available() -> None:
     probe = subprocess.run(
         [sys.executable, "-m", "pip", "--version"],
         cwd=REPO_ROOT,
@@ -28,8 +27,31 @@ def _build_wheel(tmp_path: Path) -> Path:
         text=True,
         check=False,
     )
-    if probe.returncode != 0:
-        pytest.skip("pip is unavailable in this environment.")
+    if probe.returncode == 0:
+        return
+
+    bootstrap = subprocess.run(
+        [sys.executable, "-m", "ensurepip", "--upgrade"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert bootstrap.returncode == 0, bootstrap.stderr or bootstrap.stdout
+
+    reprobe = subprocess.run(
+        [sys.executable, "-m", "pip", "--version"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert reprobe.returncode == 0, reprobe.stderr or reprobe.stdout
+
+
+def _build_wheel(tmp_path: Path) -> Path:
+    shutil.rmtree(REPO_ROOT / "build", ignore_errors=True)
+    _ensure_pip_available()
 
     backend_probe = subprocess.run(
         [sys.executable, "-c", "import setuptools.build_meta"],
@@ -38,8 +60,7 @@ def _build_wheel(tmp_path: Path) -> Path:
         text=True,
         check=False,
     )
-    if backend_probe.returncode != 0:
-        pytest.skip("setuptools.build_meta is unavailable in this environment.")
+    assert backend_probe.returncode == 0, backend_probe.stderr or backend_probe.stdout
 
     wheel_dir = tmp_path / "wheelhouse"
     wheel_dir.mkdir(parents=True, exist_ok=True)
@@ -92,8 +113,4 @@ def test_installed_wheel_loads_registry(tmp_path: Path) -> None:
     )
     assert probe.returncode == 0, probe.stderr
     payload = json.loads(probe.stdout.strip())
-    assert payload == [
-        "peanut_sheller_fu2010",
-        "pill_capsule_min_area",
-        "planar_truss_span",
-    ]
+    assert payload == list(list_problems())
