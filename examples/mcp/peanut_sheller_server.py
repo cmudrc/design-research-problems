@@ -8,8 +8,6 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import anyio
-
 from design_research_problems import MissingOptionalDependencyError, get_problem
 
 if TYPE_CHECKING:
@@ -135,10 +133,16 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.serve:
-        serve_stdio()
+        try:
+            serve_stdio()
+        except (MissingOptionalDependencyError, ModuleNotFoundError) as exc:
+            print(exc)
+            print("Install the optional MCP dependency with: pip install design-research-problems[mcp]")
         return 0
 
     try:
+        import anyio
+
         summary = anyio.run(run_roundtrip)
     except (MissingOptionalDependencyError, ModuleNotFoundError) as exc:
         print(exc)

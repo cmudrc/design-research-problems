@@ -7,8 +7,6 @@ from collections.abc import Sequence
 from textwrap import dedent
 from typing import TYPE_CHECKING, Any, cast
 
-import anyio
-
 from design_research_problems import MissingOptionalDependencyError, get_problem
 
 if TYPE_CHECKING:
@@ -180,6 +178,8 @@ def main() -> int:
     print("Upstream command:", problem.command)
 
     try:
+        import anyio
+
         server = create_server()
         summary = anyio.run(run_summary, server)
     except (MissingOptionalDependencyError, ModuleNotFoundError) as exc:
