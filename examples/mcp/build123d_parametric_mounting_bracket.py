@@ -161,9 +161,9 @@ async def run_summary(server: FastMCP) -> dict[str, object]:
         "backend_available": status.get("available", False),
         "result_is_valid": evaluation.get("is_valid"),
         "volume_mm3": evaluation.get("volume_mm3"),
-        "matches_nominal_envelope": cast(
-            dict[str, object], evaluation.get("constraint_checks", {})
-        ).get("matches_nominal_envelope"),
+        "matches_nominal_envelope": cast(dict[str, object], evaluation.get("constraint_checks", {})).get(
+            "matches_nominal_envelope"
+        ),
         "last_result_name": last_result.get("result_name"),
         "final_answer": final_answer.get("answer", "<missing>"),
     }

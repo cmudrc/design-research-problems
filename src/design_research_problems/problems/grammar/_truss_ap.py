@@ -375,7 +375,7 @@ class TrussAPGrammarProblem(GrammarProblem[TrussAPState, TrussAPEvaluation]):
                             next_state=self.set_load(
                                 typed_state,
                                 joint_id=joint_id,
-                                direction=cast(TrussLoadDirection, direction),
+                                direction=direction,
                                 magnitude_n=magnitude,
                             ),
                         )
@@ -388,7 +388,7 @@ class TrussAPGrammarProblem(GrammarProblem[TrussAPState, TrussAPEvaluation]):
                             next_state=self.clear_load(
                                 typed_state,
                                 joint_id=joint_id,
-                                direction=cast(TrussLoadDirection, direction),
+                                direction=direction,
                             ),
                         )
                     )

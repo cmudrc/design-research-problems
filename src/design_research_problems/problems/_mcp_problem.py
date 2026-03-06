@@ -196,8 +196,10 @@ class _LoopBoundUpstreamSession:
                 return self._session
 
             _anyio_module, client_session_cls, stdio_module = _import_mcp_client_modules()
-            stdio_client = stdio_module.stdio_client
-            params = stdio_module.StdioServerParameters(
+            stdio_module_any = cast(Any, stdio_module)
+            client_session_cls_any = cast(Any, client_session_cls)
+            stdio_client = stdio_module_any.stdio_client
+            params = stdio_module_any.StdioServerParameters(
                 command=self._stdio_config.command,
                 args=list(self._stdio_config.args),
                 cwd=self._stdio_config.cwd,
@@ -206,7 +208,7 @@ class _LoopBoundUpstreamSession:
 
             exit_stack = AsyncExitStack()
             read_stream, write_stream = await exit_stack.enter_async_context(stdio_client(params))
-            session = await exit_stack.enter_async_context(client_session_cls(read_stream, write_stream))
+            session = await exit_stack.enter_async_context(client_session_cls_any(read_stream, write_stream))
             await cast(Any, session).initialize()
             self._session = session
             self._exit_stack = exit_stack
@@ -444,8 +446,10 @@ class MCPProblem(Problem):
             Discovered upstream tool definitions.
         """
         anyio_module, client_session_cls, stdio_module = _import_mcp_client_modules()
-        stdio_client = stdio_module.stdio_client
-        params = stdio_module.StdioServerParameters(
+        stdio_module_any = cast(Any, stdio_module)
+        client_session_cls_any = cast(Any, client_session_cls)
+        stdio_client = stdio_module_any.stdio_client
+        params = stdio_module_any.StdioServerParameters(
             command=self._stdio_config.command,
             args=list(self._stdio_config.args),
             cwd=self._stdio_config.cwd,
@@ -455,7 +459,7 @@ class MCPProblem(Problem):
         async def _discover() -> tuple[MCPTool, ...]:
             async with stdio_client(params) as streams:
                 read_stream, write_stream = streams
-                async with client_session_cls(read_stream, write_stream) as session:
+                async with client_session_cls_any(read_stream, write_stream) as session:
                     await cast(Any, session).initialize()
                     listed = await cast(Any, session).list_tools()
                     return tuple(cast(Any, listed).tools)
@@ -518,11 +522,12 @@ class MCPProblem(Problem):
             }
 
         proxy_tool.__name__ = f"proxy_{_safe_identifier(tool_name)}"
-        proxy_tool.__signature__ = signature
+        proxy_tool_any = cast(Any, proxy_tool)
+        proxy_tool_any.__signature__ = signature
         return proxy_tool
 
 
-def _import_mcp_client_modules() -> tuple[object, object, object]:
+def _import_mcp_client_modules() -> tuple[Any, Any, Any]:
     """Import MCP client modules lazily.
 
     Returns:
@@ -624,7 +629,7 @@ def _proxy_signature(*, tool_name: str, input_schema: Mapping[str, object]) -> i
     return inspect.Signature(parameters=parameters, return_annotation=dict[str, object])
 
 
-def _annotation_from_schema(schema: object) -> object:
+def _annotation_from_schema(schema: object) -> Any:
     """Map one JSON-schema field descriptor to a Python annotation."""
     if not isinstance(schema, Mapping):
         return object

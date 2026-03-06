@@ -14,9 +14,7 @@ DEFAULT_GUI_DIR = Path("/Users/work/Desktop/Just-IoT-Things-master/gui")
 DEFAULT_DESIGN_DIR = DEFAULT_GUI_DIR / "best_solution"
 DEFAULT_OUTPUT = ROOT / "tests" / "fixtures" / "iot_octave_parity.json"
 
-_ADD_PRODUCT = re.compile(
-    r"net\.add_product\(([-+0-9.eE]+),\s*([-+0-9.eE]+),\s*'([^']+)',\s*'([dsej])'\);"
-)
+_ADD_PRODUCT = re.compile(r"net\.add_product\(([-+0-9.eE]+),\s*([-+0-9.eE]+),\s*'([^']+)',\s*'([dsej])'\);")
 _SET_BTUS = re.compile(r"net\.product_list\(end\)\.btus\s*=\s*([-+0-9.eE]+);")
 _SET_CFM = re.compile(r"net\.product_list\(end\)\.cfm\s*=\s*([-+0-9.eE]+);")
 _SET_DM = re.compile(r"net\.product_list\(end\)\.dm\s*=\s*'([^']+)';")

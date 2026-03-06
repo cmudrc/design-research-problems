@@ -386,6 +386,14 @@ def get_problem(problem_id: _SpaceTrussProblemId) -> SpaceTrussSpanProblem: ...
 
 
 @overload
+def get_problem(problem_id: _IoTGrammarProblemId) -> IoTHomeCoolingGrammarProblem: ...
+
+
+@overload
+def get_problem(problem_id: _TrussAPProblemId) -> TrussAPGrammarProblem: ...
+
+
+@overload
 def get_problem(
     problem_id: Literal[
         "planar_truss_span_mass_min",

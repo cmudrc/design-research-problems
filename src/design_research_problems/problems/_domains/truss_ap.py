@@ -127,9 +127,9 @@ _STEEL_E_PA = 210.0e9
 
 _OUTER_DIAMETER_M = numpy.asarray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], dtype=float) / 100.0
 _WALL_THICKNESS_M = _OUTER_DIAMETER_M / 15.0
-_SECTION_AREA_M2 = numpy.pi * (_OUTER_DIAMETER_M / 2.0) ** 2 - numpy.pi * (
-    _OUTER_DIAMETER_M / 2.0 - _WALL_THICKNESS_M
-) ** 2
+_SECTION_AREA_M2 = (
+    numpy.pi * (_OUTER_DIAMETER_M / 2.0) ** 2 - numpy.pi * (_OUTER_DIAMETER_M / 2.0 - _WALL_THICKNESS_M) ** 2
+)
 _SECTION_INERTIA_M4 = numpy.pi * (_OUTER_DIAMETER_M**4 - (_OUTER_DIAMETER_M - 2.0 * _WALL_THICKNESS_M) ** 4) / 64.0
 _LINEAR_MASS_KG_PER_M = _SECTION_AREA_M2 * 7870.0
 
@@ -178,9 +178,11 @@ def _point_in_polygon(x_value: float, y_value: float, polygon: tuple[tuple[float
         x0, y0 = polygon[index]
         x1, y1 = polygon[(index + 1) % count]
         cross = (x_value - x0) * (y1 - y0) - (y_value - y0) * (x1 - x0)
-        if abs(cross) < 1e-12 and min(x0, x1) - 1e-12 <= x_value <= max(x0, x1) + 1e-12 and min(
-            y0, y1
-        ) - 1e-12 <= y_value <= max(y0, y1) + 1e-12:
+        if (
+            abs(cross) < 1e-12
+            and min(x0, x1) - 1e-12 <= x_value <= max(x0, x1) + 1e-12
+            and min(y0, y1) - 1e-12 <= y_value <= max(y0, y1) + 1e-12
+        ):
             return True
 
         intersects = (y0 > y_value) != (y1 > y_value)
@@ -656,11 +658,7 @@ def resolve_truss_load(
     Returns:
         Updated state with the target load replaced or inserted.
     """
-    retained = [
-        load
-        for load in state.loads
-        if not (load.joint_id == joint_id and load.direction == direction)
-    ]
+    retained = [load for load in state.loads if not (load.joint_id == joint_id and load.direction == direction)]
     retained.append(TrussAPLoad(joint_id=joint_id, direction=direction, magnitude_n=magnitude_n))
     retained.sort(key=lambda entry: (entry.joint_id, _DIRECTION_TO_SLOT[entry.direction]))
     return replace(state, loads=tuple(retained))
@@ -677,11 +675,7 @@ def clear_truss_load(state: TrussAPState, *, joint_id: int, direction: TrussLoad
     Returns:
         Updated state without the target load.
     """
-    loads = tuple(
-        load
-        for load in state.loads
-        if not (load.joint_id == joint_id and load.direction == direction)
-    )
+    loads = tuple(load for load in state.loads if not (load.joint_id == joint_id and load.direction == direction))
     return replace(state, loads=loads)
 
 

@@ -7,7 +7,7 @@ import math
 from dataclasses import asdict, dataclass
 from importlib import import_module
 from types import MappingProxyType
-from typing import Any
+from typing import Any, cast
 
 _BASE_HOLE_EDGE_OFFSET_MM = 10.0
 _FLANGE_HOLE_EDGE_OFFSET_MM = 10.0
@@ -123,8 +123,7 @@ def estimate_bracket_volume_mm3(spec: MountingBracketSpec) -> float:
     flange_volume = spec.width_mm * spec.flange_thickness_mm * spec.flange_height_mm
     hole_area = math.pi * (spec.hole_diameter_mm / 2.0) ** 2
     hole_volume = hole_area * (
-        (spec.base_hole_count * spec.base_thickness_mm)
-        + (spec.flange_hole_count * spec.flange_thickness_mm)
+        (spec.base_hole_count * spec.base_thickness_mm) + (spec.flange_hole_count * spec.flange_thickness_mm)
     )
     return max(base_volume + flange_volume - hole_volume, 0.0)
 
@@ -298,8 +297,7 @@ def _build123d_bracket_volume_mm3(
                 corner_edges = [
                     edge
                     for edge in part.edges()
-                    if abs(float(edge.center().Y) - target_y) <= 1e-6
-                    and abs(float(edge.center().Z) - target_z) <= 1e-6
+                    if abs(float(edge.center().Y) - target_y) <= 1e-6 and abs(float(edge.center().Z) - target_z) <= 1e-6
                 ]
                 if corner_edges:
                     for candidate_radius in _fillet_candidates_mm(spec.fillet_radius_mm):
@@ -310,9 +308,7 @@ def _build123d_bracket_volume_mm3(
                         applied_fillet_radius = candidate_radius
                         break
                     if applied_fillet_radius is None:
-                        warning = (
-                            "Internal-corner fillet could not be applied for the current geometry."
-                        )
+                        warning = "Internal-corner fillet could not be applied for the current geometry."
                     elif applied_fillet_radius < spec.fillet_radius_mm:
                         warning = (
                             f"Requested {spec.fillet_radius_mm:.3g} mm fillet; "
@@ -489,14 +485,13 @@ def evaluate_scripted_part(script: str, *, result_name: str = "result") -> dict[
         raise ValueError(f"Script execution failed: {exc}") from exc
 
     if result_name not in namespace:
-        raise ValueError(
-            f"Script must assign the final model to variable {result_name!r}."
-        )
+        raise ValueError(f"Script must assign the final model to variable {result_name!r}.")
 
     shape = _coerce_script_result_shape(namespace[result_name], result_name=result_name)
+    shape_any = cast(Any, shape)
 
     try:
-        bbox = shape.bounding_box()
+        bbox = shape_any.bounding_box()
         bbox_size = bbox.size
         bbox_x = float(bbox_size.X)
         bbox_y = float(bbox_size.Y)
@@ -510,7 +505,7 @@ def evaluate_scripted_part(script: str, *, result_name: str = "result") -> dict[
     except Exception as exc:
         raise ValueError(f"Could not compute shape metrics: {exc}") from exc
 
-    is_valid_raw = getattr(shape, "is_valid", None)
+    is_valid_raw = getattr(shape_any, "is_valid", None)
     is_valid = bool(is_valid_raw() if callable(is_valid_raw) else is_valid_raw)
 
     return {
@@ -519,8 +514,8 @@ def evaluate_scripted_part(script: str, *, result_name: str = "result") -> dict[
         "build123d_version": build123d_version(),
         "result_name": result_name,
         "is_valid": is_valid,
-        "volume_mm3": float(shape.volume),
-        "surface_area_mm2": float(shape.area) if hasattr(shape, "area") else None,
+        "volume_mm3": float(shape_any.volume),
+        "surface_area_mm2": float(shape_any.area) if hasattr(shape_any, "area") else None,
         "bounding_box_mm": {"x": bbox_x, "y": bbox_y, "z": bbox_z},
         "constraint_checks": {
             "nominal_envelope_mm": {

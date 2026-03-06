@@ -71,9 +71,7 @@ def describe_last_script_result(ctx: Context, include_script: bool = False) -> d
     """Return the most recent scripted CAD evaluation."""
     state = _backend_state(ctx)
     if state.last_script_result is None:
-        raise ValueError(
-            "No script has been evaluated yet. Call evaluate_scripted_part first."
-        )
+        raise ValueError("No script has been evaluated yet. Call evaluate_scripted_part first.")
 
     payload: dict[str, object] = dict(state.last_script_result)
     if not include_script:
