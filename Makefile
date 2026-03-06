@@ -10,7 +10,7 @@ UV ?= $(if $(wildcard .venv/bin/uv),.venv/bin/uv,uv)
 REPRO_PYTHON ?= $(shell cat .python-version 2>/dev/null || echo 3.12.12)
 REPRO_EXTRAS ?= dev
 TRUSSME_SPEC ?= trussme>=0.1.0
-COVERAGE_MINIMUM ?= 75
+COVERAGE_MINIMUM ?= 80
 FULL_EXTRAS ?= dev,battery,grammar,mcp,cad,pandas,solvers
 
 .PHONY: help check-python check-uv dev install-dev repro lock \
