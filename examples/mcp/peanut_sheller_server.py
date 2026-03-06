@@ -134,7 +134,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.serve:
-        serve_stdio()
+        try:
+            serve_stdio()
+        except (MissingOptionalDependencyError, ModuleNotFoundError) as exc:
+            print(exc)
+            print("Install the optional MCP dependency with: pip install design-research-problems[mcp]")
         return 0
 
     try:

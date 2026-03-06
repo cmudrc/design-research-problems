@@ -179,6 +179,8 @@ def main() -> int:
     print("Upstream command:", problem.command)
 
     try:
+        import anyio
+
         server = create_server()
         summary = asyncio.run(run_summary(server))
     except (MissingOptionalDependencyError, ModuleNotFoundError) as exc:
