@@ -1,4 +1,4 @@
-"""Tkinter GUI for interactive IoT home cooling-system co-design."""
+"""Tkinter GUI for interactive IoT home cooling-system."""
 
 from __future__ import annotations
 
@@ -7,6 +7,17 @@ import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
 
 from design_research_problems import get_problem
+from design_research_problems.gui._tk_shared import (
+    CanvasResizeGuard,
+    ViewportTransform,
+    build_canvas_sidebar_layout,
+    fit_window_to_content,
+    is_additive_multiselect_event,
+    keep_sidebar_content_width,
+    run_evaluation_cycle,
+    update_sidebar_scrollregion,
+    viewport_from_canvas,
+)
 from design_research_problems.problems._domains.iot_home import IoTHomeEvaluation, IoTHomeProduct
 
 
@@ -20,8 +31,9 @@ class IoTHomeCoolingApp:
             root: Tk root window.
         """
         self.root = root
-        self.root.title("IoT Home Cooling Co-Design")
+        self.root.title("IoT Home Cooling")
         self.root.minsize(980, 620)
+        self._compact_sidebar = self.root.winfo_screenheight() <= 1000
         self.problem = get_problem("iot_home_cooling_system_design")
         self.state = self.problem.initial_state()
         self._btus_options = tuple(int(value) for value in self.problem.cooler_btus_options)
@@ -34,36 +46,44 @@ class IoTHomeCoolingApp:
 
         self._product_index_to_name: list[str] = []
         self._link_index_to_name: list[str] = []
-        self._last_canvas_size: tuple[int, int] = (0, 0)
+        self._resize_guard = CanvasResizeGuard()
         self._product_canvas_positions: dict[str, tuple[float, float]] = {}
         self._product_hit_radius_px = 12.0
         self._latest_evaluation: IoTHomeEvaluation | None = None
 
         self._build_layout()
-        self.root.after_idle(self._refresh)
+        self.root.after_idle(self._initialize_view)
+
+    def _initialize_view(self) -> None:
+        """Run first refresh, then size window to fit rendered sidebar content."""
+        self._refresh()
+        self.root.update_idletasks()
+        sidebar_height = self._sidebar_content.winfo_reqheight() + 24
+        fit_window_to_content(
+            self.root,
+            preferred_width=1250,
+            preferred_height=max(760, sidebar_height),
+            min_width=980,
+            min_height=620,
+            screen_margin_y=40,
+        )
 
     def _build_layout(self) -> None:
-        main = ttk.Frame(self.root, padding=8)
-        main.pack(fill=tk.BOTH, expand=True)
+        layout = build_canvas_sidebar_layout(
+            self.root,
+            sidebar_width=330,
+            canvas_width=920,
+            canvas_height=560,
+            canvas_background="#f7f7f7",
+        )
+        self.canvas = layout.canvas
+        self.sidebar_canvas = layout.sidebar_canvas
+        self._sidebar_window_id = layout.sidebar_window_id
+        right = layout.right
+        self._sidebar_content = right
 
-        left = ttk.Frame(main)
-        left.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-        sidebar_outer = ttk.Frame(main)
-        sidebar_outer.pack(side=tk.LEFT, fill=tk.Y, padx=(10, 0))
-        self.sidebar_canvas = tk.Canvas(sidebar_outer, width=330, highlightthickness=0, borderwidth=0)
-        sidebar_scrollbar = ttk.Scrollbar(sidebar_outer, orient=tk.VERTICAL, command=self.sidebar_canvas.yview)
-        self.sidebar_canvas.configure(yscrollcommand=sidebar_scrollbar.set)
-        self.sidebar_canvas.pack(side=tk.LEFT, fill=tk.Y)
-        sidebar_scrollbar.pack(side=tk.LEFT, fill=tk.Y)
-
-        right = ttk.Frame(self.sidebar_canvas)
-        self._sidebar_window_id = self.sidebar_canvas.create_window((0, 0), window=right, anchor=tk.NW)
         right.bind("<Configure>", self._on_sidebar_content_configure)
         self.sidebar_canvas.bind("<Configure>", self._on_sidebar_canvas_configure)
-
-        self.canvas = tk.Canvas(left, width=920, height=560, background="#f7f7f7", highlightthickness=1)
-        self.canvas.pack(fill=tk.BOTH, expand=True)
         self.canvas.bind("<Button-1>", self._on_canvas_click)
         self.canvas.bind("<Configure>", self._on_canvas_configure)
 
@@ -100,12 +120,20 @@ class IoTHomeCoolingApp:
         ).pack(anchor=tk.W, pady=(0, 8))
 
         ttk.Label(right, text="Products").pack(anchor=tk.W)
-        self.product_listbox = tk.Listbox(right, height=12, width=34, selectmode=tk.EXTENDED, exportselection=False)
+        product_list_height = 9 if self._compact_sidebar else 12
+        self.product_listbox = tk.Listbox(
+            right,
+            height=product_list_height,
+            width=34,
+            selectmode=tk.EXTENDED,
+            exportselection=False,
+        )
         self.product_listbox.pack(anchor=tk.W, fill=tk.X)
         self.product_listbox.bind("<<ListboxSelect>>", self._on_product_list_selection)
 
         ttk.Label(right, text="Links").pack(anchor=tk.W, pady=(8, 0))
-        self.link_listbox = tk.Listbox(right, height=8, width=34, exportselection=False)
+        link_list_height = 6 if self._compact_sidebar else 8
+        self.link_listbox = tk.Listbox(right, height=link_list_height, width=34, exportselection=False)
         self.link_listbox.pack(anchor=tk.W, fill=tk.X)
 
         ttk.Button(right, text="Add Link (2 selected products)", command=self._add_link_from_selection).pack(
@@ -141,24 +169,16 @@ class IoTHomeCoolingApp:
 
     def _on_sidebar_content_configure(self, _event: tk.Event[tk.Misc]) -> None:
         """Update sidebar scroll range when content height changes."""
-        self.sidebar_canvas.configure(scrollregion=self.sidebar_canvas.bbox("all"))
+        update_sidebar_scrollregion(self.sidebar_canvas)
 
     def _on_sidebar_canvas_configure(self, event: tk.Event[tk.Misc]) -> None:
         """Keep sidebar content width equal to the visible canvas width."""
         width = int(getattr(event, "width", 0))
-        if width > 0:
-            self.sidebar_canvas.itemconfigure(self._sidebar_window_id, width=width)
+        keep_sidebar_content_width(self.sidebar_canvas, self._sidebar_window_id, width)
 
     def _on_canvas_configure(self, event: tk.Event[tk.Misc]) -> None:
         """Redraw when canvas dimensions change to keep initial scaling stable."""
-        width = int(getattr(event, "width", 0))
-        height = int(getattr(event, "height", 0))
-        next_size = (width, height)
-        if next_size == self._last_canvas_size:
-            return
-        self._last_canvas_size = next_size
-        if width > 1 and height > 1:
-            self._draw()
+        self._resize_guard.handle_configure(event, self._draw)
 
     def _on_product_list_selection(self, _event: tk.Event[tk.Misc]) -> None:
         """Refresh visual highlight when product selection changes."""
@@ -178,34 +198,15 @@ class IoTHomeCoolingApp:
         ys = room_y + product_y + [-2.0, 50.0]
         return (min(xs), max(xs), min(ys), max(ys))
 
-    def _viewport_transform(self) -> tuple[float, float, float, float, float]:
+    def _viewport_transform(self) -> ViewportTransform:
         """Return scale/offset terms for an aspect-preserving world-to-canvas map."""
-        min_x, max_x, min_y, max_y = self._world_bounds()
-        width = max(self.canvas.winfo_width(), 200)
-        height = max(self.canvas.winfo_height(), 200)
-        margin = 24.0
-        span_x = max(max_x - min_x, 1e-9)
-        span_y = max(max_y - min_y, 1e-9)
-        usable_width = max(width - 2.0 * margin, 1.0)
-        usable_height = max(height - 2.0 * margin, 1.0)
-        scale = min(usable_width / span_x, usable_height / span_y)
-        draw_width = span_x * scale
-        draw_height = span_y * scale
-        offset_x = (width - draw_width) / 2.0
-        offset_y = (height - draw_height) / 2.0
-        return (scale, offset_x, offset_y, min_x, max_y)
+        return viewport_from_canvas(self._world_bounds(), self.canvas)
 
     def _world_to_canvas(self, x_value: float, y_value: float) -> tuple[float, float]:
-        scale, offset_x, offset_y, min_x, max_y = self._viewport_transform()
-        canvas_x = offset_x + (x_value - min_x) * scale
-        canvas_y = offset_y + (max_y - y_value) * scale
-        return (canvas_x, canvas_y)
+        return self._viewport_transform().world_to_canvas(x_value, y_value)
 
     def _canvas_to_world(self, canvas_x: float, canvas_y: float) -> tuple[float, float]:
-        scale, offset_x, offset_y, min_x, max_y = self._viewport_transform()
-        world_x = min_x + (canvas_x - offset_x) / scale
-        world_y = max_y - (canvas_y - offset_y) / scale
-        return (world_x, world_y)
+        return self._viewport_transform().canvas_to_world(canvas_x, canvas_y)
 
     def _temperature_to_color(self, temperature_c: float | None) -> str:
         """Map one room temperature to a blue-to-red fill color."""
@@ -232,7 +233,7 @@ class IoTHomeCoolingApp:
         return {room.room_id: float(values[room.room_id - 1]) for room in self.state.house_geometry.rooms}
 
     def _draw_temperature_legend(self) -> None:
-        """Draw a compact room-temperature legend in canvas coordinates."""
+        """Draw a continuous room-temperature colorbar in canvas coordinates."""
         x0 = 12
         y0 = 12
         self.canvas.create_text(
@@ -243,12 +244,44 @@ class IoTHomeCoolingApp:
             fill="#111827",
             font=("Helvetica", 9, "bold"),
         )
-        swatches = ((16.0, "16"), (24.0, "24"), (34.0, "34"))
-        for index, (temp_c, label) in enumerate(swatches):
-            y = y0 + 18 + index * 18
-            color = self._temperature_to_color(temp_c)
-            self.canvas.create_rectangle(x0, y, x0 + 14, y + 12, fill=color, outline="#374151")
-            self.canvas.create_text(x0 + 20, y + 6, text=label, anchor=tk.W, fill="#111827", font=("Helvetica", 8))
+        min_temp_c = 16.0
+        max_temp_c = 34.0
+        bar_top = y0 + 20
+        bar_height = 138
+        bar_width = 16
+        steps = 69
+        step_height = bar_height / steps
+
+        for step in range(steps):
+            y_start = bar_top + step * step_height
+            y_end = bar_top + (step + 1) * step_height
+            fraction_from_top = (step + 0.5) / steps
+            temperature_c = max_temp_c - fraction_from_top * (max_temp_c - min_temp_c)
+            color = self._temperature_to_color(temperature_c)
+            self.canvas.create_rectangle(x0, y_start, x0 + bar_width, y_end, fill=color, outline=color)
+
+        self.canvas.create_rectangle(
+            x0,
+            bar_top,
+            x0 + bar_width,
+            bar_top + bar_height,
+            outline="#374151",
+            width=1,
+        )
+
+        ticks_c = (34.0, 30.0, 26.0, 22.0, 18.0, 16.0)
+        for tick_c in ticks_c:
+            ratio = (max_temp_c - tick_c) / (max_temp_c - min_temp_c)
+            tick_y = bar_top + ratio * bar_height
+            self.canvas.create_line(x0 + bar_width, tick_y, x0 + bar_width + 4, tick_y, fill="#374151", width=1)
+            self.canvas.create_text(
+                x0 + bar_width + 8,
+                tick_y,
+                text=f"{tick_c:.0f}",
+                anchor=tk.W,
+                fill="#111827",
+                font=("Helvetica", 8),
+            )
 
     def _draw(self) -> None:
         self.canvas.delete("all")
@@ -405,8 +438,7 @@ class IoTHomeCoolingApp:
 
     def _is_multiselect_event(self, event: tk.Event[tk.Misc]) -> bool:
         """Return whether one click event requests additive multi-selection."""
-        state_bits = int(getattr(event, "state", 0))
-        return bool(state_bits & 0x0001 or state_bits & 0x0004 or state_bits & 0x0008)
+        return is_additive_multiselect_event(event)
 
     def _on_canvas_click(self, event: tk.Event[tk.Misc]) -> None:
         canvas_x = float(event.x)
@@ -540,16 +572,12 @@ class IoTHomeCoolingApp:
             return
         self._refresh()
 
-    def _reevaluate_state(self) -> None:
-        """Run one evaluation pass and update cached metrics/overlay data."""
-        try:
-            evaluation = self.problem.evaluate(self.state)
-        except Exception as exc:
-            self._latest_evaluation = None
-            self.metrics_var.set(f"evaluation_error: {exc}")
-            return
-
+    def _set_latest_evaluation(self, evaluation: IoTHomeEvaluation | None) -> None:
+        """Store one latest evaluation object for overlay drawing and metrics."""
         self._latest_evaluation = evaluation
+
+    def _summarize_evaluation(self, evaluation: IoTHomeEvaluation) -> tuple[IoTHomeEvaluation | None, str]:
+        """Return ``(latest_evaluation, metrics_text)`` for one successful evaluate() call."""
         room_temperatures = evaluation.room_temperatures_c
         hottest_room_id = 0
         if room_temperatures:
@@ -568,7 +596,16 @@ class IoTHomeCoolingApp:
         ]
         if evaluation.failure_reason:
             lines.append(f"reason: {evaluation.failure_reason}")
-        self.metrics_var.set("\n".join(lines))
+        return (evaluation, "\n".join(lines))
+
+    def _reevaluate_state(self) -> None:
+        """Run one evaluation pass and update cached metrics/overlay data."""
+        run_evaluation_cycle(
+            evaluate=lambda: self.problem.evaluate(self.state),
+            on_success=self._summarize_evaluation,
+            set_latest=self._set_latest_evaluation,
+            metrics_var=self.metrics_var,
+        )
 
     def _evaluate(self) -> None:
         """Re-run evaluation on demand (auto-runs after every edit too)."""

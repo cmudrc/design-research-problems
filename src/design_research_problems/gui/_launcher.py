@@ -23,12 +23,12 @@ _GUI_APP_SPECS: Final[dict[GUIAppId, tuple[str, str, str]]] = {
     "iot": (
         "design_research_problems.gui.iot_home_cooling_tk",
         "IoTHomeCoolingApp",
-        "1250x620",
+        "1250x760",
     ),
     "truss": (
         "design_research_problems.gui.truss_analysis_program_tk",
         "TrussAPApp",
-        "1260x640",
+        "1260x760",
     ),
 }
 

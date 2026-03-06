@@ -8,6 +8,17 @@ from tkinter import messagebox, ttk
 from typing import cast
 
 from design_research_problems import get_problem
+from design_research_problems.gui._tk_shared import (
+    CanvasResizeGuard,
+    ViewportTransform,
+    build_canvas_sidebar_layout,
+    fit_window_to_content,
+    is_additive_multiselect_event,
+    keep_sidebar_content_width,
+    run_evaluation_cycle,
+    update_sidebar_scrollregion,
+    viewport_from_canvas,
+)
 from design_research_problems.problems._domains.truss_ap import TrussAPEvaluation, TrussLoadDirection
 from design_research_problems.problems.grammar._truss_ap import TrussAPGrammarProblem
 
@@ -22,8 +33,9 @@ class TrussAPApp:
             root: Tk root window.
         """
         self.root = root
-        self.root.title("Truss Analysis Program Co-Design")
+        self.root.title("Truss Analysis Program")
         self.root.minsize(980, 620)
+        self._compact_sidebar = self.root.winfo_screenheight() <= 1000
         problem = get_problem("truss_analysis_program_design")
         if not isinstance(problem, TrussAPGrammarProblem):
             raise TypeError("Truss GUI requires the TrussAPGrammarProblem direct-stiffness backend.")
@@ -42,34 +54,42 @@ class TrussAPApp:
         self._member_canvas_segments: dict[int, tuple[float, float, float, float]] = {}
         self._joint_hit_radius_px = 12.0
         self._member_hit_radius_px = 10.0
-        self._last_canvas_size: tuple[int, int] = (0, 0)
+        self._resize_guard = CanvasResizeGuard()
         self._latest_evaluation: TrussAPEvaluation | None = None
 
         self._build_layout()
-        self.root.after_idle(self._refresh)
+        self.root.after_idle(self._initialize_view)
+
+    def _initialize_view(self) -> None:
+        """Run first refresh, then size window to fit rendered sidebar content."""
+        self._refresh()
+        self.root.update_idletasks()
+        sidebar_height = self._sidebar_content.winfo_reqheight() + 24
+        fit_window_to_content(
+            self.root,
+            preferred_width=1260,
+            preferred_height=max(760, sidebar_height),
+            min_width=980,
+            min_height=620,
+            screen_margin_y=40,
+        )
 
     def _build_layout(self) -> None:
-        main = ttk.Frame(self.root, padding=8)
-        main.pack(fill=tk.BOTH, expand=True)
+        layout = build_canvas_sidebar_layout(
+            self.root,
+            sidebar_width=350,
+            canvas_width=920,
+            canvas_height=560,
+            canvas_background="#f6f8fb",
+        )
+        self.canvas = layout.canvas
+        self.sidebar_canvas = layout.sidebar_canvas
+        self._sidebar_window_id = layout.sidebar_window_id
+        right = layout.right
+        self._sidebar_content = right
 
-        left = ttk.Frame(main)
-        left.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-        sidebar_outer = ttk.Frame(main)
-        sidebar_outer.pack(side=tk.LEFT, fill=tk.Y, padx=(10, 0))
-        self.sidebar_canvas = tk.Canvas(sidebar_outer, width=350, highlightthickness=0, borderwidth=0)
-        sidebar_scrollbar = ttk.Scrollbar(sidebar_outer, orient=tk.VERTICAL, command=self.sidebar_canvas.yview)
-        self.sidebar_canvas.configure(yscrollcommand=sidebar_scrollbar.set)
-        self.sidebar_canvas.pack(side=tk.LEFT, fill=tk.Y)
-        sidebar_scrollbar.pack(side=tk.LEFT, fill=tk.Y)
-
-        right = ttk.Frame(self.sidebar_canvas)
-        self._sidebar_window_id = self.sidebar_canvas.create_window((0, 0), window=right, anchor=tk.NW)
         right.bind("<Configure>", self._on_sidebar_content_configure)
         self.sidebar_canvas.bind("<Configure>", self._on_sidebar_canvas_configure)
-
-        self.canvas = tk.Canvas(left, width=920, height=560, background="#f6f8fb", highlightthickness=1)
-        self.canvas.pack(fill=tk.BOTH, expand=True)
         self.canvas.bind("<Button-1>", self._on_canvas_click)
         self.canvas.bind("<Configure>", self._on_canvas_configure)
 
@@ -83,12 +103,19 @@ class TrussAPApp:
         ).pack(anchor=tk.W, pady=(0, 8))
 
         ttk.Label(right, text="Joints").pack(anchor=tk.W)
-        self.joint_listbox = tk.Listbox(right, height=10, width=36, selectmode=tk.EXTENDED, exportselection=False)
+        list_height = 8 if self._compact_sidebar else 10
+        self.joint_listbox = tk.Listbox(
+            right,
+            height=list_height,
+            width=36,
+            selectmode=tk.EXTENDED,
+            exportselection=False,
+        )
         self.joint_listbox.pack(anchor=tk.W, fill=tk.X)
         self.joint_listbox.bind("<<ListboxSelect>>", self._on_joint_list_selection)
 
         ttk.Label(right, text="Members").pack(anchor=tk.W, pady=(8, 0))
-        self.member_listbox = tk.Listbox(right, height=10, width=36, exportselection=False)
+        self.member_listbox = tk.Listbox(right, height=list_height, width=36, exportselection=False)
         self.member_listbox.pack(anchor=tk.W, fill=tk.X)
         self.member_listbox.bind("<<ListboxSelect>>", self._on_member_list_selection)
 
@@ -151,24 +178,16 @@ class TrussAPApp:
 
     def _on_sidebar_content_configure(self, _event: tk.Event[tk.Misc]) -> None:
         """Update sidebar scroll range when content height changes."""
-        self.sidebar_canvas.configure(scrollregion=self.sidebar_canvas.bbox("all"))
+        update_sidebar_scrollregion(self.sidebar_canvas)
 
     def _on_sidebar_canvas_configure(self, event: tk.Event[tk.Misc]) -> None:
         """Keep sidebar content width equal to the visible canvas width."""
         width = int(getattr(event, "width", 0))
-        if width > 0:
-            self.sidebar_canvas.itemconfigure(self._sidebar_window_id, width=width)
+        keep_sidebar_content_width(self.sidebar_canvas, self._sidebar_window_id, width)
 
     def _on_canvas_configure(self, event: tk.Event[tk.Misc]) -> None:
         """Redraw when canvas dimensions change to keep initial scaling stable."""
-        width = int(getattr(event, "width", 0))
-        height = int(getattr(event, "height", 0))
-        next_size = (width, height)
-        if next_size == self._last_canvas_size:
-            return
-        self._last_canvas_size = next_size
-        if width > 1 and height > 1:
-            self._draw()
+        self._resize_guard.handle_configure(event, self._draw)
 
     def _on_joint_list_selection(self, _event: tk.Event[tk.Misc]) -> None:
         """Refresh visual highlight when listbox selection changes."""
@@ -181,34 +200,15 @@ class TrussAPApp:
     def _viewport_transform(
         self,
         bounds: tuple[float, float, float, float],
-    ) -> tuple[float, float, float, float, float]:
+    ) -> ViewportTransform:
         """Return scale/offset terms for an aspect-preserving world-to-canvas map."""
-        x_min, x_max, y_min, y_max = bounds
-        width = max(self.canvas.winfo_width(), 200)
-        height = max(self.canvas.winfo_height(), 200)
-        margin = 24.0
-        span_x = max(x_max - x_min, 1e-9)
-        span_y = max(y_max - y_min, 1e-9)
-        usable_width = max(width - 2.0 * margin, 1.0)
-        usable_height = max(height - 2.0 * margin, 1.0)
-        scale = min(usable_width / span_x, usable_height / span_y)
-        draw_width = span_x * scale
-        draw_height = span_y * scale
-        offset_x = (width - draw_width) / 2.0
-        offset_y = (height - draw_height) / 2.0
-        return (scale, offset_x, offset_y, x_min, y_max)
+        return viewport_from_canvas(bounds, self.canvas)
 
     def _world_to_canvas(self, x_value: float, y_value: float) -> tuple[float, float]:
-        scale, offset_x, offset_y, x_min, y_max = self._viewport_transform(self.state.design_bounds)
-        canvas_x = offset_x + (x_value - x_min) * scale
-        canvas_y = offset_y + (y_max - y_value) * scale
-        return (canvas_x, canvas_y)
+        return self._viewport_transform(self.state.design_bounds).world_to_canvas(x_value, y_value)
 
     def _canvas_to_world(self, canvas_x: float, canvas_y: float) -> tuple[float, float]:
-        scale, offset_x, offset_y, x_min, y_max = self._viewport_transform(self.state.design_bounds)
-        world_x = x_min + (canvas_x - offset_x) / scale
-        world_y = y_max - (canvas_y - offset_y) / scale
-        return (world_x, world_y)
+        return self._viewport_transform(self.state.design_bounds).canvas_to_world(canvas_x, canvas_y)
 
     def _draw_load_arrow(self, x_value: float, y_value: float, direction: str, color: str = "#8b1a1a") -> None:
         dx = 0.0
@@ -489,8 +489,7 @@ class TrussAPApp:
         Returns:
             ``True`` when the event has a common modifier for additive selection.
         """
-        state_bits = int(getattr(event, "state", 0))
-        return bool(state_bits & 0x0001 or state_bits & 0x0004 or state_bits & 0x0008)
+        return is_additive_multiselect_event(event)
 
     def _on_canvas_click(self, event: tk.Event[tk.Misc]) -> None:
         canvas_x = float(event.x)
@@ -640,29 +639,20 @@ class TrussAPApp:
             return
         self._refresh()
 
-    def _reevaluate_state(self) -> None:
-        """Run one evaluation pass and update cached metrics/overlay data."""
-        _member_count, _reaction_count, lhs, rhs = self._determinacy_values()
-        if lhs < rhs:
-            self._latest_evaluation = None
-            self.metrics_var.set(self._evaluation_waiting_message())
-            return
+    def _set_latest_evaluation(self, evaluation: TrussAPEvaluation | None) -> None:
+        """Store one latest evaluation object for drawing overlays and metrics."""
+        self._latest_evaluation = evaluation
 
-        try:
-            evaluation = self.problem.evaluate(self.state)
-        except Exception as exc:
-            self._latest_evaluation = None
-            self.metrics_var.set(f"evaluation_error: {exc}")
-            return
-
+    def _summarize_evaluation(self, evaluation: TrussAPEvaluation) -> tuple[TrussAPEvaluation | None, str]:
+        """Return ``(latest_evaluation, metrics_text)`` for one successful evaluate() call."""
+        latest: TrussAPEvaluation | None = None
         if (
             evaluation.is_stable
             and evaluation.failure_reason is None
             and len(evaluation.fos_by_member) == len(self.state.members)
         ):
-            self._latest_evaluation = evaluation
-        else:
-            self._latest_evaluation = None
+            latest = evaluation
+
         lines = [
             f"mass_kg: {evaluation.mass_kg:.3f}",
             f"min_fos: {evaluation.min_fos:.3f}",
@@ -673,7 +663,22 @@ class TrussAPApp:
         ]
         if evaluation.failure_reason:
             lines.append(f"reason: {evaluation.failure_reason}")
-        self.metrics_var.set("\n".join(lines))
+        return (latest, "\n".join(lines))
+
+    def _reevaluate_state(self) -> None:
+        """Run one evaluation pass and update cached metrics/overlay data."""
+        _member_count, _reaction_count, lhs, rhs = self._determinacy_values()
+        if lhs < rhs:
+            self._latest_evaluation = None
+            self.metrics_var.set(self._evaluation_waiting_message())
+            return
+
+        run_evaluation_cycle(
+            evaluate=lambda: self.problem.evaluate(self.state),
+            on_success=self._summarize_evaluation,
+            set_latest=self._set_latest_evaluation,
+            metrics_var=self.metrics_var,
+        )
 
     def _evaluate(self) -> None:
         """Re-run evaluation on demand (auto-runs after every edit too)."""
