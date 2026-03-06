@@ -267,13 +267,21 @@ class IoTHomeCoolingApp:
         self._draw()
 
     def _selected_product_names(self) -> list[str]:
-        return [self._product_index_to_name[index] for index in self.product_listbox.curselection()]
+        selected_indices = (int(index) for index in self.product_listbox.curselection())
+        return [
+            self._product_index_to_name[index]
+            for index in selected_indices
+            if 0 <= index < len(self._product_index_to_name)
+        ]
 
     def _selected_link_name(self) -> str | None:
         selection = self.link_listbox.curselection()
         if not selection:
             return None
-        return self._link_index_to_name[selection[0]]
+        selected_index = int(selection[0])
+        if not (0 <= selected_index < len(self._link_index_to_name)):
+            return None
+        return self._link_index_to_name[selected_index]
 
     def _nearest_product_name(self, canvas_x: float, canvas_y: float) -> str | None:
         """Return nearest product under one canvas click, using a hit area."""

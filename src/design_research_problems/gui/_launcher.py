@@ -4,11 +4,20 @@ from __future__ import annotations
 
 import argparse
 from importlib import import_module
-from typing import Final, Literal
+from typing import Any, Final, Literal, Protocol, cast
 
 from design_research_problems._exceptions import MissingOptionalDependencyError
 
 type GUIAppId = Literal["iot", "truss"]
+
+
+class _TkModule(Protocol):
+    """Minimal Tk module protocol required by this launcher."""
+
+    def Tk(self) -> Any:
+        """Construct and return the root Tk window."""
+        ...
+
 
 _GUI_APP_SPECS: Final[dict[GUIAppId, tuple[str, str, str]]] = {
     "iot": (
@@ -29,7 +38,7 @@ def list_gui_apps() -> tuple[GUIAppId, ...]:
     return tuple(_GUI_APP_SPECS)
 
 
-def _import_tk() -> object:
+def _import_tk() -> _TkModule:
     """Import tkinter or raise a stable optional-dependency error."""
     try:
         import tkinter as tk
@@ -38,7 +47,7 @@ def _import_tk() -> object:
             "Tkinter is not available in this Python environment. "
             "Install/use a Python build with Tk support to run GUI examples."
         ) from exc
-    return tk
+    return cast(_TkModule, tk)
 
 
 def launch_gui(app: GUIAppId = "iot") -> None:

@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import tkinter as tk
 from tkinter import messagebox, ttk
+from typing import cast
 
 from design_research_problems import get_problem
+from design_research_problems.problems._domains.truss_ap import TrussLoadDirection
 
 
 class TrussAPApp:
@@ -270,13 +272,19 @@ class TrussAPApp:
         self._draw()
 
     def _selected_joint_ids(self) -> list[int]:
-        return [self._joint_index_to_id[index] for index in self.joint_listbox.curselection()]
+        selected_indices = (int(index) for index in self.joint_listbox.curselection())
+        return [
+            self._joint_index_to_id[index] for index in selected_indices if 0 <= index < len(self._joint_index_to_id)
+        ]
 
     def _selected_member_id(self) -> int | None:
         selection = self.member_listbox.curselection()
         if not selection:
             return None
-        return self._member_index_to_id[selection[0]]
+        selected_index = int(selection[0])
+        if not (0 <= selected_index < len(self._member_index_to_id)):
+            return None
+        return self._member_index_to_id[selected_index]
 
     def _nearest_joint_id(self, canvas_x: float, canvas_y: float) -> int | None:
         """Return nearest joint under one canvas click, using a hit area."""
@@ -410,7 +418,10 @@ class TrussAPApp:
             return
 
         try:
-            direction = self.load_direction_var.get()
+            direction_raw = self.load_direction_var.get()
+            if direction_raw not in {"left", "down", "right", "up"}:
+                raise ValueError("Load direction must be one of left, down, right, or up.")
+            direction = cast(TrussLoadDirection, direction_raw)
             magnitude = float(self.load_magnitude_var.get())
             self.state = self.problem.set_load(
                 self.state,
@@ -430,7 +441,10 @@ class TrussAPApp:
             return
 
         try:
-            direction = self.load_direction_var.get()
+            direction_raw = self.load_direction_var.get()
+            if direction_raw not in {"left", "down", "right", "up"}:
+                raise ValueError("Load direction must be one of left, down, right, or up.")
+            direction = cast(TrussLoadDirection, direction_raw)
             self.state = self.problem.clear_load(self.state, joint_id=selected[0], direction=direction)
         except Exception as exc:
             messagebox.showerror("Clear load failed", str(exc))
