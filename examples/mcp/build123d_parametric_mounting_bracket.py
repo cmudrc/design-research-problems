@@ -107,6 +107,23 @@ def create_server() -> FastMCP:
     return problem.to_mcp_server(server_name=SERVER_NAME, include_citation=False)
 
 
+def _is_expected_build123d_runtime_unavailable_error(exc: BaseException) -> bool:
+    """Return whether one exception indicates optional build123d runtime absence.
+
+    Args:
+        exc: Exception raised while exercising the Build123d MCP tools.
+
+    Returns:
+        ``True`` when the error matches expected optional-backend absence paths.
+    """
+    message = str(exc).lower()
+    return (
+        "build123d is not installed" in message
+        or "tcl wasn't installed properly" in message
+        or "upstream mcp tool 'evaluate_scripted_part' failed" in message
+    )
+
+
 async def run_summary(server: FastMCP) -> dict[str, object]:
     """Collect a short runtime summary from the wrapped MCP server.
 
@@ -172,6 +189,11 @@ def main() -> int:
     except (FileNotFoundError, RuntimeError) as exc:
         print(f"build123d backend startup failed: {exc}")
         return 0
+    except Exception as exc:
+        if _is_expected_build123d_runtime_unavailable_error(exc):
+            print(f"build123d backend startup failed: {exc}")
+            return 0
+        raise
 
     print("Tool count:", summary["tool_count"])
     print("Tools:", ", ".join(cast(list[str], summary["tool_names"])))
