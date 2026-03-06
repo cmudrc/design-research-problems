@@ -297,16 +297,39 @@ class TrussAPApp:
                 best_joint_id = joint_id
         return best_joint_id
 
-    def _select_joint_by_id(self, joint_id: int) -> None:
-        """Select one joint in the listbox by identifier."""
+    def _select_joint_by_id(self, joint_id: int, *, append: bool = False) -> None:
+        """Select one joint in the listbox by identifier.
+
+        Args:
+            joint_id: Joint identifier to select.
+            append: Whether to keep existing selection and toggle this joint.
+        """
         target_index = next((index for index, item in enumerate(self._joint_index_to_id) if item == joint_id), None)
         if target_index is None:
             return
-        self.joint_listbox.selection_clear(0, tk.END)
-        self.joint_listbox.selection_set(target_index)
+        if append:
+            if self.joint_listbox.selection_includes(target_index):
+                self.joint_listbox.selection_clear(target_index)
+            else:
+                self.joint_listbox.selection_set(target_index)
+        else:
+            self.joint_listbox.selection_clear(0, tk.END)
+            self.joint_listbox.selection_set(target_index)
         self.joint_listbox.activate(target_index)
         self.joint_listbox.see(target_index)
         self._draw()
+
+    def _is_multiselect_event(self, event: tk.Event[tk.Misc]) -> bool:
+        """Return whether one click event requests additive multi-selection.
+
+        Args:
+            event: Tk click event.
+
+        Returns:
+            ``True`` when the event has a common modifier for additive selection.
+        """
+        state_bits = int(getattr(event, "state", 0))
+        return bool(state_bits & 0x0001 or state_bits & 0x0004 or state_bits & 0x0008)
 
     def _on_canvas_click(self, event: tk.Event[tk.Misc]) -> None:
         canvas_x = float(event.x)
@@ -315,7 +338,7 @@ class TrussAPApp:
 
         clicked_joint_id = self._nearest_joint_id(canvas_x, canvas_y)
         if clicked_joint_id is not None:
-            self._select_joint_by_id(clicked_joint_id)
+            self._select_joint_by_id(clicked_joint_id, append=self._is_multiselect_event(event))
             if mode == "move_selected_joint":
                 # In move mode: clicking a joint selects it; clicking empty space moves it.
                 return
