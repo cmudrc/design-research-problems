@@ -9,6 +9,7 @@ from typing import cast
 
 from design_research_problems import get_problem
 from design_research_problems.problems._domains.truss_ap import TrussAPEvaluation, TrussLoadDirection
+from design_research_problems.problems.grammar._truss_ap import TrussAPGrammarProblem
 
 
 class TrussAPApp:
@@ -23,7 +24,10 @@ class TrussAPApp:
         self.root = root
         self.root.title("Truss Analysis Program Co-Design")
         self.root.minsize(980, 620)
-        self.problem = get_problem("truss_analysis_program_design")
+        problem = get_problem("truss_analysis_program_design")
+        if not isinstance(problem, TrussAPGrammarProblem):
+            raise TypeError("Truss GUI requires the TrussAPGrammarProblem direct-stiffness backend.")
+        self.problem = problem
         self.state = self.problem.initial_state()
 
         self.mode_var = tk.StringVar(value="add_joint")
@@ -139,7 +143,10 @@ class TrussAPApp:
         self.metrics_var = tk.StringVar(value="No evaluation yet.")
         ttk.Label(right, textvariable=self.metrics_var, justify=tk.LEFT).pack(anchor=tk.W, pady=(6, 0))
 
-        hint = "Select joints/members from the lists or canvas. Member colors and labels show FOS after each change."
+        hint = (
+            "Select joints/members from the lists or canvas. Under-determined trusses (m + r < 2j) are not "
+            "evaluated. Member colors and FOS labels appear after a successful structural solve."
+        )
         ttk.Label(right, text=hint, wraplength=280, justify=tk.LEFT).pack(anchor=tk.W, pady=(10, 0))
 
     def _on_sidebar_content_configure(self, _event: tk.Event[tk.Misc]) -> None:
@@ -233,6 +240,35 @@ class TrussAPApp:
         if value < self.state.fos_target:
             return "#b45309"
         return "#166534"
+
+    def _reaction_unknown_count(self) -> int:
+        """Return planar support-reaction unknown count from support toggles."""
+        count = 0
+        if self.state.support_enabled[0]:
+            count += 2
+        if self.state.support_enabled[1]:
+            count += 1
+        if self.state.support_enabled[2]:
+            count += 2
+        return count
+
+    def _determinacy_values(self) -> tuple[int, int, int, int]:
+        """Return ``(m, r, lhs, rhs)`` for planar determinacy ``m + r >= 2j``."""
+        member_count = len(self.state.members)
+        reaction_count = self._reaction_unknown_count()
+        joint_count = len(self.state.joints)
+        lhs = member_count + reaction_count
+        rhs = 2 * joint_count
+        return (member_count, reaction_count, lhs, rhs)
+
+    def _evaluation_waiting_message(self) -> str:
+        """Build the status message shown while under-determined."""
+        member_count, reaction_count, lhs, rhs = self._determinacy_values()
+        lines = [
+            "Evaluation disabled while the truss is under-determined.",
+            f"determinacy: m + r = {lhs} (m={member_count}, r={reaction_count}); 2j = {rhs}",
+        ]
+        return "\n".join(lines)
 
     def _draw(self) -> None:
         self.canvas.delete("all")
@@ -606,6 +642,12 @@ class TrussAPApp:
 
     def _reevaluate_state(self) -> None:
         """Run one evaluation pass and update cached metrics/overlay data."""
+        _member_count, _reaction_count, lhs, rhs = self._determinacy_values()
+        if lhs < rhs:
+            self._latest_evaluation = None
+            self.metrics_var.set(self._evaluation_waiting_message())
+            return
+
         try:
             evaluation = self.problem.evaluate(self.state)
         except Exception as exc:
@@ -613,7 +655,14 @@ class TrussAPApp:
             self.metrics_var.set(f"evaluation_error: {exc}")
             return
 
-        self._latest_evaluation = evaluation
+        if (
+            evaluation.is_stable
+            and evaluation.failure_reason is None
+            and len(evaluation.fos_by_member) == len(self.state.members)
+        ):
+            self._latest_evaluation = evaluation
+        else:
+            self._latest_evaluation = None
         lines = [
             f"mass_kg: {evaluation.mass_kg:.3f}",
             f"min_fos: {evaluation.min_fos:.3f}",

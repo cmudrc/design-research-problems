@@ -534,10 +534,11 @@ def _evaluate_st_solver(
             for col_idx in range(6):
                 stiffness[dof[row_idx], dof[col_idx]] += block[row_idx, col_idx]
 
-    displacement_mask = (1.0 - re_matrix).reshape(-1)
+    # MATLAB parity: vectorize 3xN DOF arrays in column-major order.
+    displacement_mask = (1.0 - re_matrix).reshape(-1, order="F")
     free_dofs = numpy.flatnonzero(displacement_mask)
     displacement = displacement_mask.copy()
-    rhs = load.reshape(-1)
+    rhs = load.reshape(-1, order="F")
 
     if free_dofs.size == 0:
         return (False, (), (), "No unconstrained DOFs available for solve.")
@@ -558,7 +559,7 @@ def _evaluate_st_solver(
     except numpy.linalg.LinAlgError:
         return (False, (), (), "Structural solve failed.")
 
-    displacement_matrix = displacement.reshape(3, joint_count)
+    displacement_matrix = displacement.reshape(3, joint_count, order="F")
     force = numpy.sum(
         tj * (displacement_matrix[:, con[1, :]] - displacement_matrix[:, con[0, :]]),
         axis=0,
