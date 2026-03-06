@@ -211,6 +211,24 @@ def test_space_truss_grammar_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
+def test_iot_home_cooling_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/iot_home_cooling_system_design.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "iot_home_cooling_system_design" in completed.stdout
+    assert "total-cost" in completed.stdout
+    assert "peak-temp-c" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_truss_ap_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/truss_analysis_program_design.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "truss_analysis_program_design" in completed.stdout
+    assert "mass-kg" in completed.stdout
+    assert "min-fos" in completed.stdout
+
+
+@pytest.mark.examples_smoke
 def test_space_truss_optimization_example_runs() -> None:
     completed = _run_example("examples/optimization/space_truss_span_mass_min.py")
     assert completed.returncode == 0, completed.stderr

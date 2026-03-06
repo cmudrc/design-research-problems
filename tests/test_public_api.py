@@ -45,8 +45,12 @@ def test_top_level_exports_resolve() -> None:
 
 
 def test_family_subpackage_exports_resolve() -> None:
+    assert grammar.IoTHomeCoolingGrammarProblem is grammar.IoTHomeCoolingGrammarProblem
+    assert grammar.IoTHomeState is grammar.IoTHomeState
     assert grammar.SpaceTrussSpanProblem is grammar.SpaceTrussSpanProblem
     assert grammar.SpaceTrussState is grammar.SpaceTrussState
+    assert grammar.TrussAPGrammarProblem is grammar.TrussAPGrammarProblem
+    assert grammar.TrussAPState is grammar.TrussAPState
     assert (
         optimization.PlanarTrussEngineeringOptimizationProblem is optimization.PlanarTrussEngineeringOptimizationProblem
     )

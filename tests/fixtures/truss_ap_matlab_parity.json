@@ -1,0 +1,2599 @@
+{
+  "source_data_dir": "/tmp/trussprogram_extracted_2/TrussProgram/example_data",
+  "entry_count": 24,
+  "entries": [
+    {
+      "design_name": "1.1.736389.3731153",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          }
+        ],
+        "members": [],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 0.0,
+        "min_fos": 0.0,
+        "joint_count": 6,
+        "member_count": 0
+      }
+    },
+    {
+      "design_name": "1.1.736389.3731337",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          }
+        ],
+        "members": [],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 0.0,
+        "min_fos": 0.0,
+        "joint_count": 7,
+        "member_count": 0
+      }
+    },
+    {
+      "design_name": "1.1.736389.3731490",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 0.0,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 0
+      }
+    },
+    {
+      "design_name": "1.1.736389.3731737",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 10.979004896642463,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 1
+      }
+    },
+    {
+      "design_name": "1.1.736389.3731926",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 18.67101997603187,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 2
+      }
+    },
+    {
+      "design_name": "1.1.736389.3732089",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 3,
+            "start_joint_id": 5,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 26.363035055421282,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 3
+      }
+    },
+    {
+      "design_name": "1.1.736389.3732249",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 3,
+            "start_joint_id": 5,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 4,
+            "start_joint_id": 2,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 37.901057674505395,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 4
+      }
+    },
+    {
+      "design_name": "1.1.736389.3732401",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 3,
+            "start_joint_id": 5,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 4,
+            "start_joint_id": 2,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 5,
+            "start_joint_id": 4,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 49.43908029358951,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 5
+      }
+    },
+    {
+      "design_name": "1.1.736389.3732744",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 3,
+            "start_joint_id": 5,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 4,
+            "start_joint_id": 2,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 5,
+            "start_joint_id": 4,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 6,
+            "start_joint_id": 6,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 58.722250761932,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 6
+      }
+    },
+    {
+      "design_name": "1.1.736389.3732928",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 3,
+            "start_joint_id": 5,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 4,
+            "start_joint_id": 2,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 5,
+            "start_joint_id": 4,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 6,
+            "start_joint_id": 6,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 7,
+            "start_joint_id": 6,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 67.7482153143151,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 7
+      }
+    },
+    {
+      "design_name": "1.1.736389.3733109",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 3,
+            "start_joint_id": 5,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 4,
+            "start_joint_id": 2,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 5,
+            "start_joint_id": 4,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 6,
+            "start_joint_id": 6,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 7,
+            "start_joint_id": 6,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 8,
+            "start_joint_id": 4,
+            "end_joint_id": 7,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 77.08644717850275,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 8
+      }
+    },
+    {
+      "design_name": "1.1.736389.3733251",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 3,
+            "start_joint_id": 5,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 4,
+            "start_joint_id": 2,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 5,
+            "start_joint_id": 4,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 6,
+            "start_joint_id": 6,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 7,
+            "start_joint_id": 6,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 8,
+            "start_joint_id": 4,
+            "end_joint_id": 7,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 9,
+            "start_joint_id": 7,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 85.98774645266158,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 9
+      }
+    },
+    {
+      "design_name": "1.1.736389.3733385",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 3,
+            "start_joint_id": 5,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 4,
+            "start_joint_id": 2,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 5,
+            "start_joint_id": 4,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 6,
+            "start_joint_id": 6,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 7,
+            "start_joint_id": 6,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 8,
+            "start_joint_id": 4,
+            "end_joint_id": 7,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 9,
+            "start_joint_id": 7,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 10,
+            "start_joint_id": 2,
+            "end_joint_id": 8,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 96.0364867764009,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 10
+      }
+    },
+    {
+      "design_name": "1.1.736389.3733515",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 3,
+            "start_joint_id": 5,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 4,
+            "start_joint_id": 2,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 5,
+            "start_joint_id": 4,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 6,
+            "start_joint_id": 6,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 7,
+            "start_joint_id": 6,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 8,
+            "start_joint_id": 4,
+            "end_joint_id": 7,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 9,
+            "start_joint_id": 7,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 10,
+            "start_joint_id": 2,
+            "end_joint_id": 8,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 11,
+            "start_joint_id": 8,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 103.21915823802769,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 11
+      }
+    },
+    {
+      "design_name": "1.1.736389.3733746",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 3,
+            "start_joint_id": 5,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 4,
+            "start_joint_id": 2,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 5,
+            "start_joint_id": 4,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 6,
+            "start_joint_id": 6,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 7,
+            "start_joint_id": 6,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 8,
+            "start_joint_id": 4,
+            "end_joint_id": 7,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 9,
+            "start_joint_id": 7,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 10,
+            "start_joint_id": 2,
+            "end_joint_id": 8,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 11,
+            "start_joint_id": 8,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 12,
+            "start_joint_id": 8,
+            "end_joint_id": 7,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 115.69943223104109,
+        "min_fos": 0.2436847096742746,
+        "joint_count": 8,
+        "member_count": 12
+      }
+    },
+    {
+      "design_name": "1.1.736389.3733889",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.446938775510204,
+            "y": 1.8477084270746298,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.4102040816326529,
+            "y": 1.8351815902809037,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.8346938775510218,
+            "y": 1.860235263868356,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 8,
+            "end_joint_id": 3,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 3,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 3,
+            "start_joint_id": 5,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 4,
+            "start_joint_id": 2,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 5,
+            "start_joint_id": 4,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 6,
+            "start_joint_id": 6,
+            "end_joint_id": 1,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 7,
+            "start_joint_id": 6,
+            "end_joint_id": 4,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 8,
+            "start_joint_id": 4,
+            "end_joint_id": 7,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 9,
+            "start_joint_id": 7,
+            "end_joint_id": 2,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 10,
+            "start_joint_id": 2,
+            "end_joint_id": 8,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 11,
+            "start_joint_id": 8,
+            "end_joint_id": 5,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 12,
+            "start_joint_id": 8,
+            "end_joint_id": 7,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 13,
+            "start_joint_id": 7,
+            "end_joint_id": 6,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 127.37883612951454,
+        "min_fos": 0.11446476147185856,
+        "joint_count": 8,
+        "member_count": 13
+      }
+    },
+    {
+      "design_name": "1.2.736389.3735192",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.410204081632653,
+            "y": 2.1483525101240604,
+            "is_fixed": false
+          }
+        ],
+        "members": [],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 0.0,
+        "min_fos": 0.0,
+        "joint_count": 6,
+        "member_count": 0
+      }
+    },
+    {
+      "design_name": "1.2.736389.3735302",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.410204081632653,
+            "y": 2.1483525101240604,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.8020408163265307,
+            "y": 2.0230841421867973,
+            "is_fixed": false
+          }
+        ],
+        "members": [],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 0.0,
+        "min_fos": 0.0,
+        "joint_count": 7,
+        "member_count": 0
+      }
+    },
+    {
+      "design_name": "1.2.736389.3735383",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.410204081632653,
+            "y": 2.1483525101240604,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.8020408163265307,
+            "y": 2.0230841421867973,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.2714285714285722,
+            "y": 2.1734061837115135,
+            "is_fixed": false
+          }
+        ],
+        "members": [],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 0.0,
+        "min_fos": 0.0,
+        "joint_count": 8,
+        "member_count": 0
+      }
+    },
+    {
+      "design_name": "1.2.736389.3735615",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.410204081632653,
+            "y": 2.1483525101240604,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.8020408163265307,
+            "y": 2.0230841421867973,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.2714285714285722,
+            "y": 2.1734061837115135,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 9,
+            "x": 4.328571428571429,
+            "y": 2.348781898823682,
+            "is_fixed": false
+          }
+        ],
+        "members": [],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 0.0,
+        "min_fos": 0.0,
+        "joint_count": 9,
+        "member_count": 0
+      }
+    },
+    {
+      "design_name": "1.2.736389.3735852",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.410204081632653,
+            "y": 2.1483525101240604,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.8020408163265307,
+            "y": 2.0230841421867973,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.2714285714285722,
+            "y": 2.1734061837115135,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 9,
+            "x": 4.328571428571429,
+            "y": 2.348781898823682,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 3,
+            "end_joint_id": 9,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 9.395279827087414,
+        "min_fos": 0.0,
+        "joint_count": 9,
+        "member_count": 1
+      }
+    },
+    {
+      "design_name": "1.2.736389.3736010",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.410204081632653,
+            "y": 2.1483525101240604,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.8020408163265307,
+            "y": 2.0230841421867973,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.2714285714285722,
+            "y": 2.1734061837115135,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 9,
+            "x": 4.328571428571429,
+            "y": 2.348781898823682,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 3,
+            "end_joint_id": 9,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 9,
+            "end_joint_id": 8,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 17.335765823182154,
+        "min_fos": 0.0,
+        "joint_count": 9,
+        "member_count": 2
+      }
+    },
+    {
+      "design_name": "1.2.736389.3738244",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.410204081632653,
+            "y": 2.1483525101240604,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.8020408163265307,
+            "y": 2.0230841421867973,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.2714285714285722,
+            "y": 2.1734061837115135,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 9,
+            "x": 4.328571428571429,
+            "y": 2.348781898823682,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 3,
+            "end_joint_id": 9,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 9,
+            "end_joint_id": 8,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 17.335765823182154,
+        "min_fos": 0.0,
+        "joint_count": 9,
+        "member_count": 2
+      }
+    },
+    {
+      "design_name": "1.2.736389.3740766",
+      "state": {
+        "joints": [
+          {
+            "joint_id": 1,
+            "x": -5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 2,
+            "x": 1.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 3,
+            "x": 5.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 4,
+            "x": -2.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 5,
+            "x": 3.0,
+            "y": 0.0,
+            "is_fixed": true
+          },
+          {
+            "joint_id": 6,
+            "x": -3.410204081632653,
+            "y": 2.1483525101240604,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 7,
+            "x": -0.8020408163265307,
+            "y": 2.0230841421867973,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 8,
+            "x": 2.2714285714285722,
+            "y": 2.1734061837115135,
+            "is_fixed": false
+          },
+          {
+            "joint_id": 9,
+            "x": 4.328571428571429,
+            "y": 2.348781898823682,
+            "is_fixed": false
+          }
+        ],
+        "members": [
+          {
+            "member_id": 1,
+            "start_joint_id": 3,
+            "end_joint_id": 9,
+            "size_index": 5,
+            "linewidth": 10.0
+          },
+          {
+            "member_id": 2,
+            "start_joint_id": 9,
+            "end_joint_id": 8,
+            "size_index": 5,
+            "linewidth": 10.0
+          }
+        ],
+        "loads": [
+          {
+            "joint_id": 4,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          },
+          {
+            "joint_id": 5,
+            "direction": "down",
+            "magnitude_n": 200000.0
+          }
+        ],
+        "support_enabled": [
+          true,
+          true,
+          true
+        ]
+      },
+      "expected": {
+        "mass_kg": 17.335765823182154,
+        "min_fos": 0.0,
+        "joint_count": 9,
+        "member_count": 2
+      }
+    }
+  ]
+}

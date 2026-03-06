@@ -13,6 +13,8 @@ optimizer example to use the optional `pymoo` or `nevergrad` solver backends.
 - `optimization/pill_problem.py`: sample and optionally solve the pill problem.
 - `grammar/battery_pack_18650_open_ended.py`: build a 4S4P-equivalent explicit battery graph and evaluate it when `pybamm` is installed.
 - `grammar/battery_pack_18650_series_parallel.py`: build the constrained rectangular 4S4P battery grammar state and evaluate it when `pybamm` is installed.
+- `grammar/iot_home_cooling_system_design.py`: build a small IoT home cooling network and evaluate lifecycle and thermal metrics.
+- `grammar/truss_analysis_program_design.py`: build a truss using MATLAB Truss Analysis Program mechanics and inspect mass/FOS results.
 - `optimization/battery_grammar_to_optimizer.py`: inspect the packaged rectangular battery sizing optimizer with a seeded start and solved design.
 - `optimization/battery_open_ended_capacity_max.py`: inspect the packaged open-ended battery co-design optimizer with a seeded explicit graph and a baseline solved design.
 - `optimization/ide_treadle_pump.py`: inspect the packaged IDE-style treadle pump baseline and solver.

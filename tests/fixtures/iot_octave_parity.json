@@ -1,0 +1,1032 @@
+{
+  "source_gui_dir": "/Users/work/Desktop/Just-IoT-Things-master/gui",
+  "source_design_dir": "/Users/work/Desktop/Just-IoT-Things-master/gui/best_solution",
+  "entry_count": 12,
+  "entries": [
+    {
+      "design_name": "c01_t01_p01_d0001",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [],
+      "octave": {
+        "total_cost": 10.0,
+        "peak_temp_c": 29.982327546695,
+        "capital_cost": 10.0,
+        "operation_cost": 0.0
+      }
+    },
+    {
+      "design_name": "c01_t01_p01_d0002",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "1",
+          "type": "e",
+          "x": 6.947455,
+          "y": 35.999289,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [
+        {
+          "init_name": "0",
+          "term_name": "1",
+          "name": "2"
+        }
+      ],
+      "octave": {
+        "total_cost": 450.0,
+        "peak_temp_c": 29.982327546695,
+        "capital_cost": 450.0,
+        "operation_cost": 0.0
+      }
+    },
+    {
+      "design_name": "c01_t01_p01_d0003",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "1",
+          "type": "e",
+          "x": 6.947455,
+          "y": 35.999289,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "3",
+          "type": "s",
+          "x": 3.651551,
+          "y": 26.568279,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [
+        {
+          "init_name": "0",
+          "term_name": "1",
+          "name": "2"
+        },
+        {
+          "init_name": "0",
+          "term_name": "3",
+          "name": "4"
+        }
+      ],
+      "octave": {
+        "total_cost": 2771.613122401691,
+        "peak_temp_c": 29.824848258414,
+        "capital_cost": 480.0,
+        "operation_cost": 2291.613122401691
+      }
+    },
+    {
+      "design_name": "c01_t01_p01_d0004",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "1",
+          "type": "e",
+          "x": 6.947455,
+          "y": 35.999289,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "3",
+          "type": "s",
+          "x": 3.651551,
+          "y": 26.568279,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "5",
+          "type": "e",
+          "x": 6.215032,
+          "y": 8.168563,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [
+        {
+          "init_name": "0",
+          "term_name": "1",
+          "name": "2"
+        },
+        {
+          "init_name": "0",
+          "term_name": "3",
+          "name": "4"
+        },
+        {
+          "init_name": "0",
+          "term_name": "5",
+          "name": "6"
+        }
+      ],
+      "octave": {
+        "total_cost": 5373.156628426477,
+        "peak_temp_c": 29.602630030079,
+        "capital_cost": 920.0,
+        "operation_cost": 4453.156628426477
+      }
+    },
+    {
+      "design_name": "c01_t01_p01_d0005",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "1",
+          "type": "e",
+          "x": 6.947455,
+          "y": 35.999289,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "3",
+          "type": "s",
+          "x": 3.651551,
+          "y": 26.568279,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "5",
+          "type": "e",
+          "x": 6.215032,
+          "y": 8.168563,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "7",
+          "type": "d",
+          "x": 71.675339,
+          "y": 28.509957,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [
+        {
+          "init_name": "0",
+          "term_name": "1",
+          "name": "2"
+        },
+        {
+          "init_name": "0",
+          "term_name": "3",
+          "name": "4"
+        },
+        {
+          "init_name": "0",
+          "term_name": "5",
+          "name": "6"
+        }
+      ],
+      "octave": {
+        "total_cost": 5383.156628426477,
+        "peak_temp_c": 29.602630030079,
+        "capital_cost": 930.0,
+        "operation_cost": 4453.156628426477
+      }
+    },
+    {
+      "design_name": "c01_t01_p01_d0006",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "1",
+          "type": "e",
+          "x": 6.947455,
+          "y": 35.999289,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "3",
+          "type": "s",
+          "x": 3.651551,
+          "y": 26.568279,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "5",
+          "type": "e",
+          "x": 6.215032,
+          "y": 8.168563,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "7",
+          "type": "d",
+          "x": 71.675339,
+          "y": 28.509957,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "8",
+          "type": "e",
+          "x": 60.414335,
+          "y": 45.060455,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [
+        {
+          "init_name": "0",
+          "term_name": "1",
+          "name": "2"
+        },
+        {
+          "init_name": "0",
+          "term_name": "3",
+          "name": "4"
+        },
+        {
+          "init_name": "0",
+          "term_name": "5",
+          "name": "6"
+        },
+        {
+          "init_name": "7",
+          "term_name": "8",
+          "name": "9"
+        }
+      ],
+      "octave": {
+        "total_cost": 5823.156628426477,
+        "peak_temp_c": 29.602630030079,
+        "capital_cost": 1370.0,
+        "operation_cost": 4453.156628426477
+      }
+    },
+    {
+      "design_name": "c01_t01_p01_d0007",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "1",
+          "type": "e",
+          "x": 6.947455,
+          "y": 35.999289,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "3",
+          "type": "s",
+          "x": 3.651551,
+          "y": 26.568279,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "5",
+          "type": "e",
+          "x": 6.215032,
+          "y": 8.168563,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "7",
+          "type": "d",
+          "x": 71.675339,
+          "y": 28.509957,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "8",
+          "type": "e",
+          "x": 60.414335,
+          "y": 45.060455,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "10",
+          "type": "e",
+          "x": 58.949489,
+          "y": 14.640825,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [
+        {
+          "init_name": "0",
+          "term_name": "1",
+          "name": "2"
+        },
+        {
+          "init_name": "0",
+          "term_name": "3",
+          "name": "4"
+        },
+        {
+          "init_name": "0",
+          "term_name": "5",
+          "name": "6"
+        },
+        {
+          "init_name": "7",
+          "term_name": "8",
+          "name": "9"
+        },
+        {
+          "init_name": "7",
+          "term_name": "10",
+          "name": "11"
+        }
+      ],
+      "octave": {
+        "total_cost": 6263.156628426477,
+        "peak_temp_c": 29.602630030079,
+        "capital_cost": 1810.0,
+        "operation_cost": 4453.156628426477
+      }
+    },
+    {
+      "design_name": "c01_t01_p01_d0008",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "1",
+          "type": "e",
+          "x": 6.947455,
+          "y": 35.999289,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "3",
+          "type": "s",
+          "x": 3.651551,
+          "y": 26.568279,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "5",
+          "type": "e",
+          "x": 6.215032,
+          "y": 8.168563,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "7",
+          "type": "d",
+          "x": 71.675339,
+          "y": 28.509957,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "8",
+          "type": "e",
+          "x": 60.414335,
+          "y": 45.060455,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "10",
+          "type": "e",
+          "x": 58.949489,
+          "y": 14.640825,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "12",
+          "type": "s",
+          "x": 48.237803,
+          "y": 29.896871,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [
+        {
+          "init_name": "0",
+          "term_name": "1",
+          "name": "2"
+        },
+        {
+          "init_name": "0",
+          "term_name": "3",
+          "name": "4"
+        },
+        {
+          "init_name": "0",
+          "term_name": "5",
+          "name": "6"
+        },
+        {
+          "init_name": "7",
+          "term_name": "8",
+          "name": "9"
+        },
+        {
+          "init_name": "7",
+          "term_name": "10",
+          "name": "11"
+        },
+        {
+          "init_name": "7",
+          "term_name": "12",
+          "name": "13"
+        }
+      ],
+      "octave": {
+        "total_cost": 10587.0719225434,
+        "peak_temp_c": 28.275154850797,
+        "capital_cost": 1840.0,
+        "operation_cost": 8747.0719225434
+      }
+    },
+    {
+      "design_name": "c01_t01_p01_d0009",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "1",
+          "type": "e",
+          "x": 6.947455,
+          "y": 35.999289,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "3",
+          "type": "s",
+          "x": 3.651551,
+          "y": 26.568279,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "5",
+          "type": "e",
+          "x": 6.215032,
+          "y": 8.168563,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "7",
+          "type": "d",
+          "x": 71.675339,
+          "y": 28.509957,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "8",
+          "type": "e",
+          "x": 60.414335,
+          "y": 45.060455,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "10",
+          "type": "e",
+          "x": 58.949489,
+          "y": 14.640825,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "12",
+          "type": "s",
+          "x": 48.237803,
+          "y": 29.896871,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "14",
+          "type": "d",
+          "x": 26.539771,
+          "y": 48.204125,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [
+        {
+          "init_name": "0",
+          "term_name": "1",
+          "name": "2"
+        },
+        {
+          "init_name": "0",
+          "term_name": "3",
+          "name": "4"
+        },
+        {
+          "init_name": "0",
+          "term_name": "5",
+          "name": "6"
+        },
+        {
+          "init_name": "7",
+          "term_name": "8",
+          "name": "9"
+        },
+        {
+          "init_name": "7",
+          "term_name": "10",
+          "name": "11"
+        },
+        {
+          "init_name": "7",
+          "term_name": "12",
+          "name": "13"
+        }
+      ],
+      "octave": {
+        "total_cost": 10597.0719225434,
+        "peak_temp_c": 28.275154850797,
+        "capital_cost": 1850.0,
+        "operation_cost": 8747.0719225434
+      }
+    },
+    {
+      "design_name": "c01_t01_p01_d0010",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "1",
+          "type": "e",
+          "x": 6.947455,
+          "y": 35.999289,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "3",
+          "type": "s",
+          "x": 3.651551,
+          "y": 26.568279,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "5",
+          "type": "e",
+          "x": 6.215032,
+          "y": 8.168563,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "7",
+          "type": "d",
+          "x": 71.675339,
+          "y": 28.509957,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "8",
+          "type": "e",
+          "x": 60.414335,
+          "y": 45.060455,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "10",
+          "type": "e",
+          "x": 58.949489,
+          "y": 14.640825,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "12",
+          "type": "s",
+          "x": 48.237803,
+          "y": 29.896871,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [
+        {
+          "init_name": "0",
+          "term_name": "1",
+          "name": "2"
+        },
+        {
+          "init_name": "0",
+          "term_name": "3",
+          "name": "4"
+        },
+        {
+          "init_name": "0",
+          "term_name": "5",
+          "name": "6"
+        },
+        {
+          "init_name": "7",
+          "term_name": "8",
+          "name": "9"
+        },
+        {
+          "init_name": "7",
+          "term_name": "10",
+          "name": "11"
+        },
+        {
+          "init_name": "7",
+          "term_name": "12",
+          "name": "13"
+        }
+      ],
+      "octave": {
+        "total_cost": 10587.0719225434,
+        "peak_temp_c": 28.275154850797,
+        "capital_cost": 1840.0,
+        "operation_cost": 8747.0719225434
+      }
+    },
+    {
+      "design_name": "c01_t01_p01_d0011",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "1",
+          "type": "e",
+          "x": 6.947455,
+          "y": 35.999289,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "3",
+          "type": "s",
+          "x": 3.651551,
+          "y": 26.568279,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "5",
+          "type": "e",
+          "x": 6.215032,
+          "y": 8.168563,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "7",
+          "type": "d",
+          "x": 71.675339,
+          "y": 28.509957,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "8",
+          "type": "e",
+          "x": 60.414335,
+          "y": 45.060455,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "10",
+          "type": "e",
+          "x": 58.949489,
+          "y": 14.640825,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "12",
+          "type": "s",
+          "x": 48.237803,
+          "y": 29.896871,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "14",
+          "type": "d",
+          "x": 27.272194,
+          "y": 47.556899,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [
+        {
+          "init_name": "0",
+          "term_name": "1",
+          "name": "2"
+        },
+        {
+          "init_name": "0",
+          "term_name": "3",
+          "name": "4"
+        },
+        {
+          "init_name": "0",
+          "term_name": "5",
+          "name": "6"
+        },
+        {
+          "init_name": "7",
+          "term_name": "8",
+          "name": "9"
+        },
+        {
+          "init_name": "7",
+          "term_name": "10",
+          "name": "11"
+        },
+        {
+          "init_name": "7",
+          "term_name": "12",
+          "name": "13"
+        }
+      ],
+      "octave": {
+        "total_cost": 10597.0719225434,
+        "peak_temp_c": 28.275154850797,
+        "capital_cost": 1850.0,
+        "operation_cost": 8747.0719225434
+      }
+    },
+    {
+      "design_name": "c01_t01_p01_d0012",
+      "products": [
+        {
+          "name": "0",
+          "type": "d",
+          "x": -8.708087,
+          "y": 29.342105,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "1",
+          "type": "e",
+          "x": 6.947455,
+          "y": 35.999289,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "3",
+          "type": "s",
+          "x": 3.651551,
+          "y": 26.568279,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "5",
+          "type": "e",
+          "x": 6.215032,
+          "y": 8.168563,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "7",
+          "type": "d",
+          "x": 71.675339,
+          "y": 28.509957,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "8",
+          "type": "e",
+          "x": 60.414335,
+          "y": 45.060455,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "10",
+          "type": "e",
+          "x": 58.949489,
+          "y": 14.640825,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        },
+        {
+          "name": "12",
+          "type": "s",
+          "x": 48.237803,
+          "y": 29.896871,
+          "btus": 10000.0,
+          "cfm": 200.0,
+          "dm": null
+        }
+      ],
+      "links": [
+        {
+          "init_name": "0",
+          "term_name": "1",
+          "name": "2"
+        },
+        {
+          "init_name": "0",
+          "term_name": "3",
+          "name": "4"
+        },
+        {
+          "init_name": "0",
+          "term_name": "5",
+          "name": "6"
+        },
+        {
+          "init_name": "7",
+          "term_name": "8",
+          "name": "9"
+        },
+        {
+          "init_name": "7",
+          "term_name": "10",
+          "name": "11"
+        },
+        {
+          "init_name": "7",
+          "term_name": "12",
+          "name": "13"
+        }
+      ],
+      "octave": {
+        "total_cost": 10587.0719225434,
+        "peak_temp_c": 28.275154850797,
+        "capital_cost": 1840.0,
+        "operation_cost": 8747.0719225434
+      }
+    }
+  ]
+}

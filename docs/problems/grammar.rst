@@ -24,6 +24,13 @@ that same shared backend. The catalog also includes six
 `planar_roof_truss_*` variants that approximate the planar roof truss
 formulations discussed by Shea and Cagan, including multi-load and
 symmetry-constrained cases.
+The catalog also includes `iot_home_cooling_system_design`, which uses a
+typed state of IoT products and links over a fixed house geometry and reports
+`total_cost`, `peak_temp_c`, `capital_cost`, and `operation_cost` from a
+deterministic MATLAB-parity thermal and cost simulation.
+The catalog also includes `truss_analysis_program_design`, a direct port of
+the MATLAB Truss Analysis Program mechanics with discrete joint/member/load
+edits and deterministic `mass_kg` plus `min_fos` structural evaluation.
 
 Optional evaluators:
 

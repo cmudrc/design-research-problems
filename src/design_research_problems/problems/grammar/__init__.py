@@ -19,6 +19,11 @@ _LAZY_EXPORTS = {
     "BatteryPack18650SeriesParallelProblem": (
         "design_research_problems.problems.grammar._battery_pack_sp:BatteryPack18650SeriesParallelProblem"
     ),
+    "IoTHomeCoolingGrammarProblem": "design_research_problems.problems.grammar._iot_home:IoTHomeCoolingGrammarProblem",
+    "IoTHomeEvaluation": "design_research_problems.problems.grammar._iot_home:IoTHomeEvaluation",
+    "IoTHomeLink": "design_research_problems.problems.grammar._iot_home:IoTHomeLink",
+    "IoTHomeProduct": "design_research_problems.problems.grammar._iot_home:IoTHomeProduct",
+    "IoTHomeState": "design_research_problems.problems.grammar._iot_home:IoTHomeState",
     "PlanarJoint": "design_research_problems.problems.grammar._planar_truss:PlanarJoint",
     "PlanarLoad": "design_research_problems.problems.grammar._planar_truss:PlanarLoad",
     "PlanarMember": "design_research_problems.problems.grammar._planar_truss:PlanarMember",
@@ -31,6 +36,12 @@ _LAZY_EXPORTS = {
     "SpaceTrussEvaluation": "design_research_problems.problems.grammar._space_truss:SpaceTrussEvaluation",
     "SpaceTrussSpanProblem": "design_research_problems.problems.grammar._space_truss:SpaceTrussSpanProblem",
     "SpaceTrussState": "design_research_problems.problems.grammar._space_truss:SpaceTrussState",
+    "TrussAPEvaluation": "design_research_problems.problems.grammar._truss_ap:TrussAPEvaluation",
+    "TrussAPGrammarProblem": "design_research_problems.problems.grammar._truss_ap:TrussAPGrammarProblem",
+    "TrussAPJoint": "design_research_problems.problems.grammar._truss_ap:TrussAPJoint",
+    "TrussAPLoad": "design_research_problems.problems.grammar._truss_ap:TrussAPLoad",
+    "TrussAPMember": "design_research_problems.problems.grammar._truss_ap:TrussAPMember",
+    "TrussAPState": "design_research_problems.problems.grammar._truss_ap:TrussAPState",
     "SeriesParallelBatteryEvaluation": (
         "design_research_problems.problems.grammar._battery_pack_sp:SeriesParallelBatteryEvaluation"
     ),
@@ -73,6 +84,11 @@ if TYPE_CHECKING:
     )
     from ._battery_pack_sp import SeriesParallelBatteryEvaluation as SeriesParallelBatteryEvaluation
     from ._battery_pack_sp import SeriesParallelBatteryState as SeriesParallelBatteryState
+    from ._iot_home import IoTHomeCoolingGrammarProblem as IoTHomeCoolingGrammarProblem
+    from ._iot_home import IoTHomeEvaluation as IoTHomeEvaluation
+    from ._iot_home import IoTHomeLink as IoTHomeLink
+    from ._iot_home import IoTHomeProduct as IoTHomeProduct
+    from ._iot_home import IoTHomeState as IoTHomeState
     from ._planar_truss import PlanarJoint as PlanarJoint
     from ._planar_truss import PlanarLoad as PlanarLoad
     from ._planar_truss import PlanarMember as PlanarMember
@@ -85,3 +101,9 @@ if TYPE_CHECKING:
     from ._space_truss import SpaceTrussEvaluation as SpaceTrussEvaluation
     from ._space_truss import SpaceTrussSpanProblem as SpaceTrussSpanProblem
     from ._space_truss import SpaceTrussState as SpaceTrussState
+    from ._truss_ap import TrussAPEvaluation as TrussAPEvaluation
+    from ._truss_ap import TrussAPGrammarProblem as TrussAPGrammarProblem
+    from ._truss_ap import TrussAPJoint as TrussAPJoint
+    from ._truss_ap import TrussAPLoad as TrussAPLoad
+    from ._truss_ap import TrussAPMember as TrussAPMember
+    from ._truss_ap import TrussAPState as TrussAPState

@@ -22,8 +22,10 @@ if TYPE_CHECKING:
     from design_research_problems.problems.grammar import (
         BatteryPack18650OpenEndedProblem,
         BatteryPack18650SeriesParallelProblem,
+        IoTHomeCoolingGrammarProblem,
         PlanarTrussSpanProblem,
         SpaceTrussSpanProblem,
+        TrussAPGrammarProblem,
     )
     from design_research_problems.problems.optimization import (
         BatteryGridSizingProblem,
@@ -44,6 +46,8 @@ type _PlanarTrussProblemId = Literal[
 ]
 
 type _SpaceTrussProblemId = Literal["space_truss_span"]
+type _IoTGrammarProblemId = Literal["iot_home_cooling_system_design"]
+type _TrussAPProblemId = Literal["truss_analysis_program_design"]
 
 type _MSEvalProblemId = Literal[
     "decision_mseval_kitchen_utensil_grip_corrosion_resistant",
@@ -267,6 +271,12 @@ class ProblemRegistry:
 
     @overload
     def get(self, problem_id: _SpaceTrussProblemId) -> SpaceTrussSpanProblem: ...
+
+    @overload
+    def get(self, problem_id: _IoTGrammarProblemId) -> IoTHomeCoolingGrammarProblem: ...
+
+    @overload
+    def get(self, problem_id: _TrussAPProblemId) -> TrussAPGrammarProblem: ...
 
     @overload
     def get(

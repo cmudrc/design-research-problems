@@ -332,8 +332,10 @@ def test_non_text_problems_are_computable() -> None:
         "decision_mseval_kitchen_utensil_grip_lightweight",
         "battery_pack_18650_open_ended_capacity_max",
         "battery_pack_18650_series_parallel_cost_min",
+        "iot_home_cooling_system_design",
         "pill_capsule_min_area",
         "planar_truss_span",
+        "truss_analysis_program_design",
     )
     for problem_id in problem_ids:
         assert isinstance(get_problem(problem_id), ComputableProblem)
@@ -389,7 +391,13 @@ def _build_feasible_battery_state() -> object:
 
 def test_generic_grammar_family_api_supports_multiple_problems(monkeypatch: pytest.MonkeyPatch) -> None:
     _install_structural_fake_truss(monkeypatch)
-    for problem_id in ("battery_pack_18650_series_parallel", "planar_truss_span", "space_truss_span"):
+    for problem_id in (
+        "battery_pack_18650_series_parallel",
+        "iot_home_cooling_system_design",
+        "planar_truss_span",
+        "space_truss_span",
+        "truss_analysis_program_design",
+    ):
         problem = get_problem(problem_id)
         assert isinstance(problem, GrammarProblem)
         state = problem.initial_state()
