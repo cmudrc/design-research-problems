@@ -229,9 +229,7 @@ def _polygon_area(x_values: tuple[float, ...], y_values: tuple[float, ...]) -> f
     """
     x_array = numpy.asarray(x_values, dtype=float)
     y_array = numpy.asarray(y_values, dtype=float)
-    return 0.5 * abs(
-        float(numpy.dot(x_array, numpy.roll(y_array, -1)) - numpy.dot(y_array, numpy.roll(x_array, -1)))
-    )
+    return 0.5 * abs(float(numpy.dot(x_array, numpy.roll(y_array, -1)) - numpy.dot(y_array, numpy.roll(x_array, -1))))
 
 
 def _segment_contains_point(
