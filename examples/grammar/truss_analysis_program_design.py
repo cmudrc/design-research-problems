@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from design_research_problems import get_problem
+import design_research_problems as derp
 
 
 def main() -> None:
     """Create a feasible truss and print key evaluation metrics."""
-    problem = get_problem("truss_analysis_program_design")
+    problem = derp.get_problem("truss_analysis_program_design")
     state = problem.initial_state()
 
     state = problem.add_joint(state, x=-3.446939, y=1.847708)

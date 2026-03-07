@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from design_research_problems import MissingOptionalDependencyError, get_problem
+import design_research_problems as derp
 
 
 def main() -> None:
@@ -13,7 +13,7 @@ def main() -> None:
     """
 
     # Load the open-ended battery grammar and start from its one-cell seed state.
-    problem = get_problem("battery_pack_18650_open_ended")
+    problem = derp.get_problem("battery_pack_18650_open_ended")
     state = problem.initial_state()
     stage_input_terminal_id = state.pack_negative_terminal_id
     stage_output_terminal_id = state.pack_positive_terminal_id
@@ -62,7 +62,7 @@ def main() -> None:
         # The evaluator validates the explicit graph, reduces it to circuit nets, and
         # simulates the resulting pack through the shared battery backend.
         evaluation = problem.evaluate(state)
-    except MissingOptionalDependencyError as exc:
+    except derp.MissingOptionalDependencyError as exc:
         print(exc)
         return
     if not evaluation.is_feasible:

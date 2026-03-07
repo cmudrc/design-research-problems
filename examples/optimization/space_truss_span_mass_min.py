@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import warnings
 
-from design_research_problems import MissingOptionalDependencyError, get_problem
+import design_research_problems as derp
 from design_research_problems.problems._domains.space_truss import evaluate_space_truss_state
 
 
 def main() -> None:
     """Run the built-in structural baseline for the 3D space-truss optimizer."""
-    problem = get_problem("space_truss_span_mass_min")
+    problem = derp.get_problem("space_truss_span_mass_min")
     initial = problem.generate_initial_solution()
     print(problem.metadata.problem_id)
     print("variables", initial.shape[0])
@@ -21,7 +21,7 @@ def main() -> None:
             result = problem.solve(maxiter=64)
             final_state = problem.decode_candidate(result.x)
             structural = evaluate_space_truss_state(final_state)
-    except MissingOptionalDependencyError as exc:
+    except derp.MissingOptionalDependencyError as exc:
         print(exc)
         return
     print("initial", round(initial_evaluation.objective_value, 3), initial_evaluation.is_feasible)

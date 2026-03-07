@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from design_research_problems import MissingOptionalDependencyError, get_problem
+import design_research_problems as derp
 
 
 def main() -> None:
@@ -10,7 +10,7 @@ def main() -> None:
 
     # Load the planar truss grammar and start from its seed state, which already
     # includes the fixed support joints and one free top joint.
-    problem = get_problem("planar_truss_span")
+    problem = derp.get_problem("planar_truss_span")
     state = problem.initial_state()
 
     # Apply three rule methods to connect the top joint to both supports and then
@@ -22,7 +22,7 @@ def main() -> None:
         # The evaluator converts the serializable grammar state into a fresh truss
         # model for analysis and returns the resulting performance metrics.
         evaluation = problem.evaluate(state)
-    except MissingOptionalDependencyError as exc:
+    except derp.MissingOptionalDependencyError as exc:
         print(exc)
         return
     print(evaluation)

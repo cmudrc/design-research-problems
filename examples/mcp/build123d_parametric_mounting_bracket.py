@@ -8,7 +8,7 @@ from collections.abc import Sequence
 from textwrap import dedent
 from typing import TYPE_CHECKING, Any, cast
 
-from design_research_problems import MissingOptionalDependencyError, get_problem
+import design_research_problems as derp
 
 if TYPE_CHECKING:
     from mcp.server.fastmcp import FastMCP
@@ -102,7 +102,7 @@ def create_server() -> FastMCP:
     Returns:
         Configured FastMCP server instance.
     """
-    problem = get_problem(PROBLEM_ID)
+    problem = derp.get_problem(PROBLEM_ID)
     return problem.to_mcp_server(server_name=SERVER_NAME, include_citation=False)
 
 
@@ -174,14 +174,14 @@ def main() -> int:
     Returns:
         Process exit code.
     """
-    problem = get_problem(PROBLEM_ID)
+    problem = derp.get_problem(PROBLEM_ID)
     print("Problem id:", problem.metadata.problem_id)
     print("Upstream command:", problem.command)
 
     try:
         server = create_server()
         summary = asyncio.run(run_summary(server))
-    except (MissingOptionalDependencyError, ModuleNotFoundError) as exc:
+    except (derp.MissingOptionalDependencyError, ModuleNotFoundError) as exc:
         print(exc)
         print("Install the optional MCP dependency with: pip install design-research-problems[mcp]")
         return 0

@@ -37,9 +37,9 @@ Laptop design
 
 .. code-block:: python
 
-   from design_research_problems import get_problem
+   import design_research_problems as derp
 
-   problem = get_problem("decision_laptop_design_profit_maximization")
+   problem = derp.get_problem("decision_laptop_design_profit_maximization")
 
    top_three = problem.rank_evaluations()[:3]
    best = problem.best_evaluation()
@@ -55,9 +55,9 @@ MSEval empirical choice
 
 .. code-block:: python
 
-   from design_research_problems import get_problem
+   import design_research_problems as derp
 
-   problem = get_problem("decision_mseval_safety_helmet_lightweight")
+   problem = derp.get_problem("decision_mseval_safety_helmet_lightweight")
 
    top_three = problem.rank_evaluations()[:3]
    best = problem.best_evaluation()

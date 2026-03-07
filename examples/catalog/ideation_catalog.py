@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from design_research_problems import get_ideation_catalog
+import design_research_problems as derp
 
 
 def main() -> None:
     """Print a small ideation catalog summary."""
-    catalog = get_ideation_catalog()
+    catalog = derp.get_ideation_catalog()
     print("prompts", len(catalog.list_prompts()))
     print("variants", len(catalog.list_variants()))
     print("families", len(catalog.list_families()))

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from design_research_problems import MissingOptionalDependencyError
+import design_research_problems as derp
 from design_research_problems.gui import launch_gui
 
 
@@ -10,7 +10,7 @@ def main() -> None:
     """Launch the truss analysis GUI from the core library."""
     try:
         launch_gui("truss")
-    except MissingOptionalDependencyError as exc:
+    except derp.MissingOptionalDependencyError as exc:
         raise SystemExit(str(exc)) from exc
 
 

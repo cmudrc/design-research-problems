@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-from design_research_problems import ProblemRegistry, get_problem, list_problems
+import design_research_problems as derp
 
 
 def main() -> None:
     """Print the catalog IDs, feature flags, and loaded class for each seed problem."""
-    registry = ProblemRegistry()
-    problem_ids = list_problems()
+    registry = derp.ProblemRegistry()
+    problem_ids = derp.list_problems()
     print(problem_ids)
     print(registry.kind_feature_flags())
     for problem_id in problem_ids:
-        problem = get_problem(problem_id)
+        problem = derp.get_problem(problem_id)
         print(problem_id, problem.metadata.feature_flags, type(problem).__name__)
 
 

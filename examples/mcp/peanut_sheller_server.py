@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from design_research_problems import MissingOptionalDependencyError, get_problem
+import design_research_problems as derp
 
 if TYPE_CHECKING:
     from mcp.server.fastmcp import FastMCP
@@ -29,7 +29,7 @@ def create_server() -> FastMCP:
         MissingOptionalDependencyError: If the optional MCP dependency is not
             installed.
     """
-    problem = get_problem(PROBLEM_ID)
+    problem = derp.get_problem(PROBLEM_ID)
     return problem.to_mcp_server(server_name=SERVER_NAME)
 
 
@@ -136,14 +136,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.serve:
         try:
             serve_stdio()
-        except (MissingOptionalDependencyError, ModuleNotFoundError) as exc:
+        except (derp.MissingOptionalDependencyError, ModuleNotFoundError) as exc:
             print(exc)
             print("Install the optional MCP dependency with: pip install design-research-problems[mcp]")
         return 0
 
     try:
         summary = asyncio.run(run_roundtrip())
-    except (MissingOptionalDependencyError, ModuleNotFoundError) as exc:
+    except (derp.MissingOptionalDependencyError, ModuleNotFoundError) as exc:
         print(exc)
         print("Install the optional MCP dependency with: pip install design-research-problems[mcp]")
         return 0

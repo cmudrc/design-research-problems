@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from design_research_problems import MissingOptionalDependencyError, get_problem
+import design_research_problems as derp
 
 
 def _format_config(problem: object, variables: object) -> str:
@@ -21,7 +21,7 @@ def _format_config(problem: object, variables: object) -> str:
 
 def main() -> None:
     """Print a seeded start and the solved rectangular battery design."""
-    problem = get_problem("battery_pack_18650_series_parallel_cost_min")
+    problem = derp.get_problem("battery_pack_18650_series_parallel_cost_min")
 
     print("Rectangular battery packaged benchmark")
     print(problem.metadata.title)
@@ -33,7 +33,7 @@ def main() -> None:
         result = problem.solve()
         solved_components = problem.objective_components(result.x)
         solved_violation = problem.max_constraint_violation(result.x)
-    except MissingOptionalDependencyError as exc:
+    except derp.MissingOptionalDependencyError as exc:
         print(exc)
         return
 

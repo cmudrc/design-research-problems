@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from design_research_problems import get_problem
+import design_research_problems as derp
 
 
 def main() -> None:
     """Print a seeded start and the solved design."""
-    problem = get_problem("treadle_pump_ide_material_min")
+    problem = derp.get_problem("treadle_pump_ide_material_min")
     initial = problem.generate_initial_solution(seed=1)
     initial_components = problem.objective_components(initial)
     initial_violation = problem.max_constraint_violation(initial)

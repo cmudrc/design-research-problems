@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from design_research_problems import get_problem
+import design_research_problems as derp
 
 
 def main() -> None:
     """Print the packaged baseline design and the solved SciPy SLSQP design."""
-    problem = get_problem("moneymaker_hip_pump_cost_min")
+    problem = derp.get_problem("moneymaker_hip_pump_cost_min")
     initial = problem.generate_initial_solution()
     initial_components = problem.objective_components(initial)
     result = problem.solve()

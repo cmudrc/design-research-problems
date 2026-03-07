@@ -55,13 +55,13 @@ pip install "design-research-problems[solvers,pandas]"
 Then inspect the catalog directly from the installed package:
 
 ```bash
-python3 -c "from design_research_problems import list_problems; print(list_problems())"
+python3 -c "import design_research_problems as derp; print(derp.list_problems())"
 ```
 
 And inspect the ideation corpus:
 
 ```bash
-python3 -c "from design_research_problems import get_ideation_catalog; print(len(get_ideation_catalog().list_prompts()))"
+python3 -c "import design_research_problems as derp; print(len(derp.get_ideation_catalog().list_prompts()))"
 ```
 
 Launch the packaged desktop GUIs with:

@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from design_research_problems import get_problem
+import design_research_problems as derp
 
 
 def main() -> None:
     """Print a compact summary aligned with the empirical-choice decision demo."""
-    problem = get_problem("decision_laptop_design_profit_maximization")
+    problem = derp.get_problem("decision_laptop_design_profit_maximization")
     top_three = problem.rank_evaluations()[:3]
     best = problem.best_evaluation()
 

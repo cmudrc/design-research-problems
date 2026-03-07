@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from design_research_problems import get_problem
+import design_research_problems as derp
 
 
 def main() -> None:
     """Create a simple IoT network and evaluate lifecycle and thermal metrics."""
-    problem = get_problem("iot_home_cooling_system_design")
+    problem = derp.get_problem("iot_home_cooling_system_design")
     state = problem.initial_state()
     transitions = problem.enumerate_transitions(state)
 

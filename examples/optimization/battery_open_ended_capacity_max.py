@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from design_research_problems import MissingOptionalDependencyError, get_problem
+import design_research_problems as derp
 
 
 def main() -> None:
     """Print a seeded start and a baseline solved explicit battery design."""
-    problem = get_problem("battery_pack_18650_open_ended_capacity_max")
+    problem = derp.get_problem("battery_pack_18650_open_ended_capacity_max")
     initial = problem.generate_initial_solution(seed=1)
 
     print("Open-ended battery packaged benchmark")
@@ -19,7 +19,7 @@ def main() -> None:
         result = problem.solve(maxiter=0)
         solved_components = problem.objective_components(result.x)
         solved_violation = problem.max_constraint_violation(result.x)
-    except MissingOptionalDependencyError as exc:
+    except derp.MissingOptionalDependencyError as exc:
         print(exc)
         return
 

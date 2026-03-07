@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import warnings
 
-from design_research_problems import MissingOptionalDependencyError, get_problem
+import design_research_problems as derp
 
 
 def main() -> None:
     """Build a simple bridge-like space truss and evaluate it when ``trussme`` is installed."""
-    problem = get_problem("space_truss_span")
+    problem = derp.get_problem("space_truss_span")
     state = problem.initial_state()
     state = problem.add_member(state, start_joint_id=0, end_joint_id=4)
     state = problem.add_member(state, start_joint_id=1, end_joint_id=4)
@@ -26,7 +26,7 @@ def main() -> None:
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", category=RuntimeWarning, module=r"trussme\\.components")
             evaluation = problem.evaluate(state)
-    except MissingOptionalDependencyError as exc:
+    except derp.MissingOptionalDependencyError as exc:
         print(exc)
         return
     print("mass", round(evaluation.mass, 3))

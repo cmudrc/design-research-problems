@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from design_research_problems import MissingOptionalDependencyError, get_problem
+import design_research_problems as derp
 
 
 def main() -> None:
@@ -13,7 +13,7 @@ def main() -> None:
     """
 
     # Load the constrained rectangular battery grammar and start from its 1S1P seed pack.
-    problem = get_problem("battery_pack_18650_series_parallel")
+    problem = derp.get_problem("battery_pack_18650_series_parallel")
     state = problem.initial_state()
 
     # Add three more series stages. In this grammar each add_series_stage call must
@@ -36,7 +36,7 @@ def main() -> None:
         # The packaged evaluator checks the rectangular topology, translates it into
         # the shared explicit circuit backend, and then runs the battery simulation.
         evaluation = problem.evaluate(state)
-    except MissingOptionalDependencyError as exc:
+    except derp.MissingOptionalDependencyError as exc:
         print(exc)
         return
     if not evaluation.is_feasible:

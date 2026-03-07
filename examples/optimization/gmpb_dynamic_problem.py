@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import numpy
 
-from design_research_problems import get_problem
+import design_research_problems as derp
 
 
 def main() -> None:
     """Print stateful GMPB evaluation and solve details."""
-    problem = get_problem("gmpb_default_dynamic_min")
+    problem = derp.get_problem("gmpb_default_dynamic_min")
     print(problem.metadata.problem_id)
     print(f"dimension {problem.bounds.lb.shape[0]}")
     print(f"before env={problem.current_environment_index()} evals={problem.evaluations_in_environment()}")

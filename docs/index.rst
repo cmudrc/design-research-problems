@@ -35,11 +35,11 @@ If you want a five-minute start, copy this:
 
 .. code-block:: python
 
-   from design_research_problems import get_ideation_catalog, get_problem, list_problems
+   import design_research_problems as derp
 
-   print(list_problems())
-   print(len(get_ideation_catalog().list_prompts()))
-   peanut = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
+   print(derp.list_problems())
+   print(len(derp.get_ideation_catalog().list_prompts()))
+   peanut = derp.get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
    print(peanut.render_brief(include_citation=False))
 
 That gives you the packaged problem IDs, the ideation prompt count, and a

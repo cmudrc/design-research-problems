@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from design_research_problems import get_ideation_catalog
+import design_research_problems as derp
 
 
 def main() -> None:
     """Print compact JSON and CSV previews."""
-    catalog = get_ideation_catalog()
+    catalog = derp.get_ideation_catalog()
     json_payload = catalog.export_prompt_index(format="json")
     csv_payload = catalog.export_prompt_index(format="csv")
     print(json_payload.splitlines()[0])
