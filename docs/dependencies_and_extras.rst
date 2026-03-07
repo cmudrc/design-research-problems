@@ -1,9 +1,6 @@
 Dependencies and Extras
 =======================
 
-The project keeps runtime dependencies small and layers family-specific
-integrations behind extras.
-
 Core Install
 ------------
 
@@ -11,29 +8,22 @@ Core Install
 
    pip install design-research-problems
 
-Runtime dependencies:
+Editable contributor setup:
 
-- ``gmpb``
-- ``numpy``
-- ``scipy``
+.. code-block:: bash
 
-Development Install
--------------------
+   git clone https://github.com/cmudrc/design-research-problems.git
+   cd design-research-problems
+   python -m venv .venv
+   source .venv/bin/activate
+   python -m pip install --upgrade pip
+   pip install -e ".[dev]"
+
+Or use:
 
 .. code-block:: bash
 
    make dev
-
-This installs linting, typing, tests, docs, and release-check tooling.
-
-Reproducible Install
---------------------
-
-.. code-block:: bash
-
-   make repro REPRO_EXTRAS="dev"
-
-The frozen install uses ``uv.lock`` and pinned interpreter ``3.12.12``.
 
 Extras Matrix
 -------------
@@ -43,56 +33,33 @@ Extras Matrix
 
    * - Extra
      - Purpose
-     - Key packages
    * - ``grammar``
-     - Truss grammar evaluation and structural truss optimization benchmarks
-     - ``trussme``
+     - Truss-oriented grammar and structural workflows
    * - ``battery``
-     - Battery grammar evaluation and battery optimization benchmarks
-     - ``pybamm``
+     - Battery grammar and battery optimization workflows
    * - ``mcp``
-     - MCP export/ingestion problem workflows
-     - ``mcp``
+     - MCP-backed task workflows
    * - ``cad``
-     - Build123d CAD backend for MCP CAD problems
-     - ``build123d``
+     - Build123d-backed CAD workflows
    * - ``solvers``
-     - External optimization backends for selected problems
-     - ``nevergrad``, ``pymoo``
+     - External optimization backends
    * - ``pandas``
-     - DataFrame export helpers for ideation catalog workflows
-     - ``pandas``
-   * - ``opt``
-     - Compatibility extra for SciPy optimization dependency
-     - ``scipy``
+     - DataFrame exports for catalog/ideation data
    * - ``dev``
-     - Contributor tooling and quality checks
-     - ``pytest``, ``ruff``, ``mypy``, ``sphinx``, ``build``, ``twine``
+     - Contributor tooling
 
-Recommended Profiles
---------------------
+Text and decision families are suitable for lightweight setups. Grammar and
+battery families are more infrastructure-sensitive because they depend on
+domain-specific toolchains. MCP and CAD tasks are best when your study must
+interact with an external execution environment.
 
-- Fast contributor loop: ``make dev``
-- Truss workflows: ``pip install -e ".[grammar]"`` or ``make dev-truss``
-- Battery workflows: ``pip install -e ".[battery]"`` or ``make dev-battery``
-- MCP CAD workflows: ``pip install -e ".[mcp,cad]"``
-- Extra solver coverage: ``pip install -e ".[solvers]"``
-- Full optional local verification: ``make dev-full``
+Recommended install profiles:
 
-Maintainer Release Baseline
----------------------------
+- lightweight catalog and text studies: base install only
+- structural grammar studies: ``pip install -e ".[grammar]"``
+- battery studies: ``pip install -e ".[battery]"``
+- external-tool workflows: ``pip install -e ".[mcp,cad]"``
+- full local validation environment: ``make dev-full``
 
-Use this flow before tagging a release:
-
-1. Use Python ``3.12.12`` (from ``.python-version``).
-2. Regenerate lock data: ``make lock``.
-3. Verify frozen install and checks: ``make repro REPRO_EXTRAS="dev"`` and ``make ci``.
-4. Build release artifacts and validate metadata: ``make release-check``.
-5. Commit lock/dependency updates before tagging.
-
-Notes
------
-
-- Truss grammar evaluation and structural truss optimization require ``trussme``.
-- Battery grammar evaluation requires a supported ``pybamm`` install; there is no packaged battery-evaluation fallback.
-- Open-ended battery optimization prefers ``pymoo``, then ``nevergrad``, then the built-in deterministic local-search baseline.
+Reproducible and release flows are exposed via ``make repro``, ``make lock``,
+and ``make release-check``.

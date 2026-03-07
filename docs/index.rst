@@ -1,105 +1,96 @@
 design-research-problems
 ========================
 
-A compact library and compendium of canonical design research problems.
+A library of benchmark tasks for design research.
 
-Use it to:
+What This Library Does
+----------------------
 
-- load reusable human-subjects design prompts,
-- run small canonical optimization benchmarks, and
-- explore discrete design grammars with optional domain-specific evaluators.
+``design-research-problems`` provides structured design tasks spanning
+ideation, decision-making, optimization, grammar-based design exploration, and
+MCP-backed workflows. We use it to package reusable task definitions with clear
+metadata, evaluators, and domain structure.
 
 Highlights
 ----------
 
-- A packaged catalog of reusable design research prompts and benchmark problems.
-- Five problem families: text, decision, optimization, grammar, and mcp, plus a linked ideation metadata catalog.
-- A shared ``Problem`` base plus ``ComputableProblem`` layer for executable entries.
-- Lazy optional integrations for SciPy, ``trussme``, ``pybamm``, and Build123d so the base install stays light.
-- Problem-level feature flags plus family-level aggregated feature flags for capability discovery.
-- Typed metadata and a deliberately small public API.
-- Runnable examples and generated docs that stay in sync with the codebase.
+- Text prompts
+- Decision problems
+- Optimization problems
+- Grammar problems
+- MCP-backed tasks
+- Typed metadata
+
+Different problem families support different forms of inquiry. Text problems are
+well suited for prompt-based and human-subjects studies. Optimization problems
+support algorithmic benchmarking. Grammar problems support constructive search
+and sequential design behavior. MCP-backed tasks connect studies to external
+execution systems.
 
 Typical Workflow
 ----------------
 
-1. List available IDs and pick a problem family that matches your study objective.
-2. Load a problem, generate an initial solution/state, and inspect transitions or constraints.
-3. Run ``evaluate()``/``solve()`` (when available), optionally enabling family-specific extras.
-4. Export artifacts or integrate the problem through sibling agent/experiment workflows.
+1. Browse the catalog and choose a family aligned with the study question.
+2. Load a problem and inspect state, constraints, prompt content, or evaluator behavior.
+3. Generate candidate solutions or trajectories.
+4. Evaluate outputs and collect artifacts.
+5. Hand tasks to agents directly or bind them into studies via experiments.
+
+Integration With The Ecosystem
+------------------------------
+
+The Design Research Collective maintains a modular ecosystem of libraries for
+studying human and AI design behavior.
+
+- **design-research-agents** implements AI participants, workflows, and tool-using reasoning patterns.
+- **design-research-problems** provides benchmark design tasks, prompts, grammars, and evaluators.
+- **design-research-analysis** analyzes the traces, event tables, and outcomes generated during studies.
+- **design-research-experiments** sits above the stack as the study-design and orchestration layer, defining hypotheses, factors, conditions, replications, and artifact flows across agents, problems, and analysis.
+
+Together these libraries support end-to-end design research pipelines, from
+study design through execution and interpretation.
+
+.. image:: _static/ecosystem-platform.svg
+   :alt: Ecosystem diagram showing experiments above agents, problems, and analysis.
+   :width: 100%
+   :align: center
 
 Start Here
 ----------
 
-If you want a five-minute start, copy this:
-
-.. code-block:: python
-
-   import design_research_problems as derp
-
-   print(derp.list_problems())
-   print(len(derp.get_ideation_catalog().list_prompts()))
-   peanut = derp.get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
-   print(peanut.render_brief(include_citation=False))
-
-That gives you the packaged problem IDs, the ideation prompt count, and a
-ready-to-use text prompt packet.
-
-Choose the path that matches what you want to do next:
-
-- Read :doc:`quickstart` to set up the package and run the first catalog calls.
-- Read :doc:`problems/index` to understand behavior and contracts by problem family.
-- Read :doc:`problem_catalog/index` for the full generated problem-by-problem inventory.
-- Read :doc:`dependencies_and_extras` before enabling optional backend integrations.
-- Read :doc:`examples/index` for runnable scripts grouped by problem family.
-- Read :doc:`api` for the curated top-level public surface.
-
-Problem Families
-----------------
-
-``Text``
-   Prompt packets, citations, and optional assets for human-subjects studies.
-
-``Decision``
-   Structured decision briefs with either explicit discrete-option or empirical-choice evaluators.
-
-``Optimization``
-   Structured numerical problems with bounds, constraints, and representative built-in baselines.
-
-``Grammar``
-   Discrete state-and-action problems for constructive design exploration.
-
-``MCP``
-   Proxy-backed problems that ingest upstream MCP tool servers for agent workflows.
-
-What Is In The Initial Catalog?
--------------------------------
-
-- 40 ideation-focused text prompts.
-- ``moneymaker_hip_pump_cost_min``: a citation-backed scalarized pump optimization benchmark.
-- ``pill_capsule_min_area``: a compact nonlinear constrained optimization problem.
-- ``battery_pack_18650_open_ended``: an explicit 18650 graph-netlist battery grammar with optional PyBaMM-shaped fixed-ambient single-cell surrogates and a library-owned pack solver.
-- ``battery_pack_18650_series_parallel``: a constrained 18650 pack co-design grammar backed by the same optional single-cell surrogate plus the shared pack solver.
-- ``planar_truss_span``, ``space_truss_span``, and six ``planar_roof_truss_*`` entries: discrete truss grammars with a lazy ``trussme`` adapter.
-- ``planar_truss_span_mass_min``, ``planar_truss_span_deflection_min``, ``planar_truss_span_fos_max``, and ``space_truss_span_mass_min``: structural truss optimization benchmarks backed by the same shared ``trussme`` adapter.
-- ``treadle_pump_ide_material_min``: a citation-backed scalarized treadle-pump optimization benchmark.
-- ``mcp_build123d_parametric_mounting_bracket``: an MCP-ingested CAD workflow problem where agents author and evaluate Build123d scripts through a package-owned backend.
+- :doc:`quickstart`
+- :doc:`installation`
+- :doc:`concepts`
+- :doc:`typical_workflow`
+- :doc:`examples/index`
+- :doc:`problem_catalog/index`
+- :doc:`api`
 
 .. toctree::
    :maxdepth: 2
-   :caption: Guides
+   :caption: Documentation
    :hidden:
 
    quickstart
-   dependencies_and_extras
-   problems/index
-   problem_catalog/index
+   installation
+   concepts
+   typical_workflow
    examples/index
+   api
 
 .. toctree::
    :maxdepth: 2
-   :caption: Reference
+   :caption: Development
    :hidden:
 
-   api
+   dependencies_and_extras
+   Contributing <https://github.com/cmudrc/design-research-problems/blob/main/CONTRIBUTING.md>
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Additional Guides
+   :hidden:
+
+   problems/index
+   problem_catalog/index
    reference/index
