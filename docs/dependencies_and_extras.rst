@@ -1,81 +1,98 @@
-Dependencies And Extras
+Dependencies and Extras
 =======================
 
-Base install
-------------
+The project keeps runtime dependencies small and layers family-specific
+integrations behind extras.
 
-The base package installs NumPy and SciPy:
+Core Install
+------------
 
 .. code-block:: bash
 
    pip install design-research-problems
 
-Optimization baselines
-----------------------
+Runtime dependencies:
 
-The representative optimization `solve()` baselines use SciPy's constrained
-optimizers and ship in the base install; no extra dependency is required.
+- ``gmpb``
+- ``numpy``
+- ``scipy``
 
-Battery evaluation support
---------------------------
-
-Battery grammar evaluation is optional and installs ``pybamm>=25.12,<26``.
-The package uses PyBaMM only to extract a fixed-ambient, SOC-indexed single-cell
-surrogate; the library still performs the pack-level circuit simulation. There
-is no packaged fallback for battery evaluation when a supported PyBaMM install is
-not available:
+Development Install
+-------------------
 
 .. code-block:: bash
 
-   pip install design-research-problems[battery]
+   make dev
 
-Truss support
+This installs linting, typing, tests, docs, and release-check tooling.
+
+Reproducible Install
+--------------------
+
+.. code-block:: bash
+
+   make repro REPRO_EXTRAS="dev"
+
+The frozen install uses ``uv.lock`` and pinned interpreter ``3.12.12``.
+
+Extras Matrix
 -------------
 
-The planar and 3D truss grammar problems can evaluate states only when the
-optional `trussme` dependency is installed. The packaged truss optimization
-problems also require `trussme` because their objectives and constraints are
-structural:
+.. list-table::
+   :header-rows: 1
 
-.. code-block:: bash
+   * - Extra
+     - Purpose
+     - Key packages
+   * - ``grammar``
+     - Truss grammar evaluation and structural truss optimization benchmarks
+     - ``trussme``
+   * - ``battery``
+     - Battery grammar evaluation and battery optimization benchmarks
+     - ``pybamm``
+   * - ``mcp``
+     - MCP export/ingestion problem workflows
+     - ``mcp``
+   * - ``cad``
+     - Build123d CAD backend for MCP CAD problems
+     - ``build123d``
+   * - ``solvers``
+     - External optimization backends for selected problems
+     - ``nevergrad``, ``pymoo``
+   * - ``pandas``
+     - DataFrame export helpers for ideation catalog workflows
+     - ``pandas``
+   * - ``opt``
+     - Compatibility extra for SciPy optimization dependency
+     - ``scipy``
+   * - ``dev``
+     - Contributor tooling and quality checks
+     - ``pytest``, ``ruff``, ``mypy``, ``sphinx``, ``build``, ``twine``
 
-   pip install design-research-problems[grammar]
+Recommended Profiles
+--------------------
 
-In a local editable checkout of this repository, the convenience Make target
-installs the same dependency:
+- Fast contributor loop: ``make dev``
+- Truss workflows: ``pip install -e ".[grammar]"`` or ``make dev-truss``
+- Battery workflows: ``pip install -e ".[battery]"`` or ``make dev-battery``
+- MCP CAD workflows: ``pip install -e ".[mcp,cad]"``
+- Extra solver coverage: ``pip install -e ".[solvers]"``
+- Full optional local verification: ``make dev-full``
 
-.. code-block:: bash
+Maintainer Release Baseline
+---------------------------
 
-   make install-trussme
+Use this flow before tagging a release:
 
-For the battery evaluator:
+1. Use Python ``3.12.12`` (from ``.python-version``).
+2. Regenerate lock data: ``make lock``.
+3. Verify frozen install and checks: ``make repro REPRO_EXTRAS="dev"`` and ``make ci``.
+4. Build release artifacts and validate metadata: ``make release-check``.
+5. Commit lock/dependency updates before tagging.
 
-.. code-block:: bash
+Notes
+-----
 
-   make install-pybamm
-
-MCP export and ingestion support
---------------------------------
-
-Problem-level ``to_mcp_server()`` export and MCP-ingestion proxy workflows
-require the optional ``mcp`` dependency:
-
-.. code-block:: bash
-
-   pip install design-research-problems[mcp]
-
-Build123d CAD backend support
------------------------------
-
-The packaged CAD MCP problem ``mcp_build123d_parametric_mounting_bracket`` uses
-a package-owned Build123d backend server. Install ``build123d`` with:
-
-.. code-block:: bash
-
-   pip install design-research-problems[cad]
-
-For full MCP CAD workflows, install both extras:
-
-.. code-block:: bash
-
-   pip install design-research-problems[mcp,cad]
+- Truss grammar evaluation and structural truss optimization require ``trussme``.
+- Battery grammar evaluation requires a supported ``pybamm`` install; there is no packaged battery-evaluation fallback.
+- Open-ended battery optimization prefers ``pymoo``, then ``nevergrad``, then the built-in deterministic local-search baseline.

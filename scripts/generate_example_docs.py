@@ -3,10 +3,23 @@
 from __future__ import annotations
 
 import argparse
+from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "docs" / "examples" / "index.rst"
+
+
+def _category_title(category: str) -> str:
+    """Render a display title for an example category key.
+
+    Args:
+        category: Top-level examples category from the relative path.
+
+    Returns:
+        Human-readable category heading.
+    """
+    return "Core" if category == "root" else category.replace("_", " ").title()
 
 
 def _render() -> str:
@@ -15,16 +28,34 @@ def _render() -> str:
     Returns:
         Full reStructuredText content for ``docs/examples/index.rst``.
     """
+    grouped: dict[str, list[Path]] = defaultdict(list)
+    for path in sorted(ROOT.glob("examples/**/*.py")):
+        relative = path.relative_to(ROOT)
+        category = relative.parts[1] if len(relative.parts) >= 3 else "root"
+        grouped[category].append(relative)
+
     lines = [
         "Examples",
         "========",
         "",
-        "The example inventory is generated from the checked-in scripts.",
+        "The example inventory is generated from checked-in scripts.",
+        "",
+        "Run any example from repository root:",
+        "",
+        ".. code-block:: bash",
+        "",
+        "   PYTHONPATH=src python examples/<category>/<example_name>.py",
         "",
     ]
-    for path in sorted(ROOT.glob("examples/**/*.py")):
-        lines.append(f"- ``{path.relative_to(ROOT).as_posix()}``")
-    lines.append("")
+    for category in sorted(grouped):
+        title = _category_title(category)
+        lines.append(title)
+        lines.append("-" * len(title))
+        lines.append("")
+        for relative in grouped[category]:
+            lines.append(f"- ``{relative.as_posix()}``")
+        lines.append("")
+
     return "\n".join(lines)
 
 

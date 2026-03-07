@@ -1,8 +1,38 @@
 Quickstart
 ==========
 
-Load the package, list the seed problems, inspect feature flags, and fetch the
-catalog entries:
+Requires Python 3.12+ and assumes you are working from the repository root.
+
+Create and activate a virtual environment:
+
+.. code-block:: bash
+
+   python -m venv .venv
+   source .venv/bin/activate
+   python -m pip install --upgrade pip
+
+Path A: Installed package (fastest)
+-----------------------------------
+
+Use this when you want the shortest path to catalog exploration from PyPI.
+
+1. Install the base package:
+
+.. code-block:: bash
+
+   pip install design-research-problems
+
+2. (Optional) install family-specific extras:
+
+.. code-block:: bash
+
+   pip install "design-research-problems[grammar]"      # truss grammar + structural optimization
+   pip install "design-research-problems[battery]"      # battery grammar + battery optimization
+   pip install "design-research-problems[mcp,cad]"      # MCP export/ingestion + Build123d backend
+   pip install "design-research-problems[solvers]"      # external optimization backends
+   pip install "design-research-problems[pandas]"       # DataFrame exports for ideation catalog
+
+3. List the catalog and inspect one text problem:
 
 .. code-block:: python
 
@@ -14,7 +44,43 @@ catalog entries:
    peanut = get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
    print(peanut.render_brief(include_citation=False))
 
-The optimization problem can be instantiated through the registry:
+Path B: Editable repository checkout
+------------------------------------
+
+Use this when you are developing or validating local changes.
+
+1. Install editable package + dev tooling:
+
+.. code-block:: bash
+
+   make dev
+
+2. (Optional) install integration dependencies:
+
+.. code-block:: bash
+
+   make dev-truss
+   make dev-battery
+   # or install everything:
+   make dev-full
+
+3. Run one catalog example:
+
+.. code-block:: bash
+
+   PYTHONPATH=src python examples/catalog/list_and_load.py
+
+4. Launch the packaged desktop GUIs:
+
+.. code-block:: bash
+
+   python -m design_research_problems.gui --app iot
+   python -m design_research_problems.gui --app truss
+
+Problem-family snippets
+-----------------------
+
+Optimization problems can be instantiated and solved directly:
 
 .. code-block:: python
 
@@ -31,7 +97,7 @@ The optimization problem can be instantiated through the registry:
    treadle = get_problem("treadle_pump_ide_material_min")
    print(treadle.solve().message)
 
-The grammar problems expose serializable starting states and a lazy `trussme`
+Grammar problems expose serializable starting states and a lazy ``trussme``
 adapter:
 
 .. code-block:: python
@@ -76,12 +142,20 @@ netlist edits:
        len(open_battery_problem.enumerate_transitions(open_battery_state)),
    )
 
-The packaged desktop GUIs can be launched from the module entrypoint:
+Checks and Docs
+---------------
 
 .. code-block:: bash
 
-   python -m design_research_problems.gui --app iot
-   python -m design_research_problems.gui --app truss
+   make test
+   make docs-check
+   make docs-build
 
-The IoT GUI shows a continuous room-temperature colorbar, and the truss GUI
-suppresses structural evaluation while the design remains under-determined.
+Next Steps
+----------
+
+- Install profiles and release checks: :doc:`dependencies_and_extras`
+- Family-level API and behavior guide: :doc:`problems/index`
+- Full generated problem-by-problem inventory: :doc:`problem_catalog/index`
+- Runnable example inventory: :doc:`examples/index`
+- Supported top-level exports: :doc:`api`

@@ -11,66 +11,46 @@ discrete grammar-style problems behind a small, typed Python API.
 
 ## Overview
 
-The initial release centers on five problem families plus a linked ideation metadata catalog:
-
-- Text problems for human-subjects studies and prompt packets
-- Decision problems with typed discrete or empirical evaluation interfaces
-- Optimization problems with typed bounds and representative built-in baselines
-- Grammar problems that describe discrete design actions and optional evaluation adapters
-- MCP problems that ingest upstream MCP tool servers for agent-style workflows
-- An ideation catalog with prompt records, variants, families, and study summaries
-
-The public problem model now centers on a shared ``Problem`` documentation base
-and a ``ComputableProblem`` evaluation layer, with family-specific subclasses on
-top. Problem-family interchangeability is defined by those family base classes,
-not by matching catalog capability flags across different kinds.
-
-The first catalog includes:
-
-- 40 ideation-focused text prompts
-- `battery_pack_18650_open_ended_capacity_max` for explicit 18650 layout-and-wiring capacity maximization under the shared battery backend
-- `gmpb_default_dynamic_min` for a stateful dynamic minimization wrapper around the Generalized Moving Peaks Benchmark
-- `pill_capsule_min_area` for constrained continuous optimization
-- `battery_pack_18650_series_parallel_cost_min` for fixed-topology rectangular 18650 pack sizing under the shared battery backend
-- `planar_truss_span_mass_min`, `planar_truss_span_deflection_min`, and `planar_truss_span_fos_max` for fixed-joint planar truss structural optimization under real `trussme` evaluation
-- `space_truss_span_mass_min` for fixed-joint 3D space-truss structural optimization under the same shared truss backend
-- `planar_truss_span` for the original seed planar truss grammar backed by `trussme`
-- `space_truss_span` for a bounded 3D space-truss grammar backed by `trussme`
-- `battery_pack_18650_open_ended` for explicit 18650 cell-by-cell graph-netlist co-design backed by an optional PyBaMM-shaped single-cell surrogate plus a library-owned pack solver
-- `battery_pack_18650_series_parallel` for explicit 18650 series-parallel pack co-design backed by the same optional PyBaMM-shaped single-cell surrogate plus a library-owned pack solver
-- six `planar_roof_truss_*` variants that approximate the roof-truss formulations reported by Shea and Cagan
-- `moneymaker_hip_pump_cost_min` for a citation-backed scalarized pump benchmark
-- `treadle_pump_ide_material_min` for a citation-backed scalarized treadle-pump benchmark
-- `mcp_build123d_parametric_mounting_bracket` for MCP-ingested CAD workflows where agents author and evaluate Build123d scripts through a package-owned backend
+- Five problem families: text, decision, optimization, grammar, and MCP, plus a linked ideation metadata catalog.
+- Shared model contracts built around `Problem` and `ComputableProblem`, with family-specific subclasses on top.
+- A seed catalog that includes 40 ideation prompts plus packaged decision, optimization, grammar, and MCP benchmarks.
+- Optional integrations for `trussme`, `pybamm`, `mcp`, Build123d, and external solver backends.
+- Typed metadata, a curated public API, runnable examples, and Sphinx docs.
 
 ## Quickstart
 
 Requires Python 3.12+.
-Install from PyPI with:
+Reproducible local installs are pinned to Python `3.12.12` in `.python-version`.
+
+Create and activate a virtual environment:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+```
+
+Install in editable mode for local development:
+
+```bash
+make dev
+make test
+```
+
+Or install from PyPI:
 
 ```bash
 pip install design-research-problems
 ```
 
-Install the optional `trussme` truss support with:
+Optional extras:
 
 ```bash
 pip install "design-research-problems[grammar]"
+pip install "design-research-problems[battery]"
+pip install "design-research-problems[mcp,cad]"
+pip install "design-research-problems[solvers,pandas]"
 ```
-
-The representative optimization baselines are included in the base install.
-
-Install the optional external optimization backends with:
-
-```bash
-pip install "design-research-problems[solvers]"
-```
-
-The smooth continuous benchmarks continue to use SciPy baselines, while the
-open-ended battery co-design optimizer will automatically prefer `pymoo`, then
-`nevergrad`, and finally fall back to the built-in deterministic local search.
-The GMPB wrapper instead uses a simple random-search baseline because each
-evaluation advances a dynamic benchmark state.
 
 Then inspect the catalog directly from the installed package:
 
@@ -94,27 +74,41 @@ python3 -m design_research_problems.gui --app truss
 The IoT GUI renders a continuous room-temperature colorbar, and the truss GUI
 only evaluates structurally when the design is not under-determined.
 
-For local development, reproducible installs are pinned to Python `3.12.12` in
-`.python-version`:
+Run one checked-in example from repository root:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-make dev
-make ci
+PYTHONPATH=src python examples/catalog/list_and_load.py
 ```
+
+## Examples
+
+Start with [examples/README.md](https://github.com/cmudrc/design-research-problems/blob/main/examples/README.md)
+for runnable examples across all problem families.
 
 ## Docs
 
 See the [published documentation](https://cmudrc.github.io/design-research-problems/)
-for the guide and reference layout.
-Build them locally with:
+for quickstart, problem-family guides, generated catalog pages, and API reference.
+
+Build docs locally with:
 
 ```bash
 make docs
 ```
 
+## Public API
+
+The supported public surface is whatever is exported from `design_research_problems.__all__`.
+
+Top-level exports include:
+
+- Shared contracts and family bases: `Problem`, `ComputableProblem`, `ProblemKind`, `ProblemMetadata`, `ProblemTaxonomy`, `Citation`, `ProblemAsset`, `TextProblem`, `DecisionProblem`, `OptimizationProblem`, `GrammarProblem`, and `MCPProblem`.
+- Family-specific evaluation contracts: `DecisionEvaluation`, `OptimizationEvaluation`, and `GrammarTransition`.
+- Catalog access: `ProblemRegistry`, `get_problem`, `get_problem_as`, and `list_problems`.
+- Ideation metadata API: `IdeationCatalog`, `IdeationPromptRecord`, `IdeationPromptVariant`, `IdeationPromptFamily`, `IdeationStudy`, `EvidenceTier`, and `get_ideation_catalog`.
+- Public exceptions: `MissingOptionalDependencyError` and `ProblemEvaluationError`.
+
 ## Contributing
 
-Contribution guidelines live in
+Contribution workflow and quality gates are documented in
 [CONTRIBUTING.md](https://github.com/cmudrc/design-research-problems/blob/main/CONTRIBUTING.md).

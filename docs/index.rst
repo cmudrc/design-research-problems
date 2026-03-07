@@ -20,6 +20,14 @@ Highlights
 - Typed metadata and a deliberately small public API.
 - Runnable examples and generated docs that stay in sync with the codebase.
 
+Typical Workflow
+----------------
+
+1. List available IDs and pick a problem family that matches your study objective.
+2. Load a problem, generate an initial solution/state, and inspect transitions or constraints.
+3. Run ``evaluate()``/``solve()`` (when available), optionally enabling family-specific extras.
+4. Export artifacts or integrate the problem through sibling agent/experiment workflows.
+
 Start Here
 ----------
 
@@ -36,6 +44,15 @@ If you want a five-minute start, copy this:
 
 That gives you the packaged problem IDs, the ideation prompt count, and a
 ready-to-use text prompt packet.
+
+Choose the path that matches what you want to do next:
+
+- Read :doc:`quickstart` to set up the package and run the first catalog calls.
+- Read :doc:`problems/index` to understand behavior and contracts by problem family.
+- Read :doc:`problem_catalog/index` for the full generated problem-by-problem inventory.
+- Read :doc:`dependencies_and_extras` before enabling optional backend integrations.
+- Read :doc:`examples/index` for runnable scripts grouped by problem family.
+- Read :doc:`api` for the curated top-level public surface.
 
 Problem Families
 ----------------
@@ -54,18 +71,6 @@ Problem Families
 
 ``MCP``
    Proxy-backed problems that ingest upstream MCP tool servers for agent workflows.
-
-Common Paths
-------------
-
-Choose the path that matches what you want to do next:
-
-- Read :doc:`quickstart` to load the catalog and inspect each problem family.
-- Read :doc:`problems/index` to understand the five problem families.
-- Read :doc:`problem_catalog/index` for the full generated problem-by-problem catalog.
-- Read :doc:`dependencies_and_extras` before enabling SciPy, ``trussme``, ``pybamm``, or Build123d support.
-- Read :doc:`examples/index` for runnable scripts you can execute immediately.
-- Read :doc:`api` if you want the public surface contract first.
 
 What Is In The Initial Catalog?
 -------------------------------

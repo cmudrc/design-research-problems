@@ -1,32 +1,60 @@
 # Contributing
 
-## Local Setup
+## Development Setup
 
 ```bash
-python3 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate
 make dev
 ```
 
-For the optional `trussme` integration:
+For a reproducible install based on `uv.lock`:
 
 ```bash
-pip install -e ".[grammar]"
-# or
-make install-trussme
+make lock
+make repro REPRO_EXTRAS="dev"
 ```
 
-## Common Commands
+Optional integration setup for problem families that require external backends:
 
 ```bash
+make install-trussme   # truss grammar + truss optimization families
+make install-pybamm    # battery grammar + battery optimization families
+make dev-full          # install dev + all optional extras
+```
+
+## Local Quality Checks
+
+Run these before opening a pull request:
+
+```bash
+make fmt
+make lint
+make type
+make docstrings-check
 make test
-make qa
+make docs-check
 make ci
-make docs
 ```
 
-## Notes
+Optional but useful:
 
-- Keep the public API curated and intentionally small.
-- Prefer package resources for catalog content instead of embedding long prompts in Python modules.
-- New problem families should add tests, docs, and at least one runnable example.
+```bash
+pre-commit install
+pre-commit run --all-files
+```
+
+## Pull Request Guidelines
+
+- Keep changes small enough to review quickly.
+- Add or update tests for behavior changes.
+- Update docs and examples when interfaces, catalogs, or workflows change.
+- Describe what changed and how you validated it.
+
+## Code Style
+
+- Python 3.12+ target
+- Ruff for linting and formatting
+- Mypy for type checking
+- Pytest for tests
+- Google-style docstrings in `src/`, `examples/`, and `scripts/`
