@@ -13,6 +13,18 @@ _LAZY_EXPORTS = {
     "BatteryCircuitEvaluation": "design_research_problems.problems.grammar._battery_circuit:BatteryCircuitEvaluation",
     "BatteryCircuitState": "design_research_problems.problems.grammar._battery_circuit:BatteryCircuitState",
     "BatteryConnection": "design_research_problems.problems.grammar._battery_circuit:BatteryConnection",
+    "Battery18650Tier1SeriesParallelGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier1SeriesParallelGrammarProblem"
+    ),
+    "Battery18650Tier2LayoutGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier2LayoutGrammarProblem"
+    ),
+    "Battery18650Tier3TopologyGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier3TopologyGrammarProblem"
+    ),
+    "Battery18650Tier4ThermalGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier4ThermalGrammarProblem"
+    ),
     "BatteryPack18650OpenEndedProblem": (
         "design_research_problems.problems.grammar._battery_pack_open:BatteryPack18650OpenEndedProblem"
     ),
@@ -84,6 +96,12 @@ if TYPE_CHECKING:
     )
     from ._battery_pack_sp import SeriesParallelBatteryEvaluation as SeriesParallelBatteryEvaluation
     from ._battery_pack_sp import SeriesParallelBatteryState as SeriesParallelBatteryState
+    from ._battery_tiers import (
+        Battery18650Tier1SeriesParallelGrammarProblem as Battery18650Tier1SeriesParallelGrammarProblem,
+    )
+    from ._battery_tiers import Battery18650Tier2LayoutGrammarProblem as Battery18650Tier2LayoutGrammarProblem
+    from ._battery_tiers import Battery18650Tier3TopologyGrammarProblem as Battery18650Tier3TopologyGrammarProblem
+    from ._battery_tiers import Battery18650Tier4ThermalGrammarProblem as Battery18650Tier4ThermalGrammarProblem
     from ._iot_home import IoTHomeCoolingGrammarProblem as IoTHomeCoolingGrammarProblem
     from ._iot_home import IoTHomeEvaluation as IoTHomeEvaluation
     from ._iot_home import IoTHomeLink as IoTHomeLink

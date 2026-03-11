@@ -6,8 +6,10 @@ Generated from top-of-file example docstrings in ``examples/optimization``.
 .. toctree::
    :maxdepth: 1
 
-   battery_grammar_to_optimizer
-   battery_open_ended_capacity_max
+   battery_18650_t1_series_parallel_opt
+   battery_18650_t2_layout_opt
+   battery_18650_t3_topology_opt
+   battery_18650_t4_thermal_opt
    gmpb_dynamic_problem
    ide_treadle_pump
    moneymaker_hip_pump

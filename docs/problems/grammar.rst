@@ -11,16 +11,13 @@ See :doc:`../problem_catalog/grammar` for the generated per-problem catalog page
 The catalog includes `planar_truss_span`, which translates a serializable
 planar topology state into a fresh `trussme.Truss` for evaluation. It also
 includes `space_truss_span`, which applies the same evaluation pattern to a
-bounded 3D space-truss state. It also
-includes `battery_pack_18650_series_parallel`, which models a complete
-rectangular series-parallel battery pack with explicit cell coordinates,
-whole-stage and whole-branch edits, and an optional evaluation path that uses
-PyBaMM to extract a fixed-ambient single-cell surrogate while the package owns
-the pack-level circuit solve. A supported PyBaMM installation is required for
-that battery evaluation path. The catalog also includes
-`battery_pack_18650_open_ended`, which starts from a single 18650 cell and
-exposes explicit interconnect edits over a full battery graph netlist under
-that same shared backend. The catalog also includes six
+bounded 3D space-truss state. The tiered battery grammar ladder includes
+`battery_18650_t1_series_parallel_grammar`,
+`battery_18650_t2_layout_grammar`,
+`battery_18650_t3_topology_grammar`, and
+`battery_18650_t4_thermal_grammar`, which progressively unlock series-parallel
+layout edits, pose-aware layout edits, explicit topology/netlist edits, and
+thermal-system tuning. The catalog also includes six
 `planar_roof_truss_*` variants that approximate the planar roof truss
 formulations discussed by Shea and Cagan, including multi-load and
 symmetry-constrained cases.

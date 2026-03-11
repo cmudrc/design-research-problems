@@ -11,8 +11,14 @@ optimizer example to use the optional `pymoo` or `nevergrad` solver backends.
 - `decision/mseval_material_choice.py`: inspect one empirical MSEval material-choice benchmark.
 - `text/peanut_sheller_packet.py`: render the text prompt and citation packet.
 - `optimization/pill_problem.py`: sample and optionally solve the pill problem.
-- `grammar/battery_pack_18650_open_ended.py`: build a 4S4P-equivalent explicit battery graph and evaluate it when `pybamm` is installed.
-- `grammar/battery_pack_18650_series_parallel.py`: build the constrained rectangular 4S4P battery grammar state and evaluate it when `pybamm` is installed.
+- `grammar/battery_18650_t1_series_parallel_grammar.py`: inspect the tier-1 rectangular battery grammar baseline.
+- `grammar/battery_18650_t2_layout_grammar.py`: inspect tier-2 pose-aware battery grammar transitions and metrics.
+- `grammar/battery_18650_t3_topology_grammar.py`: inspect tier-3 explicit topology battery grammar behavior.
+- `grammar/battery_18650_t4_thermal_grammar.py`: inspect tier-4 battery grammar with thermal-system tuning actions.
+- `optimization/battery_18650_t1_series_parallel_opt.py`: inspect tier-1 optimization metrics and solver output.
+- `optimization/battery_18650_t2_layout_opt.py`: inspect tier-2 pose-aware optimization metrics and solver output.
+- `optimization/battery_18650_t3_topology_opt.py`: inspect tier-3 topology-aware optimization metrics and solver output.
+- `optimization/battery_18650_t4_thermal_opt.py`: inspect tier-4 thermal-system optimization metrics and solver output.
 - `grammar/iot_home_cooling_system_design.py`: build a small IoT home cooling network and evaluate lifecycle and thermal metrics.
 - `grammar/truss_analysis_program_design.py`: build a truss using MATLAB Truss Analysis Program mechanics and inspect mass/FOS results.
 - `optimization/battery_grammar_to_optimizer.py`: inspect the packaged rectangular battery sizing optimizer with a seeded start and solved design.

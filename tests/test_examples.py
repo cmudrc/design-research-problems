@@ -147,47 +147,67 @@ def test_gmpb_optimization_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
-def test_open_ended_battery_grammar_example_runs() -> None:
-    completed = _run_example("examples/grammar/battery_pack_18650_open_ended.py")
+def test_t1_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_18650_t1_series_parallel_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_pack_18650_open_ended" in completed.stdout
-    if "pybamm is required for battery grammar evaluation" in completed.stdout:
-        return
-    assert completed.stdout.splitlines()[-1].split()[1] == "True"
+    assert "battery_18650_t1_series_parallel_grammar" in completed.stdout
+    assert "metric-keys" in completed.stdout
 
 
 @pytest.mark.examples_smoke
-def test_battery_grammar_example_runs() -> None:
-    completed = _run_example("examples/grammar/battery_pack_18650_series_parallel.py")
+def test_t2_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_18650_t2_layout_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_pack_18650_series_parallel" in completed.stdout
-    if "pybamm is required for battery grammar evaluation" in completed.stdout:
-        return
-    assert completed.stdout.splitlines()[-1].split()[0] == "True"
+    assert "battery_18650_t2_layout_grammar" in completed.stdout
+    assert "metric-keys" in completed.stdout
 
 
 @pytest.mark.examples_smoke
-def test_battery_grammar_to_optimizer_example_runs() -> None:
-    completed = _run_example("examples/optimization/battery_grammar_to_optimizer.py")
+def test_t3_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_18650_t3_topology_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "Rectangular battery packaged benchmark" in completed.stdout
-    if "pybamm is required for battery grammar evaluation" in completed.stdout:
-        return
-    assert "initial config=" in completed.stdout
-    assert "\nsolve " in completed.stdout
-    assert "solved config=" in completed.stdout
+    assert "battery_18650_t3_topology_grammar" in completed.stdout
+    assert "metric-keys" in completed.stdout
 
 
 @pytest.mark.examples_smoke
-def test_open_ended_battery_optimization_example_runs() -> None:
-    completed = _run_example("examples/optimization/battery_open_ended_capacity_max.py")
+def test_t4_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_18650_t4_thermal_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "Open-ended battery packaged benchmark" in completed.stdout
-    if "pybamm is required for battery grammar evaluation" in completed.stdout:
-        return
-    assert "initial cell_count=" in completed.stdout
-    assert "\nsolve " in completed.stdout
-    assert "solved cell_count=" in completed.stdout
+    assert "battery_18650_t4_thermal_grammar" in completed.stdout
+    assert "metric-keys" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t1_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_18650_t1_series_parallel_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "battery_18650_t1_series_parallel_opt" in completed.stdout
+    assert "metric-keys" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t2_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_18650_t2_layout_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "battery_18650_t2_layout_opt" in completed.stdout
+    assert "metric-keys" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t3_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_18650_t3_topology_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "battery_18650_t3_topology_opt" in completed.stdout
+    assert "metric-keys" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t4_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_18650_t4_thermal_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "battery_18650_t4_thermal_opt" in completed.stdout
+    assert "metric-keys" in completed.stdout
 
 
 @pytest.mark.trussme_real

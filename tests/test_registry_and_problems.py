@@ -95,9 +95,11 @@ def test_registry_entries_filter_by_kind() -> None:
     )
     optimization_kinds = registry.by_kind(ProblemKind.OPTIMIZATION)
     optimization_ids = [entry.problem_id for entry in optimization_kinds]
-    assert len(optimization_ids) == 10
-    assert "battery_pack_18650_open_ended_capacity_max" in optimization_ids
-    assert "battery_pack_18650_series_parallel_cost_min" in optimization_ids
+    assert len(optimization_ids) == 12
+    assert "battery_18650_t1_series_parallel_opt" in optimization_ids
+    assert "battery_18650_t2_layout_opt" in optimization_ids
+    assert "battery_18650_t3_topology_opt" in optimization_ids
+    assert "battery_18650_t4_thermal_opt" in optimization_ids
     assert "gmpb_default_dynamic_min" in optimization_ids
     assert "planar_truss_span_mass_min" in optimization_ids
     assert "planar_truss_span_deflection_min" in optimization_ids
@@ -108,6 +110,19 @@ def test_registry_entries_filter_by_kind() -> None:
     mcp_kinds = registry.by_kind(ProblemKind.MCP)
     mcp_ids = [entry.problem_id for entry in mcp_kinds]
     assert mcp_ids == ["mcp_build123d_parametric_mounting_bracket"]
+
+
+def test_removed_battery_ids_fail_lookup() -> None:
+    removed_ids = (
+        "battery_pack_18650_series_parallel",
+        "battery_pack_18650_series_parallel_cost_min",
+        "battery_pack_18650_open_ended",
+        "battery_pack_18650_open_ended_capacity_max",
+        "battery_pack_18650_oriented_layout_min",
+    )
+    for removed_id in removed_ids:
+        with pytest.raises(KeyError):
+            get_problem(removed_id)
 
 
 def test_registry_exposes_aggregated_feature_flags_by_kind() -> None:
@@ -330,8 +345,9 @@ def test_non_text_problems_are_computable() -> None:
     problem_ids = (
         "decision_laptop_design_profit_maximization",
         "decision_mseval_kitchen_utensil_grip_lightweight",
-        "battery_pack_18650_open_ended_capacity_max",
-        "battery_pack_18650_series_parallel_cost_min",
+        "battery_18650_t1_series_parallel_grammar",
+        "battery_18650_t2_layout_opt",
+        "battery_18650_t4_thermal_opt",
         "iot_home_cooling_system_design",
         "pill_capsule_min_area",
         "planar_truss_span",
@@ -347,8 +363,10 @@ def test_registry_search_filters_by_feature_flags() -> None:
     registry = ProblemRegistry()
     matches = registry.search(feature_flags=("baseline solver",))
     assert [entry.problem_id for entry in matches] == [
-        "battery_pack_18650_open_ended_capacity_max",
-        "battery_pack_18650_series_parallel_cost_min",
+        "battery_18650_t1_series_parallel_opt",
+        "battery_18650_t2_layout_opt",
+        "battery_18650_t3_topology_opt",
+        "battery_18650_t4_thermal_opt",
         "gmpb_default_dynamic_min",
         "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",
@@ -378,7 +396,7 @@ def test_pill_helpers_return_expected_positive_values() -> None:
 
 
 def _build_feasible_battery_state() -> object:
-    problem = get_problem("battery_pack_18650_series_parallel")
+    problem = get_problem("battery_18650_t1_series_parallel_grammar")
     state = problem.initial_state()
     state = problem.add_series_stage(state, placements=((1, 0, 0),))
     state = problem.add_series_stage(state, placements=((2, 0, 0),))
@@ -392,7 +410,7 @@ def _build_feasible_battery_state() -> object:
 def test_generic_grammar_family_api_supports_multiple_problems(monkeypatch: pytest.MonkeyPatch) -> None:
     _install_structural_fake_truss(monkeypatch)
     for problem_id in (
-        "battery_pack_18650_series_parallel",
+        "battery_18650_t1_series_parallel_grammar",
         "iot_home_cooling_system_design",
         "planar_truss_span",
         "space_truss_span",
@@ -413,7 +431,7 @@ def test_battery_grid_sizing_problem_uses_optimization_family_api(monkeypatch: p
 
     monkeypatch.setattr(battery_grid, "load_18650_cell_model", _fake_cell_model)
 
-    problem = get_problem("battery_pack_18650_series_parallel_cost_min")
+    problem = get_problem("battery_18650_t1_series_parallel_opt")
     assert isinstance(problem, OptimizationProblem)
     assert isinstance(problem, BatteryGridSizingProblem)
     assert hasattr(problem, "initial_state") is False
@@ -492,15 +510,25 @@ def test_battery_grid_and_grammar_share_series_parallel_backend(monkeypatch: pyt
     monkeypatch.setattr(battery_problem_base, "load_18650_cell_model", _fake_cell_model)
     monkeypatch.setattr(battery_grid, "load_18650_cell_model", _fake_cell_model)
 
-    optimization_problem = get_problem("battery_pack_18650_series_parallel_cost_min")
-    grammar_problem = get_problem("battery_pack_18650_series_parallel")
+    optimization_problem = get_problem("battery_18650_t1_series_parallel_opt")
+    grammar_problem = get_problem("battery_18650_t1_series_parallel_grammar")
     assert isinstance(optimization_problem, BatteryGridSizingProblem)
     assert isinstance(grammar_problem, GrammarProblem)
 
     candidate = numpy.array([4.0, 4.0], dtype=float)
     state = optimization_problem.decode_candidate(candidate)
+    optimization_evaluation = optimization_problem._evaluation_from_variables(candidate)
+    grammar_evaluation = grammar_problem.evaluate(state)
+
     assert state == _build_feasible_battery_state()
-    assert grammar_problem.evaluate(state) == optimization_problem._evaluation_from_variables(candidate)
+    assert grammar_evaluation.is_feasible is True
+    assert grammar_evaluation.failure_reason is None
+    assert grammar_evaluation.cell_count == pytest.approx(float(optimization_evaluation.cell_count))
+    assert grammar_evaluation.cost_usd == pytest.approx(float(optimization_evaluation.design_cost))
+    assert grammar_evaluation.design_volume_mm3 == pytest.approx(float(optimization_evaluation.design_volume))
+    assert grammar_evaluation.voltage_v == pytest.approx(float(optimization_evaluation.design_voltage))
+    assert grammar_evaluation.capacity_ah == pytest.approx(float(optimization_evaluation.design_capacity))
+    assert grammar_evaluation.current_limit_a == pytest.approx(float(optimization_evaluation.analytic_current_limit))
 
 
 def test_truss_engineering_optimizers_use_optimization_family_api(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -565,7 +593,7 @@ def _fake_cell_model() -> BatteryCellModel:
 
 
 def _build_feasible_open_battery_state() -> object:
-    problem = get_problem("battery_pack_18650_open_ended")
+    problem = get_problem("battery_18650_t3_topology_grammar")
     state = problem.initial_state()
     stage_input_terminal_id = state.pack_negative_terminal_id
     stage_output_terminal_id = state.pack_positive_terminal_id
@@ -603,7 +631,7 @@ def _build_feasible_open_battery_state() -> object:
 
 
 def test_battery_problem_state_and_rule_methods_are_validated() -> None:
-    problem = get_problem("battery_pack_18650_series_parallel")
+    problem = get_problem("battery_18650_t1_series_parallel_grammar")
     assert isinstance(problem, GrammarProblem)
     assert hasattr(problem, "apply_action") is False
     assert hasattr(problem, "enumerate_actions") is False
@@ -653,12 +681,9 @@ def test_battery_problem_precheck_skips_pybamm(monkeypatch: pytest.MonkeyPatch) 
 
     monkeypatch.setattr(battery_problem_base, "load_18650_cell_model", _unexpected_load)
 
-    problem = get_problem("battery_pack_18650_series_parallel")
+    problem = get_problem("battery_18650_t1_series_parallel_grammar")
     evaluation = problem.evaluate(problem.initial_state())
     assert evaluation.is_feasible is False
-    assert evaluation.pybamm_ran is False
-    assert evaluation.cell_model_source is None
-    assert evaluation.cell_model_warning is None
     assert evaluation.failure_reason == "Pack voltage does not match the required target voltage."
 
 
@@ -668,7 +693,7 @@ def test_battery_problem_reports_missing_dependency(monkeypatch: pytest.MonkeyPa
     def _missing_cell_model() -> BatteryCellModel:
         raise MissingOptionalDependencyError("pybamm is required")
 
-    problem = get_problem("battery_pack_18650_series_parallel")
+    problem = get_problem("battery_18650_t1_series_parallel_grammar")
     state = _build_feasible_battery_state()
     monkeypatch.setattr(battery_problem_base, "load_18650_cell_model", _missing_cell_model)
     with pytest.raises(MissingOptionalDependencyError):
@@ -680,18 +705,17 @@ def test_battery_problem_evaluate_uses_fake_adapter(monkeypatch: pytest.MonkeyPa
 
     monkeypatch.setattr(battery_problem_base, "load_18650_cell_model", _fake_cell_model)
 
-    problem = get_problem("battery_pack_18650_series_parallel")
+    problem = get_problem("battery_18650_t1_series_parallel_grammar")
     evaluation = problem.evaluate(_build_feasible_battery_state())
-    assert evaluation.pybamm_ran is True
-    assert evaluation.cell_model_source == "custom"
-    assert evaluation.cell_model_warning is None
-    assert evaluation.pybamm_feasible is True
     assert evaluation.is_feasible is True
-    assert evaluation.cell_count == 16
+    assert evaluation.cell_count == pytest.approx(16.0)
+    assert evaluation.connection_count == pytest.approx(15.0)
+    assert evaluation.voltage_v == pytest.approx(14.8, abs=0.1)
+    assert evaluation.capacity_ah == pytest.approx(10.0, abs=1e-6)
 
 
 def test_open_ended_battery_problem_state_and_rule_methods_are_validated() -> None:
-    problem = get_problem("battery_pack_18650_open_ended")
+    problem = get_problem("battery_18650_t3_topology_grammar")
     assert isinstance(problem, GrammarProblem)
     assert hasattr(problem, "apply_action") is False
     assert hasattr(problem, "enumerate_actions") is False
@@ -778,27 +802,26 @@ def test_open_ended_battery_problem_evaluate_uses_fake_adapter(monkeypatch: pyte
 
     monkeypatch.setattr(battery_problem_base, "load_18650_cell_model", _fake_cell_model)
 
-    problem = get_problem("battery_pack_18650_open_ended")
+    problem = get_problem("battery_18650_t3_topology_grammar")
     evaluation = problem.evaluate(_build_feasible_open_battery_state())
-    assert evaluation.pybamm_ran is True
-    assert evaluation.cell_model_source == "custom"
-    assert evaluation.cell_model_warning is None
     assert evaluation.is_feasible is True
-    assert evaluation.cell_count == 16
-    assert evaluation.connection_count == 27
-    assert evaluation.topology_kind == "series_parallel"
+    assert evaluation.failure_reason is None
+    assert evaluation.cell_count == pytest.approx(16.0)
+    assert evaluation.connection_count == pytest.approx(27.0)
+    assert evaluation.voltage_v == pytest.approx(14.8, abs=0.1)
+    assert evaluation.capacity_ah == pytest.approx(10.0, abs=1e-6)
 
 
 @pytest.mark.pybamm_real
 def test_battery_problem_evaluates_when_pybamm_is_installed() -> None:
-    problem = get_problem("battery_pack_18650_series_parallel")
+    problem = get_problem("battery_18650_t1_series_parallel_grammar")
     try:
         evaluation = problem.evaluate(_build_feasible_battery_state())
     except MissingOptionalDependencyError:
         pytest.skip("pybamm is not installed in this environment.")
-    assert evaluation.pybamm_ran is True
-    assert evaluation.cell_model_source == "pybamm_thevenin"
-    assert evaluation.pybamm_pack_end_voltage is not None
+    assert evaluation.is_feasible is True
+    assert evaluation.cell_count == pytest.approx(16.0)
+    assert evaluation.voltage_v == pytest.approx(14.8, abs=0.1)
 
 
 def test_pill_problem_is_deterministic() -> None:

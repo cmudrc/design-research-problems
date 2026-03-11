@@ -20,16 +20,20 @@ if TYPE_CHECKING:
         OptimizationProblem,
     )
     from design_research_problems.problems.grammar import (
-        BatteryPack18650OpenEndedProblem,
-        BatteryPack18650SeriesParallelProblem,
+        Battery18650Tier1SeriesParallelGrammarProblem,
+        Battery18650Tier2LayoutGrammarProblem,
+        Battery18650Tier3TopologyGrammarProblem,
+        Battery18650Tier4ThermalGrammarProblem,
         IoTHomeCoolingGrammarProblem,
         PlanarTrussSpanProblem,
         SpaceTrussSpanProblem,
         TrussAPGrammarProblem,
     )
     from design_research_problems.problems.optimization import (
-        BatteryGridSizingProblem,
-        BatteryOpenEndedCapacityMaxProblem,
+        Battery18650Tier1SeriesParallelOptimizationProblem,
+        Battery18650Tier2LayoutOptimizationProblem,
+        Battery18650Tier3TopologyOptimizationProblem,
+        Battery18650Tier4ThermalOptimizationProblem,
         GMPBOptimizationProblem,
         PlanarTrussEngineeringOptimizationProblem,
         SpaceTrussEngineeringOptimizationProblem,
@@ -48,6 +52,18 @@ type _PlanarTrussProblemId = Literal[
 type _SpaceTrussProblemId = Literal["space_truss_span"]
 type _IoTGrammarProblemId = Literal["iot_home_cooling_system_design"]
 type _TrussAPProblemId = Literal["truss_analysis_program_design"]
+type _BatteryGrammarProblemId = Literal[
+    "battery_18650_t1_series_parallel_grammar",
+    "battery_18650_t2_layout_grammar",
+    "battery_18650_t3_topology_grammar",
+    "battery_18650_t4_thermal_grammar",
+]
+type _BatteryOptimizationProblemId = Literal[
+    "battery_18650_t1_series_parallel_opt",
+    "battery_18650_t2_layout_opt",
+    "battery_18650_t3_topology_opt",
+    "battery_18650_t4_thermal_opt",
+]
 
 type _MSEvalProblemId = Literal[
     "decision_mseval_kitchen_utensil_grip_corrosion_resistant",
@@ -70,18 +86,19 @@ type _MSEvalProblemId = Literal[
 
 type _DecisionProblemId = Literal["decision_laptop_design_profit_maximization"] | _MSEvalProblemId
 
-type _OptimizationProblemId = Literal[
-    "battery_pack_18650_series_parallel_cost_min",
-    "battery_pack_18650_open_ended_capacity_max",
-    "gmpb_default_dynamic_min",
-    "pill_capsule_min_area",
-    "moneymaker_hip_pump_cost_min",
-    "planar_truss_span_mass_min",
-    "planar_truss_span_deflection_min",
-    "planar_truss_span_fos_max",
-    "space_truss_span_mass_min",
-    "treadle_pump_ide_material_min",
-]
+type _OptimizationProblemId = (
+    _BatteryOptimizationProblemId
+    | Literal[
+        "gmpb_default_dynamic_min",
+        "pill_capsule_min_area",
+        "moneymaker_hip_pump_cost_min",
+        "planar_truss_span_mass_min",
+        "planar_truss_span_deflection_min",
+        "planar_truss_span_fos_max",
+        "space_truss_span_mass_min",
+        "treadle_pump_ide_material_min",
+    ]
+)
 
 _ProblemSubT = TypeVar("_ProblemSubT", bound=Problem)
 
@@ -251,22 +268,42 @@ class ProblemRegistry:
 
     @overload
     def get(
-        self, problem_id: Literal["battery_pack_18650_series_parallel"]
-    ) -> BatteryPack18650SeriesParallelProblem: ...
+        self, problem_id: Literal["battery_18650_t1_series_parallel_grammar"]
+    ) -> Battery18650Tier1SeriesParallelGrammarProblem: ...
 
     @overload
-    def get(self, problem_id: Literal["battery_pack_18650_open_ended"]) -> BatteryPack18650OpenEndedProblem: ...
+    def get(self, problem_id: Literal["battery_18650_t2_layout_grammar"]) -> Battery18650Tier2LayoutGrammarProblem: ...
+
+    @overload
+    def get(
+        self, problem_id: Literal["battery_18650_t3_topology_grammar"]
+    ) -> Battery18650Tier3TopologyGrammarProblem: ...
+
+    @overload
+    def get(
+        self, problem_id: Literal["battery_18650_t4_thermal_grammar"]
+    ) -> Battery18650Tier4ThermalGrammarProblem: ...
 
     @overload
     def get(self, problem_id: _PlanarTrussProblemId) -> PlanarTrussSpanProblem: ...
 
     @overload
-    def get(self, problem_id: Literal["battery_pack_18650_series_parallel_cost_min"]) -> BatteryGridSizingProblem: ...
+    def get(
+        self, problem_id: Literal["battery_18650_t1_series_parallel_opt"]
+    ) -> Battery18650Tier1SeriesParallelOptimizationProblem: ...
+
+    @overload
+    def get(self, problem_id: Literal["battery_18650_t2_layout_opt"]) -> Battery18650Tier2LayoutOptimizationProblem: ...
 
     @overload
     def get(
-        self, problem_id: Literal["battery_pack_18650_open_ended_capacity_max"]
-    ) -> BatteryOpenEndedCapacityMaxProblem: ...
+        self, problem_id: Literal["battery_18650_t3_topology_opt"]
+    ) -> Battery18650Tier3TopologyOptimizationProblem: ...
+
+    @overload
+    def get(
+        self, problem_id: Literal["battery_18650_t4_thermal_opt"]
+    ) -> Battery18650Tier4ThermalOptimizationProblem: ...
 
     @overload
     def get(self, problem_id: Literal["gmpb_default_dynamic_min"]) -> GMPBOptimizationProblem: ...
@@ -378,11 +415,23 @@ def list_problems() -> tuple[str, ...]:
 
 
 @overload
-def get_problem(problem_id: Literal["battery_pack_18650_series_parallel"]) -> BatteryPack18650SeriesParallelProblem: ...
+def get_problem(
+    problem_id: Literal["battery_18650_t1_series_parallel_grammar"],
+) -> Battery18650Tier1SeriesParallelGrammarProblem: ...
 
 
 @overload
-def get_problem(problem_id: Literal["battery_pack_18650_open_ended"]) -> BatteryPack18650OpenEndedProblem: ...
+def get_problem(problem_id: Literal["battery_18650_t2_layout_grammar"]) -> Battery18650Tier2LayoutGrammarProblem: ...
+
+
+@overload
+def get_problem(
+    problem_id: Literal["battery_18650_t3_topology_grammar"],
+) -> Battery18650Tier3TopologyGrammarProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["battery_18650_t4_thermal_grammar"]) -> Battery18650Tier4ThermalGrammarProblem: ...
 
 
 @overload
@@ -390,13 +439,25 @@ def get_problem(problem_id: _PlanarTrussProblemId) -> PlanarTrussSpanProblem: ..
 
 
 @overload
-def get_problem(problem_id: Literal["battery_pack_18650_series_parallel_cost_min"]) -> BatteryGridSizingProblem: ...
+def get_problem(
+    problem_id: Literal["battery_18650_t1_series_parallel_opt"],
+) -> Battery18650Tier1SeriesParallelOptimizationProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["battery_18650_t2_layout_opt"]) -> Battery18650Tier2LayoutOptimizationProblem: ...
 
 
 @overload
 def get_problem(
-    problem_id: Literal["battery_pack_18650_open_ended_capacity_max"],
-) -> BatteryOpenEndedCapacityMaxProblem: ...
+    problem_id: Literal["battery_18650_t3_topology_opt"],
+) -> Battery18650Tier3TopologyOptimizationProblem: ...
+
+
+@overload
+def get_problem(
+    problem_id: Literal["battery_18650_t4_thermal_opt"],
+) -> Battery18650Tier4ThermalOptimizationProblem: ...
 
 
 @overload

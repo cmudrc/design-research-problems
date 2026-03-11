@@ -6,8 +6,24 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 _LAZY_EXPORTS = {
+    "Battery18650Tier1SeriesParallelOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_tiers:"
+        "Battery18650Tier1SeriesParallelOptimizationProblem"
+    ),
+    "Battery18650Tier2LayoutOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier2LayoutOptimizationProblem"
+    ),
+    "Battery18650Tier3TopologyOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier3TopologyOptimizationProblem"
+    ),
+    "Battery18650Tier4ThermalOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier4ThermalOptimizationProblem"
+    ),
     "BatteryGridSizingProblem": (
         "design_research_problems.problems.optimization._battery_grid:BatteryGridSizingProblem"
+    ),
+    "BatteryOrientedLayoutProblem": (
+        "design_research_problems.problems.optimization._battery_oriented_layout:BatteryOrientedLayoutProblem"
     ),
     "BatteryOpenEndedCapacityMaxProblem": (
         "design_research_problems.problems.optimization._battery_open_ended:BatteryOpenEndedCapacityMaxProblem"
@@ -51,6 +67,17 @@ def __getattr__(name: str) -> object:
 if TYPE_CHECKING:
     from ._battery_grid import BatteryGridSizingProblem as BatteryGridSizingProblem
     from ._battery_open_ended import BatteryOpenEndedCapacityMaxProblem as BatteryOpenEndedCapacityMaxProblem
+    from ._battery_oriented_layout import BatteryOrientedLayoutProblem as BatteryOrientedLayoutProblem
+    from ._battery_tiers import (
+        Battery18650Tier1SeriesParallelOptimizationProblem as Battery18650Tier1SeriesParallelOptimizationProblem,
+    )
+    from ._battery_tiers import Battery18650Tier2LayoutOptimizationProblem as Battery18650Tier2LayoutOptimizationProblem
+    from ._battery_tiers import (
+        Battery18650Tier3TopologyOptimizationProblem as Battery18650Tier3TopologyOptimizationProblem,
+    )
+    from ._battery_tiers import (
+        Battery18650Tier4ThermalOptimizationProblem as Battery18650Tier4ThermalOptimizationProblem,
+    )
     from ._gmpb import GMPBOptimizationProblem as GMPBOptimizationProblem
     from ._ide_treadle import IDETreadlePumpMaterialMin as IDETreadlePumpMaterialMin
     from ._moneymaker import MoneyMakerHipPumpProblem as MoneyMakerHipPumpProblem
