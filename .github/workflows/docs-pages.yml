@@ -27,7 +27,7 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install dependencies
-        run: make install-dev
+        run: make dev-battery
       - name: Run docs consistency checks
         run: make docs-check
       - name: Build strict Sphinx docs
