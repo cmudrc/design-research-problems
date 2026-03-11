@@ -196,4 +196,4 @@ Background References
 - [Ohm's law](https://en.wikipedia.org/wiki/Ohm%27s_law)
 - [Joule heating](https://en.wikipedia.org/wiki/Joule_heating)
 - [Newton's law of cooling](https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling)
-- [C-rate](https://en.wikipedia.org/wiki/C_rate)
+- [C-rate](https://en.wikipedia.org/wiki/C-rate)
