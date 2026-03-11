@@ -8,6 +8,22 @@ statement = '''
 Optimize rectangular battery packs with full per-cell pose freedom using
 [x,y,z,angle_x,angle_y,angle_z] variables under spacing and envelope
 constraints.
+
+Tier-2 keeps tier-1 electrical topology semantics (S and P) but unlocks 3D
+pose decisions for each potential active cell.
+
+Geometry model:
+- Each cell is an oriented finite cylinder.
+- Feasibility uses minimum surface clearance between cell bodies.
+- Envelope dimensions come from the axis-aligned bounding box.
+- V_design = width * depth * height.
+
+Electrical and thermal terms follow the same baseline approximation as tier-1:
+- V_pack ~= S * V_cell
+- C_pack ~= P * C_cell
+- I_cell = I_load / P
+- Q_dot = N_cells * I_cell^2 * R_int
+- T_max = T_ambient + Q_dot / (G_passive + hA)
 '''
 implementation = "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier2LayoutOptimizationProblem"
 capabilities = ["statement-markdown", "bounded-variables", "baseline-solver"]

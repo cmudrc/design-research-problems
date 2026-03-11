@@ -10,6 +10,14 @@ allowing per-cell pose adjustments in millimeters and degrees.
 
 This rung introduces packing/orientation tradeoffs under spacing and envelope
 constraints while retaining a constrained electrical structure.
+
+State edits include local changes to:
+- S and P counts
+- per-cell [x, y, z, angle_x, angle_y, angle_z] controls
+
+Evaluation preserves tier-1 electrical equations and adds an oriented-cylinder
+geometry model with minimum surface-clearance feasibility checks and bounding
+box volume computation.
 '''
 implementation = "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier2LayoutGrammarProblem"
 capabilities = [

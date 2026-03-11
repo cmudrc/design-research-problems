@@ -11,6 +11,16 @@ interconnects directly in the explicit battery graph.
 
 This rung introduces meaningful electrical-topology variability beyond fixed
 rectangular assumptions.
+
+The grammar operates directly on explicit cells and interconnects. Topology
+quality is not only about cell count; stage balance matters. If n_i is stage
+population:
+- P_eq = min_i(n_i)
+- C_pack ~= P_eq * C_cell
+- I_limit ~= P_eq * C_cell * C_rate_max
+
+This creates constructive pressure for balanced stage populations while still
+allowing open-ended wiring edits.
 '''
 implementation = "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier3TopologyGrammarProblem"
 capabilities = [

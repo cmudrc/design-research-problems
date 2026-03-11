@@ -11,6 +11,17 @@ branches while preserving a full rectangular SxP topology.
 
 This is the first rung of the battery ladder and serves as the constrained
 baseline before richer pose, topology, and thermal decisions are unlocked.
+
+Evaluation uses the same shared battery metric contract as optimization tiers.
+Core electrical relations:
+- V_pack ~= S * V_cell
+- C_pack ~= P * C_cell
+- I_limit ~= P * C_cell * C_rate_max
+
+Thermal relation:
+- I_cell = I_load / P
+- Q_dot = N_cells * I_cell^2 * R_int
+- T_max = T_ambient + Q_dot / (G_passive + hA)
 '''
 implementation = "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier1SeriesParallelGrammarProblem"
 capabilities = [

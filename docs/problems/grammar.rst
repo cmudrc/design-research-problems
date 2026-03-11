@@ -7,6 +7,8 @@ Generic grammar-family tooling should use the shared `GrammarProblem` contract:
 `evaluate()`. Concrete rule methods remain problem-specific conveniences.
 
 See :doc:`../problem_catalog/grammar` for the generated per-problem catalog pages.
+For battery electronics/thermal modeling assumptions shared across grammar and
+optimization tiers, see :doc:`battery_ladder`.
 
 The catalog includes `planar_truss_span`, which translates a serializable
 planar topology state into a fresh `trussme.Truss` for evaluation. It also

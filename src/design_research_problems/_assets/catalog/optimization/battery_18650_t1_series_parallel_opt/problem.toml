@@ -7,6 +7,25 @@ statement = '''
 
 Optimize the lowest-freedom battery design space by selecting only series and
 parallel counts over canonical rectangular 18650 packs.
+
+Electrical approximation:
+- V_pack ~= S * V_cell
+- C_pack ~= P * C_cell
+- I_limit ~= P * C_cell * C_rate_max
+
+With the packaged 18650 constants:
+- V_cell = 3.7 V
+- C_cell = 2.5 Ah
+- C_rate_max = 10 C
+
+Thermal proxy:
+- I_cell = I_load / P
+- Q_dot = N_cells * I_cell^2 * R_int
+- T_max = T_ambient + Q_dot / (G_passive + hA)
+
+Objective:
+- Minimize weighted normalized volume, cell-count cost proxy, and peak
+  temperature, with hard-constraint violations penalized.
 '''
 implementation = "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier1SeriesParallelOptimizationProblem"
 capabilities = ["statement-markdown", "bounded-variables", "baseline-solver"]

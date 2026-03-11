@@ -8,6 +8,21 @@ statement = '''
 Optimize battery topology and layout jointly with thermal-system variables
 (cooling coefficients and ambient condition bounds) for the highest-freedom
 battery design rung.
+
+Tier-4 retains tier-3 topology and geometry decisions and adds:
+- convective cooling coefficient h
+- passive cooling conductance G_passive
+- ambient temperature T_ambient
+
+Thermal state equation:
+- I_cell = I_load / P_eq
+- Q_dot = N_cells * I_cell^2 * R_int
+- G_cool = G_passive + hA
+- T_max = T_ambient + Q_dot / G_cool
+
+This tier explicitly exposes thermal-system co-design tradeoffs against pack
+size and cell-count cost under hard voltage, capacity, current, spacing,
+envelope, and temperature constraints.
 '''
 implementation = "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier4ThermalOptimizationProblem"
 capabilities = ["statement-markdown", "bounded-variables", "baseline-solver"]

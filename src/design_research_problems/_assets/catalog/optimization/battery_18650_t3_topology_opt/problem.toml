@@ -8,6 +8,26 @@ statement = '''
 Optimize battery layouts with typed topology variables (cell count, stage
 assignment) and full pose variables. This tier replaces transition-index
 encodings with a stable decision schema tied to physical/topological variables.
+
+Typed topology schema:
+- active cell count N_cells
+- series stage count S
+- per-cell stage-slot assignment
+
+Unlike tier-1 and tier-2, effective parallel support depends on stage balance.
+If n_i is the population of stage i, the bottleneck stage controls usable
+parallel support:
+- P_eq = min_i(n_i)
+- C_pack ~= P_eq * C_cell
+- I_limit ~= P_eq * C_cell * C_rate_max
+
+Connectivity proxy for topology complexity:
+- N_conn = sum_i max(n_i - 1, 0) + max(S - 1, 0)
+
+Thermal proxy:
+- I_cell = I_load / P_eq
+- Q_dot = N_cells * I_cell^2 * R_int
+- T_max = T_ambient + Q_dot / (G_passive + hA)
 '''
 implementation = "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier3TopologyOptimizationProblem"
 capabilities = ["statement-markdown", "bounded-variables", "baseline-solver"]

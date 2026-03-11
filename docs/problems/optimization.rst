@@ -8,6 +8,8 @@ The smooth continuous packaged benchmarks in this family continue to use SciPy
 baselines.
 
 See :doc:`../problem_catalog/optimization` for the generated per-problem catalog pages.
+For deeper battery-model details and equations, see
+:doc:`battery_ladder`.
 
 The packaged entries include:
 
