@@ -33,6 +33,30 @@ class BatteryCellModel:
     """Non-fatal warning emitted while building the surrogate, when present."""
 
 
+@dataclass(frozen=True)
+class BatteryThermalPriors:
+    """PyBaMM-derived thermal priors normalized for the packaged 18650 model."""
+
+    soc_grid: tuple[float, ...]
+    """SOC grid aligned to ``total_resistance_ohm``."""
+    total_resistance_ohm: tuple[float, ...]
+    """SOC-indexed effective total resistance used for thermal heating."""
+    cell_to_jig_conductance_w_per_k: float
+    """Baseline core/surface-to-coolant conductance per active cell."""
+    jig_to_ambient_conductance_w_per_k: float
+    """Baseline coolant-to-ambient conductance for the pack-level coolant node."""
+    cell_thermal_mass_j_per_k: float
+    """Normalized 18650-equivalent cell thermal mass."""
+    jig_thermal_mass_j_per_k: float
+    """Normalized 18650-equivalent coolant/jig thermal mass."""
+    reference_ambient_temperature_c: float
+    """Reference ambient temperature from the extracted Thevenin parameter set."""
+    source: str = "pybamm_thevenin"
+    """Origin label for provenance reporting."""
+    warning_message: str | None = None
+    """Optional warning when extraction falls back to defaults."""
+
+
 def import_pybamm() -> Any:
     """Import ``pybamm`` lazily for battery evaluation.
 
@@ -44,10 +68,37 @@ def import_pybamm() -> Any:
     """
     return import_optional_module(
         "pybamm",
-        required_for="battery grammar evaluation",
+        required_for="battery problem evaluation",
         extras=("battery",),
         make_target="install-pybamm",
     )
+
+
+def _load_thevenin_parameter_values() -> tuple[Any, float, float]:
+    """Return copied Thevenin parameter values plus 18650 normalization factors.
+
+    Returns:
+        Tuple containing copied parameter values, resistance scale, and ambient
+        temperature in kelvin.
+
+    Raises:
+        MissingOptionalDependencyError: If a supported Thevenin factory is unavailable.
+    """
+    pybamm_module = import_pybamm()
+    equivalent_circuit = getattr(pybamm_module, "equivalent_circuit", None)
+    thevenin_factory = getattr(equivalent_circuit, "Thevenin", None)
+    if not callable(thevenin_factory):
+        raise MissingOptionalDependencyError(
+            "A supported PyBaMM installation with equivalent_circuit.Thevenin is required "
+            "for battery problem evaluation. Install design-research-problems[battery] "
+            "to get the supported PyBaMM version range."
+        )
+    model = thevenin_factory(options={"number of rc elements": 1})
+    parameter_values: Any = _copy_parameter_values(model.default_parameter_values)
+    reference_capacity_ah = _parameter_value(parameter_values, "Cell capacity [A.h]", default=100.0)
+    resistance_scale = max(1.0e-6, reference_capacity_ah / CELL_SPEC_18650.nominal_capacity_ah)
+    ambient_temperature_k = _parameter_value(parameter_values, "Initial temperature [K]", default=298.15)
+    return (parameter_values, resistance_scale, ambient_temperature_k)
 
 
 @lru_cache(maxsize=1)
@@ -66,22 +117,19 @@ def load_18650_cell_model() -> BatteryCellModel:
     Raises:
         Exception: Raised when the callable encounters an invalid state.
     """
-    pybamm_module = import_pybamm()
-    equivalent_circuit = getattr(pybamm_module, "equivalent_circuit", None)
-    thevenin_factory = getattr(equivalent_circuit, "Thevenin", None)
-    if not callable(thevenin_factory):
+    try:
+        parameter_values, resistance_scale, ambient_temperature_k = _load_thevenin_parameter_values()
+    except MissingOptionalDependencyError:
+        raise
+    except Exception as exc:
         raise MissingOptionalDependencyError(
-            "A supported PyBaMM installation with equivalent_circuit.Thevenin is required "
-            "for battery grammar evaluation. Install design-research-problems[battery] "
-            "to get the supported PyBaMM version range."
-        )
+            "PyBaMM Thevenin parameter extraction failed "
+            f"({type(exc).__name__}: {exc}). "
+            "Battery problem evaluation requires a supported PyBaMM version "
+            "with the expected Thevenin parameter interface."
+        ) from exc
 
     try:
-        model = thevenin_factory(options={"number of rc elements": 1})
-        parameter_values: Any = _copy_parameter_values(model.default_parameter_values)
-        reference_capacity_ah = _parameter_value(parameter_values, "Cell capacity [A.h]", default=100.0)
-        resistance_scale = max(1.0e-6, reference_capacity_ah / CELL_SPEC_18650.nominal_capacity_ah)
-        ambient_temperature_k = _parameter_value(parameter_values, "Initial temperature [K]", default=298.15)
         soc_grid = tuple(index / 10.0 for index in range(11))
 
         open_circuit_voltage_v: list[float] = []
@@ -171,9 +219,100 @@ def load_18650_cell_model() -> BatteryCellModel:
         raise MissingOptionalDependencyError(
             "PyBaMM Thevenin parameter extraction failed "
             f"({type(exc).__name__}: {exc}). "
-            "Battery grammar evaluation requires a supported PyBaMM version "
+            "Battery problem evaluation requires a supported PyBaMM version "
             "with the expected Thevenin parameter interface."
         ) from exc
+
+
+@lru_cache(maxsize=1)
+def load_18650_thermal_priors() -> BatteryThermalPriors:
+    """Return one cached PyBaMM-derived thermal prior bundle for Tier-4 modeling.
+
+    The extracted Thevenin thermal parameters are normalized to the packaged 18650
+    capacity scale. Conductance terms scale approximately with capacity^(2/3) and
+    thermal masses scale approximately with capacity.
+
+    Returns:
+        Thermal prior payload with SOC-indexed resistance and normalized
+        conductance/mass terms.
+
+    Raises:
+        MissingOptionalDependencyError: If the PyBaMM Thevenin extraction path fails.
+    """
+    try:
+        parameter_values, resistance_scale, ambient_temperature_k = _load_thevenin_parameter_values()
+    except MissingOptionalDependencyError:
+        raise
+    except Exception as exc:
+        raise MissingOptionalDependencyError(
+            "PyBaMM thermal prior extraction failed "
+            f"({type(exc).__name__}: {exc}). "
+            "Tier-4 battery thermal evaluation requires a supported PyBaMM version "
+            "with Thevenin thermal parameter access."
+        ) from exc
+    try:
+        cell_model = load_18650_cell_model()
+        total_resistance_ohm = tuple(
+            max(1.0e-6, series + transient)
+            for series, transient in zip(
+                cell_model.series_resistance_ohm,
+                cell_model.transient_resistance_ohm,
+                strict=True,
+            )
+        )
+        thermal_conductance_scale = max(resistance_scale ** (2.0 / 3.0), 1.0e-6)
+        thermal_mass_scale = max(resistance_scale, 1.0e-6)
+        cell_to_jig = _parameter_value(parameter_values, "Cell-jig heat transfer coefficient [W/K]", default=10.0)
+        jig_to_air = _parameter_value(parameter_values, "Jig-air heat transfer coefficient [W/K]", default=10.0)
+        cell_mass = _parameter_value(parameter_values, "Cell thermal mass [J/K]", default=1000.0)
+        jig_mass = _parameter_value(parameter_values, "Jig thermal mass [J/K]", default=500.0)
+        return BatteryThermalPriors(
+            soc_grid=cell_model.soc_grid,
+            total_resistance_ohm=total_resistance_ohm,
+            cell_to_jig_conductance_w_per_k=max(1.0e-6, cell_to_jig / thermal_conductance_scale),
+            jig_to_ambient_conductance_w_per_k=max(1.0e-6, jig_to_air / thermal_conductance_scale),
+            cell_thermal_mass_j_per_k=max(1.0, cell_mass / thermal_mass_scale),
+            jig_thermal_mass_j_per_k=max(1.0, jig_mass / thermal_mass_scale),
+            reference_ambient_temperature_c=float(ambient_temperature_k - 273.15),
+            source=cell_model.source,
+            warning_message=cell_model.warning_message,
+        )
+    except Exception as exc:
+        raise MissingOptionalDependencyError(
+            "PyBaMM thermal prior extraction failed "
+            f"({type(exc).__name__}: {exc}). "
+            "Tier-4 battery thermal evaluation requires a supported PyBaMM version "
+            "with Thevenin thermal parameter access."
+        ) from exc
+
+
+def interpolate_total_resistance(model: BatteryThermalPriors, soc: float) -> float:
+    """Interpolate effective total resistance from one SOC-indexed thermal prior.
+
+    Args:
+        model: Thermal prior bundle.
+        soc: State of charge in [0, 1].
+
+    Returns:
+        Interpolated total effective resistance in ohms.
+    """
+    clipped_soc = min(1.0, max(0.0, soc))
+    if clipped_soc <= model.soc_grid[0]:
+        return float(model.total_resistance_ohm[0])
+    if clipped_soc >= model.soc_grid[-1]:
+        return float(model.total_resistance_ohm[-1])
+
+    for index in range(1, len(model.soc_grid)):
+        upper_soc = model.soc_grid[index]
+        if clipped_soc > upper_soc:
+            continue
+        lower_soc = model.soc_grid[index - 1]
+        span = upper_soc - lower_soc
+        ratio = 0.0 if span <= 0.0 else (clipped_soc - lower_soc) / span
+        lower_resistance = model.total_resistance_ohm[index - 1]
+        upper_resistance = model.total_resistance_ohm[index]
+        return float(lower_resistance + (ratio * (upper_resistance - lower_resistance)))
+    return float(model.total_resistance_ohm[-1])
 
 
 def _copy_parameter_values(parameter_values: Any) -> Any:
@@ -294,7 +433,10 @@ def interpolate_cell_model(model: BatteryCellModel, soc: float) -> tuple[float, 
 
 __all__ = [
     "BatteryCellModel",
+    "BatteryThermalPriors",
     "import_pybamm",
     "interpolate_cell_model",
+    "interpolate_total_resistance",
     "load_18650_cell_model",
+    "load_18650_thermal_priors",
 ]

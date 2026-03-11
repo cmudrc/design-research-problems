@@ -5,7 +5,10 @@ from types import SimpleNamespace
 import pytest
 
 from design_research_problems import MissingOptionalDependencyError
-from design_research_problems.problems.grammar._battery_cell_model import BatteryCellModel
+from design_research_problems.problems.grammar._battery_cell_model import (
+    BatteryCellModel,
+    BatteryThermalPriors,
+)
 from design_research_problems.problems.grammar._battery_circuit import (
     BatteryCellInstance,
     BatteryCircuitState,
@@ -459,3 +462,95 @@ def test_load_18650_cell_model_uses_expected_pybamm_thevenin_contract() -> None:
     assert extracted.source == "pybamm_thevenin"
     assert extracted.warning_message is None
     battery_cell_model.load_18650_cell_model.cache_clear()
+
+
+def test_load_18650_thermal_priors_requires_supported_thevenin_factory(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model.load_18650_thermal_priors.cache_clear()
+    fake_module = SimpleNamespace(equivalent_circuit=SimpleNamespace(Thevenin=None))
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_module)
+
+    with pytest.raises(MissingOptionalDependencyError, match=r"equivalent_circuit\.Thevenin"):
+        battery_cell_model.load_18650_thermal_priors()
+
+    battery_cell_model.load_18650_thermal_priors.cache_clear()
+
+
+def test_load_18650_thermal_priors_extracts_and_normalizes_values(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model.load_18650_thermal_priors.cache_clear()
+    battery_cell_model.load_18650_cell_model.cache_clear()
+
+    fake_module = SimpleNamespace(
+        equivalent_circuit=SimpleNamespace(
+            Thevenin=lambda **kwargs: SimpleNamespace(
+                default_parameter_values={
+                    "Cell capacity [A.h]": 100.0,
+                    "Initial temperature [K]": 298.15,
+                    "Cell-jig heat transfer coefficient [W/K]": 10.0,
+                    "Jig-air heat transfer coefficient [W/K]": 8.0,
+                    "Cell thermal mass [J/K]": 1000.0,
+                    "Jig thermal mass [J/K]": 500.0,
+                }
+            )
+        )
+    )
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_module)
+    monkeypatch.setattr(battery_cell_model, "load_18650_cell_model", lambda: _static_cell_model())
+
+    priors = battery_cell_model.load_18650_thermal_priors()
+    assert isinstance(priors, BatteryThermalPriors)
+    assert priors.soc_grid == (0.0, 1.0)
+    assert priors.total_resistance_ohm == pytest.approx((0.01, 0.01))
+    assert priors.reference_ambient_temperature_c == pytest.approx(25.0, abs=1.0e-6)
+    assert priors.cell_to_jig_conductance_w_per_k == pytest.approx(0.85498797, rel=1.0e-5)
+    assert priors.jig_to_ambient_conductance_w_per_k == pytest.approx(0.68399038, rel=1.0e-5)
+    assert priors.cell_thermal_mass_j_per_k == pytest.approx(25.0, abs=1.0e-6)
+    assert priors.jig_thermal_mass_j_per_k == pytest.approx(12.5, abs=1.0e-6)
+
+    battery_cell_model.load_18650_thermal_priors.cache_clear()
+    cache_clear = getattr(battery_cell_model.load_18650_cell_model, "cache_clear", None)
+    if callable(cache_clear):
+        cache_clear()
+
+
+def test_load_18650_thermal_priors_is_cached(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model.load_18650_thermal_priors.cache_clear()
+    battery_cell_model.load_18650_cell_model.cache_clear()
+    calls = {"count": 0}
+
+    def _thevenin(**kwargs: object) -> SimpleNamespace:
+        del kwargs
+        calls["count"] += 1
+        return SimpleNamespace(
+            default_parameter_values={
+                "Cell capacity [A.h]": 100.0,
+                "Initial temperature [K]": 298.15,
+                "Cell-jig heat transfer coefficient [W/K]": 10.0,
+                "Jig-air heat transfer coefficient [W/K]": 10.0,
+                "Cell thermal mass [J/K]": 1000.0,
+                "Jig thermal mass [J/K]": 500.0,
+            }
+        )
+
+    fake_module = SimpleNamespace(equivalent_circuit=SimpleNamespace(Thevenin=_thevenin))
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_module)
+    monkeypatch.setattr(battery_cell_model, "load_18650_cell_model", lambda: _static_cell_model())
+
+    first = battery_cell_model.load_18650_thermal_priors()
+    second = battery_cell_model.load_18650_thermal_priors()
+    assert first is second
+    assert calls["count"] == 1
+
+    battery_cell_model.load_18650_thermal_priors.cache_clear()
+    cache_clear = getattr(battery_cell_model.load_18650_cell_model, "cache_clear", None)
+    if callable(cache_clear):
+        cache_clear()

@@ -22,7 +22,8 @@ The packaged entries include:
   topology variables (cell-count and stage assignment) on top of tier-2 pose
   variables.
 - `battery_18650_t4_thermal_opt`, a tier-4 benchmark that adds thermal-system
-  variables on top of tier-3 topology and layout decisions.
+  variables on top of tier-3 topology and layout decisions using a
+  PyBaMM-backed thermal model (lumped and multi-node modes).
 - `gmpb_default_dynamic_min`, a stateful dynamic wrapper that negates the native
   Generalized Moving Peaks Benchmark maximization score to fit this package's
   minimization-oriented optimization API.

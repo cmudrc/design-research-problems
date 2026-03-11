@@ -11,6 +11,11 @@ from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._domains.battery_cell_model import (
+    BatteryThermalPriors,
+    interpolate_total_resistance,
+    load_18650_thermal_priors,
+)
 from design_research_problems.problems._domains.battery_layout import (
     CELL_SPEC_18650,
     MIN_SPACING_MM,
@@ -37,6 +42,9 @@ _DEFAULT_AMBIENT_TEMPERATURE_C = 25.0
 _DEFAULT_MAX_TEMPERATURE_C = 60.0
 _DEFAULT_COOLING_COEFFICIENT = 18.0
 _DEFAULT_PASSIVE_COOLING = 1.0
+_THERMAL_MODEL_LUMPED = "lumped"
+_THERMAL_MODEL_MULTI_NODE = "multi_node_2node"
+_DEFAULT_THERMAL_MODEL = _THERMAL_MODEL_MULTI_NODE
 
 
 @dataclass(frozen=True)
@@ -75,6 +83,32 @@ class Tier4DecodedCandidate:
     """Candidate-specific baseline thermal conductance."""
     ambient_temperature_c: float
     """Candidate-specific ambient temperature."""
+
+
+@dataclass(frozen=True)
+class Tier4ThermalDiagnostics:
+    """Detailed tier-4 thermal diagnostics for non-contract reporting."""
+
+    thermal_model: str
+    """Thermal model used for the evaluation."""
+    max_core_temperature_c: float
+    """Maximum core temperature across all active cells."""
+    max_surface_temperature_c: float
+    """Maximum surface-node temperature across all active cells."""
+    coolant_temperature_c: float
+    """Coolant/jig node temperature."""
+    max_core_surface_delta_c: float
+    """Largest core-to-surface delta across active cells."""
+
+
+@dataclass(frozen=True)
+class _Tier4NodeThermalSolution:
+    """Internal thermal-network solution payload for one candidate."""
+
+    max_core_temperature_c: float
+    max_surface_temperature_c: float
+    coolant_temperature_c: float
+    max_core_surface_delta_c: float
 
 
 def _thermal_peak_temperature_c(
@@ -809,6 +843,13 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
         cooling_coefficient_bounds: tuple[float, float] = (5.0, 50.0),
         passive_cooling_bounds: tuple[float, float] = (0.1, 10.0),
         ambient_temperature_bounds: tuple[float, float] = (5.0, 45.0),
+        thermal_model: str = _DEFAULT_THERMAL_MODEL,
+        thermal_neighbor_clearance_mm: float = 8.0,
+        thermal_contact_decay_mm: float = 2.0,
+        thermal_contact_resistance_k_per_w: float = 2.5,
+        thermal_flow_shadowing_factor: float = 0.25,
+        thermal_airflow_axis: str = "x",
+        thermal_reference_soc: float = 0.5,
         maximum_temperature_c: float = _DEFAULT_MAX_TEMPERATURE_C,
         load_current_a: float | None = None,
     ) -> None:
@@ -827,6 +868,20 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
             maximum_temperature_c=maximum_temperature_c,
             load_current_a=load_current_a,
         )
+        self._thermal_priors: BatteryThermalPriors = load_18650_thermal_priors()
+        self.thermal_model = self._coerce_thermal_model(thermal_model)
+        self.thermal_neighbor_clearance_mm = max(0.0, float(thermal_neighbor_clearance_mm))
+        self.thermal_contact_decay_mm = max(1.0e-6, float(thermal_contact_decay_mm))
+        self.thermal_contact_resistance_k_per_w = max(1.0e-6, float(thermal_contact_resistance_k_per_w))
+        self.thermal_flow_shadowing_factor = float(numpy.clip(thermal_flow_shadowing_factor, 0.0, 1.0))
+        self.thermal_airflow_axis = self._coerce_airflow_axis(thermal_airflow_axis)
+        self.thermal_reference_soc = float(numpy.clip(thermal_reference_soc, 0.0, 1.0))
+        cell_radius_m = (CELL_SPEC_18650.diameter_mm / 2.0) * 1.0e-3
+        cell_length_m = CELL_SPEC_18650.length_mm * 1.0e-3
+        self._single_cell_surface_area_m2 = (2.0 * math.pi * cell_radius_m * cell_length_m) + (
+            2.0 * math.pi * (cell_radius_m**2)
+        )
+        self._latest_thermal_diagnostics: Tier4ThermalDiagnostics | None = None
         self.cooling_coefficient_bounds = (
             float(cooling_coefficient_bounds[0]),
             float(cooling_coefficient_bounds[1]),
@@ -906,6 +961,15 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
                 float(ambient_bounds.get("lower", 5.0)),
                 float(ambient_bounds.get("upper", 45.0)),
             ),
+            thermal_model=str(cast(str, parameters.get("thermal_model", _DEFAULT_THERMAL_MODEL))),
+            thermal_neighbor_clearance_mm=float(cast(float, parameters.get("thermal_neighbor_clearance_mm", 8.0))),
+            thermal_contact_decay_mm=float(cast(float, parameters.get("thermal_contact_decay_mm", 2.0))),
+            thermal_contact_resistance_k_per_w=float(
+                cast(float, parameters.get("thermal_contact_resistance_k_per_w", 2.5))
+            ),
+            thermal_flow_shadowing_factor=float(cast(float, parameters.get("thermal_flow_shadowing_factor", 0.25))),
+            thermal_airflow_axis=str(cast(str, parameters.get("thermal_airflow_axis", "x"))),
+            thermal_reference_soc=float(cast(float, parameters.get("thermal_reference_soc", 0.5))),
             maximum_temperature_c=float(
                 cast(float, parameters.get("maximum_temperature_c", _DEFAULT_MAX_TEMPERATURE_C))
             ),
@@ -982,6 +1046,246 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
         base = normalized if normalized.shape[0] == self.bounds.lb.shape[0] - 3 else normalized[:-3]
         return super()._decode(base)
 
+    def _coerce_thermal_model(self, thermal_model: str) -> str:
+        model = thermal_model.strip().lower()
+        if model not in {_THERMAL_MODEL_LUMPED, _THERMAL_MODEL_MULTI_NODE}:
+            raise ValueError(
+                "Tier-4 thermal_model must be one of "
+                f"{_THERMAL_MODEL_LUMPED!r} or {_THERMAL_MODEL_MULTI_NODE!r}, received {thermal_model!r}."
+            )
+        return model
+
+    def _coerce_airflow_axis(self, axis: str) -> str:
+        value = axis.strip().lower()
+        if value not in {"x", "y", "z"}:
+            raise ValueError(f"Tier-4 thermal_airflow_axis must be one of 'x', 'y', 'z', received {axis!r}.")
+        return value
+
+    def _effective_parallel_and_resistance(self, decoded: Tier3DecodedCandidate) -> tuple[float, float]:
+        min_stage_population = min(decoded.stage_counts, default=0)
+        parallel_equivalent = float(max(min_stage_population, 1))
+        effective_resistance = interpolate_total_resistance(self._thermal_priors, self.thermal_reference_soc)
+        return (parallel_equivalent, effective_resistance)
+
+    def _airflow_shadow_factors(self, cells: tuple[Any, ...]) -> list[float]:
+        if not cells:
+            return []
+        axis_accessor = {
+            "x": lambda cell: float(cell.x_mm),
+            "y": lambda cell: float(cell.y_mm),
+            "z": lambda cell: float(cell.z_mm),
+        }[self.thermal_airflow_axis]
+        coordinates = [axis_accessor(cell) for cell in cells]
+        minimum = min(coordinates)
+        maximum = max(coordinates)
+        span = max(maximum - minimum, 1.0e-9)
+        factors: list[float] = []
+        for coordinate in coordinates:
+            position = (coordinate - minimum) / span
+            factor = 1.0 - (self.thermal_flow_shadowing_factor * position)
+            factors.append(float(max(0.1, min(1.0, factor))))
+        return factors
+
+    def _pairwise_contact_conductances(self, cells: tuple[Any, ...]) -> dict[tuple[int, int], float]:
+        conductances: dict[tuple[int, int], float] = {}
+        for first_index in range(len(cells)):
+            first = cells[first_index]
+            for second_index in range(first_index + 1, len(cells)):
+                second = cells[second_index]
+                center_distance = math.sqrt(
+                    ((float(first.x_mm) - float(second.x_mm)) ** 2)
+                    + ((float(first.y_mm) - float(second.y_mm)) ** 2)
+                    + ((float(first.z_mm) - float(second.z_mm)) ** 2)
+                )
+                clearance_mm = center_distance - CELL_SPEC_18650.diameter_mm
+                if clearance_mm > self.thermal_neighbor_clearance_mm:
+                    continue
+                coupling = (1.0 / self.thermal_contact_resistance_k_per_w) * math.exp(
+                    -max(clearance_mm, 0.0) / self.thermal_contact_decay_mm
+                )
+                if coupling <= 0.0:
+                    continue
+                conductances[(first_index, second_index)] = float(coupling)
+        return conductances
+
+    def _solve_lumped_thermal_network(
+        self,
+        *,
+        cell_count: int,
+        per_cell_heat_w: float,
+        cooling_coefficient_w_per_m2k: float,
+        passive_cooling_w_per_k: float,
+        ambient_temperature_c: float,
+        total_surface_area_mm2: float,
+    ) -> _Tier4NodeThermalSolution:
+        if cell_count <= 0:
+            return _Tier4NodeThermalSolution(
+                max_core_temperature_c=ambient_temperature_c,
+                max_surface_temperature_c=ambient_temperature_c,
+                coolant_temperature_c=ambient_temperature_c,
+                max_core_surface_delta_c=0.0,
+            )
+        total_heat_w = float(cell_count) * per_cell_heat_w
+        cooling_area_m2 = max(total_surface_area_mm2, 0.0) * 1.0e-6
+        base_path_conductance = 1.0 / (
+            (1.0 / max(self._thermal_priors.cell_to_jig_conductance_w_per_k, 1.0e-9))
+            + (1.0 / max(self._thermal_priors.jig_to_ambient_conductance_w_per_k, 1.0e-9))
+        )
+        cooling_conductance = (
+            max(passive_cooling_w_per_k, 1.0e-9)
+            + max(cooling_coefficient_w_per_m2k, 0.0) * cooling_area_m2
+            + base_path_conductance
+        )
+        coolant_conductance = (
+            max(passive_cooling_w_per_k, 1.0e-9) + self._thermal_priors.jig_to_ambient_conductance_w_per_k
+        )
+        max_core_temperature_c = float(ambient_temperature_c + (total_heat_w / max(cooling_conductance, 1.0e-9)))
+        coolant_temperature_c = float(ambient_temperature_c + (total_heat_w / max(coolant_conductance, 1.0e-9)))
+        return _Tier4NodeThermalSolution(
+            max_core_temperature_c=max_core_temperature_c,
+            max_surface_temperature_c=max_core_temperature_c,
+            coolant_temperature_c=coolant_temperature_c,
+            max_core_surface_delta_c=max(0.0, max_core_temperature_c - coolant_temperature_c),
+        )
+
+    def _solve_multi_node_thermal_network(
+        self,
+        *,
+        decoded: Tier3DecodedCandidate,
+        cells: tuple[Any, ...],
+        per_cell_heat_w: float,
+        cooling_coefficient_w_per_m2k: float,
+        passive_cooling_w_per_k: float,
+        ambient_temperature_c: float,
+    ) -> _Tier4NodeThermalSolution:
+        cell_count = int(decoded.cell_count)
+        if cell_count <= 0:
+            return _Tier4NodeThermalSolution(
+                max_core_temperature_c=ambient_temperature_c,
+                max_surface_temperature_c=ambient_temperature_c,
+                coolant_temperature_c=ambient_temperature_c,
+                max_core_surface_delta_c=0.0,
+            )
+
+        node_count = (2 * cell_count) + 1
+        matrix = numpy.zeros((node_count, node_count), dtype=float)
+        vector = numpy.zeros(node_count, dtype=float)
+        coolant_index = 2 * cell_count
+        thermal_contact = self._pairwise_contact_conductances(cells)
+        shadow_factors = self._airflow_shadow_factors(cells)
+        core_surface_conductance = max(2.0 * self._thermal_priors.cell_to_jig_conductance_w_per_k, 1.0e-9)
+        base_surface_coolant_conductance = max(2.0 * self._thermal_priors.cell_to_jig_conductance_w_per_k, 1.0e-9)
+
+        for cell_index in range(cell_count):
+            core_index = cell_index
+            surface_index = cell_count + cell_index
+            matrix[core_index, core_index] += core_surface_conductance
+            matrix[core_index, surface_index] -= core_surface_conductance
+            vector[core_index] += per_cell_heat_w
+
+            matrix[surface_index, core_index] -= core_surface_conductance
+            matrix[surface_index, surface_index] += core_surface_conductance
+            surface_coolant_conductance = base_surface_coolant_conductance + (
+                max(cooling_coefficient_w_per_m2k, 0.0) * self._single_cell_surface_area_m2 * shadow_factors[cell_index]
+            )
+            matrix[surface_index, surface_index] += surface_coolant_conductance
+            matrix[surface_index, coolant_index] -= surface_coolant_conductance
+            matrix[coolant_index, coolant_index] += surface_coolant_conductance
+            matrix[coolant_index, surface_index] -= surface_coolant_conductance
+
+        for (first_index, second_index), conductance in thermal_contact.items():
+            surface_first = cell_count + first_index
+            surface_second = cell_count + second_index
+            matrix[surface_first, surface_first] += conductance
+            matrix[surface_second, surface_second] += conductance
+            matrix[surface_first, surface_second] -= conductance
+            matrix[surface_second, surface_first] -= conductance
+
+        coolant_to_ambient = (
+            max(passive_cooling_w_per_k, 1.0e-9) + self._thermal_priors.jig_to_ambient_conductance_w_per_k
+        )
+        matrix[coolant_index, coolant_index] += coolant_to_ambient
+        vector[coolant_index] += coolant_to_ambient * ambient_temperature_c
+
+        try:
+            temperatures = numpy.linalg.solve(matrix, vector)
+        except numpy.linalg.LinAlgError:
+            temperatures = numpy.linalg.lstsq(matrix, vector, rcond=None)[0]
+
+        core_temperatures = temperatures[:cell_count]
+        surface_temperatures = temperatures[cell_count : 2 * cell_count]
+        coolant_temperature = float(temperatures[coolant_index])
+        core_surface_deltas = core_temperatures - surface_temperatures
+        max_core_surface_delta = max(0.0, float(numpy.max(core_surface_deltas)))
+        return _Tier4NodeThermalSolution(
+            max_core_temperature_c=float(numpy.max(core_temperatures)),
+            max_surface_temperature_c=float(numpy.max(surface_temperatures)),
+            coolant_temperature_c=coolant_temperature,
+            max_core_surface_delta_c=max_core_surface_delta,
+        )
+
+    def _solve_thermal_network(
+        self,
+        *,
+        decoded: Tier3DecodedCandidate,
+        pose_evaluation: Any,
+        cooling_coefficient_w_per_m2k: float,
+        passive_cooling_w_per_k: float,
+        ambient_temperature_c: float,
+    ) -> _Tier4NodeThermalSolution:
+        parallel_equivalent, effective_resistance = self._effective_parallel_and_resistance(decoded)
+        per_cell_current = self.load_current_a / max(parallel_equivalent, 1.0e-9)
+        per_cell_heat_w = (per_cell_current**2) * max(effective_resistance, 1.0e-9)
+        if self.thermal_model == _THERMAL_MODEL_LUMPED:
+            return self._solve_lumped_thermal_network(
+                cell_count=decoded.cell_count,
+                per_cell_heat_w=per_cell_heat_w,
+                cooling_coefficient_w_per_m2k=cooling_coefficient_w_per_m2k,
+                passive_cooling_w_per_k=passive_cooling_w_per_k,
+                ambient_temperature_c=ambient_temperature_c,
+                total_surface_area_mm2=float(pose_evaluation.surface_area_mm2),
+            )
+        return self._solve_multi_node_thermal_network(
+            decoded=decoded,
+            cells=tuple(pose_evaluation.cells),
+            per_cell_heat_w=per_cell_heat_w,
+            cooling_coefficient_w_per_m2k=cooling_coefficient_w_per_m2k,
+            passive_cooling_w_per_k=passive_cooling_w_per_k,
+            ambient_temperature_c=ambient_temperature_c,
+        )
+
+    def thermal_diagnostics(self, variables: NDArray[numpy.float64]) -> dict[str, float]:
+        """Return optional detailed thermal diagnostics for one candidate."""
+        normalized = self._normalize_vector(variables)
+        if normalized.shape[0] != self.bounds.lb.shape[0]:
+            raise ValueError("Tier-4 thermal diagnostics require the full tier-4 design vector.")
+        base_vector = normalized[:-3]
+        decoded = super()._decode(base_vector)
+        cooling_coefficient, passive_cooling, ambient_temperature = self._thermal_parameters_from_variables(normalized)
+        active_count, pose_values = super()._active_count_and_pose_variables(base_vector)
+        pose_eval = self._pose_helper_evaluation(active_cell_count=active_count, pose_variables=pose_values)
+        thermal_solution = self._solve_thermal_network(
+            decoded=decoded,
+            pose_evaluation=pose_eval,
+            cooling_coefficient_w_per_m2k=cooling_coefficient,
+            passive_cooling_w_per_k=passive_cooling,
+            ambient_temperature_c=ambient_temperature,
+        )
+        diagnostics = Tier4ThermalDiagnostics(
+            thermal_model=self.thermal_model,
+            max_core_temperature_c=thermal_solution.max_core_temperature_c,
+            max_surface_temperature_c=thermal_solution.max_surface_temperature_c,
+            coolant_temperature_c=thermal_solution.coolant_temperature_c,
+            max_core_surface_delta_c=thermal_solution.max_core_surface_delta_c,
+        )
+        self._latest_thermal_diagnostics = diagnostics
+        return {
+            "max_core_temperature_c": diagnostics.max_core_temperature_c,
+            "max_surface_temperature_c": diagnostics.max_surface_temperature_c,
+            "coolant_temperature_c": diagnostics.coolant_temperature_c,
+            "max_core_surface_delta_c": diagnostics.max_core_surface_delta_c,
+        }
+
     def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
         normalized = self._normalize_vector(variables)
         if normalized.shape[0] != self.bounds.lb.shape[0]:
@@ -992,22 +1296,26 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
         active_count, pose_values = super()._active_count_and_pose_variables(base_vector)
         pose_eval = self._pose_helper_evaluation(active_cell_count=active_count, pose_variables=pose_values)
         decoded = super()._decode(base_vector)
-        min_stage_population = min(decoded.stage_counts, default=0)
-        max_temperature_c = _thermal_peak_temperature_c(
-            cell_count=decoded.cell_count,
-            parallel_equivalent=float(max(min_stage_population, 1)),
-            surface_area_mm2=float(pose_eval.surface_area_mm2),
-            load_current_a=self.load_current_a,
+        thermal_solution = self._solve_thermal_network(
+            decoded=decoded,
+            pose_evaluation=pose_eval,
             cooling_coefficient_w_per_m2k=cooling_coefficient,
             passive_cooling_w_per_k=passive_cooling,
             ambient_temperature_c=ambient_temperature,
+        )
+        self._latest_thermal_diagnostics = Tier4ThermalDiagnostics(
+            thermal_model=self.thermal_model,
+            max_core_temperature_c=thermal_solution.max_core_temperature_c,
+            max_surface_temperature_c=thermal_solution.max_surface_temperature_c,
+            coolant_temperature_c=thermal_solution.coolant_temperature_c,
+            max_core_surface_delta_c=thermal_solution.max_core_surface_delta_c,
         )
         return BatteryTierMetrics(
             cell_count=base_metrics.cell_count,
             connection_count=base_metrics.connection_count,
             cost_usd=base_metrics.cost_usd,
             design_volume_mm3=base_metrics.design_volume_mm3,
-            max_temperature_c=max_temperature_c,
+            max_temperature_c=thermal_solution.max_core_temperature_c,
             voltage_v=base_metrics.voltage_v,
             capacity_ah=base_metrics.capacity_ah,
             current_limit_a=base_metrics.current_limit_a,
@@ -1025,4 +1333,5 @@ __all__ = [
     "Tier2DecodedCandidate",
     "Tier3DecodedCandidate",
     "Tier4DecodedCandidate",
+    "Tier4ThermalDiagnostics",
 ]

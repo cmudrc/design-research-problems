@@ -100,9 +100,12 @@ The envelope limits in the benchmark are hard constraints, not soft penalties.
 Thermal Proxy
 -------------
 
-The thermal objective uses a steady-state Joule-heating + convective/passive
-cooling proxy. With load current :math:`I_{load}` and effective parallel
-population :math:`P_{eq}`:
+Tier-1 through Tier-3 use a compact steady-state Joule-heating proxy.
+Tier-4 upgrades this to a **PyBaMM-backed** thermal model by extracting
+Thevenin thermal priors (resistance-vs-SOC and thermal conductance parameters)
+and solving either a lumped or multi-node network.
+
+Shared heating relation:
 
 .. math::
 
@@ -110,18 +113,47 @@ population :math:`P_{eq}`:
 
 .. math::
 
-   \dot{Q}_{gen} = N_{cell} \cdot I_{cell}^2 \cdot R_{int}
+   q_i = I_{cell}^2 \cdot R_{eff}(SOC_{ref})
+
+Lumped ablation mode:
 
 .. math::
 
-   G_{cool} = G_{passive} + hA
+   T_{max} = T_{amb} + \frac{N_{cell}q_i}{G_{eff}}
+
+Tier-4 default multi-node mode (steady-state):
 
 .. math::
 
-   T_{max} = T_{amb} + \frac{\dot{Q}_{gen}}{G_{cool}}
+   G_{cs}(T_{core,i} - T_{surf,i}) = q_i
 
-Tier 4 unlocks ``h`` (convective coefficient), ``G_passive``, and ambient
-temperature bounds as design variables. Lower tiers keep them fixed.
+.. math::
+
+   G_{cs}(T_{surf,i} - T_{core,i})
+   + \sum_j G_{ij}(T_{surf,i} - T_{surf,j})
+   + G_{sc,i}(T_{surf,i} - T_{cool}) = 0
+
+.. math::
+
+   \sum_i G_{sc,i}(T_{cool} - T_{surf,i})
+   + G_{cool,amb}(T_{cool} - T_{amb}) = 0
+
+where:
+
+- :math:`G_{ij}` uses a geometry-derived neighbor graph (clearance threshold +
+  exponential distance decay).
+- :math:`G_{sc,i}` includes both PyBaMM prior conductance and
+  :math:`hA_{cell}` with airflow shadowing.
+- reported ``max_temperature_c`` is :math:`\max_i(T_{core,i})` for a
+  conservative hotspot metric.
+
+Tier-4 unlocks ``h`` (convective coefficient), ``G_passive``, ambient
+temperature, and network-model parameters via manifest knobs. Lower tiers keep
+thermal settings fixed.
+
+PyBattMo/BattMo is intentionally **not** part of the runtime path in this
+release to avoid mandatory Julia/JIT coupling in baseline CI and packaged
+benchmarks.
 
 Objective Scalarization
 -----------------------

@@ -19,7 +19,8 @@ bounded 3D space-truss state. The tiered battery grammar ladder includes
 `battery_18650_t3_topology_grammar`, and
 `battery_18650_t4_thermal_grammar`, which progressively unlock series-parallel
 layout edits, pose-aware layout edits, explicit topology/netlist edits, and
-thermal-system tuning. The catalog also includes six
+thermal-system tuning (Tier-4 uses a PyBaMM-backed thermal evaluator). The
+catalog also includes six
 `planar_roof_truss_*` variants that approximate the planar roof truss
 formulations discussed by Shea and Cagan, including multi-load and
 symmetry-constrained cases.
@@ -35,6 +36,7 @@ Optional evaluators:
 
 - It is not required for the base install.
 - `trussme` is available as the `grammar` extra.
-- `pybamm` is available as the `battery` extra.
-- It is not installed in default CI.
+- `pybamm` is available as the `battery` extra and is required for tier-4
+  battery thermal evaluation.
+- Core CI installs `pybamm` for battery-tier verification.
 - It is required for real planar and 3D truss grammar evaluation.
