@@ -16,7 +16,10 @@ from design_research_problems.problems._domains.battery_tier_metrics import (
 from design_research_problems.problems._grammar import GrammarProblem, GrammarTransition
 from design_research_problems.problems.grammar._battery_pack_open import BatteryPack18650OpenEndedProblem
 from design_research_problems.problems.grammar._battery_pack_sp import BatteryPack18650SeriesParallelProblem
-from design_research_problems.problems.grammar._battery_problem_base import parse_battery_requirements
+from design_research_problems.problems.grammar._battery_problem_base import (
+    parse_battery_backend_config,
+    parse_battery_requirements,
+)
 from design_research_problems.problems.optimization._battery_tiers import (
     Battery18650Tier2LayoutOptimizationProblem,
     Battery18650Tier4ThermalOptimizationProblem,
@@ -76,6 +79,7 @@ class Battery18650Tier1SeriesParallelGrammarProblem(BatteryPack18650SeriesParall
             statement_markdown=manifest.statement_markdown,
             resource_bundle=cls.resource_bundle_from_manifest(manifest),
             requirements=parse_battery_requirements(manifest),
+            backend_config=parse_battery_backend_config(manifest),
         )
 
     def evaluate(self, state: object) -> BatteryTierMetrics:  # type: ignore[override]
@@ -115,6 +119,7 @@ class Battery18650Tier3TopologyGrammarProblem(BatteryPack18650OpenEndedProblem):
             resource_bundle=cls.resource_bundle_from_manifest(manifest),
             requirements=parse_battery_requirements(manifest),
             max_cell_count=int(cast(int, manifest.parameters.get("max_cell_count", 24))),
+            backend_config=parse_battery_backend_config(manifest),
         )
 
     def evaluate(self, state: object) -> BatteryTierMetrics:  # type: ignore[override]

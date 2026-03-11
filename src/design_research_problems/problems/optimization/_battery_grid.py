@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._domains.battery_cell_model import load_18650_cell_model
+from design_research_problems.problems._domains.battery_cell_model import BatteryBackendConfig, load_18650_cell_model
 from design_research_problems.problems._domains.battery_circuit import (
     BatteryCircuitEvaluation,
     BatteryCircuitState,
@@ -34,7 +34,10 @@ from design_research_problems.problems._optimization import (
     OptimizationProblem,
     OptimizationResult,
 )
-from design_research_problems.problems.grammar._battery_problem_base import parse_battery_requirements
+from design_research_problems.problems.grammar._battery_problem_base import (
+    parse_battery_backend_config,
+    parse_battery_requirements,
+)
 
 _INFEASIBILITY_PENALTY_SCALE = 1_000.0
 
@@ -48,6 +51,7 @@ class BatteryGridSizingProblem(OptimizationProblem):
         statement_markdown: str = "",
         resource_bundle: PackageResourceBundle | None = None,
         requirements: BatteryRequirements | None = None,
+        backend_config: BatteryBackendConfig | None = None,
     ) -> None:
         """Initialize the packaged battery-grid sizing instance.
 
@@ -56,6 +60,7 @@ class BatteryGridSizingProblem(OptimizationProblem):
             statement_markdown: Value for ``statement_markdown``.
             resource_bundle: Value for ``resource_bundle``.
             requirements: Value for ``requirements``.
+            backend_config: Value for ``backend_config``.
         """
         super().__init__(
             metadata=metadata,
@@ -86,6 +91,7 @@ class BatteryGridSizingProblem(OptimizationProblem):
             ConstraintDefinition(kind="ineq", evaluate=self._backend_feasibility_margin),
         ]
         self._evaluation_cache: dict[tuple[int, int], SeriesParallelBatteryEvaluation] = {}
+        self.backend_config = backend_config
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> BatteryGridSizingProblem:
@@ -102,6 +108,7 @@ class BatteryGridSizingProblem(OptimizationProblem):
             statement_markdown=manifest.statement_markdown,
             resource_bundle=cls.resource_bundle_from_manifest(manifest),
             requirements=parse_battery_requirements(manifest),
+            backend_config=parse_battery_backend_config(manifest),
         )
 
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
@@ -307,6 +314,7 @@ class BatteryGridSizingProblem(OptimizationProblem):
             state=state,
             requirements=self.requirements,
             load_cell_model=load_18650_cell_model,
+            backend_config=self.backend_config,
         )
 
     def _evaluation_for_counts(self, series_count: int, parallel_count: int) -> SeriesParallelBatteryEvaluation:

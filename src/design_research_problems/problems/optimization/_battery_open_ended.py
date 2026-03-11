@@ -12,7 +12,7 @@ from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import MissingOptionalDependencyError
 from design_research_problems._optional import import_optional_module
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._domains.battery_cell_model import load_18650_cell_model
+from design_research_problems.problems._domains.battery_cell_model import BatteryBackendConfig, load_18650_cell_model
 from design_research_problems.problems._domains.battery_circuit import (
     BatteryCircuitEvaluation,
     BatteryCircuitState,
@@ -27,7 +27,10 @@ from design_research_problems.problems._optimization import (
     OptimizationResult,
 )
 from design_research_problems.problems.grammar._battery_pack_open import BatteryPack18650OpenEndedProblem
-from design_research_problems.problems.grammar._battery_problem_base import parse_battery_requirements
+from design_research_problems.problems.grammar._battery_problem_base import (
+    parse_battery_backend_config,
+    parse_battery_requirements,
+)
 
 _TRANSITION_PROGRAM_LENGTH = 32
 _MAX_TRANSITION_TOKEN = 8_192
@@ -49,6 +52,7 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         resource_bundle: PackageResourceBundle | None = None,
         requirements: BatteryRequirements | None = None,
         max_cell_count: int = 24,
+        backend_config: BatteryBackendConfig | None = None,
     ) -> None:
         """Initialize the packaged open-ended capacity-maximization benchmark.
 
@@ -58,6 +62,7 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             resource_bundle: Optional package-resource loader.
             requirements: Optional battery-pack requirements override.
             max_cell_count: Maximum allowed cell count in generated states.
+            backend_config: Optional backend fidelity configuration.
         """
         super().__init__(
             metadata=metadata,
@@ -74,6 +79,7 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             voltage_tolerance_v=0.1,
         )
         self.max_cell_count = max_cell_count
+        self.backend_config = backend_config
         self.bounds = Bounds(
             lb=numpy.zeros(_TRANSITION_PROGRAM_LENGTH, dtype=float),
             ub=numpy.full(_TRANSITION_PROGRAM_LENGTH, float(_MAX_TRANSITION_TOKEN), dtype=float),
@@ -87,6 +93,7 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             metadata=metadata,
             requirements=self.requirements,
             max_cell_count=self.max_cell_count,
+            backend_config=self.backend_config,
         )
         self._state_cache: dict[tuple[int, ...], BatteryCircuitState] = {}
         self._evaluation_cache: dict[tuple[int, ...], BatteryCircuitEvaluation] = {}
@@ -109,6 +116,7 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             resource_bundle=cls.resource_bundle_from_manifest(manifest),
             requirements=parse_battery_requirements(manifest),
             max_cell_count=int(cast(int, manifest.parameters.get("max_cell_count", 24))),
+            backend_config=parse_battery_backend_config(manifest),
         )
 
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
@@ -734,6 +742,7 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             requirements=self.requirements,
             load_cell_model=load_18650_cell_model,
             simulate_to_failure=True,
+            backend_config=self.backend_config,
         )
 
     def _evaluation_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryCircuitEvaluation:

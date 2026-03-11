@@ -86,6 +86,10 @@ class SeriesParallelBatteryEvaluation:
     """Exact source of the effective single-cell surrogate when the path ran."""
     cell_model_warning: str | None = None
     """Non-fatal warning reported while building the effective surrogate."""
+    cell_model_mode: str | None = None
+    """Resolved backend mode used for the cell model."""
+    cell_model_parameter_set: str | None = None
+    """Resolved parameter-set identifier used for the cell model."""
 
 
 def build_canonical_series_parallel_state(
@@ -192,6 +196,8 @@ def evaluation_from_summary(
     failure_reason: str | None,
     cell_model_source: str | None = None,
     cell_model_warning: str | None = None,
+    cell_model_mode: str | None = None,
+    cell_model_parameter_set: str | None = None,
 ) -> SeriesParallelBatteryEvaluation:
     """Build one structured evaluation object from computed summary metrics.
 
@@ -206,6 +212,8 @@ def evaluation_from_summary(
         failure_reason: Value for ``failure_reason``.
         cell_model_source: Value for ``cell_model_source``.
         cell_model_warning: Value for ``cell_model_warning``.
+        cell_model_mode: Value for ``cell_model_mode``.
+        cell_model_parameter_set: Value for ``cell_model_parameter_set``.
 
     Returns:
         Computed result for this callable.
@@ -234,6 +242,8 @@ def evaluation_from_summary(
         failure_reason=failure_reason,
         cell_model_source=cell_model_source,
         cell_model_warning=cell_model_warning,
+        cell_model_mode=cell_model_mode,
+        cell_model_parameter_set=cell_model_parameter_set,
     )
 
 
@@ -404,6 +414,8 @@ def evaluate_series_parallel_state(
         failure_reason=circuit_evaluation.failure_reason,
         cell_model_source=circuit_evaluation.cell_model_source,
         cell_model_warning=circuit_evaluation.cell_model_warning,
+        cell_model_mode=circuit_evaluation.cell_model_mode,
+        cell_model_parameter_set=circuit_evaluation.cell_model_parameter_set,
     )
 
 

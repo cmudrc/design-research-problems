@@ -9,7 +9,12 @@ from math import ceil, exp
 
 import numpy
 
-from design_research_problems.problems._domains.battery_cell_model import BatteryCellModel, interpolate_cell_model
+from design_research_problems.problems._domains.battery_cell_model import (
+    BatteryBackendConfig,
+    BatteryCellModel,
+    interpolate_cell_model,
+    load_battery_cell_model,
+)
 from design_research_problems.problems._domains.battery_layout import (
     CELL_SPEC_18650,
     DEFAULT_INTERCONNECT_RESISTANCE_OHM,
@@ -132,6 +137,10 @@ class BatteryCircuitEvaluation:
     """Exact source of the effective single-cell surrogate when the path ran."""
     cell_model_warning: str | None = None
     """Non-fatal warning reported while building the effective surrogate."""
+    cell_model_mode: str | None = None
+    """Resolved backend mode used for this evaluation."""
+    cell_model_parameter_set: str | None = None
+    """Resolved concrete parameter-set name used for this evaluation."""
 
 
 @dataclass(frozen=True)
@@ -827,6 +836,7 @@ def evaluate_battery_circuit(
     load_cell_model: Callable[[], BatteryCellModel],
     *,
     simulate_to_failure: bool = False,
+    backend_config: BatteryBackendConfig | None = None,
 ) -> BatteryCircuitEvaluation:
     """Evaluate one explicit battery circuit using deterministic checks and the shared solver.
 
@@ -835,6 +845,7 @@ def evaluate_battery_circuit(
         requirements: Value for ``requirements``.
         load_cell_model: Value for ``load_cell_model``.
         simulate_to_failure: Value for ``simulate_to_failure``.
+        backend_config: Value for ``backend_config``.
 
     Returns:
         Computed result for this callable.
@@ -856,12 +867,14 @@ def evaluate_battery_circuit(
             pybamm_ran=False,
             cell_model_source=None,
             cell_model_warning=None,
+            cell_model_mode=None,
+            cell_model_parameter_set=None,
             simulation=None,
             is_feasible=False,
             failure_reason=validation_failure,
         )
 
-    cell_model = load_cell_model()
+    cell_model = load_cell_model() if backend_config is None else load_battery_cell_model(backend_config)
     simulation = simulate_battery_circuit(
         state,
         requirements,
@@ -890,6 +903,8 @@ def evaluate_battery_circuit(
         pybamm_ran=True,
         cell_model_source=cell_model.source,
         cell_model_warning=cell_model.warning_message,
+        cell_model_mode=cell_model.resolved_mode,
+        cell_model_parameter_set=cell_model.resolved_parameter_set,
         simulation=simulation,
         is_feasible=is_feasible,
         failure_reason=failure_reason,
@@ -905,6 +920,8 @@ def _evaluation_from_parts(
     pybamm_ran: bool,
     cell_model_source: str | None,
     cell_model_warning: str | None,
+    cell_model_mode: str | None,
+    cell_model_parameter_set: str | None,
     simulation: BatteryCircuitSimulationResult | None,
     is_feasible: bool,
     failure_reason: str | None,
@@ -919,6 +936,8 @@ def _evaluation_from_parts(
         pybamm_ran: Value for ``pybamm_ran``.
         cell_model_source: Value for ``cell_model_source``.
         cell_model_warning: Value for ``cell_model_warning``.
+        cell_model_mode: Value for ``cell_model_mode``.
+        cell_model_parameter_set: Value for ``cell_model_parameter_set``.
         simulation: Value for ``simulation``.
         is_feasible: Whether to feasible.
         failure_reason: Value for ``failure_reason``.
@@ -950,6 +969,8 @@ def _evaluation_from_parts(
         failure_reason=failure_reason,
         cell_model_source=cell_model_source,
         cell_model_warning=cell_model_warning,
+        cell_model_mode=cell_model_mode,
+        cell_model_parameter_set=cell_model_parameter_set,
     )
 
 

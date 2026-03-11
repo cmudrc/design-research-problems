@@ -12,6 +12,7 @@ from numpy.typing import NDArray
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._domains.battery_cell_model import (
+    BatteryBackendConfig,
     BatteryThermalPriors,
     interpolate_total_resistance,
     load_18650_thermal_priors,
@@ -33,7 +34,10 @@ from design_research_problems.problems._optimization import (
     OptimizationResult,
     bounded_pattern_search,
 )
-from design_research_problems.problems.grammar._battery_problem_base import parse_battery_requirements
+from design_research_problems.problems.grammar._battery_problem_base import (
+    parse_battery_backend_config,
+    parse_battery_requirements,
+)
 from design_research_problems.problems.optimization._battery_grid import BatteryGridSizingProblem
 from design_research_problems.problems.optimization._battery_oriented_layout import BatteryOrientedLayoutProblem
 
@@ -165,6 +169,7 @@ class Battery18650Tier1SeriesParallelOptimizationProblem(BatteryGridSizingProble
         statement_markdown: str = "",
         resource_bundle: PackageResourceBundle | None = None,
         requirements: BatteryRequirements | None = None,
+        backend_config: BatteryBackendConfig | None = None,
         objective_weights: BatteryObjectiveWeights | None = None,
         cooling_coefficient_w_per_m2k: float = _DEFAULT_COOLING_COEFFICIENT,
         passive_cooling_w_per_k: float = _DEFAULT_PASSIVE_COOLING,
@@ -178,6 +183,7 @@ class Battery18650Tier1SeriesParallelOptimizationProblem(BatteryGridSizingProble
             statement_markdown=statement_markdown,
             resource_bundle=resource_bundle,
             requirements=requirements,
+            backend_config=backend_config,
         )
         self.objective_weights = objective_weights or BatteryObjectiveWeights(volume=0.20, cost=0.65, temperature=0.15)
         self.cooling_coefficient_w_per_m2k = float(cooling_coefficient_w_per_m2k)
@@ -197,6 +203,7 @@ class Battery18650Tier1SeriesParallelOptimizationProblem(BatteryGridSizingProble
             statement_markdown=manifest.statement_markdown,
             resource_bundle=cls.resource_bundle_from_manifest(manifest),
             requirements=parse_battery_requirements(manifest),
+            backend_config=parse_battery_backend_config(manifest),
             objective_weights=BatteryObjectiveWeights.from_mapping(
                 parameters.get("objective_weights"),
                 default_volume=0.20,

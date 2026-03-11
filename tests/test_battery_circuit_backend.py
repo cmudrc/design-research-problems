@@ -6,8 +6,11 @@ import pytest
 
 from design_research_problems import MissingOptionalDependencyError
 from design_research_problems.problems.grammar._battery_cell_model import (
+    BatteryBackendConfig,
     BatteryCellModel,
+    BatteryParameterization,
     BatteryThermalPriors,
+    battery_backend_config_from_mapping,
 )
 from design_research_problems.problems.grammar._battery_circuit import (
     BatteryCellInstance,
@@ -403,6 +406,196 @@ def test_extended_simulation_still_fails_when_required_capacity_is_not_met() -> 
     assert evaluation.is_feasible is False
     assert evaluation.delivered_capacity_ah == pytest.approx(2.5)
     assert evaluation.failure_reason == "A cell depleted before the required discharge duration completed."
+
+
+def test_evaluation_records_cell_model_mode_and_parameter_set_metadata() -> None:
+    configured_model = BatteryCellModel(
+        soc_grid=(0.0, 1.0),
+        open_circuit_voltage_v=(4.2, 4.2),
+        series_resistance_ohm=(0.01, 0.01),
+        transient_resistance_ohm=(0.0, 0.0),
+        transient_capacitance_f=(1.0, 1.0),
+        source="custom",
+        warning_message=None,
+        resolved_mode="pybamm_ecm",
+        resolved_parameter_set="Chen2020",
+    )
+    evaluation = evaluate_battery_circuit(
+        state=_single_cell_state(),
+        requirements=_relaxed_requirements(target_voltage_v=3.7, minimum_capacity_ah=1.0, minimum_current_a=1.0),
+        load_cell_model=lambda: configured_model,
+    )
+    assert evaluation.cell_model_mode == "pybamm_ecm"
+    assert evaluation.cell_model_parameter_set == "Chen2020"
+
+
+def test_evaluate_battery_circuit_uses_backend_config_loader_path(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    def _unexpected_load() -> BatteryCellModel:
+        raise AssertionError("load_cell_model should not be used when backend_config is provided.")
+
+    monkeypatch.setattr(
+        battery_cell_model,
+        "import_pybamm",
+        lambda: (_ for _ in ()).throw(MissingOptionalDependencyError("backend-config loader invoked")),
+    )
+    with pytest.raises(MissingOptionalDependencyError, match="backend-config loader invoked"):
+        evaluate_battery_circuit(
+            state=_single_cell_state(),
+            requirements=_relaxed_requirements(target_voltage_v=3.7, minimum_capacity_ah=1.0, minimum_current_a=1.0),
+            load_cell_model=_unexpected_load,
+            backend_config=BatteryBackendConfig(cell_model_mode="pybamm_spm"),
+        )
+
+
+def test_battery_backend_config_parses_parameterization_and_options() -> None:
+    config = battery_backend_config_from_mapping(
+        {
+            "cell_model_mode": "pybamm_ecm",
+            "parameterization": {"preset": "fast"},
+            "thermal_mode": "isothermal",
+            "ambient_temp_C": 22.5,
+            "parasitics": {"R_bus": 0.001, "R_contact": 0.002},
+            "solver_policy": {"dt_s": 1.0, "rel_tol": 1e-6},
+        }
+    )
+    assert config.cell_model_mode == "pybamm_ecm"
+    assert config.parameterization == BatteryParameterization(preset="fast", parameter_set=None)
+    assert config.parameterization.resolved_parameter_set() == "Chen2020"
+    assert config.thermal_mode == "isothermal"
+    assert config.ambient_temp_c == pytest.approx(22.5)
+    assert dict(config.parasitics) == {"R_bus": 0.001, "R_contact": 0.002}
+    assert dict(config.solver_policy) == {"dt_s": 1.0, "rel_tol": 1e-6}
+
+
+def test_battery_backend_config_rejects_unknown_mode() -> None:
+    with pytest.raises(ValueError, match="cell_model_mode"):
+        battery_backend_config_from_mapping({"cell_model_mode": "unknown"})
+
+
+def test_battery_backend_config_rejects_removed_surrogate_mode() -> None:
+    with pytest.raises(ValueError, match="cell_model_mode"):
+        battery_backend_config_from_mapping({"cell_model_mode": "surrogate_rescaled"})
+
+
+def test_load_battery_cell_model_auto_mode_requires_pybamm(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+    monkeypatch.setattr(
+        battery_cell_model,
+        "import_pybamm",
+        lambda: (_ for _ in ()).throw(MissingOptionalDependencyError("pybamm is required")),
+    )
+    with pytest.raises(MissingOptionalDependencyError, match="pybamm is required"):
+        battery_cell_model.load_battery_cell_model(BatteryBackendConfig(cell_model_mode="auto"))
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+
+
+def test_load_battery_cell_model_spm_mode_uses_lithium_ion_spm_contract(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+    fake_defaults = {
+        "Nominal cell capacity [A.h]": 100.0,
+        "Initial temperature [K]": 298.15,
+        "Open-circuit voltage [V]": lambda soc: 3.0 + (1.2 * soc),
+        "R0 [Ohm]": lambda temperature_k, current_a, soc: 0.08 + (0.01 * soc),
+        "R1 [Ohm]": lambda temperature_k, current_a, soc: 0.02,
+        "C1 [F]": lambda temperature_k, current_a, soc: 600.0,
+    }
+    fake_module = SimpleNamespace(
+        lithium_ion=SimpleNamespace(
+            SPM=lambda: SimpleNamespace(default_parameter_values=dict(fake_defaults)),
+            DFN=lambda: SimpleNamespace(default_parameter_values=dict(fake_defaults)),
+        ),
+        ParameterValues=lambda name: dict(fake_defaults),
+    )
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_module)
+
+    model = battery_cell_model.load_battery_cell_model(BatteryBackendConfig(cell_model_mode="pybamm_spm"))
+    assert model.source == "pybamm_spm"
+    assert model.resolved_mode == "pybamm_spm"
+    assert model.warning_message is None
+    assert len(model.soc_grid) == 11
+    assert model.open_circuit_voltage_v[0] < model.open_circuit_voltage_v[-1]
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+
+
+def test_load_battery_cell_model_spm_mode_fails_fast_without_required_ecm_keys(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+    fake_defaults = {
+        "Nominal cell capacity [A.h]": 100.0,
+        "Initial temperature [K]": 298.15,
+        "Open-circuit voltage [V]": lambda soc: 3.0 + soc,
+        "R1 [Ohm]": lambda temperature_k, current_a, soc: 0.02,
+        "C1 [F]": lambda temperature_k, current_a, soc: 600.0,
+    }
+    fake_module = SimpleNamespace(
+        lithium_ion=SimpleNamespace(
+            SPM=lambda: SimpleNamespace(default_parameter_values=dict(fake_defaults)),
+            DFN=lambda: SimpleNamespace(default_parameter_values=dict(fake_defaults)),
+        ),
+        ParameterValues=lambda name: dict(fake_defaults),
+    )
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_module)
+
+    with pytest.raises(MissingOptionalDependencyError, match=r"R0 \[Ohm\]"):
+        battery_cell_model.load_battery_cell_model(BatteryBackendConfig(cell_model_mode="pybamm_spm"))
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+
+
+def test_load_battery_cell_model_dfn_mode_respects_parameter_set_override(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+    parameter_set_calls: list[str] = []
+    fake_defaults = {
+        "Cell capacity [A.h]": 100.0,
+        "Initial temperature [K]": 298.15,
+        "Open-circuit voltage [V]": lambda soc: 3.2 + soc,
+        "R0 [Ohm]": lambda temperature_k, current_a, soc: 0.07,
+        "R1 [Ohm]": lambda temperature_k, current_a, soc: 0.02,
+        "C1 [F]": lambda temperature_k, current_a, soc: 800.0,
+    }
+
+    def _parameter_values(name: str) -> dict[str, object]:
+        parameter_set_calls.append(name)
+        return dict(fake_defaults)
+
+    fake_module = SimpleNamespace(
+        lithium_ion=SimpleNamespace(
+            SPM=lambda: SimpleNamespace(default_parameter_values=dict(fake_defaults)),
+            DFN=lambda: SimpleNamespace(default_parameter_values={"unused": 1.0}),
+        ),
+        ParameterValues=_parameter_values,
+    )
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_module)
+
+    model = battery_cell_model.load_battery_cell_model(
+        BatteryBackendConfig(
+            cell_model_mode="pybamm_dfn",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+        )
+    )
+    assert parameter_set_calls == ["Marquis2019"]
+    assert model.source == "pybamm_dfn"
+    assert model.resolved_mode == "pybamm_dfn"
+    assert model.resolved_parameter_set == "Marquis2019"
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
 
 
 def test_load_18650_cell_model_requires_supported_thevenin_factory(

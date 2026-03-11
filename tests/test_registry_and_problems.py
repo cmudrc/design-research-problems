@@ -26,7 +26,7 @@ from design_research_problems import (
     list_problems,
 )
 from design_research_problems.problems import DecisionOption
-from design_research_problems.problems.grammar._battery_cell_model import BatteryCellModel
+from design_research_problems.problems.grammar._battery_cell_model import BatteryBackendConfig, BatteryCellModel
 from design_research_problems.problems.optimization import (
     BatteryGridSizingProblem,
     GMPBOptimizationProblem,
@@ -712,6 +712,30 @@ def test_battery_problem_evaluate_uses_fake_adapter(monkeypatch: pytest.MonkeyPa
     assert evaluation.connection_count == pytest.approx(15.0)
     assert evaluation.voltage_v == pytest.approx(14.8, abs=0.1)
     assert evaluation.capacity_ah == pytest.approx(10.0, abs=1e-6)
+
+
+def test_battery_grammar_problem_threads_backend_config() -> None:
+    baseline = get_problem("battery_18650_t1_series_parallel_grammar")
+    configured = type(baseline)(
+        metadata=baseline.metadata,
+        statement_markdown=baseline.statement_markdown,
+        requirements=baseline.requirements,
+        backend_config=BatteryBackendConfig(cell_model_mode="pybamm_spm"),
+    )
+    with pytest.raises(MissingOptionalDependencyError):
+        configured.evaluate(_build_feasible_battery_state())
+
+
+def test_battery_optimization_problem_threads_backend_config() -> None:
+    baseline = get_problem("battery_18650_t1_series_parallel_opt")
+    configured = type(baseline)(
+        metadata=baseline.metadata,
+        statement_markdown=baseline.statement_markdown,
+        requirements=baseline.requirements,
+        backend_config=BatteryBackendConfig(cell_model_mode="pybamm_spm"),
+    )
+    with pytest.raises(MissingOptionalDependencyError):
+        configured.objective(numpy.array([4.0, 4.0], dtype=float))
 
 
 def test_open_ended_battery_problem_state_and_rule_methods_are_validated() -> None:

@@ -21,6 +21,7 @@ from design_research_problems.problems._domains.battery_series_parallel import (
 from design_research_problems.problems._grammar import GrammarTransition
 from design_research_problems.problems.grammar._battery_problem_base import (
     BatteryCircuitProblemBase,
+    parse_battery_backend_config,
     parse_battery_requirements,
 )
 
@@ -75,6 +76,7 @@ class BatteryPack18650SeriesParallelProblem(
             statement_markdown=manifest.statement_markdown,
             resource_bundle=cls.resource_bundle_from_manifest(manifest),
             requirements=parse_battery_requirements(manifest),
+            backend_config=parse_battery_backend_config(manifest),
         )
 
     def initial_state(self) -> SeriesParallelBatteryState:

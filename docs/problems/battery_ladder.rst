@@ -30,6 +30,30 @@ All tiers enforce hard constraints on:
 - geometric envelope dimensions,
 - minimum inter-cell clearance.
 
+Backend Configuration
+---------------------
+
+Battery grammar and optimization problems share one optional backend config
+surface under ``[parameters.battery_backend]`` in manifest TOML:
+
+- ``cell_model_mode``: ``auto | pybamm_ecm | pybamm_spm | pybamm_dfn``
+- ``parameterization.preset``: ``fast | medium | slow``
+- ``parameterization.parameter_set``: explicit PyBaMM parameter-set name override
+- optional placeholders accepted for forward compatibility:
+  ``thermal_mode``, ``ambient_temp_c`` / ``ambient_temp_C``, ``parasitics``,
+  and ``solver_policy``
+
+Current backend behavior in this release:
+
+- PyBaMM is required for battery cell-model evaluation.
+- ``auto`` resolves to ``pybamm_ecm``.
+- ``pybamm_spm`` and ``pybamm_dfn`` are implemented through PyBaMM
+  ``lithium_ion.SPM`` and ``lithium_ion.DFN`` parameter extraction and then
+  mapped into the shared backend ECM lookup-table contract.
+- ``pybamm_spm`` and ``pybamm_dfn`` fail fast when required ECM-equivalent
+  parameters (``Open-circuit voltage [V]``, ``R0 [Ohm]``, ``R1 [Ohm]``,
+  ``C1 [F]``) are unavailable.
+
 Electrical Approximation
 ------------------------
 

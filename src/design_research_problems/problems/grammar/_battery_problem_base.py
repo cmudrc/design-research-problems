@@ -6,7 +6,11 @@ from typing import cast
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._domains.battery_cell_model import load_18650_cell_model
+from design_research_problems.problems._domains.battery_cell_model import (
+    BatteryBackendConfig,
+    battery_backend_config_from_mapping,
+    load_18650_cell_model,
+)
 from design_research_problems.problems._domains.battery_circuit import (
     BatteryCircuitEvaluation,
     BatteryCircuitState,
@@ -67,6 +71,21 @@ def parse_battery_requirements(manifest: ProblemManifest) -> BatteryRequirements
     )
 
 
+def parse_battery_backend_config(manifest: ProblemManifest) -> BatteryBackendConfig | None:
+    """Parse one optional battery backend config payload from the manifest.
+
+    Args:
+        manifest: Value for ``manifest``.
+
+    Returns:
+        Parsed backend config when ``battery_backend`` is provided; otherwise ``None``.
+    """
+    raw_backend = manifest.parameters.get("battery_backend")
+    if raw_backend is None:
+        return None
+    return battery_backend_config_from_mapping(raw_backend)
+
+
 class BatteryCircuitProblemBase[StateT, EvaluationT](GrammarProblem[StateT, EvaluationT]):
     """Shared base class for battery grammar problems."""
 
@@ -76,6 +95,7 @@ class BatteryCircuitProblemBase[StateT, EvaluationT](GrammarProblem[StateT, Eval
         statement_markdown: str = "",
         resource_bundle: PackageResourceBundle | None = None,
         requirements: BatteryRequirements | None = None,
+        backend_config: BatteryBackendConfig | None = None,
     ) -> None:
         """Store shared packaged battery requirements.
 
@@ -84,6 +104,7 @@ class BatteryCircuitProblemBase[StateT, EvaluationT](GrammarProblem[StateT, Eval
             statement_markdown: Value for ``statement_markdown``.
             resource_bundle: Value for ``resource_bundle``.
             requirements: Value for ``requirements``.
+            backend_config: Value for ``backend_config``.
         """
         super().__init__(
             metadata=metadata,
@@ -99,6 +120,7 @@ class BatteryCircuitProblemBase[StateT, EvaluationT](GrammarProblem[StateT, Eval
             max_height_mm=250.0,
             voltage_tolerance_v=0.1,
         )
+        self.backend_config = backend_config
 
     def evaluate_circuit_state(self, state: BatteryCircuitState) -> BatteryCircuitEvaluation:
         """Evaluate one explicit battery circuit using the shared backend.
@@ -113,6 +135,7 @@ class BatteryCircuitProblemBase[StateT, EvaluationT](GrammarProblem[StateT, Eval
             state=state,
             requirements=self.requirements,
             load_cell_model=load_18650_cell_model,
+            backend_config=self.backend_config,
         )
 
     def legal_grid_shape(self) -> tuple[int, int, int]:
