@@ -411,6 +411,7 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
                     from_terminal_id=negative_pair[0],
                     to_terminal_id=negative_pair[1],
                     resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                    ideal=True,
                 )
             )
         if connect_positive is not None:
@@ -421,6 +422,7 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
                     from_terminal_id=positive_pair[0],
                     to_terminal_id=positive_pair[1],
                     resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                    ideal=True,
                 )
             )
         return BatteryCircuitState(
@@ -579,6 +581,7 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
                 from_terminal_id=pair_key[0],
                 to_terminal_id=pair_key[1],
                 resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                ideal=True,
             )
         )
         return BatteryCircuitState(
