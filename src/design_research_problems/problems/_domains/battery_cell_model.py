@@ -214,8 +214,7 @@ def resolve_battery_backend_config(config: BatteryBackendConfig | None) -> Batte
     if normalized_mode not in _SUPPORTED_CELL_MODEL_MODES:
         supported = ", ".join(sorted(_SUPPORTED_CELL_MODEL_MODES))
         raise ValueError(
-            f"Unsupported battery cell_model_mode {candidate.cell_model_mode!r}. "
-            f"Expected one of: {supported}."
+            f"Unsupported battery cell_model_mode {candidate.cell_model_mode!r}. Expected one of: {supported}."
         )
     normalized_parameterization = _normalize_parameterization(candidate.parameterization)
     normalized_thermal_mode = (
@@ -329,9 +328,7 @@ def _load_named_parameter_values(*, pybamm_module: object, parameter_set: str) -
     """Return one copied ``pybamm.ParameterValues`` object for a named set."""
     parameter_values_factory = getattr(pybamm_module, "ParameterValues", None)
     if parameter_values_factory is None:
-        raise MissingOptionalDependencyError(
-            "PyBaMM parameter-set overrides require pybamm.ParameterValues support."
-        )
+        raise MissingOptionalDependencyError("PyBaMM parameter-set overrides require pybamm.ParameterValues support.")
     try:
         parameter_values = parameter_values_factory(parameter_set)
     except Exception as exc:
@@ -524,9 +521,7 @@ def _build_cell_model_from_parameter_values(
     )
     capacitance_normalization = max(resistance_normalization, 1.0e-12)
 
-    series_resistance_ohm = [
-        max(1.0e-6, resistance * resistance_normalization) for resistance in series_resistance_ohm
-    ]
+    series_resistance_ohm = [max(1.0e-6, resistance * resistance_normalization) for resistance in series_resistance_ohm]
     transient_resistance_ohm = [
         max(0.0, resistance * resistance_normalization) for resistance in transient_resistance_ohm
     ]
