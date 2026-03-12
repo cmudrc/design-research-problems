@@ -57,6 +57,8 @@ class BatteryConnection:
     """The other endpoint terminal identifier."""
     resistance_ohm: float = DEFAULT_INTERCONNECT_RESISTANCE_OHM
     """Effective interconnect resistance."""
+    ideal: bool = False
+    """Whether this interconnect should collapse into an ideal zero-drop net."""
 
 
 @dataclass(frozen=True)
@@ -123,6 +125,10 @@ class BatteryCircuitEvaluation:
     """Maximum observed absolute cell current."""
     min_cell_voltage_v: float | None
     """Minimum observed cell terminal voltage."""
+    total_connection_loss_w: float | None
+    """Total Joule loss across explicit interconnect resistors at the final step."""
+    max_connection_current_a: float | None
+    """Maximum observed absolute current through any explicit interconnect."""
     solver_steps: int
     """Number of simulation steps executed."""
     pybamm_ran: bool
@@ -157,6 +163,10 @@ class BatteryCircuitSimulationResult:
     """Stored max cell current a value."""
     min_cell_voltage_v: float
     """Stored min cell voltage v value."""
+    total_connection_loss_w: float
+    """Stored total explicit-interconnect Joule loss in watts."""
+    max_connection_current_a: float
+    """Stored maximum explicit-interconnect current in amps."""
     solver_steps: int
     """Stored solver steps value."""
     is_feasible: bool
@@ -324,6 +334,27 @@ def _build_connection_sets(state: BatteryCircuitState) -> tuple[_DisjointSet, di
     dsu = _DisjointSet(ids)
     adjacency: dict[int, set[int]] = {terminal_id: set() for terminal_id in ids}
     for connection in state.connections:
+        adjacency[connection.from_terminal_id].add(connection.to_terminal_id)
+        adjacency[connection.to_terminal_id].add(connection.from_terminal_id)
+        dsu.union(connection.from_terminal_id, connection.to_terminal_id)
+    return (dsu, adjacency)
+
+
+def _build_ideal_connection_sets(state: BatteryCircuitState) -> tuple[_DisjointSet, dict[int, set[int]]]:
+    """Return ideal-wire equivalence classes and adjacency.
+
+    Args:
+        state: Value for ``state``.
+
+    Returns:
+        Ideal-wire disjoint-set plus ideal-only adjacency.
+    """
+    ids = terminal_ids(state)
+    dsu = _DisjointSet(ids)
+    adjacency: dict[int, set[int]] = {terminal_id: set() for terminal_id in ids}
+    for connection in state.connections:
+        if not connection.ideal:
+            continue
         adjacency[connection.from_terminal_id].add(connection.to_terminal_id)
         adjacency[connection.to_terminal_id].add(connection.from_terminal_id)
         dsu.union(connection.from_terminal_id, connection.to_terminal_id)
@@ -653,10 +684,10 @@ def simulate_battery_circuit(
     Returns:
         Computed result for this callable.
     """
-    dsu, _ = _build_connection_sets(state)
-    node_ids = sorted({dsu.find(node_id) for node_id in terminal_ids(state)})
-    reference_id = dsu.find(state.pack_negative_terminal_id)
-    pack_positive_net_id = dsu.find(state.pack_positive_terminal_id)
+    ideal_dsu, _ = _build_ideal_connection_sets(state)
+    node_ids = sorted({ideal_dsu.find(node_id) for node_id in terminal_ids(state)})
+    reference_id = ideal_dsu.find(state.pack_negative_terminal_id)
+    pack_positive_net_id = ideal_dsu.find(state.pack_positive_terminal_id)
     solve_node_ids = [node_id for node_id in node_ids if node_id != reference_id]
     node_index = {node_id: index for index, node_id in enumerate(solve_node_ids)}
     capacity_ah = CELL_SPEC_18650.nominal_capacity_ah
@@ -672,10 +703,30 @@ def simulate_battery_circuit(
     min_cell_voltage_v = float("inf")
     last_pack_voltage = 0.0
     required_pack_voltage = 0.0
+    last_total_connection_loss_w = 0.0
+    max_connection_current_a = 0.0
 
     for step in range(hard_step_cap):
         matrix = numpy.zeros((len(solve_node_ids), len(solve_node_ids)))
         current_vector = numpy.zeros(len(solve_node_ids))
+
+        for connection in state.connections:
+            if connection.ideal:
+                continue
+            from_node_id = ideal_dsu.find(connection.from_terminal_id)
+            to_node_id = ideal_dsu.find(connection.to_terminal_id)
+            if from_node_id == to_node_id:
+                continue
+            conductance = 1.0 / max(connection.resistance_ohm, 1.0e-12)
+            _stamp_resistor(
+                matrix,
+                current_vector,
+                node_index,
+                reference_id,
+                from_node_id,
+                to_node_id,
+                conductance,
+            )
 
         cell_parameters: dict[int, tuple[float, float, float, float]] = {}
         for cell in state.cells:
@@ -693,8 +744,8 @@ def simulate_battery_circuit(
                 transient_resistance_ohm,
                 transient_capacitance_f,
             )
-            positive_node_id = dsu.find(cell.positive_terminal_id)
-            negative_node_id = dsu.find(cell.negative_terminal_id)
+            positive_node_id = ideal_dsu.find(cell.positive_terminal_id)
+            negative_node_id = ideal_dsu.find(cell.negative_terminal_id)
             conductance = 1.0 / series_resistance_ohm
             _stamp_resistor(
                 matrix,
@@ -732,6 +783,8 @@ def simulate_battery_circuit(
                 delivered_capacity_ah=(requirements.minimum_current_a * float(step)) / 3600.0,
                 max_cell_current_a=max_cell_current_a,
                 min_cell_voltage_v=0.0 if min_cell_voltage_v == float("inf") else min_cell_voltage_v,
+                total_connection_loss_w=last_total_connection_loss_w,
+                max_connection_current_a=max_connection_current_a,
                 solver_steps=step,
                 is_feasible=False,
                 failure_reason="Battery circuit solve failed because the netlist is singular.",
@@ -742,6 +795,19 @@ def simulate_battery_circuit(
             node_voltage[node_id] = float(solved_voltages[index])
 
         last_pack_voltage = node_voltage[pack_positive_net_id] - node_voltage[reference_id]
+        last_total_connection_loss_w = 0.0
+        for connection in state.connections:
+            if connection.ideal:
+                continue
+            from_node_id = ideal_dsu.find(connection.from_terminal_id)
+            to_node_id = ideal_dsu.find(connection.to_terminal_id)
+            if from_node_id == to_node_id:
+                continue
+            connection_current_a = (node_voltage[from_node_id] - node_voltage[to_node_id]) / max(
+                connection.resistance_ohm, 1.0e-12
+            )
+            max_connection_current_a = max(max_connection_current_a, abs(connection_current_a))
+            last_total_connection_loss_w += (connection_current_a**2) * connection.resistance_ohm
         if (step + 1) == required_steps:
             required_pack_voltage = last_pack_voltage
         for cell in state.cells:
@@ -751,8 +817,8 @@ def simulate_battery_circuit(
                 transient_resistance_ohm,
                 transient_capacitance_f,
             ) = cell_parameters[cell.cell_id]
-            positive_node_id = dsu.find(cell.positive_terminal_id)
-            negative_node_id = dsu.find(cell.negative_terminal_id)
+            positive_node_id = ideal_dsu.find(cell.positive_terminal_id)
+            negative_node_id = ideal_dsu.find(cell.negative_terminal_id)
             terminal_voltage = node_voltage[positive_node_id] - node_voltage[negative_node_id]
             effective_open_circuit_voltage = open_circuit_voltage_v - rc_voltage_by_cell_id[cell.cell_id]
             current_positive_to_negative = (terminal_voltage - effective_open_circuit_voltage) / series_resistance_ohm
@@ -768,6 +834,8 @@ def simulate_battery_circuit(
                         delivered_capacity_ah=delivered_capacity,
                         max_cell_current_a=max_cell_current_a,
                         min_cell_voltage_v=min_cell_voltage_v,
+                        total_connection_loss_w=last_total_connection_loss_w,
+                        max_connection_current_a=max_connection_current_a,
                         solver_steps=step + 1,
                         is_feasible=True,
                         failure_reason=None,
@@ -778,6 +846,8 @@ def simulate_battery_circuit(
                     delivered_capacity_ah=delivered_capacity,
                     max_cell_current_a=max_cell_current_a,
                     min_cell_voltage_v=min_cell_voltage_v,
+                    total_connection_loss_w=last_total_connection_loss_w,
+                    max_connection_current_a=max_connection_current_a,
                     solver_steps=step + 1,
                     is_feasible=False,
                     failure_reason="A cell dropped below the minimum allowable voltage.",
@@ -802,6 +872,8 @@ def simulate_battery_circuit(
                         delivered_capacity_ah=delivered_capacity,
                         max_cell_current_a=max_cell_current_a,
                         min_cell_voltage_v=min_cell_voltage_v,
+                        total_connection_loss_w=last_total_connection_loss_w,
+                        max_connection_current_a=max_connection_current_a,
                         solver_steps=step + 1,
                         is_feasible=True,
                         failure_reason=None,
@@ -812,6 +884,8 @@ def simulate_battery_circuit(
                     delivered_capacity_ah=delivered_capacity,
                     max_cell_current_a=max_cell_current_a,
                     min_cell_voltage_v=min_cell_voltage_v,
+                    total_connection_loss_w=last_total_connection_loss_w,
+                    max_connection_current_a=max_connection_current_a,
                     solver_steps=step + 1,
                     is_feasible=False,
                     failure_reason="A cell depleted before the required discharge duration completed.",
@@ -824,6 +898,8 @@ def simulate_battery_circuit(
         delivered_capacity_ah=delivered_capacity_ah,
         max_cell_current_a=max_cell_current_a,
         min_cell_voltage_v=0.0 if min_cell_voltage_v == float("inf") else min_cell_voltage_v,
+        total_connection_loss_w=last_total_connection_loss_w,
+        max_connection_current_a=max_connection_current_a,
         solver_steps=hard_step_cap,
         is_feasible=True,
         failure_reason=None,
@@ -962,6 +1038,8 @@ def _evaluation_from_parts(
         delivered_capacity_ah=None if simulation is None else simulation.delivered_capacity_ah,
         max_cell_current_a=None if simulation is None else simulation.max_cell_current_a,
         min_cell_voltage_v=None if simulation is None else simulation.min_cell_voltage_v,
+        total_connection_loss_w=None if simulation is None else simulation.total_connection_loss_w,
+        max_connection_current_a=None if simulation is None else simulation.max_connection_current_a,
         solver_steps=0 if simulation is None else simulation.solver_steps,
         pybamm_ran=pybamm_ran,
         topology_kind=analysis.topology_kind,

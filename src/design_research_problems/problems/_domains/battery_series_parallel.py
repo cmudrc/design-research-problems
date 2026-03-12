@@ -172,6 +172,7 @@ def build_circuit_state_from_series_parallel(state: SeriesParallelBatteryState) 
                     from_terminal_id=anchor,
                     to_terminal_id=member,
                     resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                    ideal=True,
                 )
             )
             next_connection_id_value += 1

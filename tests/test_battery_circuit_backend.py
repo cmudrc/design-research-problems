@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from types import SimpleNamespace
 
 import pytest
@@ -96,6 +97,7 @@ def _two_cell_series_state() -> BatteryCircuitState:
                 from_terminal_id=1,
                 to_terminal_id=2,
                 resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                ideal=True,
             ),
         ),
         pack_positive_terminal_id=3,
@@ -129,16 +131,30 @@ def _two_cell_parallel_state() -> BatteryCircuitState:
                 from_terminal_id=0,
                 to_terminal_id=2,
                 resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                ideal=True,
             ),
             BatteryConnection(
                 connection_id=1,
                 from_terminal_id=1,
                 to_terminal_id=3,
                 resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                ideal=True,
             ),
         ),
         pack_positive_terminal_id=1,
         pack_negative_terminal_id=0,
+    )
+
+
+def _two_cell_parallel_state_with_connection_resistance(resistance_ohm: float) -> BatteryCircuitState:
+    baseline = _two_cell_parallel_state()
+    return BatteryCircuitState(
+        cells=baseline.cells,
+        connections=tuple(
+            replace(connection, resistance_ohm=resistance_ohm, ideal=False) for connection in baseline.connections
+        ),
+        pack_positive_terminal_id=baseline.pack_positive_terminal_id,
+        pack_negative_terminal_id=baseline.pack_negative_terminal_id,
     )
 
 
@@ -176,18 +192,21 @@ def _general_cross_link_state() -> BatteryCircuitState:
                 from_terminal_id=1,
                 to_terminal_id=2,
                 resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                ideal=True,
             ),
             BatteryConnection(
                 connection_id=1,
                 from_terminal_id=0,
                 to_terminal_id=4,
                 resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                ideal=True,
             ),
             BatteryConnection(
                 connection_id=2,
                 from_terminal_id=3,
                 to_terminal_id=5,
                 resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                ideal=True,
             ),
         ),
         pack_positive_terminal_id=3,
@@ -227,6 +246,7 @@ def _canonical_4s4p_state() -> BatteryCircuitState:
                     from_terminal_id=anchor,
                     to_terminal_id=member,
                     resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                    ideal=True,
                 )
             )
 
@@ -281,6 +301,62 @@ def test_two_cell_parallel_backend_preserves_voltage_and_increases_parallel_coun
     )
     assert evaluation.pack_nominal_voltage == pytest.approx(3.7)
     assert evaluation.is_feasible is True
+
+
+def test_backend_is_sensitive_to_interconnect_resistance() -> None:
+    requirements = _relaxed_requirements(target_voltage_v=3.7, minimum_capacity_ah=1.0, minimum_current_a=5.0)
+    low_resistance = evaluate_battery_circuit(
+        state=_two_cell_parallel_state_with_connection_resistance(1.0e-4),
+        requirements=requirements,
+        load_cell_model=_static_cell_model,
+    )
+    high_resistance = evaluate_battery_circuit(
+        state=_two_cell_parallel_state_with_connection_resistance(1.0),
+        requirements=requirements,
+        load_cell_model=_static_cell_model,
+    )
+
+    assert low_resistance.pack_terminal_voltage_end != pytest.approx(high_resistance.pack_terminal_voltage_end)
+    assert low_resistance.max_connection_current_a != pytest.approx(high_resistance.max_connection_current_a)
+    assert high_resistance.max_cell_current_a is not None
+    assert low_resistance.max_cell_current_a is not None
+    assert high_resistance.max_cell_current_a > low_resistance.max_cell_current_a
+
+    series_requirements = _relaxed_requirements(target_voltage_v=7.4, minimum_capacity_ah=1.0, minimum_current_a=5.0)
+    low_series = evaluate_battery_circuit(
+        state=BatteryCircuitState(
+            cells=_two_cell_series_state().cells,
+            connections=(
+                replace(
+                    _two_cell_series_state().connections[0],
+                    resistance_ohm=1.0e-4,
+                    ideal=False,
+                ),
+            ),
+            pack_positive_terminal_id=_two_cell_series_state().pack_positive_terminal_id,
+            pack_negative_terminal_id=_two_cell_series_state().pack_negative_terminal_id,
+        ),
+        requirements=series_requirements,
+        load_cell_model=_static_cell_model,
+    )
+    high_series = evaluate_battery_circuit(
+        state=BatteryCircuitState(
+            cells=_two_cell_series_state().cells,
+            connections=(
+                replace(
+                    _two_cell_series_state().connections[0],
+                    resistance_ohm=1.0,
+                    ideal=False,
+                ),
+            ),
+            pack_positive_terminal_id=_two_cell_series_state().pack_positive_terminal_id,
+            pack_negative_terminal_id=_two_cell_series_state().pack_negative_terminal_id,
+        ),
+        requirements=series_requirements,
+        load_cell_model=_static_cell_model,
+    )
+
+    assert low_series.total_connection_loss_w != pytest.approx(high_series.total_connection_loss_w)
 
 
 def test_direct_wire_short_is_rejected_before_simulation() -> None:
