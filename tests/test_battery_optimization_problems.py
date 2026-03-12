@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import numpy
 import pytest
 
@@ -8,6 +10,10 @@ from design_research_problems import (
     OptimizationEvaluation,
     OptimizationProblem,
     get_problem,
+)
+from design_research_problems.problems._domains.battery_geometry import (
+    FiniteCylinder,
+    min_distance_between_cylinders,
 )
 from design_research_problems.problems.grammar._battery_cell_model import (
     BatteryCellModel,
@@ -229,3 +235,73 @@ def test_t4_requires_pybamm_for_thermal_priors(monkeypatch: pytest.MonkeyPatch) 
             metadata=t3.metadata,
             requirements=t3.requirements,
         )
+
+
+def test_finite_cylinder_distance_reports_axial_end_gap() -> None:
+    first = FiniteCylinder(
+        center_mm=(0.0, 0.0, 0.0),
+        axis_unit_vector=(0.0, 0.0, 1.0),
+        radius_mm=9.0,
+        half_length_mm=32.5,
+    )
+    second = FiniteCylinder(
+        center_mm=(0.0, 0.0, 67.0),
+        axis_unit_vector=(0.0, 0.0, 1.0),
+        radius_mm=9.0,
+        half_length_mm=32.5,
+    )
+
+    summary = min_distance_between_cylinders(first, second)
+
+    assert summary.classification == "axial"
+    assert summary.gap_axial_mm == pytest.approx(2.0)
+    assert summary.clearance_true_mm == pytest.approx(2.0)
+
+
+def test_t4_thermal_contact_model_recognizes_axial_neighbors(monkeypatch: pytest.MonkeyPatch) -> None:
+    _patch_battery_loaders(monkeypatch)
+    problem = get_problem("battery_18650_t4_thermal_opt")
+    assert isinstance(problem, Battery18650Tier4ThermalOptimizationProblem)
+
+    cells = (
+        SimpleNamespace(x_mm=0.0, y_mm=0.0, z_mm=0.0, angle_x_deg=0.0, angle_y_deg=0.0, angle_z_deg=0.0),
+        SimpleNamespace(x_mm=0.0, y_mm=0.0, z_mm=67.0, angle_x_deg=0.0, angle_y_deg=0.0, angle_z_deg=0.0),
+    )
+
+    conductances = problem._pairwise_contact_conductances(cells)
+
+    assert (0, 1) in conductances
+    assert conductances[(0, 1)] > 0.0
+
+
+def test_t2_pose_helper_uses_true_axial_clearance(monkeypatch: pytest.MonkeyPatch) -> None:
+    _patch_battery_loaders(monkeypatch)
+    problem = get_problem("battery_18650_t2_layout_opt")
+    assert isinstance(problem, Battery18650Tier2LayoutOptimizationProblem)
+
+    helper = problem._pose_helper
+    candidate = numpy.zeros_like(helper.bounds.lb)
+    candidate[0] = 2.0
+    candidate[1:7] = (50.0, 50.0, 50.0, 0.0, 0.0, 0.0)
+    candidate[7:13] = (50.0, 50.0, 117.0, 0.0, 0.0, 0.0)
+
+    evaluation = helper._evaluation_from_variables(candidate)
+
+    assert evaluation.minimum_surface_clearance_mm == pytest.approx(2.0)
+
+
+def test_t3_metric_payload_marks_empty_stage_topology_infeasible(monkeypatch: pytest.MonkeyPatch) -> None:
+    _patch_battery_loaders(monkeypatch)
+    problem = get_problem("battery_18650_t3_topology_opt")
+    assert isinstance(problem, Battery18650Tier3TopologyOptimizationProblem)
+
+    candidate = problem.generate_initial_solution(seed=3)
+    candidate[0] = 3.0
+    candidate[1] = 3.0
+    for cell_index in range(problem.max_cell_count):
+        candidate[2 + (7 * cell_index) + 6] = 0.0
+
+    metrics = problem._metrics_from_variables(candidate)
+
+    assert metrics.failure_reason == "At least one series stage is empty."
+    assert metrics.is_feasible is False

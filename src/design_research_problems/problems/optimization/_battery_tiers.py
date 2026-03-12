@@ -17,6 +17,11 @@ from design_research_problems.problems._domains.battery_cell_model import (
     interpolate_total_resistance,
     load_18650_thermal_priors,
 )
+from design_research_problems.problems._domains.battery_geometry import (
+    FiniteCylinder,
+    axis_unit_vector_from_euler,
+    min_distance_between_cylinders,
+)
 from design_research_problems.problems._domains.battery_layout import (
     CELL_SPEC_18650,
     MIN_SPACING_MM,
@@ -813,6 +818,7 @@ class Battery18650Tier3TopologyOptimizationProblem(_TierOrientedOptimizationBase
             passive_cooling_w_per_k=self.passive_cooling_w_per_k,
             ambient_temperature_c=self.ambient_temperature_c,
         )
+        failure_reason = None if min_stage_population > 0 else "At least one series stage is empty."
         return BatteryTierMetrics(
             cell_count=float(decoded.cell_count),
             connection_count=connection_count,
@@ -823,8 +829,8 @@ class Battery18650Tier3TopologyOptimizationProblem(_TierOrientedOptimizationBase
             capacity_ah=capacity_ah,
             current_limit_a=current_limit_a,
             min_clearance_mm=float(helper.minimum_surface_clearance_mm),
-            is_feasible=True,
-            failure_reason=None if min_stage_population > 0 else "At least one series stage is empty.",
+            is_feasible=failure_reason is None,
+            failure_reason=failure_reason,
         )
 
     def _stage_completeness_margin(self, variables: NDArray[numpy.float64]) -> float:
@@ -1096,15 +1102,11 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
     def _pairwise_contact_conductances(self, cells: tuple[Any, ...]) -> dict[tuple[int, int], float]:
         conductances: dict[tuple[int, int], float] = {}
         for first_index in range(len(cells)):
-            first = cells[first_index]
+            first = self._thermal_cylinder_from_cell(cells[first_index])
             for second_index in range(first_index + 1, len(cells)):
-                second = cells[second_index]
-                center_distance = math.sqrt(
-                    ((float(first.x_mm) - float(second.x_mm)) ** 2)
-                    + ((float(first.y_mm) - float(second.y_mm)) ** 2)
-                    + ((float(first.z_mm) - float(second.z_mm)) ** 2)
-                )
-                clearance_mm = center_distance - CELL_SPEC_18650.diameter_mm
+                second = self._thermal_cylinder_from_cell(cells[second_index])
+                summary = min_distance_between_cylinders(first, second)
+                clearance_mm = self._thermal_interface_gap_mm(summary)
                 if clearance_mm > self.thermal_neighbor_clearance_mm:
                     continue
                 coupling = (1.0 / self.thermal_contact_resistance_k_per_w) * math.exp(
@@ -1114,6 +1116,27 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
                     continue
                 conductances[(first_index, second_index)] = float(coupling)
         return conductances
+
+    def _thermal_cylinder_from_cell(self, cell: Any) -> FiniteCylinder:
+        """Return the finite-cylinder proxy used for thermal-neighbor calculations."""
+        return FiniteCylinder(
+            center_mm=(float(cell.x_mm), float(cell.y_mm), float(cell.z_mm)),
+            axis_unit_vector=axis_unit_vector_from_euler(
+                float(cell.angle_x_deg),
+                float(cell.angle_y_deg),
+                float(cell.angle_z_deg),
+            ),
+            radius_mm=CELL_SPEC_18650.diameter_mm / 2.0,
+            half_length_mm=CELL_SPEC_18650.length_mm / 2.0,
+        )
+
+    def _thermal_interface_gap_mm(self, summary: Any) -> float:
+        """Return the interface-specific gap metric used for thermal coupling."""
+        if summary.classification == "axial" and summary.gap_axial_mm is not None:
+            return float(summary.gap_axial_mm)
+        if summary.classification == "radial" and summary.gap_radial_mm is not None:
+            return float(summary.gap_radial_mm)
+        return float(summary.clearance_true_mm)
 
     def _solve_lumped_thermal_network(
         self,
@@ -1327,7 +1350,7 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
             capacity_ah=base_metrics.capacity_ah,
             current_limit_a=base_metrics.current_limit_a,
             min_clearance_mm=base_metrics.min_clearance_mm,
-            is_feasible=True,
+            is_feasible=base_metrics.failure_reason is None,
             failure_reason=base_metrics.failure_reason,
         )
 

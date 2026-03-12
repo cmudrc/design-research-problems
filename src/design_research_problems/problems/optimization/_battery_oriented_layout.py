@@ -11,6 +11,11 @@ from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._domains.battery_geometry import (
+    FiniteCylinder,
+    axis_unit_vector_from_euler,
+    min_distance_between_cylinders,
+)
 from design_research_problems.problems._domains.battery_layout import (
     CELL_SPEC_18650,
     MIN_SPACING_MM,
@@ -526,9 +531,10 @@ class BatteryOrientedLayoutProblem(OptimizationProblem):
             max_x = -math.inf
             max_y = -math.inf
             max_z = -math.inf
-            segments: list[tuple[tuple[float, float, float], tuple[float, float, float]]] = []
+            cylinders: list[FiniteCylinder] = []
             for cell in cells_tuple:
-                axis_x, axis_y, axis_z = self._axis_unit_vector(cell)
+                cylinder = self._cylinder_from_cell(cell)
+                axis_x, axis_y, axis_z = cylinder.axis_unit_vector
                 extent_x = (abs(axis_x) * self._cell_half_length_mm) + (
                     self._cell_radius_mm * math.sqrt(max(0.0, 1.0 - (axis_x * axis_x)))
                 )
@@ -544,17 +550,7 @@ class BatteryOrientedLayoutProblem(OptimizationProblem):
                 max_x = max(max_x, cell.x_mm + extent_x)
                 max_y = max(max_y, cell.y_mm + extent_y)
                 max_z = max(max_z, cell.z_mm + extent_z)
-                segment_start = (
-                    cell.x_mm - (axis_x * self._cell_half_length_mm),
-                    cell.y_mm - (axis_y * self._cell_half_length_mm),
-                    cell.z_mm - (axis_z * self._cell_half_length_mm),
-                )
-                segment_end = (
-                    cell.x_mm + (axis_x * self._cell_half_length_mm),
-                    cell.y_mm + (axis_y * self._cell_half_length_mm),
-                    cell.z_mm + (axis_z * self._cell_half_length_mm),
-                )
-                segments.append((segment_start, segment_end))
+                cylinders.append(cylinder)
 
             width_mm = max(0.0, max_x - min_x)
             depth_mm = max(0.0, max_y - min_y)
@@ -562,19 +558,16 @@ class BatteryOrientedLayoutProblem(OptimizationProblem):
             surface_area_mm2 = 2.0 * ((width_mm * depth_mm) + (width_mm * height_mm) + (depth_mm * height_mm))
             design_volume_mm3 = width_mm * depth_mm * height_mm
 
-            if len(segments) < 2:
+            if len(cylinders) < 2:
                 min_surface_clearance_mm = self.minimum_spacing_mm
             else:
                 min_surface_clearance_mm = math.inf
-                for first_index in range(len(segments)):
-                    for second_index in range(first_index + 1, len(segments)):
-                        distance = self._segment_distance(
-                            segments[first_index][0],
-                            segments[first_index][1],
-                            segments[second_index][0],
-                            segments[second_index][1],
-                        )
-                        clearance = distance - CELL_SPEC_18650.diameter_mm
+                for first_index in range(len(cylinders)):
+                    for second_index in range(first_index + 1, len(cylinders)):
+                        clearance = min_distance_between_cylinders(
+                            cylinders[first_index],
+                            cylinders[second_index],
+                        ).clearance_true_mm
                         min_surface_clearance_mm = min(min_surface_clearance_mm, clearance)
                 if not math.isfinite(min_surface_clearance_mm):
                     min_surface_clearance_mm = self.minimum_spacing_mm
@@ -663,111 +656,16 @@ class BatteryOrientedLayoutProblem(OptimizationProblem):
         Returns:
             Unit axis vector for the rotated cell centerline.
         """
-        angle_x = math.radians(cell.angle_x_deg)
-        angle_y = math.radians(cell.angle_y_deg)
-        angle_z = math.radians(cell.angle_z_deg)
+        return axis_unit_vector_from_euler(cell.angle_x_deg, cell.angle_y_deg, cell.angle_z_deg)
 
-        x_value = 0.0
-        y_value = 0.0
-        z_value = 1.0
-
-        cos_x = math.cos(angle_x)
-        sin_x = math.sin(angle_x)
-        y_rot = (y_value * cos_x) - (z_value * sin_x)
-        z_rot = (y_value * sin_x) + (z_value * cos_x)
-        x_rot = x_value
-
-        cos_y = math.cos(angle_y)
-        sin_y = math.sin(angle_y)
-        x_rot2 = (x_rot * cos_y) + (z_rot * sin_y)
-        z_rot2 = (-x_rot * sin_y) + (z_rot * cos_y)
-        y_rot2 = y_rot
-
-        cos_z = math.cos(angle_z)
-        sin_z = math.sin(angle_z)
-        x_rot3 = (x_rot2 * cos_z) - (y_rot2 * sin_z)
-        y_rot3 = (x_rot2 * sin_z) + (y_rot2 * cos_z)
-        z_rot3 = z_rot2
-
-        norm = math.sqrt((x_rot3 * x_rot3) + (y_rot3 * y_rot3) + (z_rot3 * z_rot3))
-        if norm <= 1.0e-12:
-            return (0.0, 0.0, 1.0)
-        return (x_rot3 / norm, y_rot3 / norm, z_rot3 / norm)
-
-    def _segment_distance(
-        self,
-        point_a0: tuple[float, float, float],
-        point_a1: tuple[float, float, float],
-        point_b0: tuple[float, float, float],
-        point_b1: tuple[float, float, float],
-    ) -> float:
-        """Return the shortest distance between two finite 3D line segments.
-
-        Args:
-            point_a0: First segment start.
-            point_a1: First segment end.
-            point_b0: Second segment start.
-            point_b1: Second segment end.
-
-        Returns:
-            Shortest point-to-point segment distance.
-        """
-        u = numpy.array(point_a1, dtype=float) - numpy.array(point_a0, dtype=float)
-        v = numpy.array(point_b1, dtype=float) - numpy.array(point_b0, dtype=float)
-        w = numpy.array(point_a0, dtype=float) - numpy.array(point_b0, dtype=float)
-        a_value = float(numpy.dot(u, u))
-        b_value = float(numpy.dot(u, v))
-        c_value = float(numpy.dot(v, v))
-        d_value = float(numpy.dot(u, w))
-        e_value = float(numpy.dot(v, w))
-        denominator = (a_value * c_value) - (b_value * b_value)
-        epsilon = 1.0e-12
-
-        s_numerator = denominator
-        s_denominator = denominator
-        t_numerator = denominator
-        t_denominator = denominator
-
-        if denominator <= epsilon:
-            s_numerator = 0.0
-            s_denominator = 1.0
-            t_numerator = e_value
-            t_denominator = c_value
-        else:
-            s_numerator = (b_value * e_value) - (c_value * d_value)
-            t_numerator = (a_value * e_value) - (b_value * d_value)
-            if s_numerator < 0.0:
-                s_numerator = 0.0
-                t_numerator = e_value
-                t_denominator = c_value
-            elif s_numerator > s_denominator:
-                s_numerator = s_denominator
-                t_numerator = e_value + b_value
-                t_denominator = c_value
-
-        if t_numerator < 0.0:
-            t_numerator = 0.0
-            if (-d_value) < 0.0:
-                s_numerator = 0.0
-            elif (-d_value) > a_value:
-                s_numerator = s_denominator
-            else:
-                s_numerator = -d_value
-                s_denominator = a_value
-        elif t_numerator > t_denominator:
-            t_numerator = t_denominator
-            if (-d_value + b_value) < 0.0:
-                s_numerator = 0.0
-            elif (-d_value + b_value) > a_value:
-                s_numerator = s_denominator
-            else:
-                s_numerator = -d_value + b_value
-                s_denominator = a_value
-
-        sc = 0.0 if abs(s_numerator) <= epsilon else s_numerator / s_denominator
-        tc = 0.0 if abs(t_numerator) <= epsilon else t_numerator / t_denominator
-        delta = w + (sc * u) - (tc * v)
-        return float(math.sqrt(float(numpy.dot(delta, delta))))
+    def _cylinder_from_cell(self, cell: OrientedBatteryCellPlacement) -> FiniteCylinder:
+        """Return the finite-cylinder geometry proxy for one oriented cell."""
+        return FiniteCylinder(
+            center_mm=(cell.x_mm, cell.y_mm, cell.z_mm),
+            axis_unit_vector=self._axis_unit_vector(cell),
+            radius_mm=self._cell_radius_mm,
+            half_length_mm=self._cell_half_length_mm,
+        )
 
     def _width_margin(self, variables: NDArray[numpy.float64]) -> float:
         """Return the maximum-width constraint margin."""
