@@ -11,6 +11,10 @@ import numpy
 
 from design_research_problems._exceptions import MissingOptionalDependencyError
 from design_research_problems._optional import import_optional_module
+from design_research_problems.problems._domains.battery_defaults import (
+    BATTERY_BACKEND_DEFAULTS,
+    SUPPORTED_BATTERY_THERMAL_MODES,
+)
 from design_research_problems.problems._domains.battery_layout import CELL_SPEC_18650
 
 BatteryBackendScalar = bool | int | float | str
@@ -74,9 +78,9 @@ class BatteryBackendConfig:
     parameterization: BatteryParameterization = BatteryParameterization()
     """Parameterization selector."""
     thermal_mode: str | None = None
-    """Optional thermal mode placeholder accepted for forward compatibility."""
+    """Thermal handling mode for backend discharge simulation."""
     ambient_temp_c: float | None = None
-    """Optional ambient temperature placeholder accepted for forward compatibility."""
+    """Ambient temperature used by the electrical and thermal models."""
     parasitics: BatteryBackendOptions = ()
     """Optional parasitics settings accepted for forward compatibility."""
     solver_policy: BatteryBackendOptions = ()
@@ -121,6 +125,24 @@ class BatteryCellModel:
     """Resolved backend mode used to build this cell model."""
     resolved_parameter_set: str | None = None
     """Resolved concrete parameter set used for this model."""
+    reference_temperature_c: float | None = None
+    """Reference evaluation temperature for the stored lookup tables."""
+    dynamic_parameters: _BatteryCellDynamicParameters | None = None
+    """Optional temperature-aware parameter functions for runtime interpolation."""
+
+
+@dataclass(frozen=True)
+class _BatteryCellDynamicParameters:
+    """Temperature-aware parameter bundle retained for runtime interpolation."""
+
+    parameter_values: Any
+    open_circuit_voltage_fn: object
+    series_resistance_fn: object
+    transient_resistance_fn: object
+    transient_capacitance_fn: object
+    resistance_scale: float
+    resistance_normalization: float
+    capacitance_normalization: float
 
 
 @dataclass(frozen=True)
@@ -217,16 +239,29 @@ def resolve_battery_backend_config(config: BatteryBackendConfig | None) -> Batte
             f"Unsupported battery cell_model_mode {candidate.cell_model_mode!r}. Expected one of: {supported}."
         )
     normalized_parameterization = _normalize_parameterization(candidate.parameterization)
-    normalized_thermal_mode = (
-        None
-        if candidate.thermal_mode is None
-        else _coerce_string(candidate.thermal_mode, field_name="battery_backend.thermal_mode").strip().lower()
+    if candidate.thermal_mode is None:
+        normalized_thermal_mode = BATTERY_BACKEND_DEFAULTS.thermal.default_mode
+    else:
+        normalized_thermal_mode = _coerce_string(
+            candidate.thermal_mode,
+            field_name="battery_backend.thermal_mode",
+        ).strip().lower()
+    if normalized_thermal_mode not in SUPPORTED_BATTERY_THERMAL_MODES:
+        supported_thermal_modes = ", ".join(sorted(SUPPORTED_BATTERY_THERMAL_MODES))
+        raise ValueError(
+            "Unsupported battery thermal_mode "
+            f"{candidate.thermal_mode!r}. Expected one of: {supported_thermal_modes}."
+        )
+    ambient_temp_c = (
+        BATTERY_BACKEND_DEFAULTS.thermal.ambient_temperature_c
+        if candidate.ambient_temp_c is None
+        else float(candidate.ambient_temp_c)
     )
     return BatteryBackendConfig(
         cell_model_mode=normalized_mode,
         parameterization=normalized_parameterization,
         thermal_mode=normalized_thermal_mode,
-        ambient_temp_c=candidate.ambient_temp_c,
+        ambient_temp_c=ambient_temp_c,
         parasitics=tuple(sorted(candidate.parasitics)),
         solver_policy=tuple(sorted(candidate.solver_policy)),
     )
@@ -266,16 +301,21 @@ def _build_cell_model_from_config(config: BatteryBackendConfig) -> BatteryCellMo
     resolved_mode = _resolve_effective_mode(requested_mode)
     resolved_parameter_set = config.parameterization.resolved_parameter_set()
     if resolved_mode == "pybamm_ecm":
-        return _load_pybamm_ecm_cell_model(resolved_parameter_set=resolved_parameter_set)
+        return _load_pybamm_ecm_cell_model(
+            resolved_parameter_set=resolved_parameter_set,
+            ambient_temperature_c=None,
+        )
     if resolved_mode == "pybamm_spm":
         return _load_pybamm_lithium_ion_cell_model(
             model_family="spm",
             resolved_parameter_set=resolved_parameter_set,
+            ambient_temperature_c=None,
         )
     if resolved_mode == "pybamm_dfn":
         return _load_pybamm_lithium_ion_cell_model(
             model_family="dfn",
             resolved_parameter_set=resolved_parameter_set,
+            ambient_temperature_c=None,
         )
     raise MissingOptionalDependencyError(f"Unsupported resolved battery mode {resolved_mode!r}.")
 
@@ -287,11 +327,16 @@ def _resolve_effective_mode(requested_mode: str) -> str:
     return "pybamm_ecm"
 
 
-def _load_thevenin_parameter_values(*, resolved_parameter_set: str | None = None) -> tuple[Any, float, float]:
+def _load_thevenin_parameter_values(
+    *,
+    resolved_parameter_set: str | None = None,
+    ambient_temperature_c: float | None = None,
+) -> tuple[Any, float, float]:
     """Return copied Thevenin parameter values plus 18650 normalization factors.
 
     Args:
         resolved_parameter_set: Optional concrete PyBaMM parameter-set name.
+        ambient_temperature_c: Optional ambient-temperature override in Celsius.
 
     Returns:
         Tuple containing copied parameter values, resistance scale, and ambient
@@ -320,7 +365,10 @@ def _load_thevenin_parameter_values(*, resolved_parameter_set: str | None = None
         )
     reference_capacity_ah = _parameter_value(parameter_values, "Cell capacity [A.h]", default=100.0)
     resistance_scale = max(1.0e-6, reference_capacity_ah / CELL_SPEC_18650.nominal_capacity_ah)
-    ambient_temperature_k = _parameter_value(parameter_values, "Initial temperature [K]", default=298.15)
+    ambient_temperature_k = _resolve_ambient_temperature_k(
+        parameter_values=parameter_values,
+        ambient_temperature_c=ambient_temperature_c,
+    )
     return (parameter_values, resistance_scale, ambient_temperature_k)
 
 
@@ -338,11 +386,16 @@ def _load_named_parameter_values(*, pybamm_module: object, parameter_set: str) -
     return _copy_parameter_values(parameter_values)
 
 
-def _load_pybamm_ecm_cell_model(*, resolved_parameter_set: str | None) -> BatteryCellModel:
+def _load_pybamm_ecm_cell_model(
+    *,
+    resolved_parameter_set: str | None,
+    ambient_temperature_c: float | None,
+) -> BatteryCellModel:
     """Load one Thevenin-derived ECM model and normalize to packaged 18650 scale."""
     try:
         parameter_values, resistance_scale, ambient_temperature_k = _load_thevenin_parameter_values(
             resolved_parameter_set=resolved_parameter_set,
+            ambient_temperature_c=ambient_temperature_c,
         )
     except MissingOptionalDependencyError:
         raise
@@ -369,12 +422,14 @@ def _load_pybamm_lithium_ion_cell_model(
     *,
     model_family: str,
     resolved_parameter_set: str | None,
+    ambient_temperature_c: float | None,
 ) -> BatteryCellModel:
     """Load one SPM/DFN-based cell model and map it into ECM lookup tables."""
     try:
         parameter_values, resistance_scale, ambient_temperature_k = _load_lithium_ion_parameter_values(
             model_family=model_family,
             resolved_parameter_set=resolved_parameter_set,
+            ambient_temperature_c=ambient_temperature_c,
         )
     except MissingOptionalDependencyError:
         raise
@@ -404,6 +459,7 @@ def _load_lithium_ion_parameter_values(
     *,
     model_family: str,
     resolved_parameter_set: str | None,
+    ambient_temperature_c: float | None,
 ) -> tuple[Any, float, float]:
     """Return copied parameter values for one lithium-ion SPM/DFN model."""
     pybamm_module = import_pybamm()
@@ -430,8 +486,24 @@ def _load_lithium_ion_parameter_values(
         default=_parameter_value(parameter_values, "Cell capacity [A.h]", default=100.0),
     )
     resistance_scale = max(1.0e-6, reference_capacity_ah / CELL_SPEC_18650.nominal_capacity_ah)
-    ambient_temperature_k = _parameter_value(parameter_values, "Initial temperature [K]", default=298.15)
+    ambient_temperature_k = _resolve_ambient_temperature_k(
+        parameter_values=parameter_values,
+        ambient_temperature_c=ambient_temperature_c,
+    )
     return (parameter_values, resistance_scale, ambient_temperature_k)
+
+
+def _resolve_ambient_temperature_k(
+    *,
+    parameter_values: Any,
+    ambient_temperature_c: float | None,
+) -> float:
+    """Return the effective ambient temperature in kelvin for model extraction."""
+    if ambient_temperature_c is None:
+        return _parameter_value(parameter_values, "Initial temperature [K]", default=298.15)
+    ambient_temperature_k = 273.15 + float(ambient_temperature_c)
+    _try_set_parameter_value(parameter_values, "Initial temperature [K]", ambient_temperature_k)
+    return ambient_temperature_k
 
 
 def _build_cell_model_from_parameter_values(
@@ -530,6 +602,16 @@ def _build_cell_model_from_parameter_values(
         for index, capacitance in enumerate(transient_capacitance_f)
     ]
 
+    dynamic_parameters = _BatteryCellDynamicParameters(
+        parameter_values=parameter_values,
+        open_circuit_voltage_fn=open_circuit_fn,
+        series_resistance_fn=series_resistance_fn,
+        transient_resistance_fn=transient_resistance_fn,
+        transient_capacitance_fn=transient_capacitance_fn,
+        resistance_scale=resistance_scale,
+        resistance_normalization=resistance_normalization,
+        capacitance_normalization=capacitance_normalization,
+    )
     return BatteryCellModel(
         soc_grid=soc_grid,
         open_circuit_voltage_v=tuple(open_circuit_voltage_v),
@@ -540,12 +622,14 @@ def _build_cell_model_from_parameter_values(
         warning_message=None,
         resolved_mode=resolved_mode,
         resolved_parameter_set=resolved_parameter_set,
+        reference_temperature_c=float(ambient_temperature_k - 273.15),
+        dynamic_parameters=dynamic_parameters,
     )
 
 
-@lru_cache(maxsize=1)
-def load_18650_thermal_priors() -> BatteryThermalPriors:
-    """Return one cached PyBaMM-derived thermal prior bundle for Tier-4 modeling.
+@lru_cache(maxsize=32)
+def _load_battery_thermal_priors_cached(config: BatteryBackendConfig) -> BatteryThermalPriors:
+    """Return one cached PyBaMM-derived thermal prior bundle for a normalized config.
 
     The extracted Thevenin thermal parameters are normalized to the packaged 18650
     capacity scale. Conductance terms scale approximately with capacity^(2/3) and
@@ -559,7 +643,10 @@ def load_18650_thermal_priors() -> BatteryThermalPriors:
         MissingOptionalDependencyError: If the PyBaMM Thevenin extraction path fails.
     """
     try:
-        parameter_values, resistance_scale, ambient_temperature_k = _load_thevenin_parameter_values()
+        parameter_values, resistance_scale, ambient_temperature_k = _load_thevenin_parameter_values(
+            resolved_parameter_set=config.parameterization.resolved_parameter_set(),
+            ambient_temperature_c=config.ambient_temp_c,
+        )
     except MissingOptionalDependencyError:
         raise
     except Exception as exc:
@@ -570,7 +657,7 @@ def load_18650_thermal_priors() -> BatteryThermalPriors:
             "with Thevenin thermal parameter access."
         ) from exc
     try:
-        cell_model = load_18650_cell_model()
+        cell_model = load_battery_cell_model(config)
         total_resistance_ohm = tuple(
             max(1.0e-6, series + transient)
             for series, transient in zip(
@@ -603,6 +690,18 @@ def load_18650_thermal_priors() -> BatteryThermalPriors:
             "Tier-4 battery thermal evaluation requires a supported PyBaMM version "
             "with Thevenin thermal parameter access."
         ) from exc
+
+
+def load_battery_thermal_priors(config: BatteryBackendConfig | None = None) -> BatteryThermalPriors:
+    """Return one thermal prior bundle for the requested backend configuration."""
+    normalized = resolve_battery_backend_config(config)
+    return _load_battery_thermal_priors_cached(normalized)
+
+
+@lru_cache(maxsize=1)
+def load_18650_thermal_priors() -> BatteryThermalPriors:
+    """Return one cached default thermal prior bundle for the packaged 18650 model."""
+    return load_battery_thermal_priors()
 
 
 def interpolate_total_resistance(model: BatteryThermalPriors, soc: float) -> float:
@@ -647,6 +746,21 @@ def _copy_parameter_values(parameter_values: Any) -> Any:
     if callable(copy_method):
         return copy_method()
     return parameter_values
+
+
+def _try_set_parameter_value(parameter_values: Any, key: str, value: float) -> None:
+    """Best-effort setter for mutable parameter-value containers."""
+    update_method = getattr(parameter_values, "update", None)
+    if callable(update_method):
+        try:
+            update_method({key: value})
+            return
+        except Exception:
+            pass
+    try:
+        parameter_values[key] = value
+    except Exception:
+        return
 
 
 def _coerce_scalar(value: object) -> float:
@@ -756,17 +870,21 @@ def _evaluate_parameter_function(
         return default
 
 
-def interpolate_cell_model(model: BatteryCellModel, soc: float) -> tuple[float, float, float, float]:
-    """Interpolate cell operating values at one SOC value.
-
-    Args:
-        model: Value for ``model``.
-        soc: Value for ``soc``.
-
-    Returns:
-        Computed result for this callable.
-    """
+def interpolate_cell_model(
+    model: BatteryCellModel,
+    soc: float,
+    *,
+    temperature_c: float | None = None,
+) -> tuple[float, float, float, float]:
+    """Interpolate cell operating values at one SOC and optional temperature."""
     clipped_soc = min(1.0, max(0.0, soc))
+    if temperature_c is not None and model.dynamic_parameters is not None:
+        return _interpolate_dynamic_cell_model(model, clipped_soc, temperature_c=temperature_c)
+    return _interpolate_reference_cell_model(model, clipped_soc)
+
+
+def _interpolate_reference_cell_model(model: BatteryCellModel, clipped_soc: float) -> tuple[float, float, float, float]:
+    """Interpolate the stored reference lookup tables."""
     if clipped_soc <= model.soc_grid[0]:
         return (
             model.open_circuit_voltage_v[0],
@@ -809,6 +927,75 @@ def interpolate_cell_model(model: BatteryCellModel, soc: float) -> tuple[float, 
         CELL_SPEC_18650.internal_resistance_ohm,
         0.0,
         1.0,
+    )
+
+
+def _interpolate_dynamic_cell_model(
+    model: BatteryCellModel,
+    clipped_soc: float,
+    *,
+    temperature_c: float,
+) -> tuple[float, float, float, float]:
+    """Evaluate temperature-aware parameter functions at runtime."""
+    dynamic = model.dynamic_parameters
+    if dynamic is None:
+        return _interpolate_reference_cell_model(model, clipped_soc)
+
+    reference_ocv, reference_series, reference_transient, reference_capacitance = _interpolate_reference_cell_model(
+        model,
+        clipped_soc,
+    )
+    ambient_temperature_k = 273.15 + float(temperature_c)
+    open_circuit_voltage_v = _evaluate_parameter_function(
+        parameter_values=dynamic.parameter_values,
+        function_or_value=dynamic.open_circuit_voltage_fn,
+        ambient_temperature_k=ambient_temperature_k,
+        soc=clipped_soc,
+        default=reference_ocv,
+    )
+    series_resistance = _evaluate_parameter_function(
+        parameter_values=dynamic.parameter_values,
+        function_or_value=dynamic.series_resistance_fn,
+        ambient_temperature_k=ambient_temperature_k,
+        soc=clipped_soc,
+        default=reference_series,
+    )
+    transient_resistance = _evaluate_parameter_function(
+        parameter_values=dynamic.parameter_values,
+        function_or_value=dynamic.transient_resistance_fn,
+        ambient_temperature_k=ambient_temperature_k,
+        soc=clipped_soc,
+        default=reference_transient,
+    )
+    transient_capacitance = _evaluate_parameter_function(
+        parameter_values=dynamic.parameter_values,
+        function_or_value=dynamic.transient_capacitance_fn,
+        ambient_temperature_k=ambient_temperature_k,
+        soc=clipped_soc,
+        default=reference_capacitance,
+    )
+
+    scaled_series_resistance = max(
+        1.0e-6,
+        abs(series_resistance) * dynamic.resistance_scale * dynamic.resistance_normalization,
+    )
+    scaled_transient_resistance = max(
+        0.0,
+        abs(transient_resistance) * dynamic.resistance_scale * dynamic.resistance_normalization,
+    )
+    scaled_transient_capacitance = (
+        max(
+            1.0,
+            abs(transient_capacitance) / dynamic.resistance_scale / dynamic.capacitance_normalization,
+        )
+        if scaled_transient_resistance > 1.0e-12
+        else 1.0
+    )
+    return (
+        open_circuit_voltage_v,
+        scaled_series_resistance,
+        scaled_transient_resistance,
+        scaled_transient_capacitance,
     )
 
 
@@ -906,5 +1093,6 @@ __all__ = [
     "load_18650_cell_model",
     "load_18650_thermal_priors",
     "load_battery_cell_model",
+    "load_battery_thermal_priors",
     "resolve_battery_backend_config",
 ]

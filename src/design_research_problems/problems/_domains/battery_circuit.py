@@ -12,9 +12,13 @@ import numpy
 from design_research_problems.problems._domains.battery_cell_model import (
     BatteryBackendConfig,
     BatteryCellModel,
+    BatteryThermalPriors,
     interpolate_cell_model,
     load_battery_cell_model,
+    load_battery_thermal_priors,
+    resolve_battery_backend_config,
 )
+from design_research_problems.problems._domains.battery_defaults import BATTERY_BACKEND_DEFAULTS
 from design_research_problems.problems._domains.battery_layout import (
     CELL_SPEC_18650,
     DEFAULT_INTERCONNECT_RESISTANCE_OHM,
@@ -147,6 +151,12 @@ class BatteryCircuitEvaluation:
     """Resolved backend mode used for this evaluation."""
     cell_model_parameter_set: str | None = None
     """Resolved concrete parameter-set name used for this evaluation."""
+    end_cell_temperature_c: float | None = None
+    """Final cell temperature used by the backend thermal model."""
+    max_cell_temperature_c: float | None = None
+    """Maximum cell temperature observed during the simulated trajectory."""
+    thermal_mode: str | None = None
+    """Resolved thermal mode used during the backend evaluation."""
 
 
 @dataclass(frozen=True)
@@ -173,6 +183,10 @@ class BatteryCircuitSimulationResult:
     """Whether feasible."""
     failure_reason: str | None
     """Stored failure reason value."""
+    end_cell_temperature_c: float
+    """Final cell temperature used by the backend thermal model."""
+    max_cell_temperature_c: float
+    """Maximum cell temperature observed during the simulated trajectory."""
 
 
 def sort_battery_cells(
@@ -666,12 +680,43 @@ def validate_battery_circuit_state(
     return None
 
 
+def _series_combined_conductance(first_w_per_k: float, second_w_per_k: float) -> float:
+    """Return the equivalent conductance for two thermal paths in series."""
+    first = max(first_w_per_k, 1.0e-9)
+    second = max(second_w_per_k, 1.0e-9)
+    return float((first * second) / (first + second))
+
+
+def _effective_lumped_pack_conductance_w_per_k(
+    thermal_priors: BatteryThermalPriors,
+    *,
+    cell_count: int,
+) -> float:
+    """Return the pack-level one-state conductance to ambient."""
+    cell_to_jig_total = max(float(cell_count), 1.0) * thermal_priors.cell_to_jig_conductance_w_per_k
+    return _series_combined_conductance(cell_to_jig_total, thermal_priors.jig_to_ambient_conductance_w_per_k)
+
+
+def _effective_lumped_pack_thermal_mass_j_per_k(
+    thermal_priors: BatteryThermalPriors,
+    *,
+    cell_count: int,
+) -> float:
+    """Return the pack-level one-state thermal mass."""
+    return (
+        max(float(cell_count), 1.0) * thermal_priors.cell_thermal_mass_j_per_k
+        + thermal_priors.jig_thermal_mass_j_per_k
+    )
+
+
 def simulate_battery_circuit(
     state: BatteryCircuitState,
     requirements: BatteryRequirements,
     cell_model: BatteryCellModel,
     *,
     simulate_to_failure: bool = False,
+    backend_config: BatteryBackendConfig | None = None,
+    thermal_priors: BatteryThermalPriors | None = None,
 ) -> BatteryCircuitSimulationResult:
     """Run a constant-current discharge simulation for one explicit battery circuit.
 
@@ -680,6 +725,8 @@ def simulate_battery_circuit(
         requirements: Value for ``requirements``.
         cell_model: Value for ``cell_model``.
         simulate_to_failure: Value for ``simulate_to_failure``.
+        backend_config: Resolved backend configuration for thermal handling.
+        thermal_priors: Optional lumped thermal prior bundle.
 
     Returns:
         Computed result for this callable.
@@ -690,6 +737,15 @@ def simulate_battery_circuit(
     pack_positive_net_id = ideal_dsu.find(state.pack_positive_terminal_id)
     solve_node_ids = [node_id for node_id in node_ids if node_id != reference_id]
     node_index = {node_id: index for index, node_id in enumerate(solve_node_ids)}
+    resolved_backend_config = resolve_battery_backend_config(backend_config)
+    thermal_mode = resolved_backend_config.thermal_mode or BATTERY_BACKEND_DEFAULTS.thermal.default_mode
+    ambient_temperature_c = (
+        BATTERY_BACKEND_DEFAULTS.thermal.ambient_temperature_c
+        if resolved_backend_config.ambient_temp_c is None
+        else float(resolved_backend_config.ambient_temp_c)
+    )
+    cell_temperature_c = ambient_temperature_c
+    max_cell_temperature_c = ambient_temperature_c
     capacity_ah = CELL_SPEC_18650.nominal_capacity_ah
     duration_seconds = (requirements.minimum_capacity_ah / requirements.minimum_current_a) * 3600.0
     required_steps = max(1, ceil(duration_seconds))
@@ -735,7 +791,11 @@ def simulate_battery_circuit(
                 series_resistance_ohm,
                 transient_resistance_ohm,
                 transient_capacitance_f,
-            ) = interpolate_cell_model(cell_model, soc_by_cell_id[cell.cell_id])
+            ) = interpolate_cell_model(
+                cell_model,
+                soc_by_cell_id[cell.cell_id],
+                temperature_c=cell_temperature_c,
+            )
             series_resistance_ohm = max(1.0e-6, series_resistance_ohm)
             effective_open_circuit_voltage = open_circuit_voltage_v - rc_voltage_by_cell_id[cell.cell_id]
             cell_parameters[cell.cell_id] = (
@@ -788,6 +848,8 @@ def simulate_battery_circuit(
                 solver_steps=step,
                 is_feasible=False,
                 failure_reason="Battery circuit solve failed because the netlist is singular.",
+                end_cell_temperature_c=cell_temperature_c,
+                max_cell_temperature_c=max_cell_temperature_c,
             )
 
         node_voltage = {reference_id: 0.0}
@@ -810,6 +872,7 @@ def simulate_battery_circuit(
             last_total_connection_loss_w += (connection_current_a**2) * connection.resistance_ohm
         if (step + 1) == required_steps:
             required_pack_voltage = last_pack_voltage
+        total_cell_heat_w = 0.0
         for cell in state.cells:
             (
                 open_circuit_voltage_v,
@@ -825,6 +888,10 @@ def simulate_battery_circuit(
             discharge_current = -current_positive_to_negative
             max_cell_current_a = max(max_cell_current_a, abs(discharge_current))
             min_cell_voltage_v = min(min_cell_voltage_v, terminal_voltage)
+            total_cell_heat_w += (discharge_current**2) * max(
+                series_resistance_ohm + transient_resistance_ohm,
+                1.0e-9,
+            )
             if terminal_voltage + 1.0e-9 < CELL_SPEC_18650.min_voltage_v:
                 delivered_capacity = (requirements.minimum_current_a * float(step + 1)) / 3600.0
                 if simulate_to_failure and (step + 1) > required_steps:
@@ -839,6 +906,8 @@ def simulate_battery_circuit(
                         solver_steps=step + 1,
                         is_feasible=True,
                         failure_reason=None,
+                        end_cell_temperature_c=cell_temperature_c,
+                        max_cell_temperature_c=max_cell_temperature_c,
                     )
                 return BatteryCircuitSimulationResult(
                     pack_terminal_voltage_end=last_pack_voltage,
@@ -851,6 +920,8 @@ def simulate_battery_circuit(
                     solver_steps=step + 1,
                     is_feasible=False,
                     failure_reason="A cell dropped below the minimum allowable voltage.",
+                    end_cell_temperature_c=cell_temperature_c,
+                    max_cell_temperature_c=max_cell_temperature_c,
                 )
             soc_delta = discharge_current / (capacity_ah * 3600.0)
             next_soc = min(1.0, max(0.0, soc_by_cell_id[cell.cell_id] - soc_delta))
@@ -877,6 +948,8 @@ def simulate_battery_circuit(
                         solver_steps=step + 1,
                         is_feasible=True,
                         failure_reason=None,
+                        end_cell_temperature_c=cell_temperature_c,
+                        max_cell_temperature_c=max_cell_temperature_c,
                     )
                 return BatteryCircuitSimulationResult(
                     pack_terminal_voltage_end=last_pack_voltage,
@@ -889,7 +962,24 @@ def simulate_battery_circuit(
                     solver_steps=step + 1,
                     is_feasible=False,
                     failure_reason="A cell depleted before the required discharge duration completed.",
+                    end_cell_temperature_c=cell_temperature_c,
+                    max_cell_temperature_c=max_cell_temperature_c,
                 )
+
+        if thermal_mode == "lumped" and thermal_priors is not None:
+            pack_conductance_w_per_k = _effective_lumped_pack_conductance_w_per_k(
+                thermal_priors,
+                cell_count=len(state.cells),
+            )
+            pack_thermal_mass_j_per_k = _effective_lumped_pack_thermal_mass_j_per_k(
+                thermal_priors,
+                cell_count=len(state.cells),
+            )
+            total_pack_heat_w = total_cell_heat_w + last_total_connection_loss_w
+            cell_temperature_c += (
+                total_pack_heat_w - (pack_conductance_w_per_k * (cell_temperature_c - ambient_temperature_c))
+            ) / max(pack_thermal_mass_j_per_k, 1.0)
+            max_cell_temperature_c = max(max_cell_temperature_c, cell_temperature_c)
 
     delivered_capacity_ah = (requirements.minimum_current_a * float(hard_step_cap)) / 3600.0
     return BatteryCircuitSimulationResult(
@@ -903,6 +993,8 @@ def simulate_battery_circuit(
         solver_steps=hard_step_cap,
         is_feasible=True,
         failure_reason=None,
+        end_cell_temperature_c=cell_temperature_c,
+        max_cell_temperature_c=max_cell_temperature_c,
     )
 
 
@@ -948,14 +1040,28 @@ def evaluate_battery_circuit(
             simulation=None,
             is_feasible=False,
             failure_reason=validation_failure,
+            thermal_mode=None,
         )
 
-    cell_model = load_cell_model() if backend_config is None else load_battery_cell_model(backend_config)
+    if backend_config is None:
+        resolved_backend_config = resolve_battery_backend_config(None)
+        cell_model = load_cell_model()
+        thermal_priors = None
+    else:
+        resolved_backend_config = resolve_battery_backend_config(backend_config)
+        cell_model = load_battery_cell_model(resolved_backend_config)
+        thermal_priors = (
+            load_battery_thermal_priors(resolved_backend_config)
+            if resolved_backend_config.thermal_mode == "lumped"
+            else None
+        )
     simulation = simulate_battery_circuit(
         state,
         requirements,
         cell_model,
         simulate_to_failure=simulate_to_failure,
+        backend_config=resolved_backend_config,
+        thermal_priors=thermal_priors,
     )
     required_voltage_floor = (
         0.0
@@ -984,6 +1090,7 @@ def evaluate_battery_circuit(
         simulation=simulation,
         is_feasible=is_feasible,
         failure_reason=failure_reason,
+        thermal_mode=resolved_backend_config.thermal_mode,
     )
 
 
@@ -1001,6 +1108,7 @@ def _evaluation_from_parts(
     simulation: BatteryCircuitSimulationResult | None,
     is_feasible: bool,
     failure_reason: str | None,
+    thermal_mode: str | None,
 ) -> BatteryCircuitEvaluation:
     """Build a public evaluation object from layout and simulation pieces.
 
@@ -1017,6 +1125,7 @@ def _evaluation_from_parts(
         simulation: Value for ``simulation``.
         is_feasible: Whether to feasible.
         failure_reason: Value for ``failure_reason``.
+        thermal_mode: Resolved thermal mode used for the evaluation.
 
     Returns:
         Computed result for this callable.
@@ -1049,6 +1158,9 @@ def _evaluation_from_parts(
         cell_model_warning=cell_model_warning,
         cell_model_mode=cell_model_mode,
         cell_model_parameter_set=cell_model_parameter_set,
+        end_cell_temperature_c=None if simulation is None else simulation.end_cell_temperature_c,
+        max_cell_temperature_c=None if simulation is None else simulation.max_cell_temperature_c,
+        thermal_mode=thermal_mode,
     )
 
 
