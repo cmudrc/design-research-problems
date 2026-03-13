@@ -36,6 +36,30 @@ def _static_cell_model() -> BatteryCellModel:
     )
 
 
+def _temperature_sensitive_pybamm_module() -> SimpleNamespace:
+    defaults = {
+        "Cell capacity [A.h]": 100.0,
+        "Initial temperature [K]": 298.15,
+        "Open-circuit voltage [V]": lambda temperature_k, current_a, soc: 4.2 - (0.05 * (1.0 - soc)),
+        "R0 [Ohm]": lambda temperature_k, current_a, soc: 0.015 + (0.001 * (temperature_k - 298.15)),
+        "R1 [Ohm]": lambda temperature_k, current_a, soc: 0.015,
+        "C1 [F]": lambda temperature_k, current_a, soc: 400.0,
+        "Cell-jig heat transfer coefficient [W/K]": 0.2,
+        "Jig-air heat transfer coefficient [W/K]": 0.1,
+        "Cell thermal mass [J/K]": 2.0,
+        "Jig thermal mass [J/K]": 1.0,
+    }
+
+    def thevenin_factory(**kwargs: object) -> SimpleNamespace:
+        del kwargs
+        return SimpleNamespace(default_parameter_values=dict(defaults))
+
+    return SimpleNamespace(
+        equivalent_circuit=SimpleNamespace(Thevenin=thevenin_factory),
+        ParameterValues=lambda name: dict(defaults),
+    )
+
+
 def _relaxed_requirements(
     *,
     target_voltage_v: float,
@@ -547,6 +571,12 @@ def test_battery_backend_config_parses_parameterization_and_options() -> None:
     assert dict(config.solver_policy) == {"dt_s": 1.0, "rel_tol": 1e-6}
 
 
+def test_battery_backend_config_defaults_to_isothermal_with_shared_ambient() -> None:
+    config = battery_backend_config_from_mapping({"cell_model_mode": "pybamm_ecm"})
+    assert config.thermal_mode == "isothermal"
+    assert config.ambient_temp_c == pytest.approx(25.0)
+
+
 def test_battery_backend_config_rejects_unknown_mode() -> None:
     with pytest.raises(ValueError, match="cell_model_mode"):
         battery_backend_config_from_mapping({"cell_model_mode": "unknown"})
@@ -555,6 +585,11 @@ def test_battery_backend_config_rejects_unknown_mode() -> None:
 def test_battery_backend_config_rejects_removed_surrogate_mode() -> None:
     with pytest.raises(ValueError, match="cell_model_mode"):
         battery_backend_config_from_mapping({"cell_model_mode": "surrogate_rescaled"})
+
+
+def test_battery_backend_config_rejects_unknown_thermal_mode() -> None:
+    with pytest.raises(ValueError, match="thermal_mode"):
+        battery_backend_config_from_mapping({"thermal_mode": "multi_node"})
 
 
 def test_load_battery_cell_model_auto_mode_requires_pybamm(
@@ -674,6 +709,95 @@ def test_load_battery_cell_model_dfn_mode_respects_parameter_set_override(
     battery_cell_model._load_battery_cell_model_cached.cache_clear()
 
 
+def test_isothermal_backend_propagates_ambient_temperature_to_cell_model(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+    battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", _temperature_sensitive_pybamm_module)
+
+    requirements = _relaxed_requirements(target_voltage_v=3.7, minimum_capacity_ah=0.5, minimum_current_a=5.0)
+    cool = evaluate_battery_circuit(
+        state=_single_cell_state(),
+        requirements=requirements,
+        load_cell_model=lambda: (_ for _ in ()).throw(AssertionError("backend-config path expected")),
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm",
+            thermal_mode="isothermal",
+            ambient_temp_c=15.0,
+        ),
+    )
+    warm = evaluate_battery_circuit(
+        state=_single_cell_state(),
+        requirements=requirements,
+        load_cell_model=lambda: (_ for _ in ()).throw(AssertionError("backend-config path expected")),
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm",
+            thermal_mode="isothermal",
+            ambient_temp_c=35.0,
+        ),
+    )
+
+    assert cool.thermal_mode == "isothermal"
+    assert warm.thermal_mode == "isothermal"
+    assert cool.end_cell_temperature_c == pytest.approx(15.0)
+    assert warm.end_cell_temperature_c == pytest.approx(35.0)
+    assert cool.max_cell_temperature_c == pytest.approx(15.0)
+    assert warm.max_cell_temperature_c == pytest.approx(35.0)
+    assert cool.pack_terminal_voltage_end != pytest.approx(warm.pack_terminal_voltage_end)
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+    battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
+
+
+def test_lumped_backend_produces_distinct_temperature_and_voltage_trajectory(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+    battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", _temperature_sensitive_pybamm_module)
+
+    requirements = _relaxed_requirements(target_voltage_v=3.7, minimum_capacity_ah=0.5, minimum_current_a=10.0)
+    isothermal = evaluate_battery_circuit(
+        state=_single_cell_state(),
+        requirements=requirements,
+        load_cell_model=lambda: (_ for _ in ()).throw(AssertionError("backend-config path expected")),
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm",
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+    lumped = evaluate_battery_circuit(
+        state=_single_cell_state(),
+        requirements=requirements,
+        load_cell_model=lambda: (_ for _ in ()).throw(AssertionError("backend-config path expected")),
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm",
+            thermal_mode="lumped",
+            ambient_temp_c=25.0,
+        ),
+    )
+
+    assert isothermal.thermal_mode == "isothermal"
+    assert lumped.thermal_mode == "lumped"
+    assert isothermal.end_cell_temperature_c == pytest.approx(25.0)
+    assert lumped.end_cell_temperature_c is not None
+    assert lumped.max_cell_temperature_c is not None
+    assert lumped.end_cell_temperature_c > 25.0
+    assert lumped.max_cell_temperature_c >= lumped.end_cell_temperature_c
+    assert lumped.pack_terminal_voltage_end is not None
+    assert isothermal.pack_terminal_voltage_end is not None
+    assert lumped.pack_terminal_voltage_end < isothermal.pack_terminal_voltage_end
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+    battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
+
+
 def test_load_18650_cell_model_requires_supported_thevenin_factory(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -739,6 +863,7 @@ def test_load_18650_thermal_priors_requires_supported_thevenin_factory(
     from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
 
     battery_cell_model.load_18650_thermal_priors.cache_clear()
+    battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
     fake_module = SimpleNamespace(equivalent_circuit=SimpleNamespace(Thevenin=None))
     monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_module)
 
@@ -746,6 +871,7 @@ def test_load_18650_thermal_priors_requires_supported_thevenin_factory(
         battery_cell_model.load_18650_thermal_priors()
 
     battery_cell_model.load_18650_thermal_priors.cache_clear()
+    battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
 
 
 def test_load_18650_thermal_priors_extracts_and_normalizes_values(
@@ -754,6 +880,7 @@ def test_load_18650_thermal_priors_extracts_and_normalizes_values(
     from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
 
     battery_cell_model.load_18650_thermal_priors.cache_clear()
+    battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
     battery_cell_model.load_18650_cell_model.cache_clear()
 
     fake_module = SimpleNamespace(
@@ -771,7 +898,7 @@ def test_load_18650_thermal_priors_extracts_and_normalizes_values(
         )
     )
     monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_module)
-    monkeypatch.setattr(battery_cell_model, "load_18650_cell_model", lambda: _static_cell_model())
+    monkeypatch.setattr(battery_cell_model, "load_battery_cell_model", lambda config=None: _static_cell_model())
 
     priors = battery_cell_model.load_18650_thermal_priors()
     assert isinstance(priors, BatteryThermalPriors)
@@ -784,7 +911,8 @@ def test_load_18650_thermal_priors_extracts_and_normalizes_values(
     assert priors.jig_thermal_mass_j_per_k == pytest.approx(12.5, abs=1.0e-6)
 
     battery_cell_model.load_18650_thermal_priors.cache_clear()
-    cache_clear = getattr(battery_cell_model.load_18650_cell_model, "cache_clear", None)
+    battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
+    cache_clear = getattr(battery_cell_model.load_battery_cell_model, "cache_clear", None)
     if callable(cache_clear):
         cache_clear()
 
@@ -793,6 +921,7 @@ def test_load_18650_thermal_priors_is_cached(monkeypatch: pytest.MonkeyPatch) ->
     from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
 
     battery_cell_model.load_18650_thermal_priors.cache_clear()
+    battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
     battery_cell_model.load_18650_cell_model.cache_clear()
     calls = {"count": 0}
 
@@ -812,7 +941,7 @@ def test_load_18650_thermal_priors_is_cached(monkeypatch: pytest.MonkeyPatch) ->
 
     fake_module = SimpleNamespace(equivalent_circuit=SimpleNamespace(Thevenin=_thevenin))
     monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_module)
-    monkeypatch.setattr(battery_cell_model, "load_18650_cell_model", lambda: _static_cell_model())
+    monkeypatch.setattr(battery_cell_model, "load_battery_cell_model", lambda config=None: _static_cell_model())
 
     first = battery_cell_model.load_18650_thermal_priors()
     second = battery_cell_model.load_18650_thermal_priors()
@@ -820,6 +949,7 @@ def test_load_18650_thermal_priors_is_cached(monkeypatch: pytest.MonkeyPatch) ->
     assert calls["count"] == 1
 
     battery_cell_model.load_18650_thermal_priors.cache_clear()
-    cache_clear = getattr(battery_cell_model.load_18650_cell_model, "cache_clear", None)
+    battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
+    cache_clear = getattr(battery_cell_model.load_battery_cell_model, "cache_clear", None)
     if callable(cache_clear):
         cache_clear()

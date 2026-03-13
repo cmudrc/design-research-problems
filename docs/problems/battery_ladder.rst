@@ -39,9 +39,9 @@ surface under ``[parameters.battery_backend]`` in manifest TOML:
 - ``cell_model_mode``: ``auto | pybamm_ecm | pybamm_spm | pybamm_dfn``
 - ``parameterization.preset``: ``fast | medium | slow``
 - ``parameterization.parameter_set``: explicit PyBaMM parameter-set name override
-- optional placeholders accepted for forward compatibility:
-  ``thermal_mode``, ``ambient_temp_c`` / ``ambient_temp_C``, ``parasitics``,
-  and ``solver_policy``
+- ``thermal_mode``: ``isothermal | lumped``
+- ``ambient_temp_c`` / ``ambient_temp_C``: backend ambient temperature override
+- optional advanced passthrough mappings: ``parasitics`` and ``solver_policy``
 
 Current backend behavior in this release:
 
@@ -53,6 +53,14 @@ Current backend behavior in this release:
 - ``pybamm_spm`` and ``pybamm_dfn`` fail fast when required ECM-equivalent
   parameters (``Open-circuit voltage [V]``, ``R0 [Ohm]``, ``R1 [Ohm]``,
   ``C1 [F]``) are unavailable.
+- backend thermal defaults are centralized in the shared battery defaults layer
+  and currently resolve to ``thermal_mode = isothermal`` and
+  ``ambient_temp_c = 25 C`` when the manifest does not override them.
+- ``isothermal`` keeps cell temperature fixed at ambient and uses that
+  temperature when evaluating the PyBaMM-derived electrical parameters.
+- ``lumped`` adds a single-state thermal RC update driven by cell Joule heat and
+  interconnect loss, then feeds the updated cell temperature back into the
+  electrical model at each solver step.
 
 Electrical Approximation
 ------------------------
@@ -124,7 +132,15 @@ The envelope limits in the benchmark are hard constraints, not soft penalties.
 Thermal Proxy
 -------------
 
-Tier-1 through Tier-3 use a compact steady-state Joule-heating proxy.
+The explicit battery-circuit backend now supports two thermal modes:
+
+- ``isothermal``: fixed ambient cell temperature with temperature-aware
+  electrical parameter evaluation.
+- ``lumped``: one-state thermal RC update coupled back into the electrical
+  discharge solve.
+
+Tier-1 through Tier-3 still use a compact steady-state Joule-heating proxy for
+their optimization objectives.
 Tier-4 upgrades this to a **PyBaMM-backed** thermal model by extracting
 Thevenin thermal priors (resistance-vs-SOC and thermal conductance parameters)
 and solving either a lumped or multi-node network.
