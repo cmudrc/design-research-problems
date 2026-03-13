@@ -704,8 +704,7 @@ def _effective_lumped_pack_thermal_mass_j_per_k(
 ) -> float:
     """Return the pack-level one-state thermal mass."""
     return (
-        max(float(cell_count), 1.0) * thermal_priors.cell_thermal_mass_j_per_k
-        + thermal_priors.jig_thermal_mass_j_per_k
+        max(float(cell_count), 1.0) * thermal_priors.cell_thermal_mass_j_per_k + thermal_priors.jig_thermal_mass_j_per_k
     )
 
 

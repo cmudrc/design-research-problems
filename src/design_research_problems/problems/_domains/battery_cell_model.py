@@ -242,15 +242,18 @@ def resolve_battery_backend_config(config: BatteryBackendConfig | None) -> Batte
     if candidate.thermal_mode is None:
         normalized_thermal_mode = BATTERY_BACKEND_DEFAULTS.thermal.default_mode
     else:
-        normalized_thermal_mode = _coerce_string(
-            candidate.thermal_mode,
-            field_name="battery_backend.thermal_mode",
-        ).strip().lower()
+        normalized_thermal_mode = (
+            _coerce_string(
+                candidate.thermal_mode,
+                field_name="battery_backend.thermal_mode",
+            )
+            .strip()
+            .lower()
+        )
     if normalized_thermal_mode not in SUPPORTED_BATTERY_THERMAL_MODES:
         supported_thermal_modes = ", ".join(sorted(SUPPORTED_BATTERY_THERMAL_MODES))
         raise ValueError(
-            "Unsupported battery thermal_mode "
-            f"{candidate.thermal_mode!r}. Expected one of: {supported_thermal_modes}."
+            f"Unsupported battery thermal_mode {candidate.thermal_mode!r}. Expected one of: {supported_thermal_modes}."
         )
     ambient_temp_c = (
         BATTERY_BACKEND_DEFAULTS.thermal.ambient_temperature_c
