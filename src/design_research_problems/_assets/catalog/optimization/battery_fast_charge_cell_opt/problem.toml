@@ -1,0 +1,81 @@
+problem_id = "battery_fast_charge_cell_opt"
+title = "Fast-charge lithium-ion cell optimization"
+summary = "Optimize cell-design parameters for faster charging under lithium-plating and thermal safety constraints."
+kind = "optimization"
+statement = '''
+# Fast-charge lithium-ion cell optimization
+
+Optimize a lithium-ion cell design for faster charging while respecting
+plating-risk and thermal safety limits. This benchmark is adapted from the
+fast-charge DesignBench battery case and re-packaged for the
+`design-research-problems` optimization API.
+
+The design variables are bounded cell-level parameters taken from a Chen2020
+style PyBaMM parameterization:
+- negative electrode thickness
+- positive electrode thickness
+- separator thickness
+- negative electrode porosity
+- positive electrode porosity
+- negative particle radius
+- positive particle radius
+- negative active-material volume fraction
+- positive active-material volume fraction
+
+The evaluation path uses a PyBaMM DFN model with:
+- lumped thermal dynamics
+- partially reversible lithium plating
+- solvent-diffusion-limited SEI growth
+- a fast-charge CC-CV experiment
+
+Primary objective:
+- minimize time to move from the configured low-SOC window edge to the
+  configured high-SOC window edge
+
+Hard constraints:
+- maximum cell temperature
+- maximum plated-lithium concentration proxy
+- optional minimum energy-density floor
+- non-negative inactive volume fraction in each electrode
+
+Reported metrics:
+- charge time in minutes
+- maximum plated lithium concentration
+- maximum cell temperature
+- practical energy density in Wh/L
+- solver success flag
+'''
+implementation = "design_research_problems.problems.optimization._battery_fast_charge:BatteryFastChargeOptimizationProblem"
+capabilities = ["statement-markdown", "bounded-variables", "baseline-solver"]
+study_suitability = []
+
+[parameters]
+parameter_set = "Chen2020"
+initial_soc_fraction = 0.0
+charge_c_rate = 1.5
+target_soc_start = 0.10
+target_soc_end = 0.80
+max_voltage_v = 4.2
+cv_cutoff_denominator = 50.0
+maximum_temperature_c = 50.0
+maximum_plating_mol_m3 = 1.0e-5
+minimum_energy_density_wh_per_l = 0.0
+ambient_temperature_c = 25.0
+heat_transfer_coefficient_w_per_m2k = 10.0
+packaging_efficiency = 0.86
+rest_before_charge_min = 2.0
+rest_after_charge_min = 30.0
+mesh_points = 10
+failure_charge_time_min = 999.0
+
+[taxonomy]
+formulation = "continuous_optimization"
+convexity = "nonconvex"
+design_variable_type = "continuous"
+is_dynamic = true
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.10
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "bounded electrode, separator, porosity, particle-radius, and active-fraction variables"
+tags = ["optimization", "battery", "fast-charge", "pybamm", "thermal", "plating"]

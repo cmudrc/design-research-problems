@@ -34,6 +34,7 @@ if TYPE_CHECKING:
         Battery18650Tier2LayoutOptimizationProblem,
         Battery18650Tier3TopologyOptimizationProblem,
         Battery18650Tier4ThermalOptimizationProblem,
+        BatteryFastChargeOptimizationProblem,
         GMPBOptimizationProblem,
         PlanarTrussEngineeringOptimizationProblem,
         SpaceTrussEngineeringOptimizationProblem,
@@ -63,6 +64,7 @@ type _BatteryOptimizationProblemId = Literal[
     "battery_18650_t2_layout_opt",
     "battery_18650_t3_topology_opt",
     "battery_18650_t4_thermal_opt",
+    "battery_fast_charge_cell_opt",
 ]
 
 type _MSEvalProblemId = Literal[
@@ -306,6 +308,9 @@ class ProblemRegistry:
     ) -> Battery18650Tier4ThermalOptimizationProblem: ...
 
     @overload
+    def get(self, problem_id: Literal["battery_fast_charge_cell_opt"]) -> BatteryFastChargeOptimizationProblem: ...
+
+    @overload
     def get(self, problem_id: Literal["gmpb_default_dynamic_min"]) -> GMPBOptimizationProblem: ...
 
     @overload
@@ -458,6 +463,10 @@ def get_problem(
 def get_problem(
     problem_id: Literal["battery_18650_t4_thermal_opt"],
 ) -> Battery18650Tier4ThermalOptimizationProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["battery_fast_charge_cell_opt"]) -> BatteryFastChargeOptimizationProblem: ...
 
 
 @overload

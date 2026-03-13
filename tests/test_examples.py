@@ -210,6 +210,16 @@ def test_t4_battery_optimization_example_runs() -> None:
     assert "metric-keys" in completed.stdout
 
 
+@pytest.mark.examples_smoke
+def test_fast_charge_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_fast_charge_cell_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    if "Install it with: pip install design-research-problems[battery]" in completed.stdout:
+        pytest.skip("pybamm is not installed in this environment.")
+    assert "battery_fast_charge_cell_opt" in completed.stdout
+    assert "metric-keys" in completed.stdout
+
+
 @pytest.mark.trussme_real
 def test_grammar_example_runs_when_trussme_is_installed() -> None:
     completed = _run_example("examples/grammar/planar_truss_span.py")

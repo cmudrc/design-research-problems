@@ -95,11 +95,12 @@ def test_registry_entries_filter_by_kind() -> None:
     )
     optimization_kinds = registry.by_kind(ProblemKind.OPTIMIZATION)
     optimization_ids = [entry.problem_id for entry in optimization_kinds]
-    assert len(optimization_ids) == 12
+    assert len(optimization_ids) == 13
     assert "battery_18650_t1_series_parallel_opt" in optimization_ids
     assert "battery_18650_t2_layout_opt" in optimization_ids
     assert "battery_18650_t3_topology_opt" in optimization_ids
     assert "battery_18650_t4_thermal_opt" in optimization_ids
+    assert "battery_fast_charge_cell_opt" in optimization_ids
     assert "gmpb_default_dynamic_min" in optimization_ids
     assert "planar_truss_span_mass_min" in optimization_ids
     assert "planar_truss_span_deflection_min" in optimization_ids
@@ -348,6 +349,7 @@ def test_non_text_problems_are_computable() -> None:
         "battery_18650_t1_series_parallel_grammar",
         "battery_18650_t2_layout_opt",
         "battery_18650_t4_thermal_opt",
+        "battery_fast_charge_cell_opt",
         "iot_home_cooling_system_design",
         "pill_capsule_min_area",
         "planar_truss_span",
@@ -367,6 +369,7 @@ def test_registry_search_filters_by_feature_flags() -> None:
         "battery_18650_t2_layout_opt",
         "battery_18650_t3_topology_opt",
         "battery_18650_t4_thermal_opt",
+        "battery_fast_charge_cell_opt",
         "gmpb_default_dynamic_min",
         "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",

@@ -6,6 +6,9 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 _LAZY_EXPORTS = {
+    "BatteryFastChargeOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_fast_charge:BatteryFastChargeOptimizationProblem"
+    ),
     "Battery18650Tier1SeriesParallelOptimizationProblem": (
         "design_research_problems.problems.optimization._battery_tiers:"
         "Battery18650Tier1SeriesParallelOptimizationProblem"
@@ -65,6 +68,7 @@ def __getattr__(name: str) -> object:
 
 
 if TYPE_CHECKING:
+    from ._battery_fast_charge import BatteryFastChargeOptimizationProblem as BatteryFastChargeOptimizationProblem
     from ._battery_grid import BatteryGridSizingProblem as BatteryGridSizingProblem
     from ._battery_open_ended import BatteryOpenEndedCapacityMaxProblem as BatteryOpenEndedCapacityMaxProblem
     from ._battery_oriented_layout import BatteryOrientedLayoutProblem as BatteryOrientedLayoutProblem

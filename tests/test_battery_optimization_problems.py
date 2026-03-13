@@ -24,6 +24,10 @@ from design_research_problems.problems.optimization import (
     Battery18650Tier2LayoutOptimizationProblem,
     Battery18650Tier3TopologyOptimizationProblem,
     Battery18650Tier4ThermalOptimizationProblem,
+    BatteryFastChargeOptimizationProblem,
+)
+from design_research_problems.problems.optimization._battery_fast_charge import (
+    FastChargeMetricSummary,
 )
 
 _COMMON_METRIC_KEYS = {
@@ -66,6 +70,54 @@ def _static_thermal_priors() -> BatteryThermalPriors:
         jig_thermal_mass_j_per_k=12.5,
         reference_ambient_temperature_c=25.0,
         source="test_stub",
+    )
+
+
+def _static_fast_charge_metrics(*args: object, **kwargs: object) -> FastChargeMetricSummary:
+    del args, kwargs
+    return FastChargeMetricSummary(
+        charge_time_min=14.5,
+        max_plating_mol_m3=0.0,
+        max_temperature_c=38.0,
+        energy_density_wh_per_l=620.0,
+        success=True,
+    )
+
+
+def _directional_fast_charge_metrics(
+    design_parameters: dict[str, float],
+    **kwargs: object,
+) -> FastChargeMetricSummary:
+    del kwargs
+    negative_thickness = float(design_parameters["Negative electrode thickness [m]"])
+    positive_thickness = float(design_parameters["Positive electrode thickness [m]"])
+    separator_thickness = float(design_parameters["Separator thickness [m]"])
+    negative_porosity = float(design_parameters["Negative electrode porosity"])
+    positive_porosity = float(design_parameters["Positive electrode porosity"])
+    charge_time = (
+        9.0
+        + (160_000.0 * (negative_thickness + positive_thickness))
+        + (250_000.0 * separator_thickness)
+        - (4.0 * (negative_porosity + positive_porosity))
+    )
+    return FastChargeMetricSummary(
+        charge_time_min=float(charge_time),
+        max_plating_mol_m3=0.0,
+        max_temperature_c=36.0,
+        energy_density_wh_per_l=540.0,
+        success=True,
+    )
+
+
+def _failed_fast_charge_metrics(*args: object, **kwargs: object) -> FastChargeMetricSummary:
+    del args, kwargs
+    return FastChargeMetricSummary(
+        charge_time_min=999.0,
+        max_plating_mol_m3=1.0,
+        max_temperature_c=120.0,
+        energy_density_wh_per_l=0.0,
+        success=False,
+        failure_reason="solver failed",
     )
 
 
@@ -235,6 +287,59 @@ def test_t4_requires_pybamm_for_thermal_priors(monkeypatch: pytest.MonkeyPatch) 
             metadata=t3.metadata,
             requirements=t3.requirements,
         )
+
+
+def test_fast_charge_optimizer_is_registered_and_uses_optimization_api(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.optimization import _battery_fast_charge
+
+    monkeypatch.setattr(_battery_fast_charge, "evaluate_fast_charge_design", _static_fast_charge_metrics)
+
+    problem = get_problem("battery_fast_charge_cell_opt")
+    assert isinstance(problem, OptimizationProblem)
+    assert isinstance(problem, BatteryFastChargeOptimizationProblem)
+    initial = problem.generate_initial_solution(seed=7)
+    components = problem.objective_components(initial)
+    evaluation = problem.evaluate(initial)
+    assert set(components) == {
+        "charge_time_min",
+        "max_plating_mol_m3",
+        "max_temperature_c",
+        "energy_density_wh_per_l",
+        "success",
+    }
+    assert isinstance(evaluation, OptimizationEvaluation)
+    assert evaluation.is_feasible is True
+
+
+def test_fast_charge_optimizer_failure_metrics_stay_finite(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems.optimization import _battery_fast_charge
+
+    monkeypatch.setattr(_battery_fast_charge, "evaluate_fast_charge_design", _failed_fast_charge_metrics)
+
+    problem = get_problem("battery_fast_charge_cell_opt")
+    initial = problem.generate_initial_solution()
+    evaluation = problem.evaluate(initial)
+    components = problem.objective_components(initial)
+    assert components["success"] == pytest.approx(0.0)
+    assert numpy.isfinite(evaluation.objective_value)
+    assert evaluation.is_feasible is False
+
+
+def test_fast_charge_optimizer_baseline_search_can_improve_charge_time(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.optimization import _battery_fast_charge
+
+    monkeypatch.setattr(_battery_fast_charge, "evaluate_fast_charge_design", _directional_fast_charge_metrics)
+
+    problem = get_problem("battery_fast_charge_cell_opt")
+    initial = problem.generate_initial_solution()
+    baseline = problem.objective(initial)
+    result = problem.solve(maxiter=1)
+    assert result.fun <= baseline
+    assert result.x[0] < initial[0]
 
 
 def test_finite_cylinder_distance_reports_axial_end_gap() -> None:
