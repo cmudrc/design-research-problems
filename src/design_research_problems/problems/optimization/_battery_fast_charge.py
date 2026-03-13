@@ -7,7 +7,7 @@ from typing import Any, cast
 
 import numpy
 from numpy.typing import NDArray
-from scipy.integrate import cumulative_trapezoid
+from scipy.integrate import cumulative_trapezoid, trapezoid
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import MissingOptionalDependencyError
@@ -326,7 +326,7 @@ def evaluate_fast_charge_design(
         charge_time_min = float(failure_charge_time_min)
 
     voltage = numpy.array(solution["Terminal voltage [V]"].entries, dtype=float)
-    energy_wh = float(numpy.trapezoid(voltage * numpy.abs(current_amps), time_hours))
+    energy_wh = float(trapezoid(voltage * numpy.abs(current_amps), time_hours))
     cell_volume_m3 = _safe_parameter_value(parameters, "Cell volume [m3]", default=1.0e-5)
     energy_density_wh_per_l = (energy_wh / max(cell_volume_m3 * 1_000.0, 1.0e-12)) * float(packaging_efficiency)
 
