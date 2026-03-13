@@ -73,8 +73,10 @@ def test_registry_entries_filter_by_kind() -> None:
     assert set(MSEVAL_IDS).issubset(decision_ids)
     kinds = registry.by_kind(ProblemKind.TEXT)
     text_ids = [entry.problem_id for entry in kinds]
-    assert len(text_ids) == 40
+    assert len(text_ids) == 48
     assert "ideation_accessible_drinking_fountain" in text_ids
+    assert "ideation_dark_hour_safety" in text_ids
+    assert "ideation_forest_fire_detection" in text_ids
     assert "ideation_public_belongings_security" in text_ids
     assert "ideation_wheelchair_peach_picking" in text_ids
     assert registry.feature_flags("ideation_peanut_shelling_fu_cagan_kotovsky_2010") == (
@@ -170,6 +172,15 @@ def test_text_problem_can_render_summary_and_raw_citations() -> None:
     assert "## Sources" in packet
     assert "## BibTeX" in packet
     assert "@article{fu2010design," in packet
+
+
+def test_new_2025_ideation_problem_renders_statement_and_citation() -> None:
+    problem = get_problem("ideation_dark_hour_safety")
+    assert isinstance(problem, Problem)
+    packet = problem.render_brief()
+    assert packet.count("# Dark-Hour Safety") == 1
+    assert "Design a way to support safety in the dark morning" in packet
+    assert "Wojciechowski, Olagoke, Ng, Wacnik, and Kramer (2025)." in packet
 
 
 def test_decision_problem_exposes_structured_brief() -> None:

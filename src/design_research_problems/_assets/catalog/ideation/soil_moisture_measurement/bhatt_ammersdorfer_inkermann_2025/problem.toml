@@ -1,0 +1,35 @@
+problem_id = "ideation_soil_moisture_measurement"
+title = "Soil Moisture Measurement for Lawns"
+summary = "A primary-source classroom ideation brief about measuring soil moisture to water lawns more efficiently under water constraints."
+kind = "text"
+statement = '''
+# Soil Moisture Measurement for Lawns
+
+Limitation of water resources is raising the demand for devices to measure
+moisture in soils in order to be able to water lawns efficiently.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "water", "sensing", "landscape"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "bhatt_ammersdorfer_inkermann_2025"
+kind = "inline"
+authors = ["Apoorv Naresh Bhatt", "Theresa Ammersdorfer", "David Inkermann"]
+title = "Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course"
+year = 2025
+venue = "ASME IDETC/CIE 2025, DETC2025-168538"
+formatted_text = "Bhatt, Ammersdorfer, and Inkermann (2025). Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course. ASME IDETC/CIE 2025, DETC2025-168538."
+raw_text = "Bhatt, Ammersdorfer, and Inkermann (2025). Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course. ASME IDETC/CIE 2025, DETC2025-168538."
+provisional = true

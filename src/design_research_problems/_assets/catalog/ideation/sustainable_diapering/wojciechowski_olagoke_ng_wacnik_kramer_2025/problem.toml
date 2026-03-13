@@ -1,0 +1,40 @@
+problem_id = "ideation_sustainable_diapering"
+title = "Sustainable Infant Diapering"
+summary = "A primary-source ideation brief about keeping infants clean while reducing diaper-related waste, water use, and energy use."
+kind = "text"
+statement = '''
+# Sustainable Infant Diapering
+
+Infants can go through 10 diapers or more a day. Disposable diapers increase
+the amount of waste we add to landfills, and reusable diapers use a lot of
+water (reducing the amount of a precious resource) and energy (increasing CO2
+emissions). A new wave of diapers tries to combine reusable elements with
+disposal ones to minimize harmful effects, however, the functionality of this
+new product is a question. Design a way to keep infants clean and limit
+environmental impacts.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "childcare", "sustainability", "consumer"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 10
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "wojciechowski_olagoke_ng_wacnik_kramer_2025"
+kind = "inline"
+authors = ["Lauren Wojciechowski", "Uthman Olagoke", "Rowena Ng", "Peter Wacnik", "Julia Kramer"]
+title = "Musical Playlists to Improve the Ideation Environment: An Exploratory Study"
+year = 2025
+venue = "ASME IDETC/CIE 2025, DETC2025-164691"
+formatted_text = "Wojciechowski, Olagoke, Ng, Wacnik, and Kramer (2025). Musical Playlists to Improve the Ideation Environment: An Exploratory Study. ASME IDETC/CIE 2025, DETC2025-164691."
+raw_text = "Wojciechowski, Olagoke, Ng, Wacnik, and Kramer (2025). Musical Playlists to Improve the Ideation Environment: An Exploratory Study. ASME IDETC/CIE 2025, DETC2025-164691."
+provisional = true

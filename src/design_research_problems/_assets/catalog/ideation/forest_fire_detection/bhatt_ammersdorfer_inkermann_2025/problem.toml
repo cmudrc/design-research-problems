@@ -1,0 +1,35 @@
+problem_id = "ideation_forest_fire_detection"
+title = "Forest Fire Detection in Local Forests"
+summary = "A primary-source classroom ideation brief about reliably detecting emerging fire in local forests."
+kind = "text"
+statement = '''
+# Forest Fire Detection in Local Forests
+
+There is an increasing need to prevent fire in local forests. We need a
+device to detect upcoming fires in a reliable way.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "wildfire", "sensing", "environment"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "bhatt_ammersdorfer_inkermann_2025"
+kind = "inline"
+authors = ["Apoorv Naresh Bhatt", "Theresa Ammersdorfer", "David Inkermann"]
+title = "Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course"
+year = 2025
+venue = "ASME IDETC/CIE 2025, DETC2025-168538"
+formatted_text = "Bhatt, Ammersdorfer, and Inkermann (2025). Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course. ASME IDETC/CIE 2025, DETC2025-168538."
+raw_text = "Bhatt, Ammersdorfer, and Inkermann (2025). Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course. ASME IDETC/CIE 2025, DETC2025-168538."
+provisional = true

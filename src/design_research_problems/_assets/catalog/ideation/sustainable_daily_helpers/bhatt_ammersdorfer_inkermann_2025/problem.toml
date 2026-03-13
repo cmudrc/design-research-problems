@@ -1,0 +1,36 @@
+problem_id = "ideation_sustainable_daily_helpers"
+title = "Sustainable Daily Helpers"
+summary = "A primary-source classroom ideation brief about improving the sustainability of indoor transport and cleaning service devices."
+kind = "text"
+statement = '''
+# Sustainable Daily Helpers
+
+In order to ease tasks like indoor transport or cleaning, there is an
+increasing demand for service devices. How can we enhance the sustainability
+of these daily helpers?
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "service-devices", "sustainability", "indoor"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "bhatt_ammersdorfer_inkermann_2025"
+kind = "inline"
+authors = ["Apoorv Naresh Bhatt", "Theresa Ammersdorfer", "David Inkermann"]
+title = "Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course"
+year = 2025
+venue = "ASME IDETC/CIE 2025, DETC2025-168538"
+formatted_text = "Bhatt, Ammersdorfer, and Inkermann (2025). Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course. ASME IDETC/CIE 2025, DETC2025-168538."
+raw_text = "Bhatt, Ammersdorfer, and Inkermann (2025). Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course. ASME IDETC/CIE 2025, DETC2025-168538."
+provisional = true

@@ -496,6 +496,28 @@ formatted_text = "Lemons, Carberry, Swan, Jarvin, and Rogers (2010). The benefit
 raw_text = "Lemons, Carberry, Swan, Jarvin, and Rogers (2010). The benefits of model building in teaching engineering design. Design Studies, 31(3), 288-309. DOI: 10.1016/j.destud.2010.02.001."
 provisional = false
 
+[[citations]]
+key = "wojciechowski_olagoke_ng_wacnik_kramer_2025"
+kind = "inline"
+authors = ["Lauren Wojciechowski", "Uthman Olagoke", "Rowena Ng", "Peter Wacnik", "Julia Kramer"]
+title = "Musical Playlists to Improve the Ideation Environment: An Exploratory Study"
+year = 2025
+venue = "ASME IDETC/CIE 2025, DETC2025-164691"
+formatted_text = "Wojciechowski, Olagoke, Ng, Wacnik, and Kramer (2025). Musical Playlists to Improve the Ideation Environment: An Exploratory Study. ASME IDETC/CIE 2025, DETC2025-164691."
+raw_text = "Wojciechowski, Olagoke, Ng, Wacnik, and Kramer (2025). Musical Playlists to Improve the Ideation Environment: An Exploratory Study. ASME IDETC/CIE 2025, DETC2025-164691."
+provisional = true
+
+[[citations]]
+key = "bhatt_ammersdorfer_inkermann_2025"
+kind = "inline"
+authors = ["Apoorv Naresh Bhatt", "Theresa Ammersdorfer", "David Inkermann"]
+title = "Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course"
+year = 2025
+venue = "ASME IDETC/CIE 2025, DETC2025-168538"
+formatted_text = "Bhatt, Ammersdorfer, and Inkermann (2025). Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course. ASME IDETC/CIE 2025, DETC2025-168538."
+raw_text = "Bhatt, Ammersdorfer, and Inkermann (2025). Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course. ASME IDETC/CIE 2025, DETC2025-168538."
+provisional = true
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -720,6 +742,78 @@ external_aliases = []
 canonical_prompt_ids = ["prompt_home_energy_conservation"]
 tags = ["sustainability", "energy", "home"]
 notes = "Original training problem introduced by Goucher-Lambert and Cagan (2019)."
+
+[[families]]
+family_id = "family_dark_hour_safety"
+name = "Dark-Hour Safety"
+group = "transport-infrastructure"
+external_aliases = []
+canonical_prompt_ids = ["prompt_dark_hour_safety"]
+tags = ["safety", "mobility", "public-space"]
+notes = "Wojciechowski et al. (2025) reproduces this participant-facing prompt from a University of Michigan ideation study based on Shanna Daly's Front-End Design course material."
+
+[[families]]
+family_id = "family_household_moving"
+name = "Household Moving"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_household_moving"]
+tags = ["moving", "household", "logistics"]
+notes = "Wojciechowski et al. (2025) reproduces this participant-facing moving-households brief from a University of Michigan ideation study."
+
+[[families]]
+family_id = "family_sustainable_diapering"
+name = "Sustainable Diapering"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_sustainable_diapering"]
+tags = ["childcare", "sustainability", "consumer"]
+notes = "Wojciechowski et al. (2025) reproduces this participant-facing diapering brief focused on infant cleanliness and environmental impact."
+
+[[families]]
+family_id = "family_entryway_track_removal"
+name = "Entryway Track Removal"
+group = "transport-infrastructure"
+external_aliases = []
+canonical_prompt_ids = ["prompt_entryway_track_removal"]
+tags = ["cleaning", "safety", "public-space"]
+notes = "Wojciechowski et al. (2025) reproduces this participant-facing brief about removing tracked dirt, snow, and water before building entry."
+
+[[families]]
+family_id = "family_forest_fire_detection"
+name = "Forest Fire Detection"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_forest_fire_detection"]
+tags = ["wildfire", "sensing", "environment"]
+notes = "Bhatt, Ammersdorfer, and Inkermann (2025) lists this classroom problem brief in Table 1 as Topic A."
+
+[[families]]
+family_id = "family_sustainable_fdm_printing"
+name = "Sustainable FDM Printing"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_sustainable_fdm_printing"]
+tags = ["manufacturing", "sustainability", "3d-printing"]
+notes = "Bhatt, Ammersdorfer, and Inkermann (2025) lists this classroom problem brief in Table 1 as Topic B."
+
+[[families]]
+family_id = "family_soil_moisture_measurement"
+name = "Soil Moisture Measurement"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_soil_moisture_measurement"]
+tags = ["water", "sensing", "landscape"]
+notes = "Bhatt, Ammersdorfer, and Inkermann (2025) lists this classroom problem brief in Table 1 as Topic C."
+
+[[families]]
+family_id = "family_sustainable_daily_helpers"
+name = "Sustainable Daily Helpers"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_sustainable_daily_helpers"]
+tags = ["service-devices", "sustainability", "indoor"]
+notes = "Bhatt, Ammersdorfer, and Inkermann (2025) lists this classroom problem brief in Table 1 as Topic D."
 
 [[prompts]]
 prompt_id = "prompt_travel_exercise_device"
@@ -1174,6 +1268,94 @@ tags = ["sustainability", "energy", "ideation"]
 status = "complete"
 variant_ids = ["variant_home_energy_conservation"]
 
+[[prompts]]
+prompt_id = "prompt_dark_hour_safety"
+problem_id = "ideation_dark_hour_safety"
+family_id = "family_dark_hour_safety"
+canonical_brief = "The shorter daylight hours that come with the seasons can increase safety concerns for many, including those who walk to commute, runners who exercise early in the morning or late at night, and students going home late from the library or social events. Design a way to support safety in the dark morning and evening hours."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["wojciechowski_olagoke_ng_wacnik_kramer_2025"]
+tags = ["safety", "mobility", "ideation"]
+status = "complete"
+variant_ids = ["variant_dark_hour_safety"]
+
+[[prompts]]
+prompt_id = "prompt_household_moving"
+problem_id = "ideation_household_moving"
+family_id = "family_household_moving"
+canonical_brief = "Moving is considered one of the top stressors in life. When people move, they experience multiple challenges. For example: lifting heavy furniture, navigating through small spaces (door frames, corners, narrow hallways, stairs), keeping belongings organized, finding other people to help them move, continuing living (and even working) while belongings are in transit, and moving in extreme weather (snow, heat, rain). Design a way to help people move households."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["wojciechowski_olagoke_ng_wacnik_kramer_2025"]
+tags = ["household", "moving", "ideation"]
+status = "complete"
+variant_ids = ["variant_household_moving"]
+
+[[prompts]]
+prompt_id = "prompt_sustainable_diapering"
+problem_id = "ideation_sustainable_diapering"
+family_id = "family_sustainable_diapering"
+canonical_brief = "Infants can go through 10 diapers or more a day. Disposable diapers increase the amount of waste we add to landfills, and reusable diapers use a lot of water (reducing the amount of a precious resource) and energy (increasing CO2 emissions). A new wave of diapers tries to combine reusable elements with disposal ones to minimize harmful effects, however, the functionality of this new product is a question. Design a way to keep infants clean and limit environmental impacts."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["wojciechowski_olagoke_ng_wacnik_kramer_2025"]
+tags = ["childcare", "sustainability", "ideation"]
+status = "complete"
+variant_ids = ["variant_sustainable_diapering"]
+
+[[prompts]]
+prompt_id = "prompt_entryway_track_removal"
+problem_id = "ideation_entryway_track_removal"
+family_id = "family_entryway_track_removal"
+canonical_brief = "Building entrances often become messy and unsafe due to snow, dirt, and water being tracked inside. Floor mats and fans are often used to mitigate the issue, but people often do not wipe their feet or use the fans. Design an intuitive way to remove tracks in dirt, snow, and water from individuals' shoes before they enter into a building."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["wojciechowski_olagoke_ng_wacnik_kramer_2025"]
+tags = ["cleaning", "safety", "ideation"]
+status = "complete"
+variant_ids = ["variant_entryway_track_removal"]
+
+[[prompts]]
+prompt_id = "prompt_forest_fire_detection"
+problem_id = "ideation_forest_fire_detection"
+family_id = "family_forest_fire_detection"
+canonical_brief = "There is an increasing need to prevent fire in local forests. We need a device to detect upcoming fires in a reliable way."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["bhatt_ammersdorfer_inkermann_2025"]
+tags = ["wildfire", "sensing", "ideation"]
+status = "complete"
+variant_ids = ["variant_forest_fire_detection"]
+
+[[prompts]]
+prompt_id = "prompt_sustainable_fdm_printing"
+problem_id = "ideation_sustainable_fdm_printing"
+family_id = "family_sustainable_fdm_printing"
+canonical_brief = "Increasing amount of 3D printing (FDM) and resource limitation raises the question of how to evaluate and improve sustainability."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["bhatt_ammersdorfer_inkermann_2025"]
+tags = ["manufacturing", "sustainability", "ideation"]
+status = "complete"
+variant_ids = ["variant_sustainable_fdm_printing"]
+
+[[prompts]]
+prompt_id = "prompt_soil_moisture_measurement"
+problem_id = "ideation_soil_moisture_measurement"
+family_id = "family_soil_moisture_measurement"
+canonical_brief = "Limitation of water resources is raising the demand for devices to measure moisture in soils in order to be able to water lawns efficiently."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["bhatt_ammersdorfer_inkermann_2025"]
+tags = ["water", "sensing", "ideation"]
+status = "complete"
+variant_ids = ["variant_soil_moisture_measurement"]
+
+[[prompts]]
+prompt_id = "prompt_sustainable_daily_helpers"
+problem_id = "ideation_sustainable_daily_helpers"
+family_id = "family_sustainable_daily_helpers"
+canonical_brief = "In order to ease tasks like indoor transport or cleaning, there is an increasing demand for service devices. How can we enhance the sustainability of these daily helpers?"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["bhatt_ammersdorfer_inkermann_2025"]
+tags = ["service-devices", "sustainability", "ideation"]
+status = "complete"
+variant_ids = ["variant_sustainable_daily_helpers"]
+
 [[variants]]
 variant_id = "variant_travel_exercise_device"
 prompt_id = "prompt_travel_exercise_device"
@@ -1625,6 +1807,94 @@ statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["goucher_lambert_cagan_2019"]
 notes = "Verbatim original training prompt listed as Problem NA in Table 1 of Goucher-Lambert and Cagan (2019)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_dark_hour_safety"
+prompt_id = "prompt_dark_hour_safety"
+problem_id = "ideation_dark_hour_safety"
+label = "Wojciechowski et al. (2025) study prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["wojciechowski_olagoke_ng_wacnik_kramer_2025"]
+notes = "Verbatim prompt block reproduced in the accessible 2025 paper and credited there to Shanna Daly's Front-End Design course material."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_household_moving"
+prompt_id = "prompt_household_moving"
+problem_id = "ideation_household_moving"
+label = "Wojciechowski et al. (2025) study prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["wojciechowski_olagoke_ng_wacnik_kramer_2025"]
+notes = "Verbatim moving-households prompt block reproduced in the accessible 2025 paper."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_sustainable_diapering"
+prompt_id = "prompt_sustainable_diapering"
+problem_id = "ideation_sustainable_diapering"
+label = "Wojciechowski et al. (2025) study prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["wojciechowski_olagoke_ng_wacnik_kramer_2025"]
+notes = "Verbatim infant-diapering prompt block reproduced in the accessible 2025 paper."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_entryway_track_removal"
+prompt_id = "prompt_entryway_track_removal"
+problem_id = "ideation_entryway_track_removal"
+label = "Wojciechowski et al. (2025) study prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["wojciechowski_olagoke_ng_wacnik_kramer_2025"]
+notes = "Verbatim building-entry prompt block reproduced in the accessible 2025 paper."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_forest_fire_detection"
+prompt_id = "prompt_forest_fire_detection"
+problem_id = "ideation_forest_fire_detection"
+label = "Bhatt, Ammersdorfer, and Inkermann (2025) project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["bhatt_ammersdorfer_inkermann_2025"]
+notes = "Verbatim classroom project brief listed in Table 1 as Topic A."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_sustainable_fdm_printing"
+prompt_id = "prompt_sustainable_fdm_printing"
+problem_id = "ideation_sustainable_fdm_printing"
+label = "Bhatt, Ammersdorfer, and Inkermann (2025) project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["bhatt_ammersdorfer_inkermann_2025"]
+notes = "Verbatim classroom project brief listed in Table 1 as Topic B."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_soil_moisture_measurement"
+prompt_id = "prompt_soil_moisture_measurement"
+problem_id = "ideation_soil_moisture_measurement"
+label = "Bhatt, Ammersdorfer, and Inkermann (2025) project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["bhatt_ammersdorfer_inkermann_2025"]
+notes = "Verbatim classroom project brief listed in Table 1 as Topic C."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_sustainable_daily_helpers"
+prompt_id = "prompt_sustainable_daily_helpers"
+problem_id = "ideation_sustainable_daily_helpers"
+label = "Bhatt, Ammersdorfer, and Inkermann (2025) project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["bhatt_ammersdorfer_inkermann_2025"]
+notes = "Verbatim classroom project brief listed in Table 1 as Topic D."
 status = "complete"
 
 [[studies]]

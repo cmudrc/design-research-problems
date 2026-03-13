@@ -11,9 +11,9 @@ from design_research_problems._catalog._validation import validate_catalog
 
 def test_ideation_catalog_exposes_expected_table_sizes() -> None:
     catalog = get_ideation_catalog()
-    assert len(catalog.list_prompts()) == 40
-    assert len(catalog.list_variants()) == 40
-    assert len(catalog.list_families()) == 22
+    assert len(catalog.list_prompts()) == 48
+    assert len(catalog.list_variants()) == 48
+    assert len(catalog.list_families()) == 30
     assert len(catalog.list_studies()) == 6
 
 
