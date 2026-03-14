@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import replace
 from types import SimpleNamespace
 
+import numpy
 import pytest
 
 from design_research_problems import MissingOptionalDependencyError
@@ -12,6 +13,7 @@ from design_research_problems.problems.grammar._battery_cell_model import (
     BatteryParameterization,
     BatteryThermalPriors,
     battery_backend_config_from_mapping,
+    interpolate_cell_model,
 )
 from design_research_problems.problems.grammar._battery_circuit import (
     BatteryCellInstance,
@@ -21,6 +23,7 @@ from design_research_problems.problems.grammar._battery_circuit import (
     evaluate_battery_circuit,
 )
 from design_research_problems.problems.grammar._battery_layout import (
+    CELL_SPEC_18650,
     DEFAULT_INTERCONNECT_RESISTANCE_OHM,
     BatteryRequirements,
 )
@@ -33,6 +36,18 @@ def _static_cell_model() -> BatteryCellModel:
         series_resistance_ohm=(0.01, 0.01),
         transient_resistance_ohm=(0.0, 0.0),
         transient_capacitance_f=(1.0, 1.0),
+    )
+
+
+def _static_two_rc_cell_model() -> BatteryCellModel:
+    return BatteryCellModel(
+        soc_grid=(0.0, 0.5, 1.0),
+        open_circuit_voltage_v=(3.2, 3.7, 4.2),
+        series_resistance_ohm=(0.012, 0.011, 0.010),
+        transient_resistance_ohm=(0.022, 0.020, 0.018),
+        transient_capacitance_f=(120.0, 150.0, 180.0),
+        secondary_transient_resistance_ohm=(0.016, 0.014, 0.012),
+        secondary_transient_capacitance_f=(900.0, 1000.0, 1100.0),
     )
 
 
@@ -57,6 +72,75 @@ def _temperature_sensitive_pybamm_module() -> SimpleNamespace:
     return SimpleNamespace(
         equivalent_circuit=SimpleNamespace(Thevenin=thevenin_factory),
         ParameterValues=lambda name: dict(defaults),
+    )
+
+
+def _profile_segments(
+    battery_circuit_module: SimpleNamespace | object,
+    *pairs: tuple[float, float],
+) -> tuple[object, ...]:
+    return tuple(
+        battery_circuit_module._BatteryCurrentProfileSegment(duration_s=duration_s, current_a=current_a)
+        for duration_s, current_a in pairs
+    )
+
+
+def _rmse(left: numpy.ndarray, right: numpy.ndarray) -> float:
+    return float(numpy.sqrt(numpy.mean((left - right) ** 2)))
+
+
+def _run_live_pybamm_spm_profile(
+    *,
+    parameter_set: str,
+    initial_soc: float,
+    temperature_c: float,
+    profile_pairs: tuple[tuple[float, float], ...],
+) -> tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    try:
+        pybamm_module = battery_cell_model.import_pybamm()
+    except MissingOptionalDependencyError:
+        pytest.skip("pybamm is not installed in this environment.")
+
+    steps: list[str] = []
+    for duration_s, current_a in profile_pairs:
+        duration_label = round(duration_s)
+        if abs(current_a) <= 1.0e-12:
+            steps.append(f"Rest for {duration_label} seconds")
+        else:
+            steps.append(f"Discharge at {current_a:.3f} A for {duration_label} seconds")
+
+    parameter_values = pybamm_module.ParameterValues(parameter_set)
+    update_method = getattr(parameter_values, "update", None)
+    if callable(update_method):
+        try:
+            update_method(
+                {
+                    "Initial temperature [K]": 273.15 + temperature_c,
+                    "Ambient temperature [K]": 273.15 + temperature_c,
+                },
+                check_already_exists=False,
+            )
+        except TypeError:
+            update_method(
+                {
+                    "Initial temperature [K]": 273.15 + temperature_c,
+                    "Ambient temperature [K]": 273.15 + temperature_c,
+                }
+            )
+    simulation = pybamm_module.Simulation(
+        pybamm_module.lithium_ion.SPM(),
+        experiment=pybamm_module.Experiment(steps),
+        parameter_values=parameter_values,
+    )
+    solution = simulation.solve(initial_soc=initial_soc)
+    total_duration_s = sum(round(duration_s) for duration_s, _current_a in profile_pairs)
+    sample_times = numpy.arange(0.0, float(total_duration_s), 1.0, dtype=float)
+    return (
+        sample_times,
+        numpy.asarray(solution["Current [A]"](sample_times), dtype=float),
+        numpy.asarray(solution["Voltage [V]"](sample_times), dtype=float),
     )
 
 
@@ -179,6 +263,46 @@ def _two_cell_parallel_state_with_connection_resistance(resistance_ohm: float) -
         ),
         pack_positive_terminal_id=baseline.pack_positive_terminal_id,
         pack_negative_terminal_id=baseline.pack_negative_terminal_id,
+    )
+
+
+def _two_series_two_parallel_state() -> BatteryCircuitState:
+    return BatteryCircuitState(
+        cells=(
+            BatteryCellInstance(cell_id=0, positive_terminal_id=1, negative_terminal_id=0, x=0, y=0, z=0),
+            BatteryCellInstance(cell_id=1, positive_terminal_id=3, negative_terminal_id=2, x=1, y=0, z=0),
+            BatteryCellInstance(cell_id=2, positive_terminal_id=5, negative_terminal_id=4, x=0, y=1, z=0),
+            BatteryCellInstance(cell_id=3, positive_terminal_id=7, negative_terminal_id=6, x=1, y=1, z=0),
+        ),
+        connections=(
+            BatteryConnection(connection_id=0, from_terminal_id=1, to_terminal_id=2, ideal=True),
+            BatteryConnection(connection_id=1, from_terminal_id=5, to_terminal_id=6, ideal=True),
+            BatteryConnection(connection_id=2, from_terminal_id=0, to_terminal_id=4, ideal=True),
+            BatteryConnection(connection_id=3, from_terminal_id=3, to_terminal_id=7, ideal=True),
+        ),
+        pack_positive_terminal_id=3,
+        pack_negative_terminal_id=0,
+    )
+
+
+def _asymmetric_parallel_pack_state(*, link_resistance_ohm: float) -> BatteryCircuitState:
+    return BatteryCircuitState(
+        cells=(
+            BatteryCellInstance(cell_id=0, positive_terminal_id=1, negative_terminal_id=0, x=0, y=0, z=0),
+            BatteryCellInstance(cell_id=1, positive_terminal_id=3, negative_terminal_id=2, x=0, y=1, z=0),
+        ),
+        connections=(
+            BatteryConnection(connection_id=0, from_terminal_id=0, to_terminal_id=2, ideal=True),
+            BatteryConnection(
+                connection_id=1,
+                from_terminal_id=1,
+                to_terminal_id=3,
+                resistance_ohm=link_resistance_ohm,
+                ideal=False,
+            ),
+        ),
+        pack_positive_terminal_id=1,
+        pack_negative_terminal_id=0,
     )
 
 
@@ -953,3 +1077,524 @@ def test_load_18650_thermal_priors_is_cached(monkeypatch: pytest.MonkeyPatch) ->
     cache_clear = getattr(battery_cell_model.load_battery_cell_model, "cache_clear", None)
     if callable(cache_clear):
         cache_clear()
+
+
+def test_battery_backend_config_accepts_two_rc_mode() -> None:
+    config = battery_backend_config_from_mapping({"cell_model_mode": "pybamm_ecm_2rc"})
+    assert config.cell_model_mode == "pybamm_ecm_2rc"
+    assert config.thermal_mode == "isothermal"
+
+
+def test_battery_backend_config_accepts_direct_mode() -> None:
+    config = battery_backend_config_from_mapping({"cell_model_mode": "pybamm_direct"})
+    assert config.cell_model_mode == "pybamm_direct"
+    assert config.thermal_mode == "isothermal"
+
+
+def test_load_battery_cell_model_direct_mode_reports_evaluator_only_usage() -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+    with pytest.raises(ValueError, match="evaluator mode"):
+        battery_cell_model.load_battery_cell_model(BatteryBackendConfig(cell_model_mode="pybamm_direct"))
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+
+
+def test_load_battery_cell_model_two_rc_mode_uses_fitted_trace_bundle(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+    fake_parameter_values = {
+        "Nominal cell capacity [A.h]": 2.5,
+        "Initial temperature [K]": 298.15,
+        "Open-circuit voltage [V]": lambda temperature_k, current_a, soc: 3.0 + (1.1 * soc),
+    }
+    traces = tuple(
+        battery_cell_model._BatteryCurrentTrace(
+            initial_soc=soc,
+            temperature_c=temperature_c,
+            time_s=(0.0, 1.0),
+            current_a=(0.0, 0.0),
+            voltage_v=(4.0, 4.0),
+        )
+        for temperature_c in battery_cell_model._TWO_RC_IDENTIFICATION_TEMPERATURES_C
+        for soc in battery_cell_model._TWO_RC_IDENTIFICATION_SOC_GRID
+    )
+
+    monkeypatch.setattr(
+        battery_cell_model,
+        "_load_lithium_ion_parameter_values",
+        lambda **kwargs: (dict(fake_parameter_values), 1.0, 298.15),
+    )
+    monkeypatch.setattr(
+        battery_cell_model,
+        "_generate_pybamm_two_rc_identification_traces",
+        lambda **kwargs: traces,
+    )
+    monkeypatch.setattr(
+        battery_cell_model,
+        "_fit_two_rc_trace",
+        lambda trace, **kwargs: battery_cell_model._TwoRcFitResult(
+            initial_soc=trace.initial_soc,
+            temperature_c=trace.temperature_c,
+            series_resistance_ohm=0.010 + (0.002 * (1.0 - trace.initial_soc)),
+            transient_resistance_ohm=0.020 + (0.001 * trace.temperature_c / 25.0),
+            transient_capacitance_f=150.0 + (20.0 * trace.initial_soc),
+            secondary_transient_resistance_ohm=0.012 + (0.001 * (35.0 - trace.temperature_c) / 20.0),
+            secondary_transient_capacitance_f=900.0 + (50.0 * trace.initial_soc),
+        ),
+    )
+
+    model = battery_cell_model.load_battery_cell_model(BatteryBackendConfig(cell_model_mode="pybamm_ecm_2rc"))
+    assert model.resolved_mode == "pybamm_ecm_2rc"
+    assert model.source == "pybamm_spm_fit_2rc"
+    assert model.secondary_transient_resistance_ohm
+    assert model.secondary_transient_capacitance_f
+    assert model.dynamic_parameters is not None
+    assert model.dynamic_parameters.temperature_grid_c == pytest.approx((15.0, 25.0, 35.0))
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+
+
+def test_evaluate_battery_circuit_uses_pybamm_direct_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+
+    calls: list[tuple[int, int]] = []
+
+    def _fake_direct(
+        state: BatteryCircuitState,
+        requirements: BatteryRequirements,
+        analysis: object,
+        *,
+        simulate_to_failure: bool,
+        backend_config: BatteryBackendConfig,
+    ) -> tuple[object, str, str | None]:
+        del requirements, simulate_to_failure
+        calls.append((analysis.series_count, analysis.parallel_count))
+        return (
+            battery_circuit.BatteryCircuitSimulationResult(
+                pack_terminal_voltage_end=7.8,
+                required_pack_terminal_voltage_end=7.8,
+                delivered_capacity_ah=1.2,
+                max_cell_current_a=0.6,
+                min_cell_voltage_v=3.9,
+                total_connection_loss_w=0.0,
+                max_connection_current_a=0.0,
+                solver_steps=60,
+                is_feasible=True,
+                failure_reason=None,
+                end_cell_temperature_c=25.0,
+                max_cell_temperature_c=25.0,
+            ),
+            "pybamm_spm_direct",
+            backend_config.parameterization.resolved_parameter_set(),
+        )
+
+    monkeypatch.setattr(battery_circuit, "_simulate_battery_circuit_pybamm_direct", _fake_direct)
+
+    evaluation = evaluate_battery_circuit(
+        state=_two_cell_series_state(),
+        requirements=_relaxed_requirements(target_voltage_v=7.4, minimum_capacity_ah=1.0, minimum_current_a=1.0),
+        load_cell_model=lambda: (_ for _ in ()).throw(AssertionError("direct path should bypass surrogate loading")),
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_direct",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+        ),
+    )
+
+    assert calls == [(2, 1)]
+    assert evaluation.is_feasible is True
+    assert evaluation.cell_model_mode == "pybamm_direct"
+    assert evaluation.cell_model_source == "pybamm_spm_direct"
+    assert evaluation.cell_model_parameter_set == "Marquis2019"
+    assert evaluation.pack_terminal_voltage_end == pytest.approx(7.8)
+
+
+def test_pybamm_direct_rejects_nonideal_interconnect_topologies() -> None:
+    with pytest.raises(ValueError, match="ideal interconnects"):
+        evaluate_battery_circuit(
+            state=_two_cell_parallel_state_with_connection_resistance(0.01),
+            requirements=_relaxed_requirements(target_voltage_v=3.7, minimum_capacity_ah=1.0, minimum_current_a=1.0),
+            load_cell_model=_static_cell_model,
+            backend_config=BatteryBackendConfig(cell_model_mode="pybamm_direct"),
+        )
+
+
+def test_two_rc_profile_runner_exposes_fast_invariants() -> None:
+    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+
+    model = _static_two_rc_cell_model()
+    result = battery_circuit._simulate_battery_circuit_current_profile(
+        _single_cell_state(),
+        model,
+        profile_segments=_profile_segments(
+            battery_circuit,
+            (45.0, 2.5),
+            (180.0, 0.0),
+        ),
+        required_step_index=225,
+        backend_config=BatteryBackendConfig(thermal_mode="isothermal"),
+    )
+
+    assert result.is_feasible is True
+    assert result.max_kcl_residual_a < 1.0e-9
+    assert result.max_kvl_residual_v < 1.0e-9
+    assert result.delivered_capacity_ah > 0.0
+    assert result.cumulative_delivered_energy_j > 0.0
+    assert result.cumulative_cell_heat_j >= 0.0
+    assert result.cumulative_connection_loss_j >= 0.0
+    assert result.trace
+    assert all(0.0 <= soc <= 1.0 for _cell_id, soc in result.end_soc_by_cell_id)
+    assert all(soc < 1.0 for _cell_id, soc in result.end_soc_by_cell_id)
+    assert all(numpy.isfinite(value) for _cell_id, value in result.end_primary_rc_voltage_by_cell_id)
+    assert all(numpy.isfinite(value) for _cell_id, value in result.end_secondary_rc_voltage_by_cell_id)
+    available_energy_upper_bound_j = (
+        len(_single_cell_state().cells)
+        * CELL_SPEC_18650.nominal_capacity_ah
+        * 3600.0
+        * max(model.open_circuit_voltage_v)
+    )
+    assert (
+        result.cumulative_delivered_energy_j + result.cumulative_cell_heat_j + result.cumulative_connection_loss_j
+        <= available_energy_upper_bound_j
+    )
+
+
+def test_two_rc_long_rest_converges_toward_ocv() -> None:
+    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+
+    model = _static_two_rc_cell_model()
+    result = battery_circuit._simulate_battery_circuit_current_profile(
+        _single_cell_state(),
+        model,
+        profile_segments=_profile_segments(
+            battery_circuit,
+            (30.0, 5.0),
+            (300.0, 0.0),
+        ),
+        required_step_index=330,
+        backend_config=BatteryBackendConfig(thermal_mode="isothermal"),
+    )
+    rest_points = [point for point in result.trace if abs(point.pack_current_a) <= 1.0e-12]
+    assert rest_points
+    end_soc = result.end_soc_by_cell_id[0][1]
+    end_ocv_v, *_rest = interpolate_cell_model(model, end_soc)
+    assert abs(rest_points[-1].pack_terminal_voltage_v - end_ocv_v) < abs(
+        rest_points[0].pack_terminal_voltage_v - end_ocv_v
+    )
+    assert abs(rest_points[-1].pack_terminal_voltage_v - end_ocv_v) < 0.03
+
+
+def test_profile_runner_pack_sentinels_capture_symmetric_and_asymmetric_branch_split() -> None:
+    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+
+    model = _static_two_rc_cell_model()
+    symmetric = battery_circuit._simulate_battery_circuit_current_profile(
+        _two_series_two_parallel_state(),
+        model,
+        profile_segments=_profile_segments(battery_circuit, (60.0, 5.0)),
+        required_step_index=60,
+        backend_config=BatteryBackendConfig(thermal_mode="isothermal"),
+    )
+    symmetric_currents = dict(symmetric.end_cell_current_by_cell_id)
+    assert symmetric_currents[0] == pytest.approx(symmetric_currents[2], rel=1.0e-6, abs=1.0e-6)
+    assert symmetric_currents[1] == pytest.approx(symmetric_currents[3], rel=1.0e-6, abs=1.0e-6)
+
+    asymmetric = battery_circuit._simulate_battery_circuit_current_profile(
+        _asymmetric_parallel_pack_state(link_resistance_ohm=0.02),
+        model,
+        profile_segments=_profile_segments(battery_circuit, (60.0, 5.0)),
+        required_step_index=60,
+        backend_config=BatteryBackendConfig(thermal_mode="isothermal"),
+    )
+    asymmetric_currents = dict(asymmetric.end_cell_current_by_cell_id)
+    assert asymmetric_currents[0] > asymmetric_currents[1]
+
+
+@pytest.mark.pybamm_real
+def test_load_battery_cell_model_two_rc_mode_fits_live_pybamm_traces() -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+    model = battery_cell_model.load_battery_cell_model(
+        BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm_2rc",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+        )
+    )
+    assert model.resolved_mode == "pybamm_ecm_2rc"
+    assert model.secondary_transient_resistance_ohm
+    assert model.secondary_transient_capacitance_f
+    battery_cell_model._load_battery_cell_model_cached.cache_clear()
+
+
+@pytest.mark.pybamm_real
+def test_two_rc_mode_beats_one_rc_on_live_pybamm_pulse_rest_trace() -> None:
+    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+
+    profile_pairs = (
+        (60.0, CELL_SPEC_18650.nominal_capacity_ah),
+        (300.0, 0.0),
+    )
+    _times_s, _currents_a, oracle_voltage_v = _run_live_pybamm_spm_profile(
+        parameter_set="Marquis2019",
+        initial_soc=0.7,
+        temperature_c=25.0,
+        profile_pairs=profile_pairs,
+    )
+
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    one_rc_model = battery_cell_model.load_battery_cell_model(BatteryBackendConfig(cell_model_mode="pybamm_ecm"))
+    two_rc_model = battery_cell_model.load_battery_cell_model(
+        BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm_2rc",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+        )
+    )
+    one_rc = battery_circuit._simulate_battery_circuit_current_profile(
+        _single_cell_state(),
+        one_rc_model,
+        profile_segments=_profile_segments(battery_circuit, *profile_pairs),
+        required_step_index=sum(int(duration_s) for duration_s, _current_a in profile_pairs),
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm",
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+    two_rc = battery_circuit._simulate_battery_circuit_current_profile(
+        _single_cell_state(),
+        two_rc_model,
+        profile_segments=_profile_segments(battery_circuit, *profile_pairs),
+        required_step_index=sum(int(duration_s) for duration_s, _current_a in profile_pairs),
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm_2rc",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+
+    one_rc_voltage_v = numpy.asarray([point.pack_terminal_voltage_v for point in one_rc.trace], dtype=float)
+    two_rc_voltage_v = numpy.asarray([point.pack_terminal_voltage_v for point in two_rc.trace], dtype=float)
+    one_rc_rmse_v = _rmse(one_rc_voltage_v, oracle_voltage_v)
+    two_rc_rmse_v = _rmse(two_rc_voltage_v, oracle_voltage_v)
+    one_rc_end_rest_error_v = abs(one_rc_voltage_v[-1] - oracle_voltage_v[-1])
+    two_rc_end_rest_error_v = abs(two_rc_voltage_v[-1] - oracle_voltage_v[-1])
+
+    assert two_rc_rmse_v <= 0.8 * one_rc_rmse_v
+    assert two_rc_end_rest_error_v <= 0.8 * one_rc_end_rest_error_v
+
+
+@pytest.mark.pybamm_real
+def test_two_rc_mode_tracks_short_live_pybamm_dynamic_profile() -> None:
+    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+
+    profile_pairs = (
+        (45.0, 1.25),
+        (30.0, 0.0),
+        (60.0, 2.50),
+        (30.0, 0.75),
+        (45.0, 5.00),
+        (30.0, 0.0),
+        (60.0, 1.50),
+    )
+    _times_s, _currents_a, oracle_voltage_v = _run_live_pybamm_spm_profile(
+        parameter_set="Marquis2019",
+        initial_soc=0.7,
+        temperature_c=25.0,
+        profile_pairs=profile_pairs,
+    )
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    one_rc_model = battery_cell_model.load_battery_cell_model(BatteryBackendConfig(cell_model_mode="pybamm_ecm"))
+    two_rc_model = battery_cell_model.load_battery_cell_model(
+        BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm_2rc",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+        )
+    )
+    one_rc = battery_circuit._simulate_battery_circuit_current_profile(
+        _single_cell_state(),
+        one_rc_model,
+        profile_segments=_profile_segments(battery_circuit, *profile_pairs),
+        required_step_index=sum(int(duration_s) for duration_s, _current_a in profile_pairs),
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm",
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+    two_rc = battery_circuit._simulate_battery_circuit_current_profile(
+        _single_cell_state(),
+        two_rc_model,
+        profile_segments=_profile_segments(battery_circuit, *profile_pairs),
+        required_step_index=sum(int(duration_s) for duration_s, _current_a in profile_pairs),
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm_2rc",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+
+    one_rc_rmse_v = _rmse(
+        numpy.asarray([point.pack_terminal_voltage_v for point in one_rc.trace], dtype=float),
+        oracle_voltage_v,
+    )
+    two_rc_rmse_v = _rmse(
+        numpy.asarray([point.pack_terminal_voltage_v for point in two_rc.trace], dtype=float),
+        oracle_voltage_v,
+    )
+    assert two_rc_rmse_v <= (0.75 * one_rc_rmse_v)
+    assert two_rc_rmse_v < 0.30
+
+
+@pytest.mark.pybamm_real
+def test_live_fitted_two_rc_model_preserves_pack_sentinels() -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+
+    one_rc_model = battery_cell_model.load_battery_cell_model(BatteryBackendConfig(cell_model_mode="pybamm_ecm"))
+    two_rc_model = battery_cell_model.load_battery_cell_model(
+        BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm_2rc",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+        )
+    )
+    symmetric = battery_circuit._simulate_battery_circuit_current_profile(
+        _two_series_two_parallel_state(),
+        two_rc_model,
+        profile_segments=_profile_segments(battery_circuit, (60.0, 5.0)),
+        required_step_index=60,
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm_2rc",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+    asymmetric = battery_circuit._simulate_battery_circuit_current_profile(
+        _asymmetric_parallel_pack_state(link_resistance_ohm=0.02),
+        two_rc_model,
+        profile_segments=_profile_segments(battery_circuit, (60.0, 5.0)),
+        required_step_index=60,
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm_2rc",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+
+    symmetric_currents = dict(symmetric.end_cell_current_by_cell_id)
+    asymmetric_currents = dict(asymmetric.end_cell_current_by_cell_id)
+    one_rc_low_res = battery_circuit._simulate_battery_circuit_current_profile(
+        _asymmetric_parallel_pack_state(link_resistance_ohm=0.005),
+        one_rc_model,
+        profile_segments=_profile_segments(battery_circuit, (60.0, 5.0)),
+        required_step_index=60,
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm",
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+    one_rc_high_res = battery_circuit._simulate_battery_circuit_current_profile(
+        _asymmetric_parallel_pack_state(link_resistance_ohm=0.02),
+        one_rc_model,
+        profile_segments=_profile_segments(battery_circuit, (60.0, 5.0)),
+        required_step_index=60,
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm",
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+    two_rc_low_res = battery_circuit._simulate_battery_circuit_current_profile(
+        _asymmetric_parallel_pack_state(link_resistance_ohm=0.005),
+        two_rc_model,
+        profile_segments=_profile_segments(battery_circuit, (60.0, 5.0)),
+        required_step_index=60,
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm_2rc",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+    two_rc_high_res = battery_circuit._simulate_battery_circuit_current_profile(
+        _asymmetric_parallel_pack_state(link_resistance_ohm=0.02),
+        two_rc_model,
+        profile_segments=_profile_segments(battery_circuit, (60.0, 5.0)),
+        required_step_index=60,
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_ecm_2rc",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+
+    assert symmetric.is_feasible is True
+    assert symmetric_currents[0] == pytest.approx(symmetric_currents[2], rel=1.0e-5, abs=1.0e-5)
+    assert asymmetric_currents[0] > asymmetric_currents[1]
+    assert one_rc_low_res.pack_terminal_voltage_end > one_rc_high_res.pack_terminal_voltage_end
+    assert two_rc_low_res.pack_terminal_voltage_end > two_rc_high_res.pack_terminal_voltage_end
+
+
+@pytest.mark.pybamm_real
+def test_pybamm_direct_mode_runs_for_ideal_series_parallel_pack() -> None:
+    evaluation = evaluate_battery_circuit(
+        state=_two_cell_series_state(),
+        requirements=_relaxed_requirements(target_voltage_v=7.4, minimum_capacity_ah=1.0, minimum_current_a=1.0),
+        load_cell_model=_static_cell_model,
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_direct",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+
+    assert evaluation.is_feasible is True
+    assert evaluation.cell_model_mode == "pybamm_direct"
+    assert evaluation.cell_model_source == "pybamm_spm_direct"
+    assert evaluation.pack_terminal_voltage_end is not None
+    assert evaluation.delivered_capacity_ah is not None
+
+
+@pytest.mark.pybamm_real
+def test_pybamm_direct_mode_supports_lumped_thermal_feedback() -> None:
+    baseline = evaluate_battery_circuit(
+        state=_two_cell_series_state(),
+        requirements=_relaxed_requirements(target_voltage_v=7.4, minimum_capacity_ah=1.5, minimum_current_a=5.0),
+        load_cell_model=_static_cell_model,
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_direct",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+            thermal_mode="isothermal",
+            ambient_temp_c=25.0,
+        ),
+    )
+    lumped = evaluate_battery_circuit(
+        state=_two_cell_series_state(),
+        requirements=_relaxed_requirements(target_voltage_v=7.4, minimum_capacity_ah=1.5, minimum_current_a=5.0),
+        load_cell_model=_static_cell_model,
+        backend_config=BatteryBackendConfig(
+            cell_model_mode="pybamm_direct",
+            parameterization=BatteryParameterization(parameter_set="Marquis2019"),
+            thermal_mode="lumped",
+            ambient_temp_c=25.0,
+        ),
+    )
+
+    assert baseline.is_feasible is True
+    assert lumped.is_feasible is True
+    assert lumped.end_cell_temperature_c is not None
+    assert lumped.max_cell_temperature_c is not None
+    assert lumped.end_cell_temperature_c > baseline.end_cell_temperature_c
+    assert lumped.max_cell_temperature_c >= lumped.end_cell_temperature_c

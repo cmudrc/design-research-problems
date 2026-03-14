@@ -215,6 +215,36 @@ explicitly. Provenance records:
 This is meant to make battery benchmark fidelity legible without pretending
 that every public problem uses the same evaluator.
 
+Electrical Backend Modes
+------------------------
+
+For explicit-circuit and hybrid-thermal evaluation, the shared backend now
+distinguishes between a compact default ECM path and a medium-fidelity pulse
+path:
+
+- ``auto -> pybamm_ecm`` keeps the existing one-RC Thevenin-style surrogate as
+  the default for backwards compatibility and fast screening.
+- ``pybamm_ecm_2rc`` adds a second relaxation branch and is fit from live
+  single-cell PyBaMM SPM traces over a compact SOC/temperature pulse-rest
+  design.
+- ``pybamm_direct`` runs a direct PyBaMM SPM discharge for **ideal
+  series-parallel** packs when a higher-cost reference evaluation is worth the
+  runtime.
+
+The intended claim for ``pybamm_ecm_2rc`` is deliberately narrow:
+
+  scientifically grounded for conceptual pack ranking and first-order transient
+  voltage prediction under benchmarked discharge and pulse/rest conditions,
+  with explicit limits outside those regimes.
+
+The backend still does **not** claim to cover:
+
+- strong-hysteresis chemistries unless a later hysteresis mode is added;
+- aggressive charge or regenerative operating histories;
+- arbitrary asymmetric explicit-netlist current-split problems through the
+  ``pybamm_direct`` path;
+- production BMS use, safety-critical prediction, or plating-risk claims.
+
 Validation Matrix
 -----------------
 
@@ -236,6 +266,14 @@ battery-validation campaign:
 +-------------------------------+------------------------------------------------------+
 | Fast-charge DFN anchor        | PyBaMM model and solver reproducibility checks       |
 +-------------------------------+------------------------------------------------------+
+
+For the shared explicit battery backend, validation is split into two layers:
+
+- always-on invariant checks for KCL/KVL consistency, SOC/state boundedness,
+  discharge monotonicity, long-rest OCV convergence, and energy/loss sanity;
+- marked ``pybamm_real`` oracle checks against live PyBaMM single-cell
+  pulse/rest and short dynamic traces, plus small symmetric/asymmetric pack
+  sentinels using the fitted backend models.
 
 Background References
 ---------------------

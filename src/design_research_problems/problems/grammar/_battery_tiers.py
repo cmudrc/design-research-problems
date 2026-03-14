@@ -9,6 +9,7 @@ import numpy
 from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
+from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._domains.battery_benchmark import (
     BatteryEvaluationMode,
     BatteryRepresentationMode,
@@ -20,11 +21,16 @@ from design_research_problems.problems._domains.battery_cell_model import (
     resolve_battery_backend_config,
 )
 from design_research_problems.problems._domains.battery_circuit import BatteryCircuitState
-from design_research_problems.problems._domains.battery_layout import CELL_SPEC_18650, MIN_SPACING_MM
+from design_research_problems.problems._domains.battery_layout import (
+    CELL_SPEC_18650,
+    MIN_SPACING_MM,
+    BatteryRequirements,
+)
 from design_research_problems.problems._domains.battery_tier_metrics import (
     BatteryTierMetrics,
 )
 from design_research_problems.problems._grammar import GrammarProblem, GrammarTransition
+from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems.grammar._battery_pack_open import BatteryPack18650OpenEndedProblem
 from design_research_problems.problems.grammar._battery_pack_sp import BatteryPack18650SeriesParallelProblem
 from design_research_problems.problems.grammar._battery_problem_base import (
@@ -32,12 +38,11 @@ from design_research_problems.problems.grammar._battery_problem_base import (
     parse_battery_requirements,
 )
 from design_research_problems.problems.optimization._battery_tiers import (
-    Battery18650Tier2LayoutOptimizationProblem,
-    Battery18650Tier4ThermalOptimizationProblem,
     Battery18650T2PoseSurrogateOptimizationProblem,
     Battery18650T3ATopologySurrogateOptimizationProblem,
     Battery18650T4ThermalHybridOptimizationProblem,
-    Battery18650T1RectangularSurrogateOptimizationProblem,
+    Battery18650Tier2LayoutOptimizationProblem,
+    Battery18650Tier4ThermalOptimizationProblem,
 )
 
 _POSE_MOVE_STEP_MM = 10.0
@@ -383,18 +388,18 @@ class Battery18650T1RectangularSurrogateGrammarProblem(Battery18650Tier1SeriesPa
     def __init__(
         self,
         *,
-        metadata: object,
+        metadata: ProblemMetadata,
         statement_markdown: str = "",
-        resource_bundle: object | None = None,
-        requirements: object | None = None,
+        resource_bundle: PackageResourceBundle | None = None,
+        requirements: BatteryRequirements | None = None,
         backend_config: BatteryBackendConfig | None = None,
         evaluation_mode: str | BatteryEvaluationMode = BatteryEvaluationMode.ANALYTIC_SURROGATE.value,
     ) -> None:
         super().__init__(
-            metadata=cast(object, metadata),
+            metadata=metadata,
             statement_markdown=statement_markdown,
-            resource_bundle=cast(object | None, resource_bundle),
-            requirements=cast(object | None, requirements),
+            resource_bundle=resource_bundle,
+            requirements=requirements,
             backend_config=backend_config,
         )
         self.evaluation_mode = coerce_battery_evaluation_mode(
@@ -434,6 +439,7 @@ class Battery18650T2PoseSurrogateGrammarProblem(Battery18650Tier2LayoutGrammarPr
 
     def __init__(self, *, optimizer: Battery18650T2PoseSurrogateOptimizationProblem) -> None:
         super().__init__(optimizer=optimizer)
+        self._optimizer: Battery18650T2PoseSurrogateOptimizationProblem = optimizer
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T2PoseSurrogateGrammarProblem:
@@ -472,7 +478,11 @@ class Battery18650T3ATopologySurrogateGrammarProblem(GrammarProblem[tuple[float,
             for delta in (-1.0, 1.0):
                 candidate = vector.copy()
                 candidate[index] = float(
-                    numpy.clip(candidate[index] + delta, self._optimizer.bounds.lb[index], self._optimizer.bounds.ub[index])
+                    numpy.clip(
+                        candidate[index] + delta,
+                        self._optimizer.bounds.lb[index],
+                        self._optimizer.bounds.ub[index],
+                    )
                 )
                 if candidate[index] == vector[index]:
                     continue
@@ -489,7 +499,11 @@ class Battery18650T3ATopologySurrogateGrammarProblem(GrammarProblem[tuple[float,
             for delta in (-self._config.move_step_mm, self._config.move_step_mm):
                 candidate = vector.copy()
                 candidate[index] = float(
-                    numpy.clip(candidate[index] + delta, self._optimizer.bounds.lb[index], self._optimizer.bounds.ub[index])
+                    numpy.clip(
+                        candidate[index] + delta,
+                        self._optimizer.bounds.lb[index],
+                        self._optimizer.bounds.ub[index],
+                    )
                 )
                 if candidate[index] == vector[index]:
                     continue
@@ -542,19 +556,19 @@ class Battery18650T3BNetlistExplicitGrammarProblem(Battery18650Tier3TopologyGram
     def __init__(
         self,
         *,
-        metadata: object,
+        metadata: ProblemMetadata,
         statement_markdown: str = "",
-        resource_bundle: object | None = None,
-        requirements: object | None = None,
+        resource_bundle: PackageResourceBundle | None = None,
+        requirements: BatteryRequirements | None = None,
         max_cell_count: int = 24,
         backend_config: BatteryBackendConfig | None = None,
         evaluation_mode: str | BatteryEvaluationMode = BatteryEvaluationMode.EXPLICIT_CIRCUIT.value,
     ) -> None:
         super().__init__(
-            metadata=cast(object, metadata),
+            metadata=metadata,
             statement_markdown=statement_markdown,
-            resource_bundle=cast(object | None, resource_bundle),
-            requirements=cast(object | None, requirements),
+            resource_bundle=resource_bundle,
+            requirements=requirements,
             max_cell_count=max_cell_count,
             backend_config=backend_config,
         )
@@ -598,6 +612,7 @@ class Battery18650T4ThermalHybridGrammarProblem(Battery18650Tier4ThermalGrammarP
 
     def __init__(self, *, optimizer: Battery18650T4ThermalHybridOptimizationProblem) -> None:
         super().__init__(optimizer=optimizer)
+        self._optimizer: Battery18650T4ThermalHybridOptimizationProblem = optimizer
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T4ThermalHybridGrammarProblem:
@@ -610,13 +625,13 @@ class Battery18650T4ThermalHybridGrammarProblem(Battery18650Tier4ThermalGrammarP
 
 
 __all__ = [
-    "Battery18650Tier1SeriesParallelGrammarProblem",
-    "Battery18650Tier2LayoutGrammarProblem",
-    "Battery18650Tier3TopologyGrammarProblem",
-    "Battery18650Tier4ThermalGrammarProblem",
     "Battery18650T1RectangularSurrogateGrammarProblem",
     "Battery18650T2PoseSurrogateGrammarProblem",
     "Battery18650T3ATopologySurrogateGrammarProblem",
     "Battery18650T3BNetlistExplicitGrammarProblem",
     "Battery18650T4ThermalHybridGrammarProblem",
+    "Battery18650Tier1SeriesParallelGrammarProblem",
+    "Battery18650Tier2LayoutGrammarProblem",
+    "Battery18650Tier3TopologyGrammarProblem",
+    "Battery18650Tier4ThermalGrammarProblem",
 ]

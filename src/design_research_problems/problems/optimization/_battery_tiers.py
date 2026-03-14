@@ -11,15 +11,6 @@ from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._domains.battery_cell_model import (
-    BatteryBackendConfig,
-    BatteryThermalPriors,
-    interpolate_total_resistance,
-    load_18650_cell_model,
-    load_battery_thermal_priors,
-    load_18650_thermal_priors,
-    resolve_battery_backend_config,
-)
 from design_research_problems.problems._domains.battery_benchmark import (
     BatteryEvaluationMode,
     BatteryImbalanceModel,
@@ -27,6 +18,15 @@ from design_research_problems.problems._domains.battery_benchmark import (
     build_battery_evaluation_provenance,
     coerce_battery_evaluation_mode,
     coerce_battery_imbalance_model,
+)
+from design_research_problems.problems._domains.battery_cell_model import (
+    BatteryBackendConfig,
+    BatteryThermalPriors,
+    interpolate_total_resistance,
+    load_18650_cell_model,
+    load_18650_thermal_priors,
+    load_battery_thermal_priors,
+    resolve_battery_backend_config,
 )
 from design_research_problems.problems._domains.battery_circuit import (
     BatteryCellInstance,
@@ -2004,8 +2004,8 @@ class Battery18650T4ThermalHybridOptimizationProblem(
             ),
         )
 
-    def decode_candidate(self, variables: NDArray[numpy.float64]) -> Tier4DecodedCandidate:
-        return self.decode_thermal_candidate(variables)
+    def decode_candidate(self, variables: NDArray[numpy.float64]) -> Tier3DecodedCandidate:
+        return super().decode_candidate(variables)
 
     def _effective_parallel_and_resistance(self, decoded: Tier3DecodedCandidate) -> tuple[float, float]:
         parallel_equivalent = max(_stage_parallel_equivalent(decoded.stage_counts, self.imbalance_model), 1.0)
@@ -2127,7 +2127,9 @@ class Battery18650T4ThermalHybridOptimizationProblem(
             decoded = super()._decode(self._normalize_vector(variables)[:-3])
             evaluation = self._projected_circuit_evaluation(decoded)
             cell_model_source = evaluation.cell_model_source
-            thermal_prior_source = self._thermal_priors.source if self.evaluation_mode is BatteryEvaluationMode.HYBRID_THERMAL else None
+            thermal_prior_source = (
+                self._thermal_priors.source if self.evaluation_mode is BatteryEvaluationMode.HYBRID_THERMAL else None
+            )
             honored_backend_fields = _resolved_backend_field_names(self.backend_config)
             projected_before_scoring = True
             projection_notes = self._projection_notes()
@@ -2146,14 +2148,14 @@ class Battery18650T4ThermalHybridOptimizationProblem(
 
 
 __all__ = [
-    "Battery18650Tier1SeriesParallelOptimizationProblem",
-    "Battery18650Tier2LayoutOptimizationProblem",
-    "Battery18650Tier3TopologyOptimizationProblem",
-    "Battery18650Tier4ThermalOptimizationProblem",
     "Battery18650T1RectangularSurrogateOptimizationProblem",
     "Battery18650T2PoseSurrogateOptimizationProblem",
     "Battery18650T3ATopologySurrogateOptimizationProblem",
     "Battery18650T4ThermalHybridOptimizationProblem",
+    "Battery18650Tier1SeriesParallelOptimizationProblem",
+    "Battery18650Tier2LayoutOptimizationProblem",
+    "Battery18650Tier3TopologyOptimizationProblem",
+    "Battery18650Tier4ThermalOptimizationProblem",
     "Tier2DecodedCandidate",
     "Tier3DecodedCandidate",
     "Tier4DecodedCandidate",

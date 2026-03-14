@@ -12,23 +12,27 @@ from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import MissingOptionalDependencyError
 from design_research_problems._optional import import_optional_module
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._domains.battery_cell_model import (
-    BatteryBackendConfig,
-    load_18650_cell_model,
-    resolve_battery_backend_config,
-)
 from design_research_problems.problems._domains.battery_benchmark import (
     BatteryEvaluationMode,
     BatteryRepresentationMode,
     build_battery_evaluation_provenance,
     coerce_battery_evaluation_mode,
 )
+from design_research_problems.problems._domains.battery_cell_model import (
+    BatteryBackendConfig,
+    load_18650_cell_model,
+    resolve_battery_backend_config,
+)
 from design_research_problems.problems._domains.battery_circuit import (
     BatteryCircuitEvaluation,
     BatteryCircuitState,
     evaluate_battery_circuit,
 )
-from design_research_problems.problems._domains.battery_layout import CELL_SPEC_18650, MIN_SPACING_MM, BatteryRequirements
+from design_research_problems.problems._domains.battery_layout import (
+    CELL_SPEC_18650,
+    MIN_SPACING_MM,
+    BatteryRequirements,
+)
 from design_research_problems.problems._domains.battery_tier_metrics import BatteryObjectiveWeights, BatteryTierMetrics
 from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems._optimization import (
@@ -1028,7 +1032,9 @@ class Battery18650T3BNetlistExplicitOptimizationProblem(BatteryOpenEndedCapacity
 
     def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
         evaluation = self._evaluation_from_variables(variables)
-        delivered_capacity = 0.0 if evaluation.delivered_capacity_ah is None else float(evaluation.delivered_capacity_ah)
+        delivered_capacity = (
+            0.0 if evaluation.delivered_capacity_ah is None else float(evaluation.delivered_capacity_ah)
+        )
         max_cell_current = 0.0 if evaluation.max_cell_current_a is None else float(evaluation.max_cell_current_a)
         parallel_equivalent = max(delivered_capacity / max(CELL_SPEC_18650.nominal_capacity_ah, 1.0e-9), 1.0)
         max_temperature_c = _thermal_peak_temperature_c(

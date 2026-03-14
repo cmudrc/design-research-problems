@@ -106,7 +106,9 @@ if TYPE_CHECKING:
     from ._battery_tiers import (
         Battery18650T3ATopologySurrogateGrammarProblem as Battery18650T3ATopologySurrogateGrammarProblem,
     )
-    from ._battery_tiers import Battery18650T3BNetlistExplicitGrammarProblem as Battery18650T3BNetlistExplicitGrammarProblem
+    from ._battery_tiers import (
+        Battery18650T3BNetlistExplicitGrammarProblem as Battery18650T3BNetlistExplicitGrammarProblem,
+    )
     from ._battery_tiers import Battery18650T4ThermalHybridGrammarProblem as Battery18650T4ThermalHybridGrammarProblem
     from ._iot_home import IoTHomeCoolingGrammarProblem as IoTHomeCoolingGrammarProblem
     from ._iot_home import IoTHomeEvaluation as IoTHomeEvaluation

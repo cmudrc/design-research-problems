@@ -8,6 +8,7 @@ from functools import lru_cache
 from typing import Any
 
 import numpy
+from numpy.typing import NDArray
 
 from design_research_problems._exceptions import MissingOptionalDependencyError
 from design_research_problems._optional import import_optional_module
@@ -24,6 +25,8 @@ _SUPPORTED_CELL_MODEL_MODES = frozenset(
     {
         "auto",
         "pybamm_ecm",
+        "pybamm_ecm_2rc",
+        "pybamm_direct",
         "pybamm_spm",
         "pybamm_dfn",
     }
@@ -40,6 +43,34 @@ _REQUIRED_ECM_PARAMETER_FUNCTION_KEYS = (
     "R1 [Ohm]",
     "C1 [F]",
 )
+_TWO_RC_IDENTIFICATION_SOC_GRID = (0.9, 0.7, 0.5, 0.3, 0.1)
+_TWO_RC_IDENTIFICATION_TEMPERATURES_C = (15.0, 25.0, 35.0)
+_TWO_RC_REFERENCE_TEMPERATURE_C = 25.0
+_TWO_RC_REFERENCE_SOC_GRID = tuple(index / 10.0 for index in range(11))
+
+
+@dataclass(frozen=True)
+class _BatteryCurrentTrace:
+    """One sampled single-cell current trace used for ECM identification."""
+
+    initial_soc: float
+    temperature_c: float
+    time_s: tuple[float, ...]
+    current_a: tuple[float, ...]
+    voltage_v: tuple[float, ...]
+
+
+@dataclass(frozen=True)
+class _TwoRcFitResult:
+    """One fitted 2-RC parameter bundle at one SOC / temperature point."""
+
+    initial_soc: float
+    temperature_c: float
+    series_resistance_ohm: float
+    transient_resistance_ohm: float
+    transient_capacitance_f: float
+    secondary_transient_resistance_ohm: float
+    secondary_transient_capacitance_f: float
 
 
 @dataclass(frozen=True)
@@ -117,6 +148,10 @@ class BatteryCellModel:
     """Effective RC polarization resistance values aligned to ``soc_grid``."""
     transient_capacitance_f: tuple[float, ...]
     """Effective RC polarization capacitance values aligned to ``soc_grid``."""
+    secondary_transient_resistance_ohm: tuple[float, ...] = ()
+    """Optional second RC polarization resistance aligned to ``soc_grid``."""
+    secondary_transient_capacitance_f: tuple[float, ...] = ()
+    """Optional second RC polarization capacitance aligned to ``soc_grid``."""
     source: str = "custom"
     """Origin of the surrogate, such as ``pybamm_thevenin`` or one custom test stub."""
     warning_message: str | None = None
@@ -136,13 +171,22 @@ class _BatteryCellDynamicParameters:
     """Temperature-aware parameter bundle retained for runtime interpolation."""
 
     parameter_values: Any
-    open_circuit_voltage_fn: object
-    series_resistance_fn: object
-    transient_resistance_fn: object
-    transient_capacitance_fn: object
-    resistance_scale: float
-    resistance_normalization: float
-    capacitance_normalization: float
+    open_circuit_voltage_fn: object | None = None
+    series_resistance_fn: object | None = None
+    transient_resistance_fn: object | None = None
+    transient_capacitance_fn: object | None = None
+    secondary_transient_resistance_fn: object | None = None
+    secondary_transient_capacitance_fn: object | None = None
+    resistance_scale: float = 1.0
+    resistance_normalization: float = 1.0
+    capacitance_normalization: float = 1.0
+    secondary_capacitance_normalization: float = 1.0
+    temperature_grid_c: tuple[float, ...] = ()
+    series_resistance_by_temperature_ohm: tuple[tuple[float, ...], ...] = ()
+    transient_resistance_by_temperature_ohm: tuple[tuple[float, ...], ...] = ()
+    transient_capacitance_by_temperature_f: tuple[tuple[float, ...], ...] = ()
+    secondary_transient_resistance_by_temperature_ohm: tuple[tuple[float, ...], ...] = ()
+    secondary_transient_capacitance_by_temperature_f: tuple[tuple[float, ...], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -314,6 +358,16 @@ def _build_cell_model_from_config(config: BatteryBackendConfig) -> BatteryCellMo
             resolved_parameter_set=resolved_parameter_set,
             ambient_temperature_c=None,
         )
+    if resolved_mode == "pybamm_ecm_2rc":
+        return _load_pybamm_ecm_two_rc_cell_model(
+            resolved_parameter_set=resolved_parameter_set,
+            ambient_temperature_c=None,
+        )
+    if resolved_mode == "pybamm_direct":
+        raise ValueError(
+            "pybamm_direct is a high-cost evaluator mode and does not expose a reusable surrogate cell model. "
+            "Use evaluate_battery_circuit(..., backend_config=BatteryBackendConfig(cell_model_mode='pybamm_direct'))."
+        )
     if resolved_mode == "pybamm_dfn":
         return _load_pybamm_lithium_ion_cell_model(
             model_family="dfn",
@@ -421,6 +475,52 @@ def _load_pybamm_ecm_cell_model(
     )
 
 
+def _load_pybamm_ecm_two_rc_cell_model(
+    *,
+    resolved_parameter_set: str | None,
+    ambient_temperature_c: float | None,
+) -> BatteryCellModel:
+    """Fit one 2-RC surrogate from live single-cell PyBaMM traces."""
+    try:
+        parameter_values, resistance_scale, ambient_temperature_k = _load_lithium_ion_parameter_values(
+            model_family="spm",
+            resolved_parameter_set=resolved_parameter_set,
+            ambient_temperature_c=ambient_temperature_c,
+        )
+        open_circuit_voltage_v = _build_reference_ocv_lookup(
+            parameter_values=parameter_values,
+            resolved_parameter_set=resolved_parameter_set,
+        )
+        traces = _generate_pybamm_two_rc_identification_traces(resolved_parameter_set=resolved_parameter_set)
+        fit_results = tuple(
+            _fit_two_rc_trace(
+                trace,
+                parameter_values=parameter_values,
+                resistance_scale=resistance_scale,
+                open_circuit_voltage_v=open_circuit_voltage_v,
+            )
+            for trace in traces
+        )
+    except MissingOptionalDependencyError:
+        raise
+    except Exception as exc:
+        raise MissingOptionalDependencyError(
+            "PyBaMM 2-RC trace fitting failed "
+            f"({type(exc).__name__}: {exc}). "
+            "Battery problem evaluation requires a supported PyBaMM version "
+            "with lithium_ion.SPM experiment support."
+        ) from exc
+
+    return _build_two_rc_cell_model_from_fit_results(
+        parameter_values=parameter_values,
+        fit_results=fit_results,
+        open_circuit_voltage_v=open_circuit_voltage_v,
+        ambient_temperature_k=ambient_temperature_k,
+        source="pybamm_spm_fit_2rc",
+        resolved_parameter_set=resolved_parameter_set,
+    )
+
+
 def _load_pybamm_lithium_ion_cell_model(
     *,
     model_family: str,
@@ -494,6 +594,436 @@ def _load_lithium_ion_parameter_values(
         ambient_temperature_c=ambient_temperature_c,
     )
     return (parameter_values, resistance_scale, ambient_temperature_k)
+
+
+def _generate_pybamm_two_rc_identification_traces(
+    *,
+    resolved_parameter_set: str | None,
+) -> tuple[_BatteryCurrentTrace, ...]:
+    """Return one compact live PyBaMM pulse/rest suite for 2-RC identification."""
+    pybamm_module = import_pybamm()
+    lithium_ion = getattr(pybamm_module, "lithium_ion", None)
+    spm_factory = getattr(lithium_ion, "SPM", None)
+    if not callable(spm_factory):
+        raise MissingOptionalDependencyError(
+            "A supported PyBaMM installation with lithium_ion.SPM is required for 2-RC identification."
+        )
+
+    traces: list[_BatteryCurrentTrace] = []
+    for temperature_c in _TWO_RC_IDENTIFICATION_TEMPERATURES_C:
+        for initial_soc in _TWO_RC_IDENTIFICATION_SOC_GRID:
+            model = spm_factory()
+            if resolved_parameter_set is None:
+                parameter_values = _copy_parameter_values(model.default_parameter_values)
+            else:
+                parameter_values = _load_named_parameter_values(
+                    pybamm_module=pybamm_module,
+                    parameter_set=resolved_parameter_set,
+                )
+            _resolve_ambient_temperature_k(
+                parameter_values=parameter_values,
+                ambient_temperature_c=temperature_c,
+            )
+            experiment = pybamm_module.Experiment(
+                _build_two_rc_identification_experiment_steps(
+                    include_long_rest=(
+                        abs(initial_soc - 0.5) <= 1.0e-9
+                        and abs(temperature_c - _TWO_RC_REFERENCE_TEMPERATURE_C) <= 1.0e-9
+                    )
+                )
+            )
+            simulation = pybamm_module.Simulation(model, experiment=experiment, parameter_values=parameter_values)
+            solution = simulation.solve(initial_soc=initial_soc)
+            time_end = round(float(solution.t[-1]))
+            sample_times = numpy.arange(0.0, float(time_end) + 1.0, 1.0, dtype=float)
+            traces.append(
+                _BatteryCurrentTrace(
+                    initial_soc=initial_soc,
+                    temperature_c=temperature_c,
+                    time_s=tuple(float(value) for value in sample_times),
+                    current_a=tuple(float(value) for value in solution["Current [A]"](sample_times)),
+                    voltage_v=tuple(float(value) for value in solution["Voltage [V]"](sample_times)),
+                )
+            )
+    return tuple(traces)
+
+
+def _build_two_rc_identification_experiment_steps(*, include_long_rest: bool) -> list[str]:
+    """Return one compact HPPC-like excitation design."""
+    one_c_current_a = CELL_SPEC_18650.nominal_capacity_ah
+    two_c_current_a = 2.0 * CELL_SPEC_18650.nominal_capacity_ah
+    steps = [
+        f"Discharge at {one_c_current_a:.3f} A for 10 seconds",
+        "Rest for 60 seconds",
+        f"Discharge at {one_c_current_a:.3f} A for 60 seconds",
+        "Rest for 60 seconds",
+        f"Discharge at {two_c_current_a:.3f} A for 10 seconds",
+        "Rest for 60 seconds",
+        f"Discharge at {two_c_current_a:.3f} A for 60 seconds",
+        "Rest for 60 seconds",
+    ]
+    if include_long_rest:
+        steps.append("Rest for 300 seconds")
+    return steps
+
+
+def _fit_two_rc_trace(
+    trace: _BatteryCurrentTrace,
+    *,
+    parameter_values: Any,
+    resistance_scale: float,
+    open_circuit_voltage_v: tuple[float, ...],
+) -> _TwoRcFitResult:
+    """Fit one 2-RC surrogate to one sampled PyBaMM voltage trace."""
+    from scipy.optimize import least_squares
+
+    capacity_ah = _parameter_value(
+        parameter_values,
+        "Nominal cell capacity [A.h]",
+        default=_parameter_value(parameter_values, "Cell capacity [A.h]", default=100.0),
+    )
+    ambient_temperature_k = 273.15 + float(trace.temperature_c)
+    del ambient_temperature_k
+    ocv_initial = _interpolate_scalar_series(_TWO_RC_REFERENCE_SOC_GRID, open_circuit_voltage_v, trace.initial_soc)
+    current_abs_max = max((abs(value) for value in trace.current_a), default=capacity_ah)
+    voltage_sag = max(0.0, ocv_initial - min(trace.voltage_v))
+    total_resistance_guess = max(1.0e-4, min(0.5, voltage_sag / max(current_abs_max, 1.0e-6)))
+    initial_guess = numpy.array(
+        [
+            0.45 * total_resistance_guess,
+            0.35 * total_resistance_guess,
+            8.0,
+            0.20 * total_resistance_guess,
+            120.0,
+        ],
+        dtype=float,
+    )
+    lower_bounds = numpy.array([1.0e-6, 1.0e-6, 0.5, 1.0e-6, 20.0], dtype=float)
+    upper_bounds = numpy.array([1.0, 1.0, 30.0, 1.0, 2_000.0], dtype=float)
+    fit = least_squares(
+        _two_rc_trace_residuals,
+        x0=initial_guess,
+        bounds=(lower_bounds, upper_bounds),
+        args=(trace, capacity_ah, open_circuit_voltage_v),
+        max_nfev=2_000,
+    )
+    if not fit.success:
+        raise MissingOptionalDependencyError(f"2-RC fitting did not converge for SOC={trace.initial_soc:.2f}.")
+
+    series_resistance_ohm = max(1.0e-6, float(fit.x[0]) * resistance_scale)
+    transient_resistance_ohm = max(1.0e-6, float(fit.x[1]) * resistance_scale)
+    secondary_transient_resistance_ohm = max(1.0e-6, float(fit.x[3]) * resistance_scale)
+    tau_fast_s = float(fit.x[2])
+    tau_slow_s = max(float(fit.x[4]), tau_fast_s + 1.0e-6)
+    transient_capacitance_f = max(1.0, tau_fast_s / transient_resistance_ohm)
+    secondary_transient_capacitance_f = max(1.0, tau_slow_s / secondary_transient_resistance_ohm)
+    return _TwoRcFitResult(
+        initial_soc=trace.initial_soc,
+        temperature_c=trace.temperature_c,
+        series_resistance_ohm=series_resistance_ohm,
+        transient_resistance_ohm=transient_resistance_ohm,
+        transient_capacitance_f=transient_capacitance_f,
+        secondary_transient_resistance_ohm=secondary_transient_resistance_ohm,
+        secondary_transient_capacitance_f=secondary_transient_capacitance_f,
+    )
+
+
+def _two_rc_trace_residuals(
+    values: numpy.ndarray,
+    trace: _BatteryCurrentTrace,
+    capacity_ah: float,
+    open_circuit_voltage_v: tuple[float, ...],
+) -> NDArray[numpy.float64]:
+    """Return voltage residuals for one 2-RC fit candidate."""
+    simulated = _simulate_two_rc_trace(
+        time_s=trace.time_s,
+        current_a=trace.current_a,
+        initial_soc=trace.initial_soc,
+        capacity_ah=capacity_ah,
+        open_circuit_voltage_v=open_circuit_voltage_v,
+        series_resistance_ohm=max(1.0e-6, float(values[0])),
+        transient_resistance_ohm=max(1.0e-6, float(values[1])),
+        transient_capacitance_f=max(1.0, float(values[2]) / max(float(values[1]), 1.0e-6)),
+        secondary_transient_resistance_ohm=max(1.0e-6, float(values[3])),
+        secondary_transient_capacitance_f=max(1.0, float(values[4]) / max(float(values[3]), 1.0e-6)),
+    )
+    residuals: NDArray[numpy.float64] = numpy.array(
+        simulated - numpy.array(trace.voltage_v, dtype=float, copy=False),
+        dtype=float,
+        copy=False,
+    )
+    return residuals
+
+
+def _simulate_two_rc_trace(
+    *,
+    time_s: tuple[float, ...],
+    current_a: tuple[float, ...],
+    initial_soc: float,
+    capacity_ah: float,
+    open_circuit_voltage_v: tuple[float, ...],
+    series_resistance_ohm: float,
+    transient_resistance_ohm: float,
+    transient_capacitance_f: float,
+    secondary_transient_resistance_ohm: float,
+    secondary_transient_capacitance_f: float,
+) -> NDArray[numpy.float64]:
+    """Simulate one sampled 2-RC terminal-voltage trajectory."""
+    voltage_trace = numpy.zeros(len(time_s), dtype=float)
+    soc = float(initial_soc)
+    primary_rc_voltage = 0.0
+    secondary_rc_voltage = 0.0
+    previous_time = float(time_s[0])
+
+    for index, (time_point_s, current_value_a) in enumerate(zip(time_s, current_a, strict=True)):
+        if index > 0:
+            dt_s = max(float(time_point_s) - previous_time, 0.0)
+            soc = min(1.0, max(0.0, soc - ((current_a[index - 1] * dt_s) / (capacity_ah * 3600.0))))
+            primary_rc_voltage = _advance_rc_voltage(
+                primary_rc_voltage,
+                current_a[index - 1],
+                transient_resistance_ohm,
+                transient_capacitance_f,
+                dt_s=dt_s,
+            )
+            secondary_rc_voltage = _advance_rc_voltage(
+                secondary_rc_voltage,
+                current_a[index - 1],
+                secondary_transient_resistance_ohm,
+                secondary_transient_capacitance_f,
+                dt_s=dt_s,
+            )
+        ocv = _interpolate_scalar_series(_TWO_RC_REFERENCE_SOC_GRID, open_circuit_voltage_v, soc)
+        voltage_trace[index] = (
+            ocv - (float(current_value_a) * series_resistance_ohm) - primary_rc_voltage - secondary_rc_voltage
+        )
+        previous_time = float(time_point_s)
+    return voltage_trace
+
+
+def _advance_rc_voltage(
+    current_voltage_v: float,
+    current_a: float,
+    resistance_ohm: float,
+    capacitance_f: float,
+    *,
+    dt_s: float,
+) -> float:
+    """Advance one RC overpotential with an exact discrete update."""
+    if resistance_ohm <= 1.0e-12 or capacitance_f <= 1.0e-12 or dt_s <= 0.0:
+        return 0.0
+    tau_seconds = resistance_ohm * capacitance_f
+    alpha = float(numpy.exp(-dt_s / max(tau_seconds, 1.0e-12)))
+    return (alpha * current_voltage_v) + ((1.0 - alpha) * current_a * resistance_ohm)
+
+
+def _build_two_rc_cell_model_from_fit_results(
+    *,
+    parameter_values: Any,
+    fit_results: tuple[_TwoRcFitResult, ...],
+    open_circuit_voltage_v: tuple[float, ...],
+    ambient_temperature_k: float,
+    source: str,
+    resolved_parameter_set: str | None,
+) -> BatteryCellModel:
+    """Build one reference-plus-temperature 2-RC surrogate from fitted traces."""
+    by_temperature: dict[float, list[_TwoRcFitResult]] = {}
+    for fit in fit_results:
+        by_temperature.setdefault(float(fit.temperature_c), []).append(fit)
+
+    temperature_grid_c = tuple(sorted(by_temperature))
+    series_tables: list[tuple[float, ...]] = []
+    transient_tables: list[tuple[float, ...]] = []
+    capacitance_tables: list[tuple[float, ...]] = []
+    secondary_transient_tables: list[tuple[float, ...]] = []
+    secondary_capacitance_tables: list[tuple[float, ...]] = []
+
+    for temperature_c in temperature_grid_c:
+        ordered = sorted(by_temperature[temperature_c], key=lambda item: item.initial_soc)
+        source_soc_grid = tuple(item.initial_soc for item in ordered)
+        series_tables.append(
+            tuple(
+                _interpolate_scalar_series(source_soc_grid, tuple(item.series_resistance_ohm for item in ordered), soc)
+                for soc in _TWO_RC_REFERENCE_SOC_GRID
+            )
+        )
+        transient_tables.append(
+            tuple(
+                _interpolate_scalar_series(
+                    source_soc_grid,
+                    tuple(item.transient_resistance_ohm for item in ordered),
+                    soc,
+                )
+                for soc in _TWO_RC_REFERENCE_SOC_GRID
+            )
+        )
+        capacitance_tables.append(
+            tuple(
+                _interpolate_scalar_series(
+                    source_soc_grid,
+                    tuple(item.transient_capacitance_f for item in ordered),
+                    soc,
+                )
+                for soc in _TWO_RC_REFERENCE_SOC_GRID
+            )
+        )
+        secondary_transient_tables.append(
+            tuple(
+                _interpolate_scalar_series(
+                    source_soc_grid,
+                    tuple(item.secondary_transient_resistance_ohm for item in ordered),
+                    soc,
+                )
+                for soc in _TWO_RC_REFERENCE_SOC_GRID
+            )
+        )
+        secondary_capacitance_tables.append(
+            tuple(
+                _interpolate_scalar_series(
+                    source_soc_grid,
+                    tuple(item.secondary_transient_capacitance_f for item in ordered),
+                    soc,
+                )
+                for soc in _TWO_RC_REFERENCE_SOC_GRID
+            )
+        )
+
+    reference_temp_index = min(
+        range(len(temperature_grid_c)),
+        key=lambda index: abs(temperature_grid_c[index] - 25.0),
+    )
+    nominal_index = min(
+        range(len(_TWO_RC_REFERENCE_SOC_GRID)),
+        key=lambda index: abs(_TWO_RC_REFERENCE_SOC_GRID[index] - 0.5),
+    )
+    nominal_total_resistance = (
+        series_tables[reference_temp_index][nominal_index]
+        + transient_tables[reference_temp_index][nominal_index]
+        + secondary_transient_tables[reference_temp_index][nominal_index]
+    )
+    resistance_normalization = (
+        1.0
+        if nominal_total_resistance <= 1.0e-12
+        else CELL_SPEC_18650.internal_resistance_ohm / nominal_total_resistance
+    )
+    capacitance_normalization = max(resistance_normalization, 1.0e-12)
+    secondary_capacitance_normalization = max(resistance_normalization, 1.0e-12)
+
+    series_tables = [
+        tuple(max(1.0e-6, value * resistance_normalization) for value in values) for values in series_tables
+    ]
+    transient_tables = [
+        tuple(max(0.0, value * resistance_normalization) for value in values) for values in transient_tables
+    ]
+    secondary_transient_tables = [
+        tuple(max(0.0, value * resistance_normalization) for value in values) for values in secondary_transient_tables
+    ]
+    capacitance_tables = [
+        tuple(
+            max(1.0, value / capacitance_normalization) if transient_tables[row_index][column_index] > 1.0e-12 else 1.0
+            for column_index, value in enumerate(values)
+        )
+        for row_index, values in enumerate(capacitance_tables)
+    ]
+    secondary_capacitance_tables = [
+        tuple(
+            max(1.0, value / secondary_capacitance_normalization)
+            if secondary_transient_tables[row_index][column_index] > 1.0e-12
+            else 1.0
+            for column_index, value in enumerate(values)
+        )
+        for row_index, values in enumerate(secondary_capacitance_tables)
+    ]
+
+    dynamic_parameters = _BatteryCellDynamicParameters(
+        parameter_values=parameter_values,
+        open_circuit_voltage_fn=_mapping_get(parameter_values, "Open-circuit voltage [V]"),
+        resistance_normalization=resistance_normalization,
+        capacitance_normalization=capacitance_normalization,
+        secondary_capacitance_normalization=secondary_capacitance_normalization,
+        temperature_grid_c=temperature_grid_c,
+        series_resistance_by_temperature_ohm=tuple(series_tables),
+        transient_resistance_by_temperature_ohm=tuple(transient_tables),
+        transient_capacitance_by_temperature_f=tuple(capacitance_tables),
+        secondary_transient_resistance_by_temperature_ohm=tuple(secondary_transient_tables),
+        secondary_transient_capacitance_by_temperature_f=tuple(secondary_capacitance_tables),
+    )
+    return BatteryCellModel(
+        soc_grid=_TWO_RC_REFERENCE_SOC_GRID,
+        open_circuit_voltage_v=open_circuit_voltage_v,
+        series_resistance_ohm=series_tables[reference_temp_index],
+        transient_resistance_ohm=transient_tables[reference_temp_index],
+        transient_capacitance_f=capacitance_tables[reference_temp_index],
+        secondary_transient_resistance_ohm=secondary_transient_tables[reference_temp_index],
+        secondary_transient_capacitance_f=secondary_capacitance_tables[reference_temp_index],
+        source=source,
+        warning_message=None,
+        resolved_mode="pybamm_ecm_2rc",
+        resolved_parameter_set=resolved_parameter_set,
+        reference_temperature_c=float(ambient_temperature_k - 273.15),
+        dynamic_parameters=dynamic_parameters,
+    )
+
+
+def _build_reference_ocv_lookup(
+    *,
+    parameter_values: Any,
+    resolved_parameter_set: str | None,
+) -> tuple[float, ...]:
+    """Return one reference OCV lookup table for the 2-RC fitter."""
+    open_circuit_fn = _mapping_get(parameter_values, "Open-circuit voltage [V]")
+    if open_circuit_fn is not None:
+        return tuple(
+            _evaluate_parameter_function(
+                parameter_values=parameter_values,
+                function_or_value=open_circuit_fn,
+                ambient_temperature_k=273.15 + _TWO_RC_REFERENCE_TEMPERATURE_C,
+                soc=soc,
+                default=CELL_SPEC_18650.nominal_voltage_v,
+                strict=True,
+                parameter_name="Open-circuit voltage [V]",
+            )
+            for soc in _TWO_RC_REFERENCE_SOC_GRID
+        )
+
+    pybamm_module = import_pybamm()
+    lithium_ion = getattr(pybamm_module, "lithium_ion", None)
+    spm_factory = getattr(lithium_ion, "SPM", None)
+    if not callable(spm_factory):
+        raise MissingOptionalDependencyError(
+            "A supported PyBaMM installation with lithium_ion.SPM is required for 2-RC OCV extraction."
+        )
+
+    ocv_values: list[float] = []
+    for soc in _TWO_RC_REFERENCE_SOC_GRID:
+        model = spm_factory()
+        if resolved_parameter_set is None:
+            ocv_parameter_values = _copy_parameter_values(model.default_parameter_values)
+        else:
+            ocv_parameter_values = _load_named_parameter_values(
+                pybamm_module=pybamm_module,
+                parameter_set=resolved_parameter_set,
+            )
+        _resolve_ambient_temperature_k(
+            parameter_values=ocv_parameter_values,
+            ambient_temperature_c=_TWO_RC_REFERENCE_TEMPERATURE_C,
+        )
+        solution = pybamm_module.Simulation(
+            model,
+            experiment=pybamm_module.Experiment(["Rest for 1 second"]),
+            parameter_values=ocv_parameter_values,
+        ).solve(initial_soc=soc)
+        ocv_values.append(float(solution["Voltage [V]"](0.0)))
+    return tuple(ocv_values)
+
+
+def _interpolate_scalar_series(x_values: tuple[float, ...], y_values: tuple[float, ...], x_value: float) -> float:
+    """Linearly interpolate one scalar series with endpoint clamping."""
+    if x_value <= x_values[0]:
+        return float(y_values[0])
+    if x_value >= x_values[-1]:
+        return float(y_values[-1])
+    return float(numpy.interp(float(x_value), x_values, y_values))
 
 
 def _resolve_ambient_temperature_k(
@@ -662,10 +1192,15 @@ def _load_battery_thermal_priors_cached(config: BatteryBackendConfig) -> Battery
     try:
         cell_model = load_battery_cell_model(config)
         total_resistance_ohm = tuple(
-            max(1.0e-6, series + transient)
-            for series, transient in zip(
+            max(1.0e-6, series + transient + secondary_transient)
+            for series, transient, secondary_transient in zip(
                 cell_model.series_resistance_ohm,
                 cell_model.transient_resistance_ohm,
+                (
+                    cell_model.secondary_transient_resistance_ohm
+                    if cell_model.secondary_transient_resistance_ohm
+                    else tuple(0.0 for _ in cell_model.soc_grid)
+                ),
                 strict=True,
             )
         )
@@ -878,7 +1413,7 @@ def interpolate_cell_model(
     soc: float,
     *,
     temperature_c: float | None = None,
-) -> tuple[float, float, float, float]:
+) -> tuple[float, float, float, float, float, float]:
     """Interpolate cell operating values at one SOC and optional temperature."""
     clipped_soc = min(1.0, max(0.0, soc))
     if temperature_c is not None and model.dynamic_parameters is not None:
@@ -886,14 +1421,29 @@ def interpolate_cell_model(
     return _interpolate_reference_cell_model(model, clipped_soc)
 
 
-def _interpolate_reference_cell_model(model: BatteryCellModel, clipped_soc: float) -> tuple[float, float, float, float]:
+def _interpolate_reference_cell_model(
+    model: BatteryCellModel,
+    clipped_soc: float,
+) -> tuple[float, float, float, float, float, float]:
     """Interpolate the stored reference lookup tables."""
+    secondary_resistance = (
+        model.secondary_transient_resistance_ohm
+        if model.secondary_transient_resistance_ohm
+        else tuple(0.0 for _ in model.soc_grid)
+    )
+    secondary_capacitance = (
+        model.secondary_transient_capacitance_f
+        if model.secondary_transient_capacitance_f
+        else tuple(1.0 for _ in model.soc_grid)
+    )
     if clipped_soc <= model.soc_grid[0]:
         return (
             model.open_circuit_voltage_v[0],
             model.series_resistance_ohm[0],
             model.transient_resistance_ohm[0],
             model.transient_capacitance_f[0],
+            secondary_resistance[0],
+            secondary_capacitance[0],
         )
     if clipped_soc >= model.soc_grid[-1]:
         return (
@@ -901,6 +1451,8 @@ def _interpolate_reference_cell_model(model: BatteryCellModel, clipped_soc: floa
             model.series_resistance_ohm[-1],
             model.transient_resistance_ohm[-1],
             model.transient_capacitance_f[-1],
+            secondary_resistance[-1],
+            secondary_capacitance[-1],
         )
 
     for index in range(1, len(model.soc_grid)):
@@ -918,16 +1470,24 @@ def _interpolate_reference_cell_model(model: BatteryCellModel, clipped_soc: floa
         upper_transient_resistance = model.transient_resistance_ohm[index]
         lower_transient_capacitance = model.transient_capacitance_f[index - 1]
         upper_transient_capacitance = model.transient_capacitance_f[index]
+        lower_secondary_resistance = secondary_resistance[index - 1]
+        upper_secondary_resistance = secondary_resistance[index]
+        lower_secondary_capacitance = secondary_capacitance[index - 1]
+        upper_secondary_capacitance = secondary_capacitance[index]
         return (
             lower_ocv + (ratio * (upper_ocv - lower_ocv)),
             lower_series_resistance + (ratio * (upper_series_resistance - lower_series_resistance)),
             lower_transient_resistance + (ratio * (upper_transient_resistance - lower_transient_resistance)),
             lower_transient_capacitance + (ratio * (upper_transient_capacitance - lower_transient_capacitance)),
+            lower_secondary_resistance + (ratio * (upper_secondary_resistance - lower_secondary_resistance)),
+            lower_secondary_capacitance + (ratio * (upper_secondary_capacitance - lower_secondary_capacitance)),
         )
 
     return (
         CELL_SPEC_18650.nominal_voltage_v,
         CELL_SPEC_18650.internal_resistance_ohm,
+        0.0,
+        1.0,
         0.0,
         1.0,
     )
@@ -938,16 +1498,20 @@ def _interpolate_dynamic_cell_model(
     clipped_soc: float,
     *,
     temperature_c: float,
-) -> tuple[float, float, float, float]:
+) -> tuple[float, float, float, float, float, float]:
     """Evaluate temperature-aware parameter functions at runtime."""
     dynamic = model.dynamic_parameters
     if dynamic is None:
         return _interpolate_reference_cell_model(model, clipped_soc)
 
-    reference_ocv, reference_series, reference_transient, reference_capacitance = _interpolate_reference_cell_model(
-        model,
-        clipped_soc,
-    )
+    (
+        reference_ocv,
+        reference_series,
+        reference_transient,
+        reference_capacitance,
+        reference_secondary_transient,
+        reference_secondary_capacitance,
+    ) = _interpolate_reference_cell_model(model, clipped_soc)
     ambient_temperature_k = 273.15 + float(temperature_c)
     open_circuit_voltage_v = _evaluate_parameter_function(
         parameter_values=dynamic.parameter_values,
@@ -956,27 +1520,78 @@ def _interpolate_dynamic_cell_model(
         soc=clipped_soc,
         default=reference_ocv,
     )
-    series_resistance = _evaluate_parameter_function(
-        parameter_values=dynamic.parameter_values,
-        function_or_value=dynamic.series_resistance_fn,
-        ambient_temperature_k=ambient_temperature_k,
-        soc=clipped_soc,
-        default=reference_series,
-    )
-    transient_resistance = _evaluate_parameter_function(
-        parameter_values=dynamic.parameter_values,
-        function_or_value=dynamic.transient_resistance_fn,
-        ambient_temperature_k=ambient_temperature_k,
-        soc=clipped_soc,
-        default=reference_transient,
-    )
-    transient_capacitance = _evaluate_parameter_function(
-        parameter_values=dynamic.parameter_values,
-        function_or_value=dynamic.transient_capacitance_fn,
-        ambient_temperature_k=ambient_temperature_k,
-        soc=clipped_soc,
-        default=reference_capacitance,
-    )
+    if dynamic.temperature_grid_c and dynamic.series_resistance_by_temperature_ohm:
+        series_resistance = _interpolate_temperature_lookup(
+            dynamic.temperature_grid_c,
+            dynamic.series_resistance_by_temperature_ohm,
+            clipped_soc,
+            temperature_c=temperature_c,
+            default=reference_series,
+        )
+        transient_resistance = _interpolate_temperature_lookup(
+            dynamic.temperature_grid_c,
+            dynamic.transient_resistance_by_temperature_ohm,
+            clipped_soc,
+            temperature_c=temperature_c,
+            default=reference_transient,
+        )
+        transient_capacitance = _interpolate_temperature_lookup(
+            dynamic.temperature_grid_c,
+            dynamic.transient_capacitance_by_temperature_f,
+            clipped_soc,
+            temperature_c=temperature_c,
+            default=reference_capacitance,
+        )
+        secondary_transient_resistance = _interpolate_temperature_lookup(
+            dynamic.temperature_grid_c,
+            dynamic.secondary_transient_resistance_by_temperature_ohm,
+            clipped_soc,
+            temperature_c=temperature_c,
+            default=reference_secondary_transient,
+        )
+        secondary_transient_capacitance = _interpolate_temperature_lookup(
+            dynamic.temperature_grid_c,
+            dynamic.secondary_transient_capacitance_by_temperature_f,
+            clipped_soc,
+            temperature_c=temperature_c,
+            default=reference_secondary_capacitance,
+        )
+    else:
+        series_resistance = _evaluate_parameter_function(
+            parameter_values=dynamic.parameter_values,
+            function_or_value=dynamic.series_resistance_fn,
+            ambient_temperature_k=ambient_temperature_k,
+            soc=clipped_soc,
+            default=reference_series,
+        )
+        transient_resistance = _evaluate_parameter_function(
+            parameter_values=dynamic.parameter_values,
+            function_or_value=dynamic.transient_resistance_fn,
+            ambient_temperature_k=ambient_temperature_k,
+            soc=clipped_soc,
+            default=reference_transient,
+        )
+        transient_capacitance = _evaluate_parameter_function(
+            parameter_values=dynamic.parameter_values,
+            function_or_value=dynamic.transient_capacitance_fn,
+            ambient_temperature_k=ambient_temperature_k,
+            soc=clipped_soc,
+            default=reference_capacitance,
+        )
+        secondary_transient_resistance = _evaluate_parameter_function(
+            parameter_values=dynamic.parameter_values,
+            function_or_value=dynamic.secondary_transient_resistance_fn,
+            ambient_temperature_k=ambient_temperature_k,
+            soc=clipped_soc,
+            default=reference_secondary_transient,
+        )
+        secondary_transient_capacitance = _evaluate_parameter_function(
+            parameter_values=dynamic.parameter_values,
+            function_or_value=dynamic.secondary_transient_capacitance_fn,
+            ambient_temperature_k=ambient_temperature_k,
+            soc=clipped_soc,
+            default=reference_secondary_capacitance,
+        )
 
     scaled_series_resistance = max(
         1.0e-6,
@@ -994,12 +1609,47 @@ def _interpolate_dynamic_cell_model(
         if scaled_transient_resistance > 1.0e-12
         else 1.0
     )
+    scaled_secondary_transient_resistance = max(
+        0.0,
+        abs(secondary_transient_resistance) * dynamic.resistance_scale * dynamic.resistance_normalization,
+    )
+    scaled_secondary_transient_capacitance = (
+        max(
+            1.0,
+            abs(secondary_transient_capacitance)
+            / dynamic.resistance_scale
+            / max(dynamic.secondary_capacitance_normalization, 1.0e-12),
+        )
+        if scaled_secondary_transient_resistance > 1.0e-12
+        else 1.0
+    )
     return (
         open_circuit_voltage_v,
         scaled_series_resistance,
         scaled_transient_resistance,
         scaled_transient_capacitance,
+        scaled_secondary_transient_resistance,
+        scaled_secondary_transient_capacitance,
     )
+
+
+def _interpolate_temperature_lookup(
+    temperature_grid_c: tuple[float, ...],
+    lookup_table: tuple[tuple[float, ...], ...],
+    soc: float,
+    *,
+    temperature_c: float,
+    default: float,
+) -> float:
+    """Interpolate one SOC-indexed lookup table over temperature and SOC."""
+    if not temperature_grid_c or not lookup_table:
+        return float(default)
+    if len(temperature_grid_c) != len(lookup_table):
+        return float(default)
+    by_temperature = tuple(
+        _interpolate_scalar_series(_TWO_RC_REFERENCE_SOC_GRID, values, soc) for values in lookup_table
+    )
+    return _interpolate_scalar_series(temperature_grid_c, by_temperature, float(temperature_c))
 
 
 def _parse_parameterization(mapping: Mapping[str, object]) -> BatteryParameterization:

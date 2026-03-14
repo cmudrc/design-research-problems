@@ -278,7 +278,9 @@ class ProblemRegistry:
     ) -> Battery18650T1RectangularSurrogateGrammarProblem: ...
 
     @overload
-    def get(self, problem_id: Literal["battery_18650_t2_pose_surrogate_grammar"]) -> Battery18650T2PoseSurrogateGrammarProblem: ...
+    def get(
+        self, problem_id: Literal["battery_18650_t2_pose_surrogate_grammar"]
+    ) -> Battery18650T2PoseSurrogateGrammarProblem: ...
 
     @overload
     def get(
@@ -304,7 +306,9 @@ class ProblemRegistry:
     ) -> Battery18650T1RectangularSurrogateOptimizationProblem: ...
 
     @overload
-    def get(self, problem_id: Literal["battery_18650_t2_pose_surrogate_opt"]) -> Battery18650T2PoseSurrogateOptimizationProblem: ...
+    def get(
+        self, problem_id: Literal["battery_18650_t2_pose_surrogate_opt"]
+    ) -> Battery18650T2PoseSurrogateOptimizationProblem: ...
 
     @overload
     def get(
@@ -322,7 +326,9 @@ class ProblemRegistry:
     ) -> Battery18650T4ThermalHybridOptimizationProblem: ...
 
     @overload
-    def get(self, problem_id: Literal["battery_fast_charge_dfn_anchor_opt"]) -> BatteryFastChargeDFNAnchorOptimizationProblem: ...
+    def get(
+        self, problem_id: Literal["battery_fast_charge_dfn_anchor_opt"]
+    ) -> BatteryFastChargeDFNAnchorOptimizationProblem: ...
 
     @overload
     def get(self, problem_id: Literal["gmpb_default_dynamic_min"]) -> GMPBOptimizationProblem: ...
@@ -440,7 +446,9 @@ def get_problem(
 
 
 @overload
-def get_problem(problem_id: Literal["battery_18650_t2_pose_surrogate_grammar"]) -> Battery18650T2PoseSurrogateGrammarProblem: ...
+def get_problem(
+    problem_id: Literal["battery_18650_t2_pose_surrogate_grammar"],
+) -> Battery18650T2PoseSurrogateGrammarProblem: ...
 
 
 @overload
@@ -450,11 +458,15 @@ def get_problem(
 
 
 @overload
-def get_problem(problem_id: Literal["battery_18650_t3b_netlist_explicit_grammar"]) -> Battery18650T3BNetlistExplicitGrammarProblem: ...
+def get_problem(
+    problem_id: Literal["battery_18650_t3b_netlist_explicit_grammar"],
+) -> Battery18650T3BNetlistExplicitGrammarProblem: ...
 
 
 @overload
-def get_problem(problem_id: Literal["battery_18650_t4_thermal_hybrid_grammar"]) -> Battery18650T4ThermalHybridGrammarProblem: ...
+def get_problem(
+    problem_id: Literal["battery_18650_t4_thermal_hybrid_grammar"],
+) -> Battery18650T4ThermalHybridGrammarProblem: ...
 
 
 @overload
@@ -468,7 +480,9 @@ def get_problem(
 
 
 @overload
-def get_problem(problem_id: Literal["battery_18650_t2_pose_surrogate_opt"]) -> Battery18650T2PoseSurrogateOptimizationProblem: ...
+def get_problem(
+    problem_id: Literal["battery_18650_t2_pose_surrogate_opt"],
+) -> Battery18650T2PoseSurrogateOptimizationProblem: ...
 
 
 @overload
@@ -490,7 +504,9 @@ def get_problem(
 
 
 @overload
-def get_problem(problem_id: Literal["battery_fast_charge_dfn_anchor_opt"]) -> BatteryFastChargeDFNAnchorOptimizationProblem: ...
+def get_problem(
+    problem_id: Literal["battery_fast_charge_dfn_anchor_opt"],
+) -> BatteryFastChargeDFNAnchorOptimizationProblem: ...
 
 
 @overload

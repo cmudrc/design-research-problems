@@ -428,9 +428,7 @@ def _render_common_sections(metadata: Any, problem: Problem) -> list[str]:
             )
             if benchmark_card.validation_scope
             else None,
-            ("Solver Role", _normalize_inline_code(benchmark_card.solver_role))
-            if benchmark_card.solver_role
-            else None,
+            ("Solver Role", _normalize_inline_code(benchmark_card.solver_role)) if benchmark_card.solver_role else None,
         ]
         lines.extend(
             [
