@@ -1,9 +1,9 @@
-problem_id = "battery_fast_charge_cell_opt"
-title = "Fast-charge lithium-ion cell optimization"
-summary = "Optimize cell-design parameters for faster charging under lithium-plating and thermal safety constraints."
+problem_id = "battery_fast_charge_dfn_anchor_opt"
+title = "Fast-charge lithium-ion DFN anchor optimization"
+summary = "High-fidelity electrochemical anchor benchmark for fast-charge cell design, packaged with a deterministic baseline/reference search."
 kind = "optimization"
 statement = '''
-# Fast-charge lithium-ion cell optimization
+# Fast-charge lithium-ion DFN anchor optimization
 
 Optimize a lithium-ion cell design for faster charging while respecting
 plating-risk and thermal safety limits. This benchmark is adapted from the
@@ -45,11 +45,31 @@ Reported metrics:
 - practical energy density in Wh/L
 - solver success flag
 '''
-implementation = "design_research_problems.problems.optimization._battery_fast_charge:BatteryFastChargeOptimizationProblem"
+implementation = "design_research_problems.problems.optimization._battery_fast_charge:BatteryFastChargeDFNAnchorOptimizationProblem"
 capabilities = ["statement-markdown", "bounded-variables", "baseline-solver"]
 study_suitability = []
 
+[benchmark]
+benchmark_question = "How well do methods handle a higher-fidelity electrochemical battery benchmark when each evaluation is comparatively expensive?"
+physically_modeled = [
+  "PyBaMM DFN electrochemistry",
+  "Lumped thermal dynamics during fast charging",
+  "Lithium plating and solvent-diffusion-limited SEI side reactions",
+]
+deliberate_surrogates = [
+  "The packaged solve routine is a deterministic baseline/reference search, not a strong optimizer",
+  "Failure cases are converted into finite benchmark metrics rather than raised as structural solver errors",
+]
+representation_mode = "fast_charge_cell"
+default_evaluation_mode = "electrochemical_anchor"
+supported_evaluation_modes = ["electrochemical_anchor"]
+validation_scope = [
+  "PyBaMM model and solver reproducibility checks",
+]
+solver_role = "deterministic baseline/reference search"
+
 [parameters]
+evaluation_mode = "electrochemical_anchor"
 parameter_set = "Chen2020"
 initial_soc_fraction = 0.0
 charge_c_rate = 1.5
@@ -78,4 +98,4 @@ feasibility_ratio_hint = 0.10
 objective_mode = "single"
 constraint_nature = "hard"
 bounds_summary = "bounded electrode, separator, porosity, particle-radius, and active-fraction variables"
-tags = ["optimization", "battery", "fast-charge", "pybamm", "thermal", "plating"]
+tags = ["optimization", "battery", "fast-charge", "anchor", "pybamm", "dfn"]

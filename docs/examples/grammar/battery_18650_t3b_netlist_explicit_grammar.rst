@@ -1,19 +1,19 @@
-Battery 18650 T1 Series Parallel Opt
-====================================
+Battery 18650 T3b Netlist Explicit Grammar
+==========================================
 
-Source: ``examples/optimization/battery_18650_t1_series_parallel_opt.py``
+Source: ``examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py``
 
 Introduction
 ------------
 
-Inspect tier-1 battery optimization benchmark.
+Inspect the T3B explicit-netlist battery grammar benchmark.
 
 Technical Implementation
 ------------------------
 
 This page is generated from the top-of-file module docstring and the example source code. The full script is included below for direct inspection.
 
-.. literalinclude:: ../../../examples/optimization/battery_18650_t1_series_parallel_opt.py
+.. literalinclude:: ../../../examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py
    :language: python
    :lines: 3-
    :linenos:
@@ -25,6 +25,6 @@ Expected Results
 
 .. code-block:: bash
 
-   PYTHONPATH=src python3 examples/optimization/battery_18650_t1_series_parallel_opt.py
+   PYTHONPATH=src python3 examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py
 
 Run the command shown below from repository root. Output should summarize the problem setup, a baseline solution, or diagnostic values relevant to this example.

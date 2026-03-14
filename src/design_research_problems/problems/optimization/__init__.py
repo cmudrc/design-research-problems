@@ -6,21 +6,26 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 _LAZY_EXPORTS = {
-    "BatteryFastChargeOptimizationProblem": (
-        "design_research_problems.problems.optimization._battery_fast_charge:BatteryFastChargeOptimizationProblem"
+    "BatteryFastChargeDFNAnchorOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_fast_charge:BatteryFastChargeDFNAnchorOptimizationProblem"
     ),
-    "Battery18650Tier1SeriesParallelOptimizationProblem": (
+    "Battery18650T1RectangularSurrogateOptimizationProblem": (
         "design_research_problems.problems.optimization._battery_tiers:"
-        "Battery18650Tier1SeriesParallelOptimizationProblem"
+        "Battery18650T1RectangularSurrogateOptimizationProblem"
     ),
-    "Battery18650Tier2LayoutOptimizationProblem": (
-        "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier2LayoutOptimizationProblem"
+    "Battery18650T2PoseSurrogateOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_tiers:Battery18650T2PoseSurrogateOptimizationProblem"
     ),
-    "Battery18650Tier3TopologyOptimizationProblem": (
-        "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier3TopologyOptimizationProblem"
+    "Battery18650T3ATopologySurrogateOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_tiers:"
+        "Battery18650T3ATopologySurrogateOptimizationProblem"
     ),
-    "Battery18650Tier4ThermalOptimizationProblem": (
-        "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier4ThermalOptimizationProblem"
+    "Battery18650T3BNetlistExplicitOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_open_ended:"
+        "Battery18650T3BNetlistExplicitOptimizationProblem"
+    ),
+    "Battery18650T4ThermalHybridOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_tiers:Battery18650T4ThermalHybridOptimizationProblem"
     ),
     "BatteryGridSizingProblem": (
         "design_research_problems.problems.optimization._battery_grid:BatteryGridSizingProblem"
@@ -68,19 +73,26 @@ def __getattr__(name: str) -> object:
 
 
 if TYPE_CHECKING:
-    from ._battery_fast_charge import BatteryFastChargeOptimizationProblem as BatteryFastChargeOptimizationProblem
+    from ._battery_fast_charge import (
+        BatteryFastChargeDFNAnchorOptimizationProblem as BatteryFastChargeDFNAnchorOptimizationProblem,
+    )
     from ._battery_grid import BatteryGridSizingProblem as BatteryGridSizingProblem
+    from ._battery_open_ended import (
+        Battery18650T3BNetlistExplicitOptimizationProblem as Battery18650T3BNetlistExplicitOptimizationProblem,
+    )
     from ._battery_open_ended import BatteryOpenEndedCapacityMaxProblem as BatteryOpenEndedCapacityMaxProblem
     from ._battery_oriented_layout import BatteryOrientedLayoutProblem as BatteryOrientedLayoutProblem
     from ._battery_tiers import (
-        Battery18650Tier1SeriesParallelOptimizationProblem as Battery18650Tier1SeriesParallelOptimizationProblem,
-    )
-    from ._battery_tiers import Battery18650Tier2LayoutOptimizationProblem as Battery18650Tier2LayoutOptimizationProblem
-    from ._battery_tiers import (
-        Battery18650Tier3TopologyOptimizationProblem as Battery18650Tier3TopologyOptimizationProblem,
+        Battery18650T1RectangularSurrogateOptimizationProblem as Battery18650T1RectangularSurrogateOptimizationProblem,
     )
     from ._battery_tiers import (
-        Battery18650Tier4ThermalOptimizationProblem as Battery18650Tier4ThermalOptimizationProblem,
+        Battery18650T2PoseSurrogateOptimizationProblem as Battery18650T2PoseSurrogateOptimizationProblem,
+    )
+    from ._battery_tiers import (
+        Battery18650T3ATopologySurrogateOptimizationProblem as Battery18650T3ATopologySurrogateOptimizationProblem,
+    )
+    from ._battery_tiers import (
+        Battery18650T4ThermalHybridOptimizationProblem as Battery18650T4ThermalHybridOptimizationProblem,
     )
     from ._gmpb import GMPBOptimizationProblem as GMPBOptimizationProblem
     from ._ide_treadle import IDETreadlePumpMaterialMin as IDETreadlePumpMaterialMin

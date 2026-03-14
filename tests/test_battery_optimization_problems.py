@@ -11,6 +11,7 @@ from design_research_problems import (
     OptimizationProblem,
     get_problem,
 )
+from design_research_problems.problems._domains.battery_benchmark import BatteryEvaluationMode
 from design_research_problems.problems._domains.battery_geometry import (
     FiniteCylinder,
     min_distance_between_cylinders,
@@ -20,11 +21,12 @@ from design_research_problems.problems.grammar._battery_cell_model import (
     BatteryThermalPriors,
 )
 from design_research_problems.problems.optimization import (
-    Battery18650Tier1SeriesParallelOptimizationProblem,
-    Battery18650Tier2LayoutOptimizationProblem,
-    Battery18650Tier3TopologyOptimizationProblem,
-    Battery18650Tier4ThermalOptimizationProblem,
-    BatteryFastChargeOptimizationProblem,
+    Battery18650T1RectangularSurrogateOptimizationProblem,
+    Battery18650T2PoseSurrogateOptimizationProblem,
+    Battery18650T3ATopologySurrogateOptimizationProblem,
+    Battery18650T3BNetlistExplicitOptimizationProblem,
+    Battery18650T4ThermalHybridOptimizationProblem,
+    BatteryFastChargeDFNAnchorOptimizationProblem,
 )
 from design_research_problems.problems.optimization._battery_fast_charge import (
     FastChargeMetricSummary,
@@ -50,13 +52,20 @@ def _static_cell_model() -> BatteryCellModel:
         series_resistance_ohm=(0.01, 0.01),
         transient_resistance_ohm=(0.0, 0.0),
         transient_capacitance_f=(1.0, 1.0),
+        source="test_stub",
+        resolved_mode="pybamm_ecm",
     )
 
 
 def _patch_battery_loaders(monkeypatch: pytest.MonkeyPatch) -> None:
-    from design_research_problems.problems.optimization import _battery_grid, _battery_tiers
+    from design_research_problems.problems._domains import battery_circuit
+    from design_research_problems.problems.optimization import _battery_grid, _battery_open_ended, _battery_tiers
 
     monkeypatch.setattr(_battery_grid, "load_18650_cell_model", _static_cell_model)
+    monkeypatch.setattr(_battery_open_ended, "load_18650_cell_model", _static_cell_model)
+    monkeypatch.setattr(battery_circuit, "load_battery_cell_model", lambda config=None: _static_cell_model())
+    monkeypatch.setattr(battery_circuit, "load_battery_thermal_priors", lambda config=None: _static_thermal_priors())
+    monkeypatch.setattr(_battery_tiers, "load_battery_thermal_priors", lambda config=None: _static_thermal_priors())
     monkeypatch.setattr(_battery_tiers, "load_18650_thermal_priors", _static_thermal_priors)
 
 
@@ -126,10 +135,16 @@ def test_tiered_battery_optimizers_are_registered_and_use_optimization_api(
 ) -> None:
     _patch_battery_loaders(monkeypatch)
     cases = (
-        ("battery_18650_t1_series_parallel_opt", Battery18650Tier1SeriesParallelOptimizationProblem),
-        ("battery_18650_t2_layout_opt", Battery18650Tier2LayoutOptimizationProblem),
-        ("battery_18650_t3_topology_opt", Battery18650Tier3TopologyOptimizationProblem),
-        ("battery_18650_t4_thermal_opt", Battery18650Tier4ThermalOptimizationProblem),
+        (
+            "battery_18650_t1_rectangular_surrogate_opt",
+            Battery18650T1RectangularSurrogateOptimizationProblem,
+        ),
+        ("battery_18650_t2_pose_surrogate_opt", Battery18650T2PoseSurrogateOptimizationProblem),
+        (
+            "battery_18650_t3a_topology_surrogate_opt",
+            Battery18650T3ATopologySurrogateOptimizationProblem,
+        ),
+        ("battery_18650_t4_thermal_hybrid_opt", Battery18650T4ThermalHybridOptimizationProblem),
     )
     for problem_id, expected_type in cases:
         problem = get_problem(problem_id)
@@ -143,22 +158,41 @@ def test_tiered_battery_optimizers_are_registered_and_use_optimization_api(
         assert evaluation.x.shape == initial.shape
 
 
+def test_t3b_explicit_battery_optimizer_is_registered_and_uses_shared_metric_contract(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _patch_battery_loaders(monkeypatch)
+    problem = get_problem("battery_18650_t3b_netlist_explicit_opt")
+    assert isinstance(problem, OptimizationProblem)
+    assert isinstance(problem, Battery18650T3BNetlistExplicitOptimizationProblem)
+    initial = problem.generate_initial_solution(seed=7)
+    components = problem.objective_components(initial)
+    evaluation = problem.evaluate(initial)
+    provenance = problem.evaluation_provenance(initial)
+    assert set(components) == _COMMON_METRIC_KEYS
+    assert isinstance(evaluation, OptimizationEvaluation)
+    assert provenance.representation_mode == "explicit_netlist"
+    assert provenance.evaluation_mode == "explicit_circuit"
+    assert provenance.honored_backend_fields
+
+
 def test_tiered_battery_dof_progression_is_strictly_increasing(monkeypatch: pytest.MonkeyPatch) -> None:
     _patch_battery_loaders(monkeypatch)
-    t1 = get_problem("battery_18650_t1_series_parallel_opt")
-    t2 = get_problem("battery_18650_t2_layout_opt")
-    t3 = get_problem("battery_18650_t3_topology_opt")
-    t4 = get_problem("battery_18650_t4_thermal_opt")
+    t1 = get_problem("battery_18650_t1_rectangular_surrogate_opt")
+    t2 = get_problem("battery_18650_t2_pose_surrogate_opt")
+    t3 = get_problem("battery_18650_t3a_topology_surrogate_opt")
+    t4 = get_problem("battery_18650_t4_thermal_hybrid_opt")
     assert t1.bounds.lb.shape[0] < t2.bounds.lb.shape[0] < t3.bounds.lb.shape[0] < t4.bounds.lb.shape[0]
 
 
 def test_tiered_battery_seeded_initial_solutions_are_deterministic(monkeypatch: pytest.MonkeyPatch) -> None:
     _patch_battery_loaders(monkeypatch)
     for problem_id in (
-        "battery_18650_t1_series_parallel_opt",
-        "battery_18650_t2_layout_opt",
-        "battery_18650_t3_topology_opt",
-        "battery_18650_t4_thermal_opt",
+        "battery_18650_t1_rectangular_surrogate_opt",
+        "battery_18650_t2_pose_surrogate_opt",
+        "battery_18650_t3a_topology_surrogate_opt",
+        "battery_18650_t3b_netlist_explicit_opt",
+        "battery_18650_t4_thermal_hybrid_opt",
     ):
         problem = get_problem(problem_id)
         x1 = problem.generate_initial_solution(seed=7)
@@ -169,10 +203,10 @@ def test_tiered_battery_seeded_initial_solutions_are_deterministic(monkeypatch: 
 def test_tiered_battery_baselines_solve_to_feasible_designs(monkeypatch: pytest.MonkeyPatch) -> None:
     _patch_battery_loaders(monkeypatch)
     for problem_id in (
-        "battery_18650_t1_series_parallel_opt",
-        "battery_18650_t2_layout_opt",
-        "battery_18650_t3_topology_opt",
-        "battery_18650_t4_thermal_opt",
+        "battery_18650_t1_rectangular_surrogate_opt",
+        "battery_18650_t2_pose_surrogate_opt",
+        "battery_18650_t3a_topology_surrogate_opt",
+        "battery_18650_t4_thermal_hybrid_opt",
     ):
         problem = get_problem(problem_id)
         result = problem.solve(maxiter=12)
@@ -184,9 +218,9 @@ def test_tiered_battery_baselines_solve_to_feasible_designs(monkeypatch: pytest.
 def test_t2_t3_t4_seeded_runs_show_non_degenerate_variability(monkeypatch: pytest.MonkeyPatch) -> None:
     _patch_battery_loaders(monkeypatch)
     for problem_id in (
-        "battery_18650_t2_layout_opt",
-        "battery_18650_t3_topology_opt",
-        "battery_18650_t4_thermal_opt",
+        "battery_18650_t2_pose_surrogate_opt",
+        "battery_18650_t3a_topology_surrogate_opt",
+        "battery_18650_t4_thermal_hybrid_opt",
     ):
         problem = get_problem(problem_id)
         outcomes: set[tuple[float, ...]] = set()
@@ -208,13 +242,14 @@ def test_t4_lumped_and_multi_node_modes_share_contract_and_are_deterministic(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     _patch_battery_loaders(monkeypatch)
-    baseline = get_problem("battery_18650_t4_thermal_opt")
-    assert isinstance(baseline, Battery18650Tier4ThermalOptimizationProblem)
+    baseline = get_problem("battery_18650_t4_thermal_hybrid_opt")
+    assert isinstance(baseline, Battery18650T4ThermalHybridOptimizationProblem)
     candidate = baseline.generate_initial_solution(seed=4)
 
-    lumped = Battery18650Tier4ThermalOptimizationProblem(
+    lumped = type(baseline)(
         metadata=baseline.metadata,
         statement_markdown=baseline.statement_markdown,
+        resource_bundle=baseline.resource_bundle,
         requirements=baseline.requirements,
         max_cell_count=baseline.max_cell_count,
         minimum_spacing_mm=baseline.minimum_spacing_mm,
@@ -231,10 +266,14 @@ def test_t4_lumped_and_multi_node_modes_share_contract_and_are_deterministic(
         thermal_reference_soc=baseline.thermal_reference_soc,
         maximum_temperature_c=baseline.maximum_temperature_c,
         load_current_a=baseline.load_current_a,
+        backend_config=baseline.backend_config,
+        evaluation_mode=BatteryEvaluationMode.HYBRID_THERMAL.value,
+        imbalance_model=baseline.imbalance_model.value,
     )
-    multi_node = Battery18650Tier4ThermalOptimizationProblem(
+    multi_node = type(baseline)(
         metadata=baseline.metadata,
         statement_markdown=baseline.statement_markdown,
+        resource_bundle=baseline.resource_bundle,
         requirements=baseline.requirements,
         max_cell_count=baseline.max_cell_count,
         minimum_spacing_mm=baseline.minimum_spacing_mm,
@@ -251,6 +290,9 @@ def test_t4_lumped_and_multi_node_modes_share_contract_and_are_deterministic(
         thermal_reference_soc=baseline.thermal_reference_soc,
         maximum_temperature_c=baseline.maximum_temperature_c,
         load_current_a=baseline.load_current_a,
+        backend_config=baseline.backend_config,
+        evaluation_mode=BatteryEvaluationMode.HYBRID_THERMAL.value,
+        imbalance_model=baseline.imbalance_model.value,
     )
 
     lumped_components_first = lumped.objective_components(candidate)
@@ -280,10 +322,10 @@ def test_t4_requires_pybamm_for_thermal_priors(monkeypatch: pytest.MonkeyPatch) 
         raise MissingOptionalDependencyError("pybamm is required")
 
     monkeypatch.setattr(_battery_tiers, "load_18650_thermal_priors", _missing_thermal_priors)
-    t3 = get_problem("battery_18650_t3_topology_opt")
-    assert isinstance(t3, Battery18650Tier3TopologyOptimizationProblem)
+    t3 = get_problem("battery_18650_t3a_topology_surrogate_opt")
+    assert isinstance(t3, Battery18650T3ATopologySurrogateOptimizationProblem)
     with pytest.raises(MissingOptionalDependencyError, match="pybamm is required"):
-        Battery18650Tier4ThermalOptimizationProblem(
+        Battery18650T4ThermalHybridOptimizationProblem(
             metadata=t3.metadata,
             requirements=t3.requirements,
         )
@@ -296,12 +338,13 @@ def test_fast_charge_optimizer_is_registered_and_uses_optimization_api(
 
     monkeypatch.setattr(_battery_fast_charge, "evaluate_fast_charge_design", _static_fast_charge_metrics)
 
-    problem = get_problem("battery_fast_charge_cell_opt")
+    problem = get_problem("battery_fast_charge_dfn_anchor_opt")
     assert isinstance(problem, OptimizationProblem)
-    assert isinstance(problem, BatteryFastChargeOptimizationProblem)
+    assert isinstance(problem, BatteryFastChargeDFNAnchorOptimizationProblem)
     initial = problem.generate_initial_solution(seed=7)
     components = problem.objective_components(initial)
     evaluation = problem.evaluate(initial)
+    provenance = problem.evaluation_provenance(initial)
     assert set(components) == {
         "charge_time_min",
         "max_plating_mol_m3",
@@ -311,6 +354,8 @@ def test_fast_charge_optimizer_is_registered_and_uses_optimization_api(
     }
     assert isinstance(evaluation, OptimizationEvaluation)
     assert evaluation.is_feasible is True
+    assert provenance.evaluation_mode == "electrochemical_anchor"
+    assert provenance.cell_model_source == "pybamm_dfn"
 
 
 def test_fast_charge_optimizer_failure_metrics_stay_finite(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -318,7 +363,7 @@ def test_fast_charge_optimizer_failure_metrics_stay_finite(monkeypatch: pytest.M
 
     monkeypatch.setattr(_battery_fast_charge, "evaluate_fast_charge_design", _failed_fast_charge_metrics)
 
-    problem = get_problem("battery_fast_charge_cell_opt")
+    problem = get_problem("battery_fast_charge_dfn_anchor_opt")
     initial = problem.generate_initial_solution()
     evaluation = problem.evaluate(initial)
     components = problem.objective_components(initial)
@@ -334,12 +379,234 @@ def test_fast_charge_optimizer_baseline_search_can_improve_charge_time(
 
     monkeypatch.setattr(_battery_fast_charge, "evaluate_fast_charge_design", _directional_fast_charge_metrics)
 
-    problem = get_problem("battery_fast_charge_cell_opt")
+    problem = get_problem("battery_fast_charge_dfn_anchor_opt")
     initial = problem.generate_initial_solution()
     baseline = problem.objective(initial)
     result = problem.solve(maxiter=1)
     assert result.fun <= baseline
     assert result.x[0] < initial[0]
+    assert "baseline/reference search" in result.message
+
+
+def test_public_battery_optimization_problem_cards_and_modes(monkeypatch: pytest.MonkeyPatch) -> None:
+    _patch_battery_loaders(monkeypatch)
+    cases = (
+        (
+            "battery_18650_t1_rectangular_surrogate_opt",
+            "rectangular",
+            "analytic_surrogate",
+            ("analytic_surrogate",),
+        ),
+        (
+            "battery_18650_t2_pose_surrogate_opt",
+            "pose_layout",
+            "analytic_surrogate",
+            ("analytic_surrogate",),
+        ),
+        (
+            "battery_18650_t3a_topology_surrogate_opt",
+            "topology_allocation",
+            "analytic_surrogate",
+            ("analytic_surrogate", "explicit_circuit"),
+        ),
+        (
+            "battery_18650_t3b_netlist_explicit_opt",
+            "explicit_netlist",
+            "explicit_circuit",
+            ("explicit_circuit",),
+        ),
+        (
+            "battery_18650_t4_thermal_hybrid_opt",
+            "thermal_topology",
+            "hybrid_thermal",
+            ("analytic_surrogate", "explicit_circuit", "hybrid_thermal"),
+        ),
+        (
+            "battery_fast_charge_dfn_anchor_opt",
+            "fast_charge_cell",
+            "electrochemical_anchor",
+            ("electrochemical_anchor",),
+        ),
+    )
+    for problem_id, representation_mode, default_mode, supported_modes in cases:
+        problem = get_problem(problem_id)
+        card = problem.metadata.benchmark_card
+        assert card is not None
+        assert card.representation_mode == representation_mode
+        assert card.default_evaluation_mode == default_mode
+        assert card.supported_evaluation_modes == supported_modes
+        assert "## Benchmark Contract" in problem.render_brief(include_citation=False)
+
+
+def test_t3a_explicit_projection_is_deterministic_and_reports_provenance(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _patch_battery_loaders(monkeypatch)
+    baseline = get_problem("battery_18650_t3a_topology_surrogate_opt")
+    assert isinstance(baseline, Battery18650T3ATopologySurrogateOptimizationProblem)
+    candidate = baseline.generate_initial_solution(seed=5)
+    explicit = type(baseline)(
+        metadata=baseline.metadata,
+        statement_markdown=baseline.statement_markdown,
+        resource_bundle=baseline.resource_bundle,
+        requirements=baseline.requirements,
+        max_cell_count=baseline.max_cell_count,
+        minimum_spacing_mm=baseline.minimum_spacing_mm,
+        objective_weights=baseline.objective_weights,
+        cooling_coefficient_w_per_m2k=baseline.cooling_coefficient_w_per_m2k,
+        passive_cooling_w_per_k=baseline.passive_cooling_w_per_k,
+        ambient_temperature_c=baseline.ambient_temperature_c,
+        maximum_temperature_c=baseline.maximum_temperature_c,
+        load_current_a=baseline.load_current_a,
+        backend_config=baseline.backend_config,
+        evaluation_mode=BatteryEvaluationMode.EXPLICIT_CIRCUIT.value,
+        imbalance_model=baseline.imbalance_model.value,
+    )
+    first = explicit.objective_components(candidate)
+    second = explicit.objective_components(candidate)
+    provenance = explicit.evaluation_provenance(candidate)
+    assert first == pytest.approx(second)
+    assert provenance.evaluation_mode == "explicit_circuit"
+    assert provenance.projected_before_scoring is True
+    assert provenance.projection_notes is not None
+    assert provenance.cell_model_source in {"test_stub", "pybamm_thevenin"}
+
+
+def test_t3_imbalance_models_are_substitutable_but_not_identical(monkeypatch: pytest.MonkeyPatch) -> None:
+    _patch_battery_loaders(monkeypatch)
+    baseline = get_problem("battery_18650_t3a_topology_surrogate_opt")
+    assert isinstance(baseline, Battery18650T3ATopologySurrogateOptimizationProblem)
+    candidate = baseline.generate_initial_solution(seed=3)
+    candidate[0] = 6.0
+    candidate[1] = 4.0
+    stage_slots = (0.0, 0.0, 0.0, 1.0, 2.0, 3.0)
+    for cell_index, stage_slot in enumerate(stage_slots):
+        candidate[2 + (7 * cell_index) + 6] = stage_slot
+    harmonic = type(baseline)(
+        metadata=baseline.metadata,
+        statement_markdown=baseline.statement_markdown,
+        resource_bundle=baseline.resource_bundle,
+        requirements=baseline.requirements,
+        max_cell_count=baseline.max_cell_count,
+        minimum_spacing_mm=baseline.minimum_spacing_mm,
+        objective_weights=baseline.objective_weights,
+        cooling_coefficient_w_per_m2k=baseline.cooling_coefficient_w_per_m2k,
+        passive_cooling_w_per_k=baseline.passive_cooling_w_per_k,
+        ambient_temperature_c=baseline.ambient_temperature_c,
+        maximum_temperature_c=baseline.maximum_temperature_c,
+        load_current_a=baseline.load_current_a,
+        backend_config=baseline.backend_config,
+        evaluation_mode=baseline.evaluation_mode.value,
+        imbalance_model="harmonic_mean_stage",
+    )
+    min_stage_metrics = baseline._metrics_from_variables(candidate)
+    harmonic_metrics = harmonic._metrics_from_variables(candidate)
+    assert harmonic_metrics.capacity_ah > min_stage_metrics.capacity_ah
+    assert harmonic_metrics.current_limit_a > min_stage_metrics.current_limit_a
+    assert baseline.evaluation_provenance(candidate).imbalance_model == "min_stage"
+    assert harmonic.evaluation_provenance(candidate).imbalance_model == "harmonic_mean_stage"
+
+
+def test_t4_public_modes_report_expected_provenance(monkeypatch: pytest.MonkeyPatch) -> None:
+    _patch_battery_loaders(monkeypatch)
+    baseline = get_problem("battery_18650_t4_thermal_hybrid_opt")
+    assert isinstance(baseline, Battery18650T4ThermalHybridOptimizationProblem)
+    candidate = baseline.generate_initial_solution(seed=4)
+
+    analytic = type(baseline)(
+        metadata=baseline.metadata,
+        statement_markdown=baseline.statement_markdown,
+        resource_bundle=baseline.resource_bundle,
+        requirements=baseline.requirements,
+        max_cell_count=baseline.max_cell_count,
+        minimum_spacing_mm=baseline.minimum_spacing_mm,
+        objective_weights=baseline.objective_weights,
+        cooling_coefficient_bounds=baseline.cooling_coefficient_bounds,
+        passive_cooling_bounds=baseline.passive_cooling_bounds,
+        ambient_temperature_bounds=baseline.ambient_temperature_bounds,
+        thermal_model=baseline.thermal_model,
+        thermal_neighbor_clearance_mm=baseline.thermal_neighbor_clearance_mm,
+        thermal_contact_decay_mm=baseline.thermal_contact_decay_mm,
+        thermal_contact_resistance_k_per_w=baseline.thermal_contact_resistance_k_per_w,
+        thermal_flow_shadowing_factor=baseline.thermal_flow_shadowing_factor,
+        thermal_airflow_axis=baseline.thermal_airflow_axis,
+        thermal_reference_soc=baseline.thermal_reference_soc,
+        maximum_temperature_c=baseline.maximum_temperature_c,
+        load_current_a=baseline.load_current_a,
+        backend_config=baseline.backend_config,
+        evaluation_mode="analytic_surrogate",
+        imbalance_model=baseline.imbalance_model.value,
+    )
+    explicit = type(analytic)(
+        metadata=analytic.metadata,
+        statement_markdown=analytic.statement_markdown,
+        resource_bundle=analytic.resource_bundle,
+        requirements=analytic.requirements,
+        max_cell_count=analytic.max_cell_count,
+        minimum_spacing_mm=analytic.minimum_spacing_mm,
+        objective_weights=analytic.objective_weights,
+        cooling_coefficient_bounds=analytic.cooling_coefficient_bounds,
+        passive_cooling_bounds=analytic.passive_cooling_bounds,
+        ambient_temperature_bounds=analytic.ambient_temperature_bounds,
+        thermal_model=analytic.thermal_model,
+        thermal_neighbor_clearance_mm=analytic.thermal_neighbor_clearance_mm,
+        thermal_contact_decay_mm=analytic.thermal_contact_decay_mm,
+        thermal_contact_resistance_k_per_w=analytic.thermal_contact_resistance_k_per_w,
+        thermal_flow_shadowing_factor=analytic.thermal_flow_shadowing_factor,
+        thermal_airflow_axis=analytic.thermal_airflow_axis,
+        thermal_reference_soc=analytic.thermal_reference_soc,
+        maximum_temperature_c=analytic.maximum_temperature_c,
+        load_current_a=analytic.load_current_a,
+        backend_config=analytic.backend_config,
+        evaluation_mode="explicit_circuit",
+        imbalance_model=analytic.imbalance_model.value,
+    )
+    assert analytic.evaluation_provenance(candidate).evaluation_mode == "analytic_surrogate"
+    explicit_provenance = explicit.evaluation_provenance(candidate)
+    hybrid_provenance = baseline.evaluation_provenance(candidate)
+    assert explicit_provenance.evaluation_mode == "explicit_circuit"
+    assert explicit_provenance.projected_before_scoring is True
+    assert hybrid_provenance.evaluation_mode == "hybrid_thermal"
+    assert hybrid_provenance.thermal_prior_source == "test_stub"
+
+
+def test_public_battery_optimizers_reject_unsupported_evaluation_modes() -> None:
+    t1 = get_problem("battery_18650_t1_rectangular_surrogate_opt")
+    with pytest.raises(ValueError, match="Unsupported battery evaluation_mode"):
+        type(t1)(
+            metadata=t1.metadata,
+            statement_markdown=t1.statement_markdown,
+            resource_bundle=t1.resource_bundle,
+            requirements=t1.requirements,
+            backend_config=t1.backend_config,
+            evaluation_mode="explicit_circuit",
+        )
+
+    fast_charge = get_problem("battery_fast_charge_dfn_anchor_opt")
+    with pytest.raises(ValueError, match="Unsupported battery evaluation_mode"):
+        type(fast_charge)(
+            metadata=fast_charge.metadata,
+            statement_markdown=fast_charge.statement_markdown,
+            resource_bundle=fast_charge.resource_bundle,
+            parameter_set=fast_charge.parameter_set,
+            initial_soc_fraction=fast_charge.initial_soc_fraction,
+            charge_c_rate=fast_charge.charge_c_rate,
+            target_soc_start=fast_charge.target_soc_start,
+            target_soc_end=fast_charge.target_soc_end,
+            max_voltage_v=fast_charge.max_voltage_v,
+            cv_cutoff_denominator=fast_charge.cv_cutoff_denominator,
+            maximum_temperature_c=fast_charge.maximum_temperature_c,
+            maximum_plating_mol_m3=fast_charge.maximum_plating_mol_m3,
+            minimum_energy_density_wh_per_l=fast_charge.minimum_energy_density_wh_per_l,
+            ambient_temperature_c=fast_charge.ambient_temperature_c,
+            heat_transfer_coefficient_w_per_m2k=fast_charge.heat_transfer_coefficient_w_per_m2k,
+            packaging_efficiency=fast_charge.packaging_efficiency,
+            rest_before_charge_min=fast_charge.rest_before_charge_min,
+            rest_after_charge_min=fast_charge.rest_after_charge_min,
+            mesh_points=fast_charge.mesh_points,
+            failure_charge_time_min=fast_charge.failure_charge_time_min,
+            evaluation_mode="analytic_surrogate",
+        )
 
 
 def test_finite_cylinder_distance_reports_axial_end_gap() -> None:
@@ -365,8 +632,8 @@ def test_finite_cylinder_distance_reports_axial_end_gap() -> None:
 
 def test_t4_thermal_contact_model_recognizes_axial_neighbors(monkeypatch: pytest.MonkeyPatch) -> None:
     _patch_battery_loaders(monkeypatch)
-    problem = get_problem("battery_18650_t4_thermal_opt")
-    assert isinstance(problem, Battery18650Tier4ThermalOptimizationProblem)
+    problem = get_problem("battery_18650_t4_thermal_hybrid_opt")
+    assert isinstance(problem, Battery18650T4ThermalHybridOptimizationProblem)
 
     cells = (
         SimpleNamespace(x_mm=0.0, y_mm=0.0, z_mm=0.0, angle_x_deg=0.0, angle_y_deg=0.0, angle_z_deg=0.0),
@@ -381,8 +648,8 @@ def test_t4_thermal_contact_model_recognizes_axial_neighbors(monkeypatch: pytest
 
 def test_t2_pose_helper_uses_true_axial_clearance(monkeypatch: pytest.MonkeyPatch) -> None:
     _patch_battery_loaders(monkeypatch)
-    problem = get_problem("battery_18650_t2_layout_opt")
-    assert isinstance(problem, Battery18650Tier2LayoutOptimizationProblem)
+    problem = get_problem("battery_18650_t2_pose_surrogate_opt")
+    assert isinstance(problem, Battery18650T2PoseSurrogateOptimizationProblem)
 
     helper = problem._pose_helper
     candidate = numpy.zeros_like(helper.bounds.lb)
@@ -397,8 +664,8 @@ def test_t2_pose_helper_uses_true_axial_clearance(monkeypatch: pytest.MonkeyPatc
 
 def test_t3_metric_payload_marks_empty_stage_topology_infeasible(monkeypatch: pytest.MonkeyPatch) -> None:
     _patch_battery_loaders(monkeypatch)
-    problem = get_problem("battery_18650_t3_topology_opt")
-    assert isinstance(problem, Battery18650Tier3TopologyOptimizationProblem)
+    problem = get_problem("battery_18650_t3a_topology_surrogate_opt")
+    assert isinstance(problem, Battery18650T3ATopologySurrogateOptimizationProblem)
 
     candidate = problem.generate_initial_solution(seed=3)
     candidate[0] = 3.0

@@ -1,4 +1,4 @@
-"""Inspect tier-3 battery optimization benchmark."""
+"""Inspect the T1 rectangular surrogate battery optimization benchmark."""
 
 from __future__ import annotations
 
@@ -18,12 +18,13 @@ COMMON_KEYS = (
 
 
 def main() -> None:
-    problem = derp.get_problem("battery_18650_t3_topology_opt")
-    initial = problem.generate_initial_solution(seed=3)
+    problem = derp.get_problem("battery_18650_t1_rectangular_surrogate_opt")
+    initial = problem.generate_initial_solution(seed=1)
     components = problem.objective_components(initial)
-    result = problem.solve(maxiter=10)
+    result = problem.solve(maxiter=20)
     solved = problem.objective_components(result.x)
     print(problem.metadata.problem_id)
+    print("default-evaluation-mode", problem.metadata.benchmark_card.default_evaluation_mode)
     print("metric-keys", ",".join(sorted(components)))
     print("initial", " ".join(f"{key}={components[key]:.3f}" for key in COMMON_KEYS))
     print("solve", result.message)

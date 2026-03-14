@@ -20,21 +20,23 @@ if TYPE_CHECKING:
         OptimizationProblem,
     )
     from design_research_problems.problems.grammar import (
-        Battery18650Tier1SeriesParallelGrammarProblem,
-        Battery18650Tier2LayoutGrammarProblem,
-        Battery18650Tier3TopologyGrammarProblem,
-        Battery18650Tier4ThermalGrammarProblem,
+        Battery18650T1RectangularSurrogateGrammarProblem,
+        Battery18650T2PoseSurrogateGrammarProblem,
+        Battery18650T3ATopologySurrogateGrammarProblem,
+        Battery18650T3BNetlistExplicitGrammarProblem,
+        Battery18650T4ThermalHybridGrammarProblem,
         IoTHomeCoolingGrammarProblem,
         PlanarTrussSpanProblem,
         SpaceTrussSpanProblem,
         TrussAPGrammarProblem,
     )
     from design_research_problems.problems.optimization import (
-        Battery18650Tier1SeriesParallelOptimizationProblem,
-        Battery18650Tier2LayoutOptimizationProblem,
-        Battery18650Tier3TopologyOptimizationProblem,
-        Battery18650Tier4ThermalOptimizationProblem,
-        BatteryFastChargeOptimizationProblem,
+        Battery18650T1RectangularSurrogateOptimizationProblem,
+        Battery18650T2PoseSurrogateOptimizationProblem,
+        Battery18650T3ATopologySurrogateOptimizationProblem,
+        Battery18650T3BNetlistExplicitOptimizationProblem,
+        Battery18650T4ThermalHybridOptimizationProblem,
+        BatteryFastChargeDFNAnchorOptimizationProblem,
         GMPBOptimizationProblem,
         PlanarTrussEngineeringOptimizationProblem,
         SpaceTrussEngineeringOptimizationProblem,
@@ -54,17 +56,19 @@ type _SpaceTrussProblemId = Literal["space_truss_span"]
 type _IoTGrammarProblemId = Literal["iot_home_cooling_system_design"]
 type _TrussAPProblemId = Literal["truss_analysis_program_design"]
 type _BatteryGrammarProblemId = Literal[
-    "battery_18650_t1_series_parallel_grammar",
-    "battery_18650_t2_layout_grammar",
-    "battery_18650_t3_topology_grammar",
-    "battery_18650_t4_thermal_grammar",
+    "battery_18650_t1_rectangular_surrogate_grammar",
+    "battery_18650_t2_pose_surrogate_grammar",
+    "battery_18650_t3a_topology_surrogate_grammar",
+    "battery_18650_t3b_netlist_explicit_grammar",
+    "battery_18650_t4_thermal_hybrid_grammar",
 ]
 type _BatteryOptimizationProblemId = Literal[
-    "battery_18650_t1_series_parallel_opt",
-    "battery_18650_t2_layout_opt",
-    "battery_18650_t3_topology_opt",
-    "battery_18650_t4_thermal_opt",
-    "battery_fast_charge_cell_opt",
+    "battery_18650_t1_rectangular_surrogate_opt",
+    "battery_18650_t2_pose_surrogate_opt",
+    "battery_18650_t3a_topology_surrogate_opt",
+    "battery_18650_t3b_netlist_explicit_opt",
+    "battery_18650_t4_thermal_hybrid_opt",
+    "battery_fast_charge_dfn_anchor_opt",
 ]
 
 type _MSEvalProblemId = Literal[
@@ -270,45 +274,55 @@ class ProblemRegistry:
 
     @overload
     def get(
-        self, problem_id: Literal["battery_18650_t1_series_parallel_grammar"]
-    ) -> Battery18650Tier1SeriesParallelGrammarProblem: ...
+        self, problem_id: Literal["battery_18650_t1_rectangular_surrogate_grammar"]
+    ) -> Battery18650T1RectangularSurrogateGrammarProblem: ...
 
     @overload
-    def get(self, problem_id: Literal["battery_18650_t2_layout_grammar"]) -> Battery18650Tier2LayoutGrammarProblem: ...
-
-    @overload
-    def get(
-        self, problem_id: Literal["battery_18650_t3_topology_grammar"]
-    ) -> Battery18650Tier3TopologyGrammarProblem: ...
+    def get(self, problem_id: Literal["battery_18650_t2_pose_surrogate_grammar"]) -> Battery18650T2PoseSurrogateGrammarProblem: ...
 
     @overload
     def get(
-        self, problem_id: Literal["battery_18650_t4_thermal_grammar"]
-    ) -> Battery18650Tier4ThermalGrammarProblem: ...
+        self, problem_id: Literal["battery_18650_t3a_topology_surrogate_grammar"]
+    ) -> Battery18650T3ATopologySurrogateGrammarProblem: ...
+
+    @overload
+    def get(
+        self, problem_id: Literal["battery_18650_t3b_netlist_explicit_grammar"]
+    ) -> Battery18650T3BNetlistExplicitGrammarProblem: ...
+
+    @overload
+    def get(
+        self, problem_id: Literal["battery_18650_t4_thermal_hybrid_grammar"]
+    ) -> Battery18650T4ThermalHybridGrammarProblem: ...
 
     @overload
     def get(self, problem_id: _PlanarTrussProblemId) -> PlanarTrussSpanProblem: ...
 
     @overload
     def get(
-        self, problem_id: Literal["battery_18650_t1_series_parallel_opt"]
-    ) -> Battery18650Tier1SeriesParallelOptimizationProblem: ...
+        self, problem_id: Literal["battery_18650_t1_rectangular_surrogate_opt"]
+    ) -> Battery18650T1RectangularSurrogateOptimizationProblem: ...
 
     @overload
-    def get(self, problem_id: Literal["battery_18650_t2_layout_opt"]) -> Battery18650Tier2LayoutOptimizationProblem: ...
-
-    @overload
-    def get(
-        self, problem_id: Literal["battery_18650_t3_topology_opt"]
-    ) -> Battery18650Tier3TopologyOptimizationProblem: ...
+    def get(self, problem_id: Literal["battery_18650_t2_pose_surrogate_opt"]) -> Battery18650T2PoseSurrogateOptimizationProblem: ...
 
     @overload
     def get(
-        self, problem_id: Literal["battery_18650_t4_thermal_opt"]
-    ) -> Battery18650Tier4ThermalOptimizationProblem: ...
+        self, problem_id: Literal["battery_18650_t3a_topology_surrogate_opt"]
+    ) -> Battery18650T3ATopologySurrogateOptimizationProblem: ...
 
     @overload
-    def get(self, problem_id: Literal["battery_fast_charge_cell_opt"]) -> BatteryFastChargeOptimizationProblem: ...
+    def get(
+        self, problem_id: Literal["battery_18650_t3b_netlist_explicit_opt"]
+    ) -> Battery18650T3BNetlistExplicitOptimizationProblem: ...
+
+    @overload
+    def get(
+        self, problem_id: Literal["battery_18650_t4_thermal_hybrid_opt"]
+    ) -> Battery18650T4ThermalHybridOptimizationProblem: ...
+
+    @overload
+    def get(self, problem_id: Literal["battery_fast_charge_dfn_anchor_opt"]) -> BatteryFastChargeDFNAnchorOptimizationProblem: ...
 
     @overload
     def get(self, problem_id: Literal["gmpb_default_dynamic_min"]) -> GMPBOptimizationProblem: ...
@@ -421,22 +435,26 @@ def list_problems() -> tuple[str, ...]:
 
 @overload
 def get_problem(
-    problem_id: Literal["battery_18650_t1_series_parallel_grammar"],
-) -> Battery18650Tier1SeriesParallelGrammarProblem: ...
+    problem_id: Literal["battery_18650_t1_rectangular_surrogate_grammar"],
+) -> Battery18650T1RectangularSurrogateGrammarProblem: ...
 
 
 @overload
-def get_problem(problem_id: Literal["battery_18650_t2_layout_grammar"]) -> Battery18650Tier2LayoutGrammarProblem: ...
+def get_problem(problem_id: Literal["battery_18650_t2_pose_surrogate_grammar"]) -> Battery18650T2PoseSurrogateGrammarProblem: ...
 
 
 @overload
 def get_problem(
-    problem_id: Literal["battery_18650_t3_topology_grammar"],
-) -> Battery18650Tier3TopologyGrammarProblem: ...
+    problem_id: Literal["battery_18650_t3a_topology_surrogate_grammar"],
+) -> Battery18650T3ATopologySurrogateGrammarProblem: ...
 
 
 @overload
-def get_problem(problem_id: Literal["battery_18650_t4_thermal_grammar"]) -> Battery18650Tier4ThermalGrammarProblem: ...
+def get_problem(problem_id: Literal["battery_18650_t3b_netlist_explicit_grammar"]) -> Battery18650T3BNetlistExplicitGrammarProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["battery_18650_t4_thermal_hybrid_grammar"]) -> Battery18650T4ThermalHybridGrammarProblem: ...
 
 
 @overload
@@ -445,28 +463,34 @@ def get_problem(problem_id: _PlanarTrussProblemId) -> PlanarTrussSpanProblem: ..
 
 @overload
 def get_problem(
-    problem_id: Literal["battery_18650_t1_series_parallel_opt"],
-) -> Battery18650Tier1SeriesParallelOptimizationProblem: ...
+    problem_id: Literal["battery_18650_t1_rectangular_surrogate_opt"],
+) -> Battery18650T1RectangularSurrogateOptimizationProblem: ...
 
 
 @overload
-def get_problem(problem_id: Literal["battery_18650_t2_layout_opt"]) -> Battery18650Tier2LayoutOptimizationProblem: ...
-
-
-@overload
-def get_problem(
-    problem_id: Literal["battery_18650_t3_topology_opt"],
-) -> Battery18650Tier3TopologyOptimizationProblem: ...
+def get_problem(problem_id: Literal["battery_18650_t2_pose_surrogate_opt"]) -> Battery18650T2PoseSurrogateOptimizationProblem: ...
 
 
 @overload
 def get_problem(
-    problem_id: Literal["battery_18650_t4_thermal_opt"],
-) -> Battery18650Tier4ThermalOptimizationProblem: ...
+    problem_id: Literal["battery_18650_t3a_topology_surrogate_opt"],
+) -> Battery18650T3ATopologySurrogateOptimizationProblem: ...
 
 
 @overload
-def get_problem(problem_id: Literal["battery_fast_charge_cell_opt"]) -> BatteryFastChargeOptimizationProblem: ...
+def get_problem(
+    problem_id: Literal["battery_18650_t3b_netlist_explicit_opt"],
+) -> Battery18650T3BNetlistExplicitOptimizationProblem: ...
+
+
+@overload
+def get_problem(
+    problem_id: Literal["battery_18650_t4_thermal_hybrid_opt"],
+) -> Battery18650T4ThermalHybridOptimizationProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["battery_fast_charge_dfn_anchor_opt"]) -> BatteryFastChargeDFNAnchorOptimizationProblem: ...
 
 
 @overload

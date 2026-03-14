@@ -13,6 +13,12 @@ from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import MissingOptionalDependencyError
 from design_research_problems._optional import import_optional_module
 from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._domains.battery_benchmark import (
+    BatteryEvaluationMode,
+    BatteryRepresentationMode,
+    build_battery_evaluation_provenance,
+    coerce_battery_evaluation_mode,
+)
 from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems._optimization import (
     Bounds,
@@ -633,7 +639,156 @@ class BatteryFastChargeOptimizationProblem(OptimizationProblem):
         )
 
 
+class BatteryFastChargeDFNAnchorOptimizationProblem(BatteryFastChargeOptimizationProblem):
+    """Public fast-charge DFN anchor benchmark with explicit baseline-solver framing."""
+
+    def __init__(
+        self,
+        metadata: ProblemMetadata,
+        statement_markdown: str = "",
+        resource_bundle: PackageResourceBundle | None = None,
+        *,
+        parameter_set: str = _DEFAULT_PARAMETER_SET,
+        initial_soc_fraction: float = 0.0,
+        charge_c_rate: float = _DEFAULT_CHARGE_C_RATE,
+        target_soc_start: float = _DEFAULT_TARGET_SOC_START,
+        target_soc_end: float = _DEFAULT_TARGET_SOC_END,
+        max_voltage_v: float = _DEFAULT_MAX_VOLTAGE_V,
+        cv_cutoff_denominator: float = _DEFAULT_CV_CUTOFF_DENOMINATOR,
+        maximum_temperature_c: float = _DEFAULT_MAX_TEMPERATURE_C,
+        maximum_plating_mol_m3: float = _DEFAULT_MAX_PLATING_MOL_M3,
+        minimum_energy_density_wh_per_l: float = _DEFAULT_MIN_ENERGY_DENSITY_WH_PER_L,
+        ambient_temperature_c: float = _DEFAULT_AMBIENT_TEMPERATURE_C,
+        heat_transfer_coefficient_w_per_m2k: float = _DEFAULT_HEAT_TRANSFER_COEFFICIENT_W_PER_M2K,
+        packaging_efficiency: float = _DEFAULT_PACKAGING_EFFICIENCY,
+        rest_before_charge_min: float = _DEFAULT_REST_BEFORE_CHARGE_MIN,
+        rest_after_charge_min: float = _DEFAULT_REST_AFTER_CHARGE_MIN,
+        mesh_points: int = _DEFAULT_MESH_POINTS,
+        failure_charge_time_min: float = _DEFAULT_FAILURE_CHARGE_TIME_MIN,
+        evaluation_mode: str | BatteryEvaluationMode = BatteryEvaluationMode.ELECTROCHEMICAL_ANCHOR.value,
+    ) -> None:
+        super().__init__(
+            metadata=metadata,
+            statement_markdown=statement_markdown,
+            resource_bundle=resource_bundle,
+            parameter_set=parameter_set,
+            initial_soc_fraction=initial_soc_fraction,
+            charge_c_rate=charge_c_rate,
+            target_soc_start=target_soc_start,
+            target_soc_end=target_soc_end,
+            max_voltage_v=max_voltage_v,
+            cv_cutoff_denominator=cv_cutoff_denominator,
+            maximum_temperature_c=maximum_temperature_c,
+            maximum_plating_mol_m3=maximum_plating_mol_m3,
+            minimum_energy_density_wh_per_l=minimum_energy_density_wh_per_l,
+            ambient_temperature_c=ambient_temperature_c,
+            heat_transfer_coefficient_w_per_m2k=heat_transfer_coefficient_w_per_m2k,
+            packaging_efficiency=packaging_efficiency,
+            rest_before_charge_min=rest_before_charge_min,
+            rest_after_charge_min=rest_after_charge_min,
+            mesh_points=mesh_points,
+            failure_charge_time_min=failure_charge_time_min,
+        )
+        self.evaluation_mode = coerce_battery_evaluation_mode(
+            evaluation_mode,
+            default=BatteryEvaluationMode.ELECTROCHEMICAL_ANCHOR,
+            supported=(BatteryEvaluationMode.ELECTROCHEMICAL_ANCHOR,),
+        )
+
+    @classmethod
+    def from_manifest(cls, manifest: ProblemManifest) -> BatteryFastChargeDFNAnchorOptimizationProblem:
+        parameters = manifest.parameters
+        return cls(
+            metadata=manifest.metadata,
+            statement_markdown=manifest.statement_markdown,
+            resource_bundle=cls.resource_bundle_from_manifest(manifest),
+            parameter_set=str(parameters.get("parameter_set", _DEFAULT_PARAMETER_SET)),
+            initial_soc_fraction=_coerce_float(parameters.get("initial_soc_fraction"), 0.0),
+            charge_c_rate=_coerce_float(parameters.get("charge_c_rate"), _DEFAULT_CHARGE_C_RATE),
+            target_soc_start=_coerce_float(parameters.get("target_soc_start"), _DEFAULT_TARGET_SOC_START),
+            target_soc_end=_coerce_float(parameters.get("target_soc_end"), _DEFAULT_TARGET_SOC_END),
+            max_voltage_v=_coerce_float(parameters.get("max_voltage_v"), _DEFAULT_MAX_VOLTAGE_V),
+            cv_cutoff_denominator=_coerce_float(
+                parameters.get("cv_cutoff_denominator"),
+                _DEFAULT_CV_CUTOFF_DENOMINATOR,
+            ),
+            maximum_temperature_c=_coerce_float(
+                parameters.get("maximum_temperature_c"),
+                _DEFAULT_MAX_TEMPERATURE_C,
+            ),
+            maximum_plating_mol_m3=_coerce_float(
+                parameters.get("maximum_plating_mol_m3"),
+                _DEFAULT_MAX_PLATING_MOL_M3,
+            ),
+            minimum_energy_density_wh_per_l=_coerce_float(
+                parameters.get("minimum_energy_density_wh_per_l"),
+                _DEFAULT_MIN_ENERGY_DENSITY_WH_PER_L,
+            ),
+            ambient_temperature_c=_coerce_float(
+                parameters.get("ambient_temperature_c"),
+                _DEFAULT_AMBIENT_TEMPERATURE_C,
+            ),
+            heat_transfer_coefficient_w_per_m2k=_coerce_float(
+                parameters.get("heat_transfer_coefficient_w_per_m2k"),
+                _DEFAULT_HEAT_TRANSFER_COEFFICIENT_W_PER_M2K,
+            ),
+            packaging_efficiency=_coerce_float(
+                parameters.get("packaging_efficiency"),
+                _DEFAULT_PACKAGING_EFFICIENCY,
+            ),
+            rest_before_charge_min=_coerce_float(
+                parameters.get("rest_before_charge_min"),
+                _DEFAULT_REST_BEFORE_CHARGE_MIN,
+            ),
+            rest_after_charge_min=_coerce_float(
+                parameters.get("rest_after_charge_min"),
+                _DEFAULT_REST_AFTER_CHARGE_MIN,
+            ),
+            mesh_points=_coerce_int(parameters.get("mesh_points"), _DEFAULT_MESH_POINTS),
+            failure_charge_time_min=_coerce_float(
+                parameters.get("failure_charge_time_min"),
+                _DEFAULT_FAILURE_CHARGE_TIME_MIN,
+            ),
+            evaluation_mode=cast(
+                str | BatteryEvaluationMode,
+                parameters.get("evaluation_mode", BatteryEvaluationMode.ELECTROCHEMICAL_ANCHOR.value),
+            ),
+        )
+
+    def evaluation_provenance(self, variables: NDArray[numpy.float64]) -> object:
+        del variables
+        return build_battery_evaluation_provenance(
+            representation_mode=BatteryRepresentationMode.FAST_CHARGE_CELL,
+            evaluation_mode=self.evaluation_mode,
+            evaluator_implementation=f"{type(self).__module__}:{type(self).__name__}",
+            requested_backend_config=None,
+            honored_backend_fields=(),
+            cell_model_source="pybamm_dfn",
+        )
+
+    def solve(
+        self,
+        initial_solution: NDArray[numpy.float64] | None = None,
+        seed: int | None = None,
+        maxiter: int = 8,
+    ) -> OptimizationResult:
+        result = super().solve(initial_solution=initial_solution, seed=seed, maxiter=maxiter)
+        return OptimizationResult(
+            x=result.x,
+            fun=result.fun,
+            success=result.success,
+            message=(
+                "Evaluated the packaged DFN anchor baseline/reference search."
+                if result.success
+                else "Evaluated the packaged DFN anchor baseline/reference search and returned a best-effort design."
+            ),
+            nit=result.nit,
+            nfev=result.nfev,
+        )
+
+
 __all__ = [
+    "BatteryFastChargeDFNAnchorOptimizationProblem",
     "BatteryFastChargeOptimizationProblem",
     "FastChargeMetricSummary",
     "FastChargeVariableSpec",

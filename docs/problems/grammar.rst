@@ -14,13 +14,24 @@ The catalog includes `planar_truss_span`, which translates a serializable
 planar topology state into a fresh `trussme.Truss` for evaluation. It also
 includes `space_truss_span`, which applies the same evaluation pattern to a
 bounded 3D space-truss state. The tiered battery grammar ladder includes
-`battery_18650_t1_series_parallel_grammar`,
-`battery_18650_t2_layout_grammar`,
-`battery_18650_t3_topology_grammar`, and
-`battery_18650_t4_thermal_grammar`, which progressively unlock series-parallel
-layout edits, pose-aware layout edits, explicit topology/netlist edits, and
-thermal-system tuning (Tier-4 uses a PyBaMM-backed thermal evaluator). The
-catalog also includes six
+`battery_18650_t1_rectangular_surrogate_grammar`,
+`battery_18650_t2_pose_surrogate_grammar`,
+`battery_18650_t3a_topology_surrogate_grammar`,
+`battery_18650_t3b_netlist_explicit_grammar`, and
+`battery_18650_t4_thermal_hybrid_grammar`. Together they expose a paired
+battery ladder with clear representation/fidelity labels:
+
+- Tier 1: rectangular pack-sizing actions scored with an analytic surrogate.
+- Tier 2: pose-aware layout actions scored with analytic electrical/thermal
+  surrogates.
+- Tier 3A: topology-allocation actions that can be benchmarked as either an
+  analytic surrogate or a projected explicit-circuit evaluation.
+- Tier 3B: explicit netlist-synthesis actions scored directly by the shared
+  explicit-circuit backend.
+- Tier 4: thermal-topology actions with analytic, explicit-circuit, or
+  hybrid-thermal scoring.
+
+The catalog also includes six
 `planar_roof_truss_*` variants that approximate the planar roof truss
 formulations discussed by Shea and Cagan, including multi-load and
 symmetry-constrained cases.

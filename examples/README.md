@@ -11,14 +11,17 @@ optimizer example to use the optional `pymoo` or `nevergrad` solver backends.
 - `decision/mseval_material_choice.py`: inspect one empirical MSEval material-choice benchmark.
 - `text/peanut_sheller_packet.py`: render the text prompt and citation packet.
 - `optimization/pill_problem.py`: sample and optionally solve the pill problem.
-- `grammar/battery_18650_t1_series_parallel_grammar.py`: inspect the tier-1 rectangular battery grammar baseline.
-- `grammar/battery_18650_t2_layout_grammar.py`: inspect tier-2 pose-aware battery grammar transitions and metrics.
-- `grammar/battery_18650_t3_topology_grammar.py`: inspect tier-3 explicit topology battery grammar behavior.
-- `grammar/battery_18650_t4_thermal_grammar.py`: inspect tier-4 battery grammar with thermal-system tuning actions.
-- `optimization/battery_18650_t1_series_parallel_opt.py`: inspect tier-1 optimization metrics and solver output.
-- `optimization/battery_18650_t2_layout_opt.py`: inspect tier-2 pose-aware optimization metrics and solver output.
-- `optimization/battery_18650_t3_topology_opt.py`: inspect tier-3 topology-aware optimization metrics and solver output.
-- `optimization/battery_18650_t4_thermal_opt.py`: inspect tier-4 thermal-system optimization metrics and solver output.
+- `grammar/battery_18650_t1_rectangular_surrogate_grammar.py`: inspect the tier-1 rectangular grammar baseline and its benchmark card.
+- `grammar/battery_18650_t2_pose_surrogate_grammar.py`: inspect tier-2 pose-aware grammar transitions and benchmark metadata.
+- `grammar/battery_18650_t3a_topology_surrogate_grammar.py`: inspect the tier-3A topology-allocation surrogate grammar and provenance.
+- `grammar/battery_18650_t3b_netlist_explicit_grammar.py`: inspect the tier-3B explicit-netlist grammar behavior.
+- `grammar/battery_18650_t4_thermal_hybrid_grammar.py`: inspect tier-4 grammar with hybrid thermal scoring and supported evaluator modes.
+- `optimization/battery_18650_t1_rectangular_surrogate_opt.py`: inspect tier-1 optimization metrics and the default evaluation mode.
+- `optimization/battery_18650_t2_pose_surrogate_opt.py`: inspect tier-2 pose-aware optimization metrics and representation metadata.
+- `optimization/battery_18650_t3a_topology_surrogate_opt.py`: compare surrogate and explicit-circuit scoring on the same tier-3A candidate.
+- `optimization/battery_18650_t3b_netlist_explicit_opt.py`: inspect the explicit-netlist optimization baseline with shared tier metrics.
+- `optimization/battery_18650_t4_thermal_hybrid_opt.py`: compare tier-4 hybrid and explicit-circuit scoring on the same candidate.
+- `optimization/battery_fast_charge_dfn_anchor_opt.py`: inspect the DFN anchor benchmark and its deterministic baseline/reference-search wording.
 - `grammar/iot_home_cooling_system_design.py`: build a small IoT home cooling network and evaluate lifecycle and thermal metrics.
 - `grammar/truss_analysis_program_design.py`: build a truss using MATLAB Truss Analysis Program mechanics and inspect mass/FOS results.
 - `optimization/battery_grammar_to_optimizer.py`: inspect the packaged rectangular battery sizing optimizer with a seeded start and solved design.

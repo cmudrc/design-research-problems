@@ -180,6 +180,7 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
                 "objective_value": objective_value,
                 "higher_is_better": higher_is_better,
                 "is_feasible": is_feasible,
+                **self._mcp_evaluation_extras(current_state),
             }
 
         def submit_final(justification: str | None = None) -> dict[str, object]:
@@ -199,6 +200,7 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
                 "higher_is_better": higher_is_better,
                 "is_feasible": is_feasible,
                 "justification": None if justification is None else justification.strip() or None,
+                **self._mcp_evaluation_extras(current_state),
             }
 
         def _set_current_state(state: StateT) -> None:
@@ -267,6 +269,14 @@ class GrammarProblem[StateT, EvaluationT](ComputableProblem[StateT, EvaluationT]
             description="Submit the current grammar design state as the final answer.",
         )
         return server
+
+    def _mcp_evaluation_extras(self, state: StateT) -> dict[str, object]:
+        """Return optional MCP-facing evaluation extras for one grammar state."""
+        report: dict[str, object] = {}
+        evaluation_provenance = getattr(self, "evaluation_provenance", None)
+        if callable(evaluation_provenance):
+            report["evaluation_provenance"] = to_json_value(evaluation_provenance(state))
+        return report
 
     @abstractmethod
     def evaluate(self, state: StateT) -> EvaluationT:

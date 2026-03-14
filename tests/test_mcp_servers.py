@@ -171,12 +171,14 @@ def test_grammar_problem_to_mcp_server_is_stateful_and_toggleable() -> None:
 
 
 def test_grammar_evaluate_helper_returns_current_state_report() -> None:
-    problem = get_problem("battery_18650_t1_series_parallel_grammar")
+    problem = get_problem("battery_18650_t1_rectangular_surrogate_grammar")
     server = problem.to_mcp_server()
 
     payload = _call_tool_json(server, "evaluate", {})
     assert payload["evaluation"]["is_feasible"] is False
     assert "failure_reason" in payload["evaluation"]
+    assert payload["evaluation_provenance"]["representation_mode"] == "rectangular"
+    assert payload["evaluation_provenance"]["evaluation_mode"] == "analytic_surrogate"
 
 
 def test_to_mcp_server_raises_missing_optional_dependency_when_mcp_is_unavailable(

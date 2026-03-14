@@ -1,19 +1,19 @@
-Battery 18650 T4 Thermal Grammar
-================================
+Battery Fast Charge Dfn Anchor Opt
+==================================
 
-Source: ``examples/grammar/battery_18650_t4_thermal_grammar.py``
+Source: ``examples/optimization/battery_fast_charge_dfn_anchor_opt.py``
 
 Introduction
 ------------
 
-Inspect tier-4 battery grammar benchmark.
+Inspect the fast-charge DFN anchor battery benchmark.
 
 Technical Implementation
 ------------------------
 
 This page is generated from the top-of-file module docstring and the example source code. The full script is included below for direct inspection.
 
-.. literalinclude:: ../../../examples/grammar/battery_18650_t4_thermal_grammar.py
+.. literalinclude:: ../../../examples/optimization/battery_fast_charge_dfn_anchor_opt.py
    :language: python
    :lines: 3-
    :linenos:
@@ -25,6 +25,6 @@ Expected Results
 
 .. code-block:: bash
 
-   PYTHONPATH=src python3 examples/grammar/battery_18650_t4_thermal_grammar.py
+   PYTHONPATH=src python3 examples/optimization/battery_fast_charge_dfn_anchor_opt.py
 
 Run the command shown below from repository root. Output should summarize the problem setup, a baseline solution, or diagnostic values relevant to this example.

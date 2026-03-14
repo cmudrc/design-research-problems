@@ -1,9 +1,9 @@
-problem_id = "battery_18650_t4_thermal_grammar"
-title = "Tier 4 18650 battery grammar (topology + thermal system)"
-summary = "Tier-4 grammar problem that adds thermal-system tuning decisions on top of topology and pose freedom."
+problem_id = "battery_18650_t4_thermal_hybrid_grammar"
+title = "T4 18650 thermal hybrid grammar"
+summary = "Tier-4 thermo-topological battery grammar benchmark with analytic, explicit-circuit, and hybrid-thermal evaluator modes."
 kind = "grammar"
 statement = '''
-# Tier 4 18650 battery grammar (topology + thermal system)
+# T4 18650 thermal hybrid grammar
 
 Tier 4 unlocks thermal-system design variables in addition to Tier-3 topology
 and geometry decisions. The grammar supports topology edits, pose edits, and
@@ -32,7 +32,7 @@ Reported T_max is max_i(T_core_i), not an averaged pack temperature.
 BattMo/PyBattMo integration is intentionally deferred in this release to keep
 the core benchmark path Python-only and CI-stable.
 '''
-implementation = "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier4ThermalGrammarProblem"
+implementation = "design_research_problems.problems.grammar._battery_tiers:Battery18650T4ThermalHybridGrammarProblem"
 capabilities = [
   "statement-markdown",
   "serializable-state",
@@ -41,7 +41,29 @@ capabilities = [
 ]
 study_suitability = []
 
+[benchmark]
+benchmark_question = "How well do grammar methods co-design topology, geometry, and thermal controls when evaluator fidelity can be stepped up without changing representation?"
+physically_modeled = [
+  "Tier-3 topology allocation and pose geometry",
+  "Thermal control variables for convection, passive cooling, and ambient conditions",
+  "PyBaMM-derived thermal priors and steady-state thermal-network evaluation in hybrid mode",
+]
+deliberate_surrogates = [
+  "Electrical scoring can remain surrogate or projected explicit depending on evaluation_mode",
+  "Hybrid thermal scoring still projects topology-allocation states to a canonical explicit netlist",
+]
+representation_mode = "thermal_topology"
+default_evaluation_mode = "hybrid_thermal"
+supported_evaluation_modes = ["analytic_surrogate", "explicit_circuit", "hybrid_thermal"]
+validation_scope = [
+  "Qualitative thermal trend validation",
+  "Mode-consistency checks across analytic, explicit, and hybrid evaluators",
+]
+solver_role = "grammar benchmark; no packaged optimizer"
+
 [parameters]
+evaluation_mode = "hybrid_thermal"
+imbalance_model = "min_stage"
 target_voltage_v = 14.8
 minimum_capacity_ah = 10.0
 minimum_current_a = 60.0
@@ -75,4 +97,4 @@ feasibility_ratio_hint = 0.02
 objective_mode = "multi"
 constraint_nature = "hard"
 bounds_summary = "tier-3 topology/pose controls plus thermal-parameter tuning actions"
-tags = ["grammar", "battery", "tiered", "tier-4", "thermal", "topology"]
+tags = ["grammar", "battery", "tiered", "tier-4", "thermal-topology", "hybrid"]

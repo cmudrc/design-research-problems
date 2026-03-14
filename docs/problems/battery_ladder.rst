@@ -1,71 +1,166 @@
 Battery Ladder Technical Notes
 ==============================
 
-This page explains the shared electronics, geometry, and thermal abstractions
-used by the tiered 18650 battery problems:
+This page describes the packaged battery benchmark suite as a **design-research
+benchmark ladder**, not as a production battery-pack simulator. The key public
+entries are:
 
-- ``battery_18650_t1_series_parallel_*``
-- ``battery_18650_t2_layout_*``
-- ``battery_18650_t3_topology_*``
-- ``battery_18650_t4_thermal_*``
+- ``battery_18650_t1_rectangular_surrogate_*``
+- ``battery_18650_t2_pose_surrogate_*``
+- ``battery_18650_t3a_topology_surrogate_*``
+- ``battery_18650_t3b_netlist_explicit_*``
+- ``battery_18650_t4_thermal_hybrid_*``
+- ``battery_fast_charge_dfn_anchor_opt``
 
-Model Scope
------------
+Representation And Evaluation Modes
+-----------------------------------
 
-The battery ladder uses one fixed cylindrical 18650 cell model with these
-nominal properties:
+The battery suite now treats **representation** and **evaluation mode** as
+separate concepts.
+
+Representation modes describe what a user designs:
+
+- ``rectangular``: classical ``S x P`` pack sizing.
+- ``pose_layout``: per-cell 3D pose with fixed rectangular electrical
+  semantics.
+- ``topology_allocation``: pose variables plus active-cell count and stage-slot
+  assignment.
+- ``explicit_netlist``: explicit cells, terminals, and interconnects.
+- ``thermal_topology``: topology-allocation plus thermal-system variables.
+- ``fast_charge_cell``: continuous electrochemical cell-design parameters.
+
+Evaluation modes describe how the design is scored:
+
+- ``analytic_surrogate``: closed-form pack electrical equations and compact
+  thermal proxies.
+- ``explicit_circuit``: projected or native explicit-netlist scoring through
+  the shared circuit backend.
+- ``hybrid_thermal``: explicit-circuit electrical scoring plus the Tier-4
+  thermal network.
+- ``electrochemical_anchor``: direct PyBaMM DFN evaluation for the fast-charge
+  anchor.
+
+Shared Physical Scope
+---------------------
+
+The 18650 pack ladder uses one fixed cylindrical packaged cell with nominal:
 
 - ``V_cell = 3.7 V``
 - ``C_cell = 2.5 Ah``
 - ``R_int = 0.05 ohm``
-- ``C-rate_max = 10 C``
+- ``C_rate,max = 10 C``
 - ``diameter = 18 mm``
 - ``length = 65 mm``
 
-All tiers enforce hard constraints on:
+All pack benchmarks enforce hard requirements on:
 
-- pack voltage matching within tolerance,
+- target voltage within tolerance,
 - minimum capacity,
 - minimum current capability,
-- geometric envelope dimensions,
+- maximum width/depth/height,
 - minimum inter-cell clearance.
 
-Backend Configuration
----------------------
+Geometry from Tier 2 upward uses finite oriented cylinders. Clearance is based
+on minimum **surface-to-surface** distance, not center distance. The reported
+design volume is the axis-aligned bounding-box volume.
 
-Battery grammar and optimization problems share one optional backend config
-surface under ``[parameters.battery_backend]`` in manifest TOML:
+Tier Contracts
+--------------
 
-- ``cell_model_mode``: ``auto | pybamm_ecm | pybamm_spm | pybamm_dfn``
-- ``parameterization.preset``: ``fast | medium | slow``
-- ``parameterization.parameter_set``: explicit PyBaMM parameter-set name override
-- ``thermal_mode``: ``isothermal | lumped``
-- ``ambient_temp_c`` / ``ambient_temp_C``: backend ambient temperature override
-- optional advanced passthrough mappings: ``parasitics`` and ``solver_policy``
+Tier 1
+^^^^^^
 
-Current backend behavior in this release:
+Question:
+  How well do methods handle discrete rectangular pack sizing when geometry and
+  wiring are fixed?
 
-- PyBaMM is required for battery cell-model evaluation.
-- ``auto`` resolves to ``pybamm_ecm``.
-- ``pybamm_spm`` and ``pybamm_dfn`` are implemented through PyBaMM
-  ``lithium_ion.SPM`` and ``lithium_ion.DFN`` parameter extraction and then
-  mapped into the shared backend ECM lookup-table contract.
-- ``pybamm_spm`` and ``pybamm_dfn`` fail fast when required ECM-equivalent
-  parameters (``Open-circuit voltage [V]``, ``R0 [Ohm]``, ``R1 [Ohm]``,
-  ``C1 [F]``) are unavailable.
-- backend thermal defaults are centralized in the shared battery defaults layer
-  and currently resolve to ``thermal_mode = isothermal`` and
-  ``ambient_temp_c = 25 C`` when the manifest does not override them.
-- ``isothermal`` keeps cell temperature fixed at ambient and uses that
-  temperature when evaluating the PyBaMM-derived electrical parameters.
-- ``lumped`` adds a single-state thermal RC update driven by cell Joule heat and
-  interconnect loss, then feeds the updated cell temperature back into the
-  electrical model at each solver step.
+Physically modeled:
+  Canonical rectangular ``S x P`` pack relations, pack envelope, cell count,
+  and a steady-state thermal proxy.
 
-Electrical Approximation
-------------------------
+Deliberate surrogates:
+  Topology is fixed to a full rectangular family, electrical behavior is
+  summarized analytically, and thermal behavior is represented by a compact
+  Joule-heating proxy.
 
-For a classical series-parallel pack abstraction:
+Tier 2
+^^^^^^
+
+Question:
+  How well do methods handle continuous geometric freedom once rectangular pack
+  sizing is no longer enough?
+
+Physically modeled:
+  Per-cell 3D pose, finite-cylinder clearance, and bounding-box volume.
+
+Deliberate surrogates:
+  Electrical and thermal scoring remain analytic pack-level surrogates.
+
+Tier 3A
+^^^^^^^
+
+Question:
+  How well do methods handle asymmetric topology allocation once cell count and
+  stage assignment matter?
+
+Physically modeled:
+  Active-cell count, pose, stage-slot assignment, geometric feasibility, and an
+  optional projected explicit-circuit check.
+
+Deliberate surrogates:
+  The default electrical abstraction uses an imbalance surrogate instead of a
+  general circuit solve. The default ``min_stage`` model is intentionally
+  conservative and penalizes uneven stage populations.
+
+Tier 3B
+^^^^^^^
+
+Question:
+  How well do methods synthesize explicit pack netlists when topology is itself
+  the representation?
+
+Physically modeled:
+  Explicit cells, terminals, interconnects, graph validation, and constant-load
+  explicit-circuit discharge scoring.
+
+Deliberate surrogates:
+  Thermal behavior still uses a compact pack-level proxy rather than a full
+  electro-thermal pack transient model.
+
+Tier 4
+^^^^^^
+
+Question:
+  How well do methods co-design topology, geometry, and thermal controls when
+  temperature becomes a first-class design axis?
+
+Physically modeled:
+  Tier-3A representation plus cooling coefficient, passive cooling, ambient
+  temperature, and a Tier-4 thermal network using PyBaMM-derived priors.
+
+Deliberate surrogates:
+  Candidate representation is still topology-allocation based; only the
+  evaluator fidelity changes across modes.
+
+Fast-Charge Anchor
+^^^^^^^^^^^^^^^^^^
+
+Question:
+  How well do optimization methods handle a higher-fidelity electrochemical
+  battery-design problem?
+
+Physically modeled:
+  A PyBaMM DFN with lumped thermal dynamics, plating, SEI growth, and CC-CV
+  fast-charge evaluation.
+
+Solver role:
+  The packaged ``solve()`` method is a deterministic baseline/reference search,
+  not a claim of strong optimization performance.
+
+Shared Surrogates And Substitution Rules
+----------------------------------------
+
+Analytic pack electrical surrogates use:
 
 .. math::
 
@@ -79,154 +174,68 @@ For a classical series-parallel pack abstraction:
 
    I_{limit} \approx P_{eq} \cdot C_{cell} \cdot C_{rate,max}
 
-``P_eq`` is the effective parallel population:
+The effective parallel support ``P_eq`` depends on the benchmark:
 
-- Tier 1 and Tier 2: ``P_eq = P`` (explicit rectangular ``S x P``).
-- Tier 3 and Tier 4: ``P_eq`` is limited by the least-populated series stage,
-  i.e., the bottleneck stage in the explicit topology assignment.
+- Tier 1 and Tier 2: ``P_eq = P``.
+- Tier 3A and Tier 4 surrogate modes: ``P_eq`` is derived from the stage
+  populations.
 
-This stage-bottleneck behavior intentionally makes topology decisions matter:
-one weak stage reduces total deliverable capacity/current.
+Two imbalance surrogates are currently supported for topology-allocation style
+benchmarks:
 
-Connection Count
-----------------
+- ``min_stage``: use the least-populated stage.
+- ``harmonic_mean_stage``: use the harmonic mean of non-empty stage counts.
 
-Connection metrics are reported for all tiers as a shared complexity/cost proxy.
-Two common formulas are used in the ladder:
+Projection rules are intentionally one-way in this release:
 
-- Tier 1/2 rectangular wiring proxy:
+- topology-allocation candidates may be projected to a canonical explicit
+  netlist for ``explicit_circuit`` scoring;
+- thermal-topology candidates may be scored as analytic surrogates, projected
+  explicit circuits, or hybrid thermal evaluations;
+- arbitrary explicit netlists do **not** automatically reduce back to surrogate
+  topology metrics unless a deterministic reduction is defined.
 
-.. math::
+Backend Provenance
+------------------
 
-   N_{conn,t1} = (S + 1)\max(P - 1, 0)
+Battery problems accept shared backend configuration through
+``[parameters.battery_backend]`` and now report evaluation provenance
+explicitly. Provenance records:
 
-- Tier 3/4 stage-assignment topology proxy:
+- representation mode,
+- evaluation mode,
+- imbalance model when applicable,
+- requested backend config,
+- resolved backend config,
+- honored vs ignored backend fields,
+- cell-model source,
+- thermal-prior source,
+- whether a candidate was projected before scoring.
 
-.. math::
+This is meant to make battery benchmark fidelity legible without pretending
+that every public problem uses the same evaluator.
 
-   N_{conn,t3} = \sum_{i=1}^{S}\max(n_i - 1, 0) + \max(S - 1, 0)
+Validation Matrix
+-----------------
 
-where :math:`n_i` is the number of cells assigned to stage :math:`i`.
+The suite is validated as a benchmark family rather than via a full
+battery-validation campaign:
 
-Geometry and Spacing
---------------------
-
-Tier 2 and above expose per-cell 3D pose variables:
-
-.. math::
-
-   \left[x_{mm}, y_{mm}, z_{mm}, \alpha_x, \alpha_y, \alpha_z\right]
-
-Each cell is represented as an oriented finite cylinder. Feasibility uses
-minimum **surface** clearance (not center distance), based on pairwise segment
-distance between cylinder axes and then subtracting cell diameter.
-
-Pack envelope metrics come from the axis-aligned bounding box:
-
-.. math::
-
-   V_{design} = W \cdot D \cdot H
-
-The envelope limits in the benchmark are hard constraints, not soft penalties.
-
-Thermal Proxy
--------------
-
-The explicit battery-circuit backend now supports two thermal modes:
-
-- ``isothermal``: fixed ambient cell temperature with temperature-aware
-  electrical parameter evaluation.
-- ``lumped``: one-state thermal RC update coupled back into the electrical
-  discharge solve.
-
-Tier-1 through Tier-3 still use a compact steady-state Joule-heating proxy for
-their optimization objectives.
-Tier-4 upgrades this to a **PyBaMM-backed** thermal model by extracting
-Thevenin thermal priors (resistance-vs-SOC and thermal conductance parameters)
-and solving either a lumped or multi-node network.
-
-Shared heating relation:
-
-.. math::
-
-   I_{cell} = \frac{I_{load}}{P_{eq}}
-
-.. math::
-
-   q_i = I_{cell}^2 \cdot R_{eff}(SOC_{ref})
-
-Lumped ablation mode:
-
-.. math::
-
-   T_{max} = T_{amb} + \frac{N_{cell}q_i}{G_{eff}}
-
-Tier-4 default multi-node mode (steady-state):
-
-.. math::
-
-   G_{cs}(T_{core,i} - T_{surf,i}) = q_i
-
-.. math::
-
-   G_{cs}(T_{surf,i} - T_{core,i})
-   + \sum_j G_{ij}(T_{surf,i} - T_{surf,j})
-   + G_{sc,i}(T_{surf,i} - T_{cool}) = 0
-
-.. math::
-
-   \sum_i G_{sc,i}(T_{cool} - T_{surf,i})
-   + G_{cool,amb}(T_{cool} - T_{amb}) = 0
-
-where:
-
-- :math:`G_{ij}` uses a geometry-derived neighbor graph (clearance threshold +
-  exponential distance decay).
-- :math:`G_{sc,i}` includes both PyBaMM prior conductance and
-  :math:`hA_{cell}` with airflow shadowing.
-- reported ``max_temperature_c`` is :math:`\max_i(T_{core,i})` for a
-  conservative hotspot metric.
-
-Tier-4 unlocks ``h`` (convective coefficient), ``G_passive``, ambient
-temperature, and network-model parameters via manifest knobs. Lower tiers keep
-thermal settings fixed.
-
-PyBattMo/BattMo is intentionally **not** part of the runtime path in this
-release to avoid mandatory Julia/JIT coupling in baseline CI and packaged
-benchmarks.
-
-Objective Scalarization
------------------------
-
-All optimization tiers minimize the same normalized scalarized objective:
-
-.. math::
-
-   J = w_V \hat{V} + w_C \hat{N}_{cell} + w_T \hat{T} + \lambda \, \phi(x)
-
-with:
-
-- ``hat(V)`` as normalized design volume,
-- ``hat(N_cell)`` as normalized cell-count/cost proxy,
-- ``hat(T)`` as normalized peak-temperature rise,
-- ``phi(x)`` as total hard-constraint violation penalty.
-
-Weights are configured per tier from manifest parameters
-(``objective_weights.*``), not hardcoded in benchmark logic.
-
-Why The Ladder Matters
-----------------------
-
-The tiered progression is designed to expose increasing design freedom while
-keeping a stable reporting contract:
-
-- Tier 1: topology sizing only (``S,P``).
-- Tier 2: Tier 1 topology + full pose freedom.
-- Tier 3: Tier 2 geometry + explicit topology/cell-count freedom.
-- Tier 4: Tier 3 + thermal-system design variables.
-
-This gives a controlled way to study algorithm behavior as decision space
-dimensionality and multimodality grow.
++-------------------------------+------------------------------------------------------+
+| Benchmark                     | Validation scope                                     |
++===============================+======================================================+
+| Tier 1                        | analytically checked surrogate consistency           |
++-------------------------------+------------------------------------------------------+
+| Tier 2                        | geometry validity and monotonicity checks            |
++-------------------------------+------------------------------------------------------+
+| Tier 3A surrogate             | topology-abstraction sanity checks                   |
++-------------------------------+------------------------------------------------------+
+| Tier 3B explicit              | explicit-circuit consistency checks                  |
++-------------------------------+------------------------------------------------------+
+| Tier 4                        | qualitative thermal trend and mode-consistency tests |
++-------------------------------+------------------------------------------------------+
+| Fast-charge DFN anchor        | PyBaMM model and solver reproducibility checks       |
++-------------------------------+------------------------------------------------------+
 
 Background References
 ---------------------

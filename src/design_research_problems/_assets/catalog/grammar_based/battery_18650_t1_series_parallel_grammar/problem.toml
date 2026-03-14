@@ -1,9 +1,9 @@
-problem_id = "battery_18650_t1_series_parallel_grammar"
-title = "Tier 1 18650 battery grammar (series-parallel sizing)"
-summary = "Tier-1 grammar problem that edits series and parallel counts over a canonical rectangular 18650 pack layout."
+problem_id = "battery_18650_t1_rectangular_surrogate_grammar"
+title = "T1 18650 rectangular surrogate grammar"
+summary = "Tier-1 rectangular battery grammar benchmark with fixed topology representation and analytic-surrogate scoring."
 kind = "grammar"
 statement = '''
-# Tier 1 18650 battery grammar (series-parallel sizing)
+# T1 18650 rectangular surrogate grammar
 
 Tier 1 exposes the lowest battery-design freedom. Designers can reposition cells
 on the canonical grid and add or remove complete series stages or parallel
@@ -23,7 +23,7 @@ Thermal relation:
 - Q_dot = N_cells * I_cell^2 * R_int
 - T_max = T_ambient + Q_dot / (G_passive + hA)
 '''
-implementation = "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier1SeriesParallelGrammarProblem"
+implementation = "design_research_problems.problems.grammar._battery_tiers:Battery18650T1RectangularSurrogateGrammarProblem"
 capabilities = [
   "statement-markdown",
   "serializable-state",
@@ -33,7 +33,28 @@ capabilities = [
 ]
 study_suitability = []
 
+[benchmark]
+benchmark_question = "How well do grammar methods navigate the lowest-freedom rectangular pack design space under hard requirements?"
+physically_modeled = [
+  "Canonical rectangular SxP pack edits",
+  "Shared pack metrics and a steady-state thermal proxy",
+  "Backend consistency checks through the shared battery cell-model path",
+]
+deliberate_surrogates = [
+  "Topology is constrained to the rectangular family",
+  "Electrical performance is summarized by analytic pack equations",
+]
+representation_mode = "rectangular"
+default_evaluation_mode = "analytic_surrogate"
+supported_evaluation_modes = ["analytic_surrogate"]
+validation_scope = [
+  "Analytically checked surrogate consistency",
+  "Canonical-pack backend sanity checks",
+]
+solver_role = "grammar benchmark; no packaged optimizer"
+
 [parameters]
+evaluation_mode = "analytic_surrogate"
 target_voltage_v = 14.8
 minimum_capacity_ah = 10.0
 minimum_current_a = 60.0
@@ -52,4 +73,4 @@ feasibility_ratio_hint = 0.1
 objective_mode = "multi"
 constraint_nature = "hard"
 bounds_summary = "rectangular SxP topology with explicit grid coordinates"
-tags = ["grammar", "battery", "tiered", "tier-1", "series-parallel"]
+tags = ["grammar", "battery", "tiered", "tier-1", "rectangular", "surrogate"]

@@ -303,6 +303,10 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
         if callable(decode_candidate):
             report["decoded_candidate"] = to_json_value(decode_candidate(vector))
 
+        evaluation_provenance = getattr(self, "evaluation_provenance", None)
+        if callable(evaluation_provenance):
+            report["evaluation_provenance"] = to_json_value(evaluation_provenance(vector))
+
         return report
 
     def _coerce_mcp_vector(self, x: list[float]) -> NDArray[numpy.float64]:

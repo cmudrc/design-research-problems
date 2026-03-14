@@ -148,76 +148,95 @@ def test_gmpb_optimization_example_runs() -> None:
 
 @pytest.mark.examples_smoke
 def test_t1_battery_grammar_example_runs() -> None:
-    completed = _run_example("examples/grammar/battery_18650_t1_series_parallel_grammar.py")
+    completed = _run_example("examples/grammar/battery_18650_t1_rectangular_surrogate_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t1_series_parallel_grammar" in completed.stdout
+    assert "battery_18650_t1_rectangular_surrogate_grammar" in completed.stdout
     assert "metric-keys" in completed.stdout
 
 
 @pytest.mark.examples_smoke
 def test_t2_battery_grammar_example_runs() -> None:
-    completed = _run_example("examples/grammar/battery_18650_t2_layout_grammar.py")
+    completed = _run_example("examples/grammar/battery_18650_t2_pose_surrogate_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t2_layout_grammar" in completed.stdout
+    assert "battery_18650_t2_pose_surrogate_grammar" in completed.stdout
     assert "metric-keys" in completed.stdout
 
 
 @pytest.mark.examples_smoke
-def test_t3_battery_grammar_example_runs() -> None:
-    completed = _run_example("examples/grammar/battery_18650_t3_topology_grammar.py")
+def test_t3a_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_18650_t3a_topology_surrogate_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t3_topology_grammar" in completed.stdout
+    assert "battery_18650_t3a_topology_surrogate_grammar" in completed.stdout
+    assert "evaluation_mode='analytic_surrogate'" not in completed.stdout
+    assert "topology_allocation" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t3b_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "battery_18650_t3b_netlist_explicit_grammar" in completed.stdout
     assert "metric-keys" in completed.stdout
 
 
 @pytest.mark.examples_smoke
 def test_t4_battery_grammar_example_runs() -> None:
-    completed = _run_example("examples/grammar/battery_18650_t4_thermal_grammar.py")
+    completed = _run_example("examples/grammar/battery_18650_t4_thermal_hybrid_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t4_thermal_grammar" in completed.stdout
+    assert "battery_18650_t4_thermal_hybrid_grammar" in completed.stdout
     assert "metric-keys" in completed.stdout
 
 
 @pytest.mark.examples_smoke
 def test_t1_battery_optimization_example_runs() -> None:
-    completed = _run_example("examples/optimization/battery_18650_t1_series_parallel_opt.py")
+    completed = _run_example("examples/optimization/battery_18650_t1_rectangular_surrogate_opt.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t1_series_parallel_opt" in completed.stdout
+    assert "battery_18650_t1_rectangular_surrogate_opt" in completed.stdout
     assert "metric-keys" in completed.stdout
 
 
 @pytest.mark.examples_smoke
 def test_t2_battery_optimization_example_runs() -> None:
-    completed = _run_example("examples/optimization/battery_18650_t2_layout_opt.py")
+    completed = _run_example("examples/optimization/battery_18650_t2_pose_surrogate_opt.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t2_layout_opt" in completed.stdout
+    assert "battery_18650_t2_pose_surrogate_opt" in completed.stdout
     assert "metric-keys" in completed.stdout
 
 
 @pytest.mark.examples_smoke
-def test_t3_battery_optimization_example_runs() -> None:
-    completed = _run_example("examples/optimization/battery_18650_t3_topology_opt.py")
+def test_t3a_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_18650_t3a_topology_surrogate_opt.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t3_topology_opt" in completed.stdout
+    assert "battery_18650_t3a_topology_surrogate_opt" in completed.stdout
+    assert "surrogate-mode analytic_surrogate" in completed.stdout
+    assert "explicit-mode explicit_circuit" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t3b_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_18650_t3b_netlist_explicit_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "battery_18650_t3b_netlist_explicit_opt" in completed.stdout
     assert "metric-keys" in completed.stdout
 
 
 @pytest.mark.examples_smoke
 def test_t4_battery_optimization_example_runs() -> None:
-    completed = _run_example("examples/optimization/battery_18650_t4_thermal_opt.py")
+    completed = _run_example("examples/optimization/battery_18650_t4_thermal_hybrid_opt.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t4_thermal_opt" in completed.stdout
-    assert "metric-keys" in completed.stdout
+    assert "battery_18650_t4_thermal_hybrid_opt" in completed.stdout
+    assert "hybrid-mode hybrid_thermal" in completed.stdout
 
 
 @pytest.mark.examples_smoke
 def test_fast_charge_battery_optimization_example_runs() -> None:
-    completed = _run_example("examples/optimization/battery_fast_charge_cell_opt.py")
+    completed = _run_example("examples/optimization/battery_fast_charge_dfn_anchor_opt.py")
     assert completed.returncode == 0, completed.stderr
     if "Install it with: pip install design-research-problems[battery]" in completed.stdout:
         pytest.skip("pybamm is not installed in this environment.")
-    assert "battery_fast_charge_cell_opt" in completed.stdout
+    assert "battery_fast_charge_dfn_anchor_opt" in completed.stdout
     assert "metric-keys" in completed.stdout
+    assert "baseline/reference search" in completed.stdout
 
 
 @pytest.mark.trussme_real

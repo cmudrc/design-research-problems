@@ -391,10 +391,61 @@ def _render_common_sections(metadata: Any, problem: Problem) -> list[str]:
         _heading("Taxonomy", "-").rstrip(),
         "",
         *_render_definition_list([item for item in taxonomy_items if item is not None]),
-        _heading("Statement", "-").rstrip(),
-        "",
-        *_normalize_statement_markdown(problem.statement_markdown, metadata.title),
     ]
+    benchmark_card = metadata.benchmark_card
+    if benchmark_card is not None:
+        benchmark_items = [
+            ("Benchmark Question", _normalize_inline_code(benchmark_card.benchmark_question))
+            if benchmark_card.benchmark_question
+            else None,
+            (
+                "Physically Modeled",
+                _normalize_inline_code("; ".join(benchmark_card.physically_modeled)),
+            )
+            if benchmark_card.physically_modeled
+            else None,
+            (
+                "Deliberate Surrogates",
+                _normalize_inline_code("; ".join(benchmark_card.deliberate_surrogates)),
+            )
+            if benchmark_card.deliberate_surrogates
+            else None,
+            ("Representation Mode", f"``{benchmark_card.representation_mode}``")
+            if benchmark_card.representation_mode
+            else None,
+            ("Default Evaluation Mode", f"``{benchmark_card.default_evaluation_mode}``")
+            if benchmark_card.default_evaluation_mode
+            else None,
+            (
+                "Supported Evaluation Modes",
+                ", ".join(f"``{mode}``" for mode in benchmark_card.supported_evaluation_modes),
+            )
+            if benchmark_card.supported_evaluation_modes
+            else None,
+            (
+                "Validation Scope",
+                _normalize_inline_code("; ".join(benchmark_card.validation_scope)),
+            )
+            if benchmark_card.validation_scope
+            else None,
+            ("Solver Role", _normalize_inline_code(benchmark_card.solver_role))
+            if benchmark_card.solver_role
+            else None,
+        ]
+        lines.extend(
+            [
+                _heading("Benchmark Contract", "-").rstrip(),
+                "",
+                *_render_definition_list([item for item in benchmark_items if item is not None]),
+            ]
+        )
+    lines.extend(
+        [
+            _heading("Statement", "-").rstrip(),
+            "",
+            *_normalize_statement_markdown(problem.statement_markdown, metadata.title),
+        ]
+    )
     return lines
 
 

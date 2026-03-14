@@ -1,9 +1,9 @@
-problem_id = "battery_18650_t3_topology_opt"
-title = "Tier 3 18650 battery optimization (topology + layout)"
-summary = "Tier-3 optimization problem with stable typed topology variables, variable cell count, and full per-cell poses."
+problem_id = "battery_18650_t3a_topology_surrogate_opt"
+title = "T3A 18650 topology surrogate optimization"
+summary = "Tier-3A topology-allocation benchmark with switchable surrogate or projected explicit-circuit scoring."
 kind = "optimization"
 statement = '''
-# Tier 3 18650 battery optimization (topology + layout)
+# T3A 18650 topology surrogate optimization
 
 Optimize battery layouts with typed topology variables (cell count, stage
 assignment) and full pose variables. This tier replaces transition-index
@@ -29,11 +29,34 @@ Thermal proxy:
 - Q_dot = N_cells * I_cell^2 * R_int
 - T_max = T_ambient + Q_dot / (G_passive + hA)
 '''
-implementation = "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier3TopologyOptimizationProblem"
+implementation = "design_research_problems.problems.optimization._battery_tiers:Battery18650T3ATopologySurrogateOptimizationProblem"
 capabilities = ["statement-markdown", "bounded-variables", "baseline-solver"]
 study_suitability = []
 
+[benchmark]
+benchmark_question = "How well do methods handle topology allocation and stage imbalance when candidate structure becomes asymmetric?"
+physically_modeled = [
+  "Per-cell pose geometry with oriented-cylinder clearance checks",
+  "Variable active cell count and explicit stage-slot allocation",
+  "Optional projection to an explicit-circuit evaluator for electrical scoring",
+]
+deliberate_surrogates = [
+  "Stage imbalance is represented by a configurable benchmark abstraction",
+  "Explicit-circuit evaluation uses a canonical projection rather than the native pose representation",
+  "Thermal behavior remains a steady-state Joule-heating proxy",
+]
+representation_mode = "topology_allocation"
+default_evaluation_mode = "analytic_surrogate"
+supported_evaluation_modes = ["analytic_surrogate", "explicit_circuit"]
+validation_scope = [
+  "Topology-abstraction sanity checks",
+  "Projected explicit-circuit consistency checks",
+]
+solver_role = "deterministic baseline search"
+
 [parameters]
+evaluation_mode = "analytic_surrogate"
+imbalance_model = "min_stage"
 target_voltage_v = 14.8
 minimum_capacity_ah = 10.0
 minimum_current_a = 60.0
@@ -60,4 +83,4 @@ feasibility_ratio_hint = 0.03
 objective_mode = "single"
 constraint_nature = "hard"
 bounds_summary = "cell-count and stage-assignment topology schema plus per-cell poses"
-tags = ["optimization", "battery", "tiered", "tier-3", "topology", "layout"]
+tags = ["optimization", "battery", "tiered", "tier-3a", "topology-allocation", "surrogate"]

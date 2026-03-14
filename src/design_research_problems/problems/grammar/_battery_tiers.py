@@ -9,6 +9,17 @@ import numpy
 from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
+from design_research_problems.problems._domains.battery_benchmark import (
+    BatteryEvaluationMode,
+    BatteryRepresentationMode,
+    build_battery_evaluation_provenance,
+    coerce_battery_evaluation_mode,
+)
+from design_research_problems.problems._domains.battery_cell_model import (
+    BatteryBackendConfig,
+    resolve_battery_backend_config,
+)
+from design_research_problems.problems._domains.battery_circuit import BatteryCircuitState
 from design_research_problems.problems._domains.battery_layout import CELL_SPEC_18650, MIN_SPACING_MM
 from design_research_problems.problems._domains.battery_tier_metrics import (
     BatteryTierMetrics,
@@ -23,6 +34,10 @@ from design_research_problems.problems.grammar._battery_problem_base import (
 from design_research_problems.problems.optimization._battery_tiers import (
     Battery18650Tier2LayoutOptimizationProblem,
     Battery18650Tier4ThermalOptimizationProblem,
+    Battery18650T2PoseSurrogateOptimizationProblem,
+    Battery18650T3ATopologySurrogateOptimizationProblem,
+    Battery18650T4ThermalHybridOptimizationProblem,
+    Battery18650T1RectangularSurrogateOptimizationProblem,
 )
 
 _POSE_MOVE_STEP_MM = 10.0
@@ -362,9 +377,246 @@ class Battery18650Tier4ThermalGrammarProblem(GrammarProblem[tuple[float, ...], B
         )
 
 
+class Battery18650T1RectangularSurrogateGrammarProblem(Battery18650Tier1SeriesParallelGrammarProblem):
+    """Public tier-1 rectangular grammar benchmark with explicit evaluator metadata."""
+
+    def __init__(
+        self,
+        *,
+        metadata: object,
+        statement_markdown: str = "",
+        resource_bundle: object | None = None,
+        requirements: object | None = None,
+        backend_config: BatteryBackendConfig | None = None,
+        evaluation_mode: str | BatteryEvaluationMode = BatteryEvaluationMode.ANALYTIC_SURROGATE.value,
+    ) -> None:
+        super().__init__(
+            metadata=cast(object, metadata),
+            statement_markdown=statement_markdown,
+            resource_bundle=cast(object | None, resource_bundle),
+            requirements=cast(object | None, requirements),
+            backend_config=backend_config,
+        )
+        self.evaluation_mode = coerce_battery_evaluation_mode(
+            evaluation_mode,
+            default=BatteryEvaluationMode.ANALYTIC_SURROGATE,
+            supported=(BatteryEvaluationMode.ANALYTIC_SURROGATE,),
+        )
+
+    @classmethod
+    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T1RectangularSurrogateGrammarProblem:
+        return cls(
+            metadata=manifest.metadata,
+            statement_markdown=manifest.statement_markdown,
+            resource_bundle=cls.resource_bundle_from_manifest(manifest),
+            requirements=parse_battery_requirements(manifest),
+            backend_config=parse_battery_backend_config(manifest),
+            evaluation_mode=cast(
+                str | BatteryEvaluationMode,
+                manifest.parameters.get("evaluation_mode", BatteryEvaluationMode.ANALYTIC_SURROGATE.value),
+            ),
+        )
+
+    def evaluation_provenance(self, state: object) -> object:
+        evaluation = BatteryPack18650SeriesParallelProblem.evaluate(self, state)
+        return build_battery_evaluation_provenance(
+            representation_mode=BatteryRepresentationMode.RECTANGULAR,
+            evaluation_mode=self.evaluation_mode,
+            evaluator_implementation=f"{type(self).__module__}:{type(self).__name__}",
+            requested_backend_config=self.backend_config,
+            honored_backend_fields=tuple(sorted(resolve_battery_backend_config(self.backend_config).as_dict())),
+            cell_model_source=evaluation.cell_model_source,
+        )
+
+
+class Battery18650T2PoseSurrogateGrammarProblem(Battery18650Tier2LayoutGrammarProblem):
+    """Public tier-2 pose-layout grammar benchmark."""
+
+    def __init__(self, *, optimizer: Battery18650T2PoseSurrogateOptimizationProblem) -> None:
+        super().__init__(optimizer=optimizer)
+
+    @classmethod
+    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T2PoseSurrogateGrammarProblem:
+        optimizer = Battery18650T2PoseSurrogateOptimizationProblem.from_manifest(manifest)
+        return cls(optimizer=optimizer)
+
+    def evaluation_provenance(self, state: tuple[float, ...]) -> object:
+        vector = _coerce_vector_state(state, expected_dimension=self._optimizer.bounds.lb.shape[0])
+        return self._optimizer.evaluation_provenance(vector)
+
+
+class Battery18650T3ATopologySurrogateGrammarProblem(GrammarProblem[tuple[float, ...], BatteryTierMetrics]):
+    """Public tier-3A topology-allocation grammar benchmark."""
+
+    def __init__(self, *, optimizer: Battery18650T3ATopologySurrogateOptimizationProblem) -> None:
+        super().__init__(
+            metadata=optimizer.metadata,
+            statement_markdown=optimizer.statement_markdown,
+            resource_bundle=optimizer.resource_bundle,
+        )
+        self._optimizer = optimizer
+        self._config = _VectorGrammarConfig()
+
+    @classmethod
+    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T3ATopologySurrogateGrammarProblem:
+        optimizer = Battery18650T3ATopologySurrogateOptimizationProblem.from_manifest(manifest)
+        return cls(optimizer=optimizer)
+
+    def initial_state(self) -> tuple[float, ...]:
+        return tuple(float(value) for value in self._optimizer.generate_initial_solution())
+
+    def enumerate_transitions(self, state: tuple[float, ...]) -> tuple[GrammarTransition[tuple[float, ...]], ...]:
+        vector = _coerce_vector_state(state, expected_dimension=self._optimizer.bounds.lb.shape[0])
+        transitions: list[GrammarTransition[tuple[float, ...]]] = []
+        for index, rule_name in ((0, "adjust_cell_count"), (1, "adjust_series_count")):
+            for delta in (-1.0, 1.0):
+                candidate = vector.copy()
+                candidate[index] = float(
+                    numpy.clip(candidate[index] + delta, self._optimizer.bounds.lb[index], self._optimizer.bounds.ub[index])
+                )
+                if candidate[index] == vector[index]:
+                    continue
+                transitions.append(
+                    GrammarTransition(
+                        rule_name=rule_name,
+                        parameters=(("delta", int(delta)),),
+                        next_state=tuple(float(value) for value in candidate),
+                    )
+                )
+        pose_start = 2
+        for local_index, rule_name in ((0, "move_cell_x"), (1, "move_cell_y"), (2, "move_cell_z")):
+            index = pose_start + local_index
+            for delta in (-self._config.move_step_mm, self._config.move_step_mm):
+                candidate = vector.copy()
+                candidate[index] = float(
+                    numpy.clip(candidate[index] + delta, self._optimizer.bounds.lb[index], self._optimizer.bounds.ub[index])
+                )
+                if candidate[index] == vector[index]:
+                    continue
+                transitions.append(
+                    GrammarTransition(
+                        rule_name=rule_name,
+                        parameters=(("delta_mm", float(delta)),),
+                        next_state=tuple(float(value) for value in candidate),
+                    )
+                )
+        stage_slot_index = pose_start + 6
+        for delta in (-1.0, 1.0):
+            candidate = vector.copy()
+            candidate[stage_slot_index] = float(
+                numpy.clip(
+                    candidate[stage_slot_index] + delta,
+                    self._optimizer.bounds.lb[stage_slot_index],
+                    self._optimizer.bounds.ub[stage_slot_index],
+                )
+            )
+            if candidate[stage_slot_index] == vector[stage_slot_index]:
+                continue
+            transitions.append(
+                GrammarTransition(
+                    rule_name="adjust_first_cell_stage_slot",
+                    parameters=(("delta", int(delta)),),
+                    next_state=tuple(float(value) for value in candidate),
+                )
+            )
+        return tuple(transitions)
+
+    def evaluate(self, state: tuple[float, ...]) -> BatteryTierMetrics:
+        vector = _coerce_vector_state(state, expected_dimension=self._optimizer.bounds.lb.shape[0])
+        metrics = self._optimizer._metrics_from_variables(vector)
+        violation = self._optimizer.max_constraint_violation(vector)
+        return _metrics_with_feasibility(
+            metrics,
+            is_feasible=violation <= 1.0e-9,
+            failure_reason=None if violation <= 1.0e-9 else f"Constraint violation {violation:.3g}",
+        )
+
+    def evaluation_provenance(self, state: tuple[float, ...]) -> object:
+        vector = _coerce_vector_state(state, expected_dimension=self._optimizer.bounds.lb.shape[0])
+        return self._optimizer.evaluation_provenance(vector)
+
+
+class Battery18650T3BNetlistExplicitGrammarProblem(Battery18650Tier3TopologyGrammarProblem):
+    """Public tier-3B explicit-netlist grammar benchmark."""
+
+    def __init__(
+        self,
+        *,
+        metadata: object,
+        statement_markdown: str = "",
+        resource_bundle: object | None = None,
+        requirements: object | None = None,
+        max_cell_count: int = 24,
+        backend_config: BatteryBackendConfig | None = None,
+        evaluation_mode: str | BatteryEvaluationMode = BatteryEvaluationMode.EXPLICIT_CIRCUIT.value,
+    ) -> None:
+        super().__init__(
+            metadata=cast(object, metadata),
+            statement_markdown=statement_markdown,
+            resource_bundle=cast(object | None, resource_bundle),
+            requirements=cast(object | None, requirements),
+            max_cell_count=max_cell_count,
+            backend_config=backend_config,
+        )
+        self.evaluation_mode = coerce_battery_evaluation_mode(
+            evaluation_mode,
+            default=BatteryEvaluationMode.EXPLICIT_CIRCUIT,
+            supported=(BatteryEvaluationMode.EXPLICIT_CIRCUIT,),
+        )
+
+    @classmethod
+    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T3BNetlistExplicitGrammarProblem:
+        return cls(
+            metadata=manifest.metadata,
+            statement_markdown=manifest.statement_markdown,
+            resource_bundle=cls.resource_bundle_from_manifest(manifest),
+            requirements=parse_battery_requirements(manifest),
+            max_cell_count=int(cast(int, manifest.parameters.get("max_cell_count", 24))),
+            backend_config=parse_battery_backend_config(manifest),
+            evaluation_mode=cast(
+                str | BatteryEvaluationMode,
+                manifest.parameters.get("evaluation_mode", BatteryEvaluationMode.EXPLICIT_CIRCUIT.value),
+            ),
+        )
+
+    def evaluation_provenance(self, state: object) -> object:
+        if not isinstance(state, BatteryCircuitState):
+            raise TypeError("Expected a BatteryCircuitState.")
+        evaluation = BatteryPack18650OpenEndedProblem.evaluate(self, state)
+        return build_battery_evaluation_provenance(
+            representation_mode=BatteryRepresentationMode.EXPLICIT_NETLIST,
+            evaluation_mode=self.evaluation_mode,
+            evaluator_implementation=f"{type(self).__module__}:{type(self).__name__}",
+            requested_backend_config=self.backend_config,
+            honored_backend_fields=tuple(sorted(resolve_battery_backend_config(self.backend_config).as_dict())),
+            cell_model_source=evaluation.cell_model_source,
+        )
+
+
+class Battery18650T4ThermalHybridGrammarProblem(Battery18650Tier4ThermalGrammarProblem):
+    """Public tier-4 thermal-topology grammar benchmark."""
+
+    def __init__(self, *, optimizer: Battery18650T4ThermalHybridOptimizationProblem) -> None:
+        super().__init__(optimizer=optimizer)
+
+    @classmethod
+    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T4ThermalHybridGrammarProblem:
+        optimizer = Battery18650T4ThermalHybridOptimizationProblem.from_manifest(manifest)
+        return cls(optimizer=optimizer)
+
+    def evaluation_provenance(self, state: tuple[float, ...]) -> object:
+        vector = _coerce_vector_state(state, expected_dimension=self._optimizer.bounds.lb.shape[0])
+        return self._optimizer.evaluation_provenance(vector)
+
+
 __all__ = [
     "Battery18650Tier1SeriesParallelGrammarProblem",
     "Battery18650Tier2LayoutGrammarProblem",
     "Battery18650Tier3TopologyGrammarProblem",
     "Battery18650Tier4ThermalGrammarProblem",
+    "Battery18650T1RectangularSurrogateGrammarProblem",
+    "Battery18650T2PoseSurrogateGrammarProblem",
+    "Battery18650T3ATopologySurrogateGrammarProblem",
+    "Battery18650T3BNetlistExplicitGrammarProblem",
+    "Battery18650T4ThermalHybridGrammarProblem",
 ]

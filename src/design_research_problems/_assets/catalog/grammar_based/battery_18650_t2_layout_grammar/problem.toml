@@ -1,9 +1,9 @@
-problem_id = "battery_18650_t2_layout_grammar"
-title = "Tier 2 18650 battery grammar (pose-aware layout)"
-summary = "Tier-2 grammar problem that keeps rectangular topology while exposing full per-cell pose edits [x,y,z,ax,ay,az]."
+problem_id = "battery_18650_t2_pose_surrogate_grammar"
+title = "T2 18650 pose surrogate grammar"
+summary = "Tier-2 pose-aware battery grammar benchmark with analytic-surrogate electrical and thermal scoring."
 kind = "grammar"
 statement = '''
-# Tier 2 18650 battery grammar (pose-aware layout)
+# T2 18650 pose surrogate grammar
 
 Tier 2 keeps Tier-1 topology semantics but expands geometric design freedom by
 allowing per-cell pose adjustments in millimeters and degrees.
@@ -19,7 +19,7 @@ Evaluation preserves tier-1 electrical equations and adds an oriented-cylinder
 geometry model with minimum surface-clearance feasibility checks and bounding
 box volume computation.
 '''
-implementation = "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier2LayoutGrammarProblem"
+implementation = "design_research_problems.problems.grammar._battery_tiers:Battery18650T2PoseSurrogateGrammarProblem"
 capabilities = [
   "statement-markdown",
   "serializable-state",
@@ -28,7 +28,28 @@ capabilities = [
 ]
 study_suitability = []
 
+[benchmark]
+benchmark_question = "How well do grammar methods explore continuous-like pose choices when topology is still rectangular?"
+physically_modeled = [
+  "Oriented-cylinder clearance and envelope geometry",
+  "Pose-aware packing and spacing constraints",
+  "Shared low-order thermal proxy",
+]
+deliberate_surrogates = [
+  "Topology remains rectangular and electrically analytic",
+  "Backend configuration is accepted for provenance but not applied end-to-end",
+]
+representation_mode = "pose_layout"
+default_evaluation_mode = "analytic_surrogate"
+supported_evaluation_modes = ["analytic_surrogate"]
+validation_scope = [
+  "Geometric validity checks",
+  "Monotonicity and deterministic surrogate checks",
+]
+solver_role = "grammar benchmark; no packaged optimizer"
+
 [parameters]
+evaluation_mode = "analytic_surrogate"
 target_voltage_v = 14.8
 minimum_capacity_ah = 10.0
 minimum_current_a = 60.0
@@ -55,4 +76,4 @@ feasibility_ratio_hint = 0.05
 objective_mode = "multi"
 constraint_nature = "hard"
 bounds_summary = "SxP decisions plus per-cell pose controls [x,y,z,ax,ay,az]"
-tags = ["grammar", "battery", "tiered", "tier-2", "layout", "orientation"]
+tags = ["grammar", "battery", "tiered", "tier-2", "pose-layout", "surrogate"]

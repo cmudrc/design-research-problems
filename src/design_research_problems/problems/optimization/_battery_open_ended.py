@@ -12,13 +12,24 @@ from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import MissingOptionalDependencyError
 from design_research_problems._optional import import_optional_module
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._domains.battery_cell_model import BatteryBackendConfig, load_18650_cell_model
+from design_research_problems.problems._domains.battery_cell_model import (
+    BatteryBackendConfig,
+    load_18650_cell_model,
+    resolve_battery_backend_config,
+)
+from design_research_problems.problems._domains.battery_benchmark import (
+    BatteryEvaluationMode,
+    BatteryRepresentationMode,
+    build_battery_evaluation_provenance,
+    coerce_battery_evaluation_mode,
+)
 from design_research_problems.problems._domains.battery_circuit import (
     BatteryCircuitEvaluation,
     BatteryCircuitState,
     evaluate_battery_circuit,
 )
-from design_research_problems.problems._domains.battery_layout import BatteryRequirements
+from design_research_problems.problems._domains.battery_layout import CELL_SPEC_18650, MIN_SPACING_MM, BatteryRequirements
+from design_research_problems.problems._domains.battery_tier_metrics import BatteryObjectiveWeights, BatteryTierMetrics
 from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems._optimization import (
     Bounds,
@@ -30,6 +41,12 @@ from design_research_problems.problems.grammar._battery_pack_open import Battery
 from design_research_problems.problems.grammar._battery_problem_base import (
     parse_battery_backend_config,
     parse_battery_requirements,
+)
+from design_research_problems.problems.optimization._battery_tiers import (
+    _DEFAULT_AMBIENT_TEMPERATURE_C,
+    _DEFAULT_MAX_TEMPERATURE_C,
+    _score_metrics,
+    _thermal_peak_temperature_c,
 )
 
 _TRANSITION_PROGRAM_LENGTH = 32
@@ -936,4 +953,172 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         return 1.0 if self._evaluation_from_variables(variables).is_feasible else -1.0
 
 
-__all__ = ["BatteryOpenEndedCapacityMaxProblem"]
+class Battery18650T3BNetlistExplicitOptimizationProblem(BatteryOpenEndedCapacityMaxProblem):
+    """Public tier-3B explicit-netlist battery benchmark."""
+
+    def __init__(
+        self,
+        metadata: ProblemMetadata,
+        statement_markdown: str = "",
+        resource_bundle: PackageResourceBundle | None = None,
+        requirements: BatteryRequirements | None = None,
+        max_cell_count: int = 24,
+        backend_config: BatteryBackendConfig | None = None,
+        objective_weights: BatteryObjectiveWeights | None = None,
+        ambient_temperature_c: float = _DEFAULT_AMBIENT_TEMPERATURE_C,
+        maximum_temperature_c: float = _DEFAULT_MAX_TEMPERATURE_C,
+        load_current_a: float | None = None,
+        evaluation_mode: str | BatteryEvaluationMode = BatteryEvaluationMode.EXPLICIT_CIRCUIT.value,
+    ) -> None:
+        super().__init__(
+            metadata=metadata,
+            statement_markdown=statement_markdown,
+            resource_bundle=resource_bundle,
+            requirements=requirements,
+            max_cell_count=max_cell_count,
+            backend_config=backend_config,
+        )
+        self.objective_weights = objective_weights or BatteryObjectiveWeights(volume=0.40, cost=0.30, temperature=0.30)
+        self.ambient_temperature_c = float(ambient_temperature_c)
+        self.maximum_temperature_c = max(float(maximum_temperature_c), self.ambient_temperature_c + 1.0)
+        self.load_current_a = (
+            float(self.requirements.minimum_current_a) if load_current_a is None else float(load_current_a)
+        )
+        self.evaluation_mode = coerce_battery_evaluation_mode(
+            evaluation_mode,
+            default=BatteryEvaluationMode.EXPLICIT_CIRCUIT,
+            supported=(BatteryEvaluationMode.EXPLICIT_CIRCUIT,),
+        )
+        self.constraints = [
+            ConstraintDefinition(kind="ineq", evaluate=self._voltage_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._capacity_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._backend_feasibility_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._current_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._temperature_margin),
+        ]
+
+    @classmethod
+    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T3BNetlistExplicitOptimizationProblem:
+        parameters = manifest.parameters
+        return cls(
+            metadata=manifest.metadata,
+            statement_markdown=manifest.statement_markdown,
+            resource_bundle=cls.resource_bundle_from_manifest(manifest),
+            requirements=parse_battery_requirements(manifest),
+            max_cell_count=int(cast(int, parameters.get("max_cell_count", 24))),
+            backend_config=parse_battery_backend_config(manifest),
+            objective_weights=BatteryObjectiveWeights.from_mapping(
+                parameters.get("objective_weights"),
+                default_volume=0.40,
+                default_cost=0.30,
+                default_temperature=0.30,
+            ),
+            ambient_temperature_c=float(
+                cast(float, parameters.get("ambient_temperature_c", _DEFAULT_AMBIENT_TEMPERATURE_C))
+            ),
+            maximum_temperature_c=float(
+                cast(float, parameters.get("maximum_temperature_c", _DEFAULT_MAX_TEMPERATURE_C))
+            ),
+            load_current_a=cast(float | None, parameters.get("load_current_a")),
+            evaluation_mode=cast(
+                str | BatteryEvaluationMode,
+                parameters.get("evaluation_mode", BatteryEvaluationMode.EXPLICIT_CIRCUIT.value),
+            ),
+        )
+
+    def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
+        evaluation = self._evaluation_from_variables(variables)
+        delivered_capacity = 0.0 if evaluation.delivered_capacity_ah is None else float(evaluation.delivered_capacity_ah)
+        max_cell_current = 0.0 if evaluation.max_cell_current_a is None else float(evaluation.max_cell_current_a)
+        parallel_equivalent = max(delivered_capacity / max(CELL_SPEC_18650.nominal_capacity_ah, 1.0e-9), 1.0)
+        max_temperature_c = _thermal_peak_temperature_c(
+            cell_count=evaluation.cell_count,
+            parallel_equivalent=parallel_equivalent,
+            surface_area_mm2=float(evaluation.surface_area),
+            load_current_a=self.load_current_a,
+            cooling_coefficient_w_per_m2k=18.0,
+            passive_cooling_w_per_k=1.0,
+            ambient_temperature_c=self.ambient_temperature_c,
+        )
+        return BatteryTierMetrics(
+            cell_count=float(evaluation.cell_count),
+            connection_count=float(evaluation.connection_count),
+            cost_usd=float(evaluation.design_cost),
+            design_volume_mm3=float(evaluation.design_volume),
+            max_temperature_c=max_temperature_c,
+            voltage_v=float(evaluation.pack_nominal_voltage),
+            capacity_ah=delivered_capacity,
+            current_limit_a=max(
+                max_cell_current,
+                self.requirements.minimum_current_a if evaluation.is_feasible else 0.0,
+            ),
+            min_clearance_mm=float(MIN_SPACING_MM if evaluation.is_feasible else -MIN_SPACING_MM),
+            is_feasible=bool(evaluation.is_feasible),
+            failure_reason=evaluation.failure_reason,
+        )
+
+    def objective_components(self, variables: NDArray[numpy.float64]) -> dict[str, float]:
+        return self._metrics_from_variables(variables).as_dict()
+
+    def objective(self, variables: NDArray[numpy.float64]) -> float:
+        normalized = self._normalize_vector(variables)
+        metrics = self._metrics_from_variables(normalized)
+        return _score_metrics(
+            metrics=metrics,
+            requirements=self.requirements,
+            max_cell_count=self.max_cell_count,
+            max_temperature_c=self.maximum_temperature_c,
+            ambient_temperature_c=self.ambient_temperature_c,
+            weights=self.objective_weights,
+            total_violation=self.constraint_violation(normalized),
+        )
+
+    def _current_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return self._metrics_from_variables(variables).current_limit_a - self.requirements.minimum_current_a
+
+    def _temperature_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return self.maximum_temperature_c - self._metrics_from_variables(variables).max_temperature_c
+
+    def evaluation_provenance(self, variables: NDArray[numpy.float64]) -> object:
+        evaluation = self._evaluation_from_variables(self._normalize_vector(variables))
+        honored_backend_fields = tuple(sorted(resolve_battery_backend_config(self.backend_config).as_dict()))
+        return build_battery_evaluation_provenance(
+            representation_mode=BatteryRepresentationMode.EXPLICIT_NETLIST,
+            evaluation_mode=self.evaluation_mode,
+            evaluator_implementation=f"{type(self).__module__}:{type(self).__name__}",
+            requested_backend_config=self.backend_config,
+            honored_backend_fields=honored_backend_fields,
+            cell_model_source=evaluation.cell_model_source,
+        )
+
+    def solve(
+        self,
+        initial_solution: NDArray[numpy.float64] | None = None,
+        seed: int | None = None,
+        maxiter: int = 200,
+        solver_backend: str = "auto",
+    ) -> OptimizationResult:
+        result = super().solve(
+            initial_solution=initial_solution,
+            seed=seed,
+            maxiter=maxiter,
+            solver_backend=solver_backend,
+        )
+        return OptimizationResult(
+            x=result.x,
+            fun=result.fun,
+            success=result.success,
+            message=(
+                "Evaluated explicit-netlist battery benchmark and found a feasible design."
+                if result.success
+                else "Evaluated explicit-netlist battery benchmark and returned a best-effort design."
+            ),
+            nit=result.nit,
+            nfev=result.nfev,
+        )
+
+
+__all__ = [
+    "Battery18650T3BNetlistExplicitOptimizationProblem",
+    "BatteryOpenEndedCapacityMaxProblem",
+]

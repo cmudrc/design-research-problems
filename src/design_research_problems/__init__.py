@@ -13,6 +13,7 @@ _EXPORTS: Final[dict[str, str]] = {
     "ProblemKind": "design_research_problems.problems:ProblemKind",
     "ProblemMetadata": "design_research_problems.problems:ProblemMetadata",
     "ProblemTaxonomy": "design_research_problems.problems:ProblemTaxonomy",
+    "ProblemBenchmarkCard": "design_research_problems.problems:ProblemBenchmarkCard",
     "Citation": "design_research_problems.problems:Citation",
     "ProblemAsset": "design_research_problems.problems:ProblemAsset",
     "TextProblem": "design_research_problems.problems:TextProblem",
@@ -97,6 +98,7 @@ if TYPE_CHECKING:
     from .problems import OptimizationProblem as OptimizationProblem
     from .problems import Problem as Problem
     from .problems import ProblemAsset as ProblemAsset
+    from .problems import ProblemBenchmarkCard as ProblemBenchmarkCard
     from .problems import ProblemKind as ProblemKind
     from .problems import ProblemMetadata as ProblemMetadata
     from .problems import ProblemTaxonomy as ProblemTaxonomy

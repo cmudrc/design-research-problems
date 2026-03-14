@@ -13,17 +13,24 @@ For deeper battery-model details and equations, see
 
 The packaged entries include:
 
-- `battery_18650_t1_series_parallel_opt`, a tier-1 rectangular sizing benchmark
-  that optimizes only series and parallel counts.
-- `battery_18650_t2_layout_opt`, a tier-2 pose-aware layout benchmark that
-  adds per-cell `[x_mm, y_mm, z_mm, angle_x_deg, angle_y_deg, angle_z_deg]`
-  freedom while retaining constrained topology.
-- `battery_18650_t3_topology_opt`, a tier-3 benchmark that introduces typed
-  topology variables (cell-count and stage assignment) on top of tier-2 pose
-  variables.
-- `battery_18650_t4_thermal_opt`, a tier-4 benchmark that adds thermal-system
-  variables on top of tier-3 topology and layout decisions using a
-  PyBaMM-backed thermal model (lumped and multi-node modes).
+- `battery_18650_t1_rectangular_surrogate_opt`, a tier-1 rectangular sizing
+  benchmark with an analytic surrogate evaluator over a fixed rectangular
+  series-parallel family.
+- `battery_18650_t2_pose_surrogate_opt`, a tier-2 pose-aware layout benchmark
+  that adds per-cell `[x_mm, y_mm, z_mm, angle_x_deg, angle_y_deg, angle_z_deg]`
+  freedom while keeping analytic electrical and thermal surrogates.
+- `battery_18650_t3a_topology_surrogate_opt`, a tier-3A topology-allocation
+  benchmark that adds active-cell count plus stage assignment and supports
+  `analytic_surrogate` and projected `explicit_circuit` evaluation modes.
+- `battery_18650_t3b_netlist_explicit_opt`, a tier-3B explicit-netlist
+  benchmark that exposes open-ended transition-program design variables and
+  scores candidates with the shared explicit-circuit backend.
+- `battery_18650_t4_thermal_hybrid_opt`, a tier-4 thermal-topology benchmark
+  that adds cooling-system variables and supports `analytic_surrogate`,
+  `explicit_circuit`, and `hybrid_thermal` evaluator modes.
+- `battery_fast_charge_dfn_anchor_opt`, a PyBaMM DFN-based electrochemical
+  anchor benchmark whose packaged `solve()` method is a deterministic
+  baseline/reference search rather than a claim of strong optimization.
 - `gmpb_default_dynamic_min`, a stateful dynamic wrapper that negates the native
   Generalized Moving Peaks Benchmark maximization score to fit this package's
   minimization-oriented optimization API.

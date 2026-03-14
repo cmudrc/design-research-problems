@@ -1,4 +1,4 @@
-"""Inspect tier-4 battery grammar benchmark."""
+"""Inspect the T1 rectangular surrogate battery grammar benchmark."""
 
 from __future__ import annotations
 
@@ -6,12 +6,12 @@ import design_research_problems as derp
 
 
 def main() -> None:
-    problem = derp.get_problem("battery_18650_t4_thermal_grammar")
+    problem = derp.get_problem("battery_18650_t1_rectangular_surrogate_grammar")
     state = problem.initial_state()
     transitions = problem.enumerate_transitions(state)
-    next_state = transitions[0].next_state if transitions else state
-    evaluation = problem.evaluate(next_state)
+    evaluation = problem.evaluate(state)
     print(problem.metadata.problem_id)
+    print("default-evaluation-mode", problem.metadata.benchmark_card.default_evaluation_mode)
     print("transitions", len(transitions))
     print("feasible", evaluation.is_feasible)
     print("metric-keys", ",".join(sorted(evaluation.as_dict())))

@@ -1,9 +1,9 @@
-problem_id = "battery_18650_t1_series_parallel_opt"
-title = "Tier 1 18650 battery optimization (series-parallel sizing)"
-summary = "Tier-1 optimization problem that chooses only rectangular series/parallel counts with shared battery metrics."
+problem_id = "battery_18650_t1_rectangular_surrogate_opt"
+title = "T1 18650 rectangular surrogate optimization"
+summary = "Tier-1 rectangular battery sizing benchmark with fixed topology representation and analytic-surrogate scoring."
 kind = "optimization"
 statement = '''
-# Tier 1 18650 battery optimization (series-parallel sizing)
+# T1 18650 rectangular surrogate optimization
 
 Optimize the lowest-freedom battery design space by selecting only series and
 parallel counts over canonical rectangular 18650 packs.
@@ -27,11 +27,33 @@ Objective:
 - Minimize weighted normalized volume, cell-count cost proxy, and peak
   temperature, with hard-constraint violations penalized.
 '''
-implementation = "design_research_problems.problems.optimization._battery_tiers:Battery18650Tier1SeriesParallelOptimizationProblem"
+implementation = "design_research_problems.problems.optimization._battery_tiers:Battery18650T1RectangularSurrogateOptimizationProblem"
 capabilities = ["statement-markdown", "bounded-variables", "baseline-solver"]
 study_suitability = []
 
+[benchmark]
+benchmark_question = "How well do methods handle discrete rectangular pack sizing when geometry and wiring are fixed but requirements remain hard?"
+physically_modeled = [
+  "Canonical rectangular SxP pack sizing relations",
+  "Pack envelope, cell count, and a steady-state thermal proxy",
+  "Backend consistency checks through the shared battery cell model path",
+]
+deliberate_surrogates = [
+  "Topology is fixed to a full rectangular series-parallel family",
+  "Electrical performance is summarized by analytic pack equations",
+  "Thermal behavior is represented by a one-state Joule-heating proxy",
+]
+representation_mode = "rectangular"
+default_evaluation_mode = "analytic_surrogate"
+supported_evaluation_modes = ["analytic_surrogate"]
+validation_scope = [
+  "Analytically checked surrogate consistency",
+  "Canonical-pack backend sanity checks",
+]
+solver_role = "deterministic baseline search"
+
 [parameters]
+evaluation_mode = "analytic_surrogate"
 target_voltage_v = 14.8
 minimum_capacity_ah = 10.0
 minimum_current_a = 60.0
@@ -56,4 +78,4 @@ feasibility_ratio_hint = 0.10
 objective_mode = "single"
 constraint_nature = "hard"
 bounds_summary = "two bounded integer variables: series and parallel counts"
-tags = ["optimization", "battery", "tiered", "tier-1", "series-parallel"]
+tags = ["optimization", "battery", "tiered", "tier-1", "rectangular", "surrogate"]

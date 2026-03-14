@@ -11,7 +11,7 @@ from design_research_problems.problems._mcp import (
     create_fastmcp_server,
     register_design_brief_resource,
 )
-from design_research_problems.problems._metadata import ProblemMetadata
+from design_research_problems.problems._metadata import ProblemBenchmarkCard, ProblemMetadata
 
 if TYPE_CHECKING:
     from mcp.server.fastmcp import FastMCP
@@ -97,6 +97,8 @@ class Problem:
             if citation_mode in {"raw", "summary+raw"}:
                 sections.append("## BibTeX")
                 sections.append(self._render_citation_raw_blocks())
+        if self.metadata.benchmark_card is not None:
+            sections.insert(1, self._render_benchmark_card(self.metadata.benchmark_card))
         return "\n\n".join(sections)
 
     def to_mcp_server(
@@ -229,3 +231,29 @@ class Problem:
             info = "bibtex" if citation.kind == "bibtex" else "text"
             blocks.append(f"```{info}\n{citation.raw_text.strip()}\n```")
         return "\n\n".join(blocks)
+
+    def _render_benchmark_card(self, card: ProblemBenchmarkCard) -> str:
+        """Render the optional benchmark contract section."""
+
+        def _joined(items: tuple[str, ...]) -> str:
+            return "; ".join(item.strip() for item in items if item.strip()) or "none"
+
+        lines = ["## Benchmark Contract"]
+        if card.benchmark_question:
+            lines.append(f"- Benchmark question: {card.benchmark_question.strip()}")
+        if card.physically_modeled:
+            lines.append(f"- Physically modeled: {_joined(card.physically_modeled)}")
+        if card.deliberate_surrogates:
+            lines.append(f"- Deliberate surrogates: {_joined(card.deliberate_surrogates)}")
+        if card.representation_mode:
+            lines.append(f"- Representation mode: `{card.representation_mode.strip()}`")
+        if card.default_evaluation_mode:
+            lines.append(f"- Default evaluation mode: `{card.default_evaluation_mode.strip()}`")
+        if card.supported_evaluation_modes:
+            modes = ", ".join(f"`{mode}`" for mode in card.supported_evaluation_modes)
+            lines.append(f"- Supported evaluation modes: {modes}")
+        if card.validation_scope:
+            lines.append(f"- Validation scope: {_joined(card.validation_scope)}")
+        if card.solver_role:
+            lines.append(f"- Solver role: {card.solver_role.strip()}")
+        return "\n".join(lines)

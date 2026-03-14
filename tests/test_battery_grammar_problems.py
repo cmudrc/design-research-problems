@@ -5,16 +5,21 @@ from dataclasses import fields
 import pytest
 
 from design_research_problems import GrammarProblem, get_problem
+from design_research_problems.problems._domains.battery_benchmark import BatteryEvaluationMode
 from design_research_problems.problems._domains.battery_tier_metrics import BatteryTierMetrics
 from design_research_problems.problems.grammar import (
-    Battery18650Tier1SeriesParallelGrammarProblem,
-    Battery18650Tier2LayoutGrammarProblem,
-    Battery18650Tier3TopologyGrammarProblem,
-    Battery18650Tier4ThermalGrammarProblem,
+    Battery18650T1RectangularSurrogateGrammarProblem,
+    Battery18650T2PoseSurrogateGrammarProblem,
+    Battery18650T3ATopologySurrogateGrammarProblem,
+    Battery18650T3BNetlistExplicitGrammarProblem,
+    Battery18650T4ThermalHybridGrammarProblem,
 )
 from design_research_problems.problems.grammar._battery_cell_model import (
     BatteryCellModel,
     BatteryThermalPriors,
+)
+from design_research_problems.problems.optimization import (
+    Battery18650T3ATopologySurrogateOptimizationProblem,
 )
 
 _CORE_METRIC_KEYS = {
@@ -68,10 +73,11 @@ def _patch_battery_loaders(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_tiered_battery_grammars_are_registered_and_share_metric_contract() -> None:
     cases = (
-        ("battery_18650_t1_series_parallel_grammar", Battery18650Tier1SeriesParallelGrammarProblem),
-        ("battery_18650_t2_layout_grammar", Battery18650Tier2LayoutGrammarProblem),
-        ("battery_18650_t3_topology_grammar", Battery18650Tier3TopologyGrammarProblem),
-        ("battery_18650_t4_thermal_grammar", Battery18650Tier4ThermalGrammarProblem),
+        ("battery_18650_t1_rectangular_surrogate_grammar", Battery18650T1RectangularSurrogateGrammarProblem),
+        ("battery_18650_t2_pose_surrogate_grammar", Battery18650T2PoseSurrogateGrammarProblem),
+        ("battery_18650_t3a_topology_surrogate_grammar", Battery18650T3ATopologySurrogateGrammarProblem),
+        ("battery_18650_t3b_netlist_explicit_grammar", Battery18650T3BNetlistExplicitGrammarProblem),
+        ("battery_18650_t4_thermal_hybrid_grammar", Battery18650T4ThermalHybridGrammarProblem),
     )
     for problem_id, expected_type in cases:
         problem = get_problem(problem_id)
@@ -89,8 +95,8 @@ def test_tiered_battery_grammars_are_registered_and_share_metric_contract() -> N
 
 
 def test_tiered_battery_grammar_vector_state_dimensions_increase() -> None:
-    t2 = get_problem("battery_18650_t2_layout_grammar")
-    t4 = get_problem("battery_18650_t4_thermal_grammar")
+    t2 = get_problem("battery_18650_t2_pose_surrogate_grammar")
+    t4 = get_problem("battery_18650_t4_thermal_hybrid_grammar")
     t2_state = t2.initial_state()
     t4_state = t4.initial_state()
     assert isinstance(t2_state, tuple)
@@ -100,13 +106,101 @@ def test_tiered_battery_grammar_vector_state_dimensions_increase() -> None:
 
 def test_tiered_battery_grammar_evaluation_is_deterministic_for_initial_state() -> None:
     for problem_id in (
-        "battery_18650_t1_series_parallel_grammar",
-        "battery_18650_t2_layout_grammar",
-        "battery_18650_t3_topology_grammar",
-        "battery_18650_t4_thermal_grammar",
+        "battery_18650_t1_rectangular_surrogate_grammar",
+        "battery_18650_t2_pose_surrogate_grammar",
+        "battery_18650_t3a_topology_surrogate_grammar",
+        "battery_18650_t3b_netlist_explicit_grammar",
+        "battery_18650_t4_thermal_hybrid_grammar",
     ):
         problem = get_problem(problem_id)
         state = problem.initial_state()
         first = problem.evaluate(state)
         second = problem.evaluate(state)
         assert first == second
+
+
+def test_public_battery_grammar_problem_cards_and_modes() -> None:
+    cases = (
+        (
+            "battery_18650_t1_rectangular_surrogate_grammar",
+            "rectangular",
+            "analytic_surrogate",
+            ("analytic_surrogate",),
+        ),
+        (
+            "battery_18650_t2_pose_surrogate_grammar",
+            "pose_layout",
+            "analytic_surrogate",
+            ("analytic_surrogate",),
+        ),
+        (
+            "battery_18650_t3a_topology_surrogate_grammar",
+            "topology_allocation",
+            "analytic_surrogate",
+            ("analytic_surrogate", "explicit_circuit"),
+        ),
+        (
+            "battery_18650_t3b_netlist_explicit_grammar",
+            "explicit_netlist",
+            "explicit_circuit",
+            ("explicit_circuit",),
+        ),
+        (
+            "battery_18650_t4_thermal_hybrid_grammar",
+            "thermal_topology",
+            "hybrid_thermal",
+            ("analytic_surrogate", "explicit_circuit", "hybrid_thermal"),
+        ),
+    )
+    for problem_id, representation_mode, default_mode, supported_modes in cases:
+        problem = get_problem(problem_id)
+        card = problem.metadata.benchmark_card
+        assert card is not None
+        assert card.representation_mode == representation_mode
+        assert card.default_evaluation_mode == default_mode
+        assert card.supported_evaluation_modes == supported_modes
+        assert "## Benchmark Contract" in problem.render_brief(include_citation=False)
+
+
+def test_t3a_surrogate_grammar_and_optimizer_share_metrics() -> None:
+    grammar_problem = get_problem("battery_18650_t3a_topology_surrogate_grammar")
+    optimization_problem = get_problem("battery_18650_t3a_topology_surrogate_opt")
+    assert isinstance(grammar_problem, Battery18650T3ATopologySurrogateGrammarProblem)
+    assert isinstance(optimization_problem, Battery18650T3ATopologySurrogateOptimizationProblem)
+
+    state = grammar_problem.initial_state()
+    vector = optimization_problem.generate_initial_solution()
+    assert state == tuple(float(value) for value in vector)
+
+    grammar_metrics = grammar_problem.evaluate(state)
+    optimization_metrics = optimization_problem._metrics_from_variables(vector)
+    assert grammar_metrics.as_dict() == pytest.approx(optimization_metrics.as_dict())
+
+    grammar_provenance = grammar_problem.evaluation_provenance(state)
+    assert grammar_provenance.representation_mode == "topology_allocation"
+    assert grammar_provenance.evaluation_mode == "analytic_surrogate"
+
+
+def test_public_battery_grammars_reject_unsupported_evaluation_modes() -> None:
+    t1 = get_problem("battery_18650_t1_rectangular_surrogate_grammar")
+    with pytest.raises(ValueError, match="Unsupported battery evaluation_mode"):
+        type(t1)(
+            metadata=t1.metadata,
+            statement_markdown=t1.statement_markdown,
+            resource_bundle=t1.resource_bundle,
+            requirements=t1.requirements,
+            backend_config=t1.backend_config,
+            evaluation_mode="explicit_circuit",
+        )
+
+    t3b = get_problem("battery_18650_t3b_netlist_explicit_grammar")
+    with pytest.raises(ValueError, match="Unsupported battery evaluation_mode"):
+        type(t3b)(
+            metadata=t3b.metadata,
+            statement_markdown=t3b.statement_markdown,
+            resource_bundle=t3b.resource_bundle,
+            requirements=t3b.requirements,
+            max_cell_count=t3b.max_cell_count,
+            backend_config=t3b.backend_config,
+            evaluation_mode=BatteryEvaluationMode.HYBRID_THERMAL.value,
+        )

@@ -1,19 +1,19 @@
-Battery 18650 T2 Layout Grammar
-===============================
+Battery 18650 T1 Rectangular Surrogate Opt
+==========================================
 
-Source: ``examples/grammar/battery_18650_t2_layout_grammar.py``
+Source: ``examples/optimization/battery_18650_t1_rectangular_surrogate_opt.py``
 
 Introduction
 ------------
 
-Inspect tier-2 battery grammar benchmark.
+Inspect the T1 rectangular surrogate battery optimization benchmark.
 
 Technical Implementation
 ------------------------
 
 This page is generated from the top-of-file module docstring and the example source code. The full script is included below for direct inspection.
 
-.. literalinclude:: ../../../examples/grammar/battery_18650_t2_layout_grammar.py
+.. literalinclude:: ../../../examples/optimization/battery_18650_t1_rectangular_surrogate_opt.py
    :language: python
    :lines: 3-
    :linenos:
@@ -25,6 +25,6 @@ Expected Results
 
 .. code-block:: bash
 
-   PYTHONPATH=src python3 examples/grammar/battery_18650_t2_layout_grammar.py
+   PYTHONPATH=src python3 examples/optimization/battery_18650_t1_rectangular_surrogate_opt.py
 
 Run the command shown below from repository root. Output should summarize the problem setup, a baseline solution, or diagnostic values relevant to this example.

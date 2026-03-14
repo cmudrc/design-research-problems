@@ -13,17 +13,20 @@ _LAZY_EXPORTS = {
     "BatteryCircuitEvaluation": "design_research_problems.problems.grammar._battery_circuit:BatteryCircuitEvaluation",
     "BatteryCircuitState": "design_research_problems.problems.grammar._battery_circuit:BatteryCircuitState",
     "BatteryConnection": "design_research_problems.problems.grammar._battery_circuit:BatteryConnection",
-    "Battery18650Tier1SeriesParallelGrammarProblem": (
-        "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier1SeriesParallelGrammarProblem"
+    "Battery18650T1RectangularSurrogateGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650T1RectangularSurrogateGrammarProblem"
     ),
-    "Battery18650Tier2LayoutGrammarProblem": (
-        "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier2LayoutGrammarProblem"
+    "Battery18650T2PoseSurrogateGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650T2PoseSurrogateGrammarProblem"
     ),
-    "Battery18650Tier3TopologyGrammarProblem": (
-        "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier3TopologyGrammarProblem"
+    "Battery18650T3ATopologySurrogateGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650T3ATopologySurrogateGrammarProblem"
     ),
-    "Battery18650Tier4ThermalGrammarProblem": (
-        "design_research_problems.problems.grammar._battery_tiers:Battery18650Tier4ThermalGrammarProblem"
+    "Battery18650T3BNetlistExplicitGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650T3BNetlistExplicitGrammarProblem"
+    ),
+    "Battery18650T4ThermalHybridGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650T4ThermalHybridGrammarProblem"
     ),
     "BatteryPack18650OpenEndedProblem": (
         "design_research_problems.problems.grammar._battery_pack_open:BatteryPack18650OpenEndedProblem"
@@ -97,11 +100,14 @@ if TYPE_CHECKING:
     from ._battery_pack_sp import SeriesParallelBatteryEvaluation as SeriesParallelBatteryEvaluation
     from ._battery_pack_sp import SeriesParallelBatteryState as SeriesParallelBatteryState
     from ._battery_tiers import (
-        Battery18650Tier1SeriesParallelGrammarProblem as Battery18650Tier1SeriesParallelGrammarProblem,
+        Battery18650T1RectangularSurrogateGrammarProblem as Battery18650T1RectangularSurrogateGrammarProblem,
     )
-    from ._battery_tiers import Battery18650Tier2LayoutGrammarProblem as Battery18650Tier2LayoutGrammarProblem
-    from ._battery_tiers import Battery18650Tier3TopologyGrammarProblem as Battery18650Tier3TopologyGrammarProblem
-    from ._battery_tiers import Battery18650Tier4ThermalGrammarProblem as Battery18650Tier4ThermalGrammarProblem
+    from ._battery_tiers import Battery18650T2PoseSurrogateGrammarProblem as Battery18650T2PoseSurrogateGrammarProblem
+    from ._battery_tiers import (
+        Battery18650T3ATopologySurrogateGrammarProblem as Battery18650T3ATopologySurrogateGrammarProblem,
+    )
+    from ._battery_tiers import Battery18650T3BNetlistExplicitGrammarProblem as Battery18650T3BNetlistExplicitGrammarProblem
+    from ._battery_tiers import Battery18650T4ThermalHybridGrammarProblem as Battery18650T4ThermalHybridGrammarProblem
     from ._iot_home import IoTHomeCoolingGrammarProblem as IoTHomeCoolingGrammarProblem
     from ._iot_home import IoTHomeEvaluation as IoTHomeEvaluation
     from ._iot_home import IoTHomeLink as IoTHomeLink

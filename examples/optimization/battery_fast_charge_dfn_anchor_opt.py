@@ -1,4 +1,4 @@
-"""Inspect the fast-charge battery optimization benchmark."""
+"""Inspect the fast-charge DFN anchor battery benchmark."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ COMMON_KEYS = (
 
 
 def main() -> None:
-    problem = derp.get_problem("battery_fast_charge_cell_opt")
+    problem = derp.get_problem("battery_fast_charge_dfn_anchor_opt")
     initial = problem.generate_initial_solution()
     try:
         components = problem.objective_components(initial)
@@ -24,6 +24,7 @@ def main() -> None:
         print(exc)
         return
     print(problem.metadata.problem_id)
+    print("solver-role", problem.metadata.benchmark_card.solver_role)
     print("metric-keys", ",".join(sorted(components)))
     print("initial", " ".join(f"{key}={components[key]:.6g}" for key in COMMON_KEYS))
     print("solve", result.message)
