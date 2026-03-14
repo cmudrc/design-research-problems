@@ -20,6 +20,11 @@ Working notes for auditing `conferences/2022 IDETC/` against
   - added `prompt_mass_production_corn_shucker`
   - added `prompt_peanut_shelling_50kg_per_hour`
   - appendix prints both full task packets verbatim
+- `DETC2022-90024`
+  - added `prompt_long_range_dtss_inspection`
+  - added `prompt_dexterous_aerial_manipulation`
+  - the two aerial-robot workshop briefs were recoverable from the figure
+    panels after visual inspection of the proceedings PDF
 
 ## Already represented or not a new catalog gap
 
@@ -32,18 +37,6 @@ Working notes for auditing `conferences/2022 IDETC/` against
 - `DETC2022-91313`
   - the appendix peanut-sheller brief adds a richer study-specific variant, but
     the underlying peanut-shelling family was already present before this pass
-
-## Follow-up items
-
-- `DETC2022-90024`
-  - contains two figure-embedded aerial-robot briefs:
-    - long-range DTSS sewer inspection
-    - tree resistograph / dexterous aerial manipulation
-  - the main text states the problem statements, and the figures are visually
-    legible enough to confirm they are real briefs, but some constraint details
-    remain embedded in images rather than clean text extraction
-  - possible future step: targeted OCR or manual transcription if we want to
-    promote these into the catalog
 
 ## Skips
 

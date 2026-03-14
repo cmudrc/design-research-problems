@@ -639,6 +639,17 @@ formatted_text = "Weaver, Buck, Merzdorf, Dorozhkin, Douglas, and Linsey (2022).
 raw_text = "Weaver, Morgan B., Jacob Buck, Hillary Merzdorf, Denis Dorozhkin, Kerrie Douglas, and Julie Linsey (2022). Investigating Priming Effects of Sketch Evaluation Instructions on Idea Generation Productivity. ASME IDETC/CIE 2022, DETC2022-91313."
 provisional = true
 
+[[citations]]
+key = "tan_foong_holtta_otto_2022"
+kind = "inline"
+authors = ["Chee How Tan", "Shaohui Foong", "Katja Holtta-Otto"]
+title = "Aerial Robot Design Principles in Creative Idea Generation and Evolution"
+year = 2022
+venue = "ASME IDETC/CIE 2022, DETC2022-90024"
+formatted_text = "Tan, Foong, and Holtta-Otto (2022). Aerial Robot Design Principles in Creative Idea Generation and Evolution. ASME IDETC/CIE 2022, DETC2022-90024."
+raw_text = "Tan, Chee How, Shaohui Foong, and Katja Holtta-Otto (2022). Aerial Robot Design Principles in Creative Idea Generation and Evolution. ASME IDETC/CIE 2022, DETC2022-90024."
+provisional = true
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -679,6 +690,24 @@ external_aliases = []
 canonical_prompt_ids = ["prompt_mass_production_corn_shucker"]
 tags = ["agriculture", "mechanical-design"]
 notes = "Weaver et al. (2022) prints a full corn-shucking appendix brief selected for equivalence with the peanut-sheller problem in sketch-based ideation research."
+
+[[families]]
+family_id = "family_long_range_dtss_inspection"
+name = "Long-range DTSS Inspection"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_long_range_dtss_inspection"]
+tags = ["aerial-robotics", "inspection", "infrastructure"]
+notes = "Tan, Foong, and Holtta-Otto (2022) prints this sewer-inspection aerial-robot design brief in a figure-based workshop handout."
+
+[[families]]
+family_id = "family_dexterous_aerial_manipulation"
+name = "Dexterous Aerial Manipulation"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_dexterous_aerial_manipulation"]
+tags = ["aerial-robotics", "structural-health", "inspection"]
+notes = "Tan, Foong, and Holtta-Otto (2022) prints this tree-resistograph aerial-manipulation design brief in a figure-based workshop handout."
 
 [[families]]
 family_id = "family_book_picking"
@@ -1334,6 +1363,28 @@ source_citation_keys = ["weaver_buck_merzdorf_dorozhkin_douglas_linsey_2022"]
 tags = ["agriculture", "mechanical-design", "ideation"]
 status = "complete"
 variant_ids = ["variant_mass_production_corn_shucker"]
+
+[[prompts]]
+prompt_id = "prompt_long_range_dtss_inspection"
+problem_id = "ideation_long_range_dtss_inspection"
+family_id = "family_long_range_dtss_inspection"
+canonical_brief = "Long-range DTSS Inspection. Aerial robots are treated as ideal platforms because of deployment and retrieval simplicity and challenging terrain. The task demands long endurance greater than 30 mins and a 3 m/s inspection pace. The brief calls for greater than 30 m autonomous ascend and descend, 5 km autonomous navigation between adjacent shaft access points, and 360 degree visual inspection of the tunnel inner surface. Design specifications emphasize battery operation for more than 30 mins, sensing for collision avoidance and localization, SWaP constraints with size less than 1.2 m radius and minimal power draw, and dark, featureless tunnel conditions."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["tan_foong_holtta_otto_2022"]
+tags = ["aerial-robotics", "inspection", "ideation"]
+status = "complete"
+variant_ids = ["variant_long_range_dtss_inspection"]
+
+[[prompts]]
+prompt_id = "prompt_dexterous_aerial_manipulation"
+problem_id = "ideation_dexterous_aerial_manipulation"
+family_id = "family_dexterous_aerial_manipulation"
+canonical_brief = "Dexterous Aerial Manipulation. Use a resistograph for structural health monitoring to measure wood resistance via drilling and assess wood density, quality, and health condition. Design specifications require withstanding the reaction force from drilling, staying as still as possible to prevent the drill from snapping, and minimizing interference with sensitive resistograph measurement."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["tan_foong_holtta_otto_2022"]
+tags = ["aerial-robotics", "structural-health", "ideation"]
+status = "complete"
+variant_ids = ["variant_dexterous_aerial_manipulation"]
 
 [[prompts]]
 prompt_id = "prompt_injured_athlete_campus_mobility"
@@ -2006,6 +2057,28 @@ statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["weaver_buck_merzdorf_dorozhkin_douglas_linsey_2022"]
 notes = "Verbatim appendix prompt used as a sketch-based ideation task paired with the peanut-sheller problem."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_long_range_dtss_inspection"
+prompt_id = "prompt_long_range_dtss_inspection"
+problem_id = "ideation_long_range_dtss_inspection"
+label = "Tan, Foong, and Holtta-Otto (2022) figure brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["tan_foong_holtta_otto_2022"]
+notes = "Verbatim figure-based sewer-inspection design brief used in the aerial-robot design-principles workshop."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_dexterous_aerial_manipulation"
+prompt_id = "prompt_dexterous_aerial_manipulation"
+problem_id = "ideation_dexterous_aerial_manipulation"
+label = "Tan, Foong, and Holtta-Otto (2022) figure brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["tan_foong_holtta_otto_2022"]
+notes = "Verbatim figure-based tree-resistograph design brief used in the aerial-robot design-principles workshop."
 status = "complete"
 
 [[variants]]
