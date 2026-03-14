@@ -621,6 +621,24 @@ formatted_text = "Walker, Shealy, and Gero (2023). Neurocognition of New Ideas D
 raw_text = "Walker, Emma, Tripp Shealy, and John Gero (2023). Neurocognition of New Ideas During Engineering Design. ASME IDETC/CIE 2023, DETC2023-117127."
 provisional = true
 
+[[citations]]
+key = "weaver_buck_merzdorf_dorozhkin_douglas_linsey_2022"
+kind = "inline"
+authors = [
+  "Morgan B. Weaver",
+  "Jacob Buck",
+  "Hillary Merzdorf",
+  "Denis Dorozhkin",
+  "Kerrie Douglas",
+  "Julie Linsey",
+]
+title = "Investigating Priming Effects of Sketch Evaluation Instructions on Idea Generation Productivity"
+year = 2022
+venue = "ASME IDETC/CIE 2022, DETC2022-91313"
+formatted_text = "Weaver, Buck, Merzdorf, Dorozhkin, Douglas, and Linsey (2022). Investigating Priming Effects of Sketch Evaluation Instructions on Idea Generation Productivity. ASME IDETC/CIE 2022, DETC2022-91313."
+raw_text = "Weaver, Morgan B., Jacob Buck, Hillary Merzdorf, Denis Dorozhkin, Kerrie Douglas, and Julie Linsey (2022). Investigating Priming Effects of Sketch Evaluation Instructions on Idea Generation Productivity. ASME IDETC/CIE 2022, DETC2022-91313."
+provisional = true
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -648,9 +666,19 @@ canonical_prompt_ids = [
   "prompt_peanut_shelling",
   "prompt_peanut_shelling_linsey_green_murphy_wood_markman_2005",
   "prompt_peanut_shelling_fu_cagan_kotovsky_2010",
+  "prompt_peanut_shelling_50kg_per_hour",
 ]
 tags = ["agriculture", "mechanical-design"]
-notes = "Linsey et al. (2005) provides the root peanut-shelling study framing; Fu et al. (2010) and Viswanathan and Linsey (2013) reuse and elaborate the task, and Goucher-Lambert and Cagan (2019) later reduce it to a one-line derivative framing."
+notes = "Linsey et al. (2005) provides the root peanut-shelling study framing; Fu et al. (2010) and Viswanathan and Linsey (2013) reuse and elaborate the task; Weaver et al. (2022) prints a higher-constraint appendix variant; and Goucher-Lambert and Cagan (2019) later reduce the family to a one-line derivative framing."
+
+[[families]]
+family_id = "family_corn_shucking"
+name = "Corn Shucking"
+group = "food-agriculture"
+external_aliases = []
+canonical_prompt_ids = ["prompt_mass_production_corn_shucker"]
+tags = ["agriculture", "mechanical-design"]
+notes = "Weaver et al. (2022) prints a full corn-shucking appendix brief selected for equivalence with the peanut-sheller problem in sketch-based ideation research."
 
 [[families]]
 family_id = "family_book_picking"
@@ -1284,6 +1312,28 @@ source_citation_keys = ["fu2010design", "linsey_green_murphy_wood_markman_2005"]
 tags = ["agriculture", "mechanical-design", "ideation", "team"]
 status = "complete"
 variant_ids = ["variant_peanut_shelling_fu_cagan_kotovsky_2010"]
+
+[[prompts]]
+prompt_id = "prompt_peanut_shelling_50kg_per_hour"
+problem_id = "ideation_peanut_shelling_50kg_per_hour"
+family_id = "family_peanut_shelling"
+canonical_brief = "In places like Haiti and certain West African countries, peanuts are a significant crop. Most peanut farmers shell their peanuts by hand, an inefficient and labor-intensive process. The goal of this project is to design and build a low-cost, easy to manufacture peanut shelling machine that will increase the productivity of the African peanut farmers. The target throughput is approximately 50 kg (110 lbs.) per hour. Customer needs: must remove the shell with minimal damage to the peanuts, electrical outlets are not available as a power source, a large quantity of peanuts must be quickly shelled, low cost, and easy to manufacture."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["weaver_buck_merzdorf_dorozhkin_douglas_linsey_2022"]
+tags = ["agriculture", "mechanical-design", "ideation"]
+status = "complete"
+variant_ids = ["variant_peanut_shelling_50kg_per_hour"]
+
+[[prompts]]
+prompt_id = "prompt_mass_production_corn_shucker"
+problem_id = "ideation_mass_production_corn_shucker"
+family_id = "family_corn_shucking"
+canonical_brief = "Corn is currently the most widely grown crop in the Americas with the United States producing 40% of the world's harvest. An ear of corn has a protective outer covering of leaves, known as the husk, and strands of corn silk threads run between the husk and the kernels. The removal of husk and silk to clean the corn is known as shucking corn. Design a device that quickly and cheaply shucks corn for mass production. Customer needs: must remove husk and silk from corn cob with minimal damage to kernels, a large quantity of corn must be shucked quickly, must be safe for user, low cost, and easy to manufacture."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["weaver_buck_merzdorf_dorozhkin_douglas_linsey_2022"]
+tags = ["agriculture", "mechanical-design", "ideation"]
+status = "complete"
+variant_ids = ["variant_mass_production_corn_shucker"]
 
 [[prompts]]
 prompt_id = "prompt_injured_athlete_campus_mobility"
@@ -1935,6 +1985,28 @@ evidence_tier = "primary_reconstructed"
 source_citation_keys = ["linsey_green_murphy_wood_markman_2005", "viswanathan_linsey_2013"]
 notes = "Reconstructed from the design-problem descriptions in Linsey et al. (2005) and Viswanathan and Linsey (2013); the exact participant instruction sheet wording is not available in the accessible text."
 status = "needs_primary_fill"
+
+[[variants]]
+variant_id = "variant_peanut_shelling_50kg_per_hour"
+prompt_id = "prompt_peanut_shelling_50kg_per_hour"
+problem_id = "ideation_peanut_shelling_50kg_per_hour"
+label = "Weaver et al. (2022) appendix brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["weaver_buck_merzdorf_dorozhkin_douglas_linsey_2022"]
+notes = "Verbatim appendix prompt with explicit throughput, manufacturability, and cost constraints from the sketch-evaluation-priming study."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_mass_production_corn_shucker"
+prompt_id = "prompt_mass_production_corn_shucker"
+problem_id = "ideation_mass_production_corn_shucker"
+label = "Weaver et al. (2022) appendix brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["weaver_buck_merzdorf_dorozhkin_douglas_linsey_2022"]
+notes = "Verbatim appendix prompt used as a sketch-based ideation task paired with the peanut-sheller problem."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_injured_athlete_campus_mobility"

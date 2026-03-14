@@ -1,0 +1,57 @@
+problem_id = "ideation_mass_production_corn_shucker"
+title = "Corn Shucker for Mass Production"
+summary = "A primary-source agricultural ideation brief about quickly and cheaply removing husk and silk from corn for mass production."
+kind = "text"
+statement = '''
+# Corn Shucker for Mass Production
+
+Corn is currently the most widely grown crop in the Americas with the United
+States producing 40% of the world's harvest. An ear of corn has a protective
+outer covering of leaves, known as the husk, and strands of corn silk threads
+run between the husk and the kernels. The removal of husk and silk to clean
+the corn is known as shucking corn. Design a device that quickly and cheaply
+shucks corn for mass production.
+
+Customer Needs:
+
+- Must remove husk and silk from corn cob with minimal damage to kernels.
+- A large quantity of corn must be shucked quickly.
+- Must be safe for user.
+- Low cost.
+- Easy to manufacture.
+
+Please sketch and note (with words) one design solution per page starting on
+the next page.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "agriculture", "mechanical-design"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 45
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "weaver_buck_merzdorf_dorozhkin_douglas_linsey_2022"
+kind = "inline"
+authors = [
+  "Morgan B. Weaver",
+  "Jacob Buck",
+  "Hillary Merzdorf",
+  "Denis Dorozhkin",
+  "Kerrie Douglas",
+  "Julie Linsey",
+]
+title = "Investigating Priming Effects of Sketch Evaluation Instructions on Idea Generation Productivity"
+year = 2022
+venue = "ASME IDETC/CIE 2022, DETC2022-91313"
+formatted_text = "Weaver, Buck, Merzdorf, Dorozhkin, Douglas, and Linsey (2022). Investigating Priming Effects of Sketch Evaluation Instructions on Idea Generation Productivity. ASME IDETC/CIE 2022, DETC2022-91313."
+raw_text = "Weaver, Morgan B., Jacob Buck, Hillary Merzdorf, Denis Dorozhkin, Kerrie Douglas, and Julie Linsey (2022). Investigating Priming Effects of Sketch Evaluation Instructions on Idea Generation Productivity. ASME IDETC/CIE 2022, DETC2022-91313."
+provisional = true
