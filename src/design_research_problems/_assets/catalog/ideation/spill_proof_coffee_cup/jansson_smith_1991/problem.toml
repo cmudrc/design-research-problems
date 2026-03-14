@@ -1,17 +1,21 @@
 problem_id = "ideation_disposable_spill_proof_coffee_cup"
 title = "Disposable Spill-Proof Coffee Cup"
-summary = "A reconstructed version of the spill-proof coffee-cup problem used in Experiment 3 of Jansson and Smith (1991)."
+summary = "A verbatim adapted version of the spill-proof coffee-cup problem printed in Brundage et al. (2024) and attributed there to Jansson and Smith (1991)."
 kind = "text"
 statement = '''
 # Disposable Spill-Proof Coffee Cup
 
-Design an inexpensive, disposable, spill-proof coffee cup.
+The aim of this design challenge is to design an inexpensive,
+disposable, spill-proof coffee cup.
 
-The design should:
+The cup should meet the following requirements:
 
-- be operable with one hand
-- be durable
-- not include straws or mouthpieces as part of the design
+- disposable
+- spill-proof
+- operable with one hand
+- durable
+- does not require a straw
+- does not require a mouthpiece
 '''
 capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
 study_suitability = ["human-subjects-ready", "ideation-friendly"]
@@ -27,6 +31,23 @@ deliverable_type = "concepts"
 timebox_hint_minutes = 45
 participants = "individual"
 evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "brundage_soria_zurita_starkey_menold_jablokow_2024"
+kind = "inline"
+authors = [
+  "Amanda Brundage",
+  "Nicolas F. Soria Zurita",
+  "Elizabeth Starkey",
+  "Jessica Menold",
+  "Kathryn Jablokow",
+]
+title = "The Effects of Incubation, Fixation Stimuli, and Working Memory Capacity on Design Fixation"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-143871"
+formatted_text = "Brundage, Soria Zurita, Starkey, Menold, and Jablokow (2024). The Effects of Incubation, Fixation Stimuli, and Working Memory Capacity on Design Fixation. ASME IDETC/CIE 2024, DETC2024-143871."
+raw_text = "Brundage, Soria Zurita, Starkey, Menold, and Jablokow (2024). The Effects of Incubation, Fixation Stimuli, and Working Memory Capacity on Design Fixation. ASME IDETC/CIE 2024, DETC2024-143871."
+provisional = true
 
 [[citations]]
 key = "jansson_smith_1991"

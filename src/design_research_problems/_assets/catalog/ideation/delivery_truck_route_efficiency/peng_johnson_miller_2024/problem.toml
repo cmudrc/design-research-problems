@@ -1,0 +1,36 @@
+problem_id = "ideation_delivery_truck_route_efficiency"
+title = "Delivery Truck Route Efficiency"
+summary = "A transportation-focused ideation prompt about improving the efficiency of delivery truck routes."
+kind = "text"
+statement = '''
+# Delivery Truck Route Efficiency
+
+Develop as many design ideas as you can to improve the efficiency of
+delivery truck routes.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "transport", "logistics"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "peng_johnson_miller_2024"
+kind = "inline"
+authors = ["Aoran Peng", "Dan Johnson", "Scarlett R. Miller"]
+title = "Crack the Code: Impact of Engineering Design Prompt Objective and Linguistic Characteristics on Understanding and Creativity Perceptions of Students"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-146351"
+formatted_text = "Peng, Johnson, and Miller (2024). Crack the Code: Impact of Engineering Design Prompt Objective and Linguistic Characteristics on Understanding and Creativity Perceptions of Students. ASME IDETC/CIE 2024, DETC2024-146351."
+raw_text = "Peng, Johnson, and Miller (2024). Crack the Code: Impact of Engineering Design Prompt Objective and Linguistic Characteristics on Understanding and Creativity Perceptions of Students. ASME IDETC/CIE 2024, DETC2024-146351."
+provisional = true
+

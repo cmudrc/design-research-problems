@@ -518,6 +518,98 @@ formatted_text = "Bhatt, Ammersdorfer, and Inkermann (2025). Impact of Problem B
 raw_text = "Bhatt, Ammersdorfer, and Inkermann (2025). Impact of Problem Brief Characteristics and Influencing Factors on Design Outcomes in a Project-Based Engineering Course. ASME IDETC/CIE 2025, DETC2025-168538."
 provisional = true
 
+[[citations]]
+key = "alzayed_starkey_ritter_prabhu_2024"
+kind = "inline"
+authors = ["Mohammad Alsager Alzayed", "Elizabeth M. Starkey", "Sarah C. Ritter", "Rohan Prabhu"]
+title = "Sustaining Creatively? Investigating the Effects of Creativity and Sustainability-Focused Evaluation Criteria in Design Tasks"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-142619"
+formatted_text = "Alzayed, Starkey, Ritter, and Prabhu (2024). Sustaining Creatively? Investigating the Effects of Creativity and Sustainability-Focused Evaluation Criteria in Design Tasks. ASME IDETC/CIE 2024, DETC2024-142619."
+raw_text = "Alzayed, Starkey, Ritter, and Prabhu (2024). Sustaining Creatively? Investigating the Effects of Creativity and Sustainability-Focused Evaluation Criteria in Design Tasks. ASME IDETC/CIE 2024, DETC2024-142619."
+provisional = true
+
+[[citations]]
+key = "brundage_soria_zurita_starkey_menold_jablokow_2024"
+kind = "inline"
+authors = ["Amanda Brundage", "Nicolas F. Soria Zurita", "Elizabeth Starkey", "Jessica Menold", "Kathryn Jablokow"]
+title = "The Effects of Incubation, Fixation Stimuli, and Working Memory Capacity on Design Fixation"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-143871"
+formatted_text = "Brundage, Soria Zurita, Starkey, Menold, and Jablokow (2024). The Effects of Incubation, Fixation Stimuli, and Working Memory Capacity on Design Fixation. ASME IDETC/CIE 2024, DETC2024-143871."
+raw_text = "Brundage, Soria Zurita, Starkey, Menold, and Jablokow (2024). The Effects of Incubation, Fixation Stimuli, and Working Memory Capacity on Design Fixation. ASME IDETC/CIE 2024, DETC2024-143871."
+provisional = true
+
+[[citations]]
+key = "das_meza_xu_yang_2024"
+kind = "inline"
+authors = ["Madhurima Das", "Jessica Meza", "Christine Xu", "Maria C. Yang"]
+title = "Concept Chaining Patterns During Ideation Using Digital Tablets"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-142785"
+formatted_text = "Das, Meza, Xu, and Yang (2024). Concept Chaining Patterns During Ideation Using Digital Tablets. ASME IDETC/CIE 2024, DETC2024-142785."
+raw_text = "Das, Meza, Xu, and Yang (2024). Concept Chaining Patterns During Ideation Using Digital Tablets. ASME IDETC/CIE 2024, DETC2024-142785."
+provisional = true
+
+[[citations]]
+key = "duan_karthik_shi_jain_yang_ramani_2024"
+kind = "inline"
+authors = ["Runlin Duan", "Nachiketh Karthik", "Jingyu Shi", "Rahul Jain", "Maria C. Yang", "Karthik Ramani"]
+title = "ConceptVis: Generating and Exploring Design Concepts for Early-Stage Ideation Using Large Language Model"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-146409"
+formatted_text = "Duan, Karthik, Shi, Jain, Yang, and Ramani (2024). ConceptVis: Generating and Exploring Design Concepts for Early-Stage Ideation Using Large Language Model. ASME IDETC/CIE 2024, DETC2024-146409."
+raw_text = "Duan, Karthik, Shi, Jain, Yang, and Ramani (2024). ConceptVis: Generating and Exploring Design Concepts for Early-Stage Ideation Using Large Language Model. ASME IDETC/CIE 2024, DETC2024-146409."
+provisional = true
+
+[[citations]]
+key = "pearl_meisel_2024"
+kind = "inline"
+authors = ["Seth Pearl", "Nicholas Meisel"]
+title = "Evaluating the Effectiveness of Heuristic Cards With Varying Example Specificity in Design for Additive Manufacturing Education"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-143225"
+formatted_text = "Pearl and Meisel (2024). Evaluating the Effectiveness of Heuristic Cards With Varying Example Specificity in Design for Additive Manufacturing Education. ASME IDETC/CIE 2024, DETC2024-143225."
+raw_text = "Pearl and Meisel (2024). Evaluating the Effectiveness of Heuristic Cards With Varying Example Specificity in Design for Additive Manufacturing Education. ASME IDETC/CIE 2024, DETC2024-143225."
+provisional = true
+
+[[citations]]
+key = "peng_johnson_miller_2024"
+kind = "inline"
+authors = ["Aoran Peng", "Dan Johnson", "Scarlett R. Miller"]
+title = "Crack the Code: Impact of Engineering Design Prompt Objective and Linguistic Characteristics on Understanding and Creativity Perceptions of Students"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-146351"
+formatted_text = "Peng, Johnson, and Miller (2024). Crack the Code: Impact of Engineering Design Prompt Objective and Linguistic Characteristics on Understanding and Creativity Perceptions of Students. ASME IDETC/CIE 2024, DETC2024-146351."
+raw_text = "Peng, Johnson, and Miller (2024). Crack the Code: Impact of Engineering Design Prompt Objective and Linguistic Characteristics on Understanding and Creativity Perceptions of Students. ASME IDETC/CIE 2024, DETC2024-146351."
+provisional = true
+
+[[citations]]
+key = "liao_macdonald_2021"
+kind = "inline"
+authors = ["Ting Liao", "Erin F. MacDonald"]
+title = "Priming on Sustainable Design Idea Creation and Evaluation"
+year = 2021
+venue = "Sustainability, 13(9), 5227"
+doi = "10.3390/su13095227"
+url = "https://doi.org/10.3390/su13095227"
+formatted_text = "Liao and MacDonald (2021). Priming on Sustainable Design Idea Creation and Evaluation. Sustainability, 13(9), 5227."
+raw_text = "Liao, Ting, and Erin F. MacDonald (2021). Priming on Sustainable Design Idea Creation and Evaluation. Sustainability, 13(9), 5227. DOI: 10.3390/su13095227."
+provisional = false
+
+[[citations]]
+key = "renji_liao_2025"
+kind = "inline"
+authors = ["Naveen Mathews Renji", "Ting Liao"]
+title = "Designing Trust: How System-Level Design Attributes Shape AI-Assisted Design Ideation"
+year = 2025
+venue = "ASME IDETC/CIE 2025, DETC2025-168783"
+doi = "10.1115/DETC2025-168783"
+url = "https://doi.org/10.1115/DETC2025-168783"
+formatted_text = "Renji and Liao (2025). Designing Trust: How System-Level Design Attributes Shape AI-Assisted Design Ideation. ASME IDETC/CIE 2025, DETC2025-168783."
+raw_text = "Renji, Naveen Mathews, and Ting Liao (2025). Designing Trust: How System-Level Design Attributes Shape AI-Assisted Design Ideation. ASME IDETC/CIE 2025, DETC2025-168783."
+provisional = false
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -814,6 +906,78 @@ external_aliases = []
 canonical_prompt_ids = ["prompt_sustainable_daily_helpers"]
 tags = ["service-devices", "sustainability", "indoor"]
 notes = "Bhatt, Ammersdorfer, and Inkermann (2025) lists this classroom problem brief in Table 1 as Topic D."
+
+[[families]]
+family_id = "family_sustainable_washing_machine"
+name = "Sustainable Washing Machine"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_sustainable_washing_machine"]
+tags = ["appliance", "sustainability", "consumer"]
+notes = "Liao and MacDonald (2021) prints the full sustainable washing-machine ideation brief; Renji and Liao (2025) later cites washing machines as one of four household design themes used with AIDA."
+
+[[families]]
+family_id = "family_sub_saharan_wash_access"
+name = "Sub-Saharan WASH Access"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_sub_saharan_wash_access_eli"]
+tags = ["water", "sanitation", "rural"]
+notes = "Alzayed et al. (2024) provides a contextualized clean-water-and-sanitation brief for Eli and his village in Sub-Saharan Africa."
+
+[[families]]
+family_id = "family_hearing_impairment_group_conversations"
+name = "Hearing-Impairment Group Conversations"
+group = "accessibility-assistive"
+external_aliases = []
+canonical_prompt_ids = ["prompt_hearing_impairment_group_conversations"]
+tags = ["accessibility", "communication", "assistive"]
+notes = "Peng, Johnson, and Miller (2024) lists this prompt as an example from the Ability Difference and Limitation category."
+
+[[families]]
+family_id = "family_delivery_truck_route_efficiency"
+name = "Delivery Truck Route Efficiency"
+group = "transport-infrastructure"
+external_aliases = []
+canonical_prompt_ids = ["prompt_delivery_truck_route_efficiency"]
+tags = ["logistics", "transport", "optimization"]
+notes = "Peng, Johnson, and Miller (2024) lists this prompt as an example from the Transportation and Mobility category."
+
+[[families]]
+family_id = "family_construction_ecosystem_impact"
+name = "Construction Ecosystem Impact"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_reduce_construction_ecosystem_impact"]
+tags = ["construction", "ecosystems", "sustainability"]
+notes = "Peng, Johnson, and Miller (2024) lists this prompt as an example from the Social and Environmental Systems category."
+
+[[families]]
+family_id = "family_milk_frothing_device"
+name = "Milk Frothing Device"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_milk_frothing_device"]
+tags = ["kitchen", "appliance", "consumer"]
+notes = "Das, Meza, Xu, and Yang (2024) reproduces a full milk-frothing device brief in Appendix B."
+
+[[families]]
+family_id = "family_parallel_tube_wall_mount"
+name = "Parallel Tube Wall Mount"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_parallel_tube_wall_mount"]
+tags = ["fixture", "mounting", "manufacturing"]
+notes = "Pearl and Meisel (2024) prints a full additive-manufacturing design challenge for a wall-mounted three-tube holder."
+
+[[families]]
+family_id = "family_outdoor_toy_children_5_8"
+name = "Outdoor Toy for Ages 5-8"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_outdoor_toy_children_5_8"]
+tags = ["toys", "children", "consumer"]
+notes = "Duan et al. (2024) uses this outdoor-toy design brief in a human-LLM ideation study."
 
 [[prompts]]
 prompt_id = "prompt_travel_exercise_device"
@@ -1250,11 +1414,11 @@ variant_ids = ["variant_car_mounted_bicycle_rack"]
 prompt_id = "prompt_disposable_spill_proof_coffee_cup"
 problem_id = "ideation_disposable_spill_proof_coffee_cup"
 family_id = "family_spill_proof_coffee_cup"
-canonical_brief = "Design an inexpensive, disposable, spill-proof coffee cup that works with one hand and excludes straws and mouthpieces."
-evidence_tier = "primary_reconstructed"
-source_citation_keys = ["jansson_smith_1991"]
+canonical_brief = "The aim of this design challenge is to design an inexpensive, disposable, spill-proof coffee cup. The cup should meet the following requirements: Disposable, Spill-proof, Operable with one hand, Durable, Does not require a straw, Does not require a mouthpiece."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["brundage_soria_zurita_starkey_menold_jablokow_2024", "jansson_smith_1991"]
 tags = ["consumer", "household", "ideation"]
-status = "needs_primary_fill"
+status = "complete"
 variant_ids = ["variant_disposable_spill_proof_coffee_cup"]
 
 [[prompts]]
@@ -1355,6 +1519,105 @@ source_citation_keys = ["bhatt_ammersdorfer_inkermann_2025"]
 tags = ["service-devices", "sustainability", "ideation"]
 status = "complete"
 variant_ids = ["variant_sustainable_daily_helpers"]
+
+[[prompts]]
+prompt_id = "prompt_sustainable_washing_machine"
+problem_id = "ideation_sustainable_washing_machine"
+family_id = "family_sustainable_washing_machine"
+canonical_brief = "Imagine that you are working on a product design team at Smithfield Appliances, and you have been asked to design the next generation of sustainable washing machine. Product ideas may be related to reducing water and energy usage, improving manufacturing, and increasing the product's appeal to users. Generate ideas that address this design challenge. You may use scratch paper if necessary but please type all individual ideas in the boxes below. You do not have to fill in all of the boxes. You will have 8 min to complete this task."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["liao_macdonald_2021", "renji_liao_2025"]
+tags = ["appliance", "sustainability", "ideation"]
+status = "complete"
+variant_ids = ["variant_sustainable_washing_machine"]
+
+[[prompts]]
+prompt_id = "prompt_sub_saharan_wash_access_eli"
+problem_id = "ideation_sub_saharan_wash_access_eli"
+family_id = "family_sub_saharan_wash_access"
+canonical_brief = "In Sub-Saharan Africa, nearly 46 people die per 100,000 people due to diseases caused by the lack of safe water, sanitation, and hygiene (WASH) services. This is nearly four times the global average of 12 deaths per 100,000 people due to poor access to WASH services. Eli is a 40-year-old man who lives in the Sub-Saharan African region with his wife and two teenage children. He is a farmer by profession, has some middle-school level education, lives in a small remote village with some access to electricity but no internet or cellular service, and relies on either a nearby polluted river or contaminated and ill-maintained wells for water. You are tasked with designing a solution to help improve access to clean water and sanitation for Eli and others in his village."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["alzayed_starkey_ritter_prabhu_2024"]
+tags = ["water", "sanitation", "ideation"]
+status = "complete"
+variant_ids = ["variant_sub_saharan_wash_access_eli"]
+
+[[prompts]]
+prompt_id = "prompt_hearing_impairment_group_conversations"
+problem_id = "ideation_hearing_impairment_group_conversations"
+family_id = "family_hearing_impairment_group_conversations"
+canonical_brief = "Develop as many design ideas as you can to help people with hearing impairments participate in group conversations."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["peng_johnson_miller_2024"]
+tags = ["assistive", "communication", "ideation"]
+status = "complete"
+variant_ids = ["variant_hearing_impairment_group_conversations"]
+
+[[prompts]]
+prompt_id = "prompt_delivery_truck_route_efficiency"
+problem_id = "ideation_delivery_truck_route_efficiency"
+family_id = "family_delivery_truck_route_efficiency"
+canonical_brief = "Develop as many design ideas as you can to improve the efficiency of delivery truck routes."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["peng_johnson_miller_2024"]
+tags = ["logistics", "transport", "ideation"]
+status = "complete"
+variant_ids = ["variant_delivery_truck_route_efficiency"]
+
+[[prompts]]
+prompt_id = "prompt_reduce_construction_ecosystem_impact"
+problem_id = "ideation_reduce_construction_ecosystem_impact"
+family_id = "family_construction_ecosystem_impact"
+canonical_brief = "Develop as many design ideas as you can to reduce the impact of construction on local ecosystems."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["peng_johnson_miller_2024"]
+tags = ["construction", "ecosystems", "ideation"]
+status = "complete"
+variant_ids = ["variant_reduce_construction_ecosystem_impact"]
+
+[[prompts]]
+prompt_id = "prompt_peanut_shelling_haiti_west_africa"
+problem_id = "ideation_peanut_shelling_haiti_west_africa"
+family_id = "family_peanut_shelling"
+canonical_brief = "In places like Haiti and certain West African countries, peanuts are a significant crop. Most peanut farmers shell their peanuts by hand, an inefficient and labor-intensive process. The goal of this project is to design and build a low-cost, easy to manufacture peanut shelling machine that will increase the productivity of the African peanut farmers. Customer needs: remove the shell with minimal damage to the peanuts, and electrical outlets are not available as a power source."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["das_meza_xu_yang_2024"]
+tags = ["agriculture", "mechanical-design", "ideation"]
+status = "complete"
+variant_ids = ["variant_peanut_shelling_haiti_west_africa"]
+
+[[prompts]]
+prompt_id = "prompt_milk_frothing_device"
+problem_id = "ideation_milk_frothing_device"
+family_id = "family_milk_frothing_device"
+canonical_brief = "Frothed milk is a pourable, virtually liquid foam that tastes rich and sweet. It is an ingredient in many coffee beverages, especially espresso-based coffee drinks (Lattes, Cappuccinos, Mochas). Frothed milk is made by incorporating very small air bubbles throughout the entire body of the milk through some form of vigorous motion. The goal of this project is to design and build a new innovative product that froths milk in a short amount of time. Customer needs: froths milk in a short amount of time, and minimal instruction needed to use."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["das_meza_xu_yang_2024"]
+tags = ["kitchen", "consumer", "ideation"]
+status = "complete"
+variant_ids = ["variant_milk_frothing_device"]
+
+[[prompts]]
+prompt_id = "prompt_parallel_tube_wall_mount"
+problem_id = "ideation_parallel_tube_wall_mount"
+family_id = "family_parallel_tube_wall_mount"
+canonical_brief = "You are tasked with designing a solution to hold three hollow tubes securely in place and parallel to each other. All tubes must be held 2 inches away from a fixed wall (measuring from the wall to the closest edge of the tubes). The tubes are 1 inch in diameter and 3 inches long."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["pearl_meisel_2024"]
+tags = ["fixture", "mounting", "ideation"]
+status = "complete"
+variant_ids = ["variant_parallel_tube_wall_mount"]
+
+[[prompts]]
+prompt_id = "prompt_outdoor_toy_children_5_8"
+problem_id = "ideation_outdoor_toy_children_5_8"
+family_id = "family_outdoor_toy_children_5_8"
+canonical_brief = "You are an employee of a toy company designing a new outdoor toy for children. According to the market report, the design needs to consider the following requirements: 1. An outdoor toy for children aged 5-8 that is mechanically interactive. 2. The price and quality of the toys are important to the customer - it should offer good value. 3. It must be safe. 4. It should keep the child occupied and interested. 5. It must last about 2-3 years of use. 6. It should be priced between $20-40."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["duan_karthik_shi_jain_yang_ramani_2024"]
+tags = ["toys", "children", "ideation"]
+status = "complete"
+variant_ids = ["variant_outdoor_toy_children_5_8"]
 
 [[variants]]
 variant_id = "variant_travel_exercise_device"
@@ -1791,12 +2054,12 @@ status = "needs_primary_fill"
 variant_id = "variant_disposable_spill_proof_coffee_cup"
 prompt_id = "prompt_disposable_spill_proof_coffee_cup"
 problem_id = "ideation_disposable_spill_proof_coffee_cup"
-label = "Jansson and Smith (1991) reconstructed brief"
+label = "Brundage et al. (2024) adapted coffee-cup brief"
 statement_type = "study-specific"
-evidence_tier = "primary_reconstructed"
-source_citation_keys = ["jansson_smith_1991"]
-notes = "Reconstructed from the Experiment 3 description in Jansson and Smith (1991); the exact instruction sheet wording is not fully recoverable from the accessible text."
-status = "needs_primary_fill"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["brundage_soria_zurita_starkey_menold_jablokow_2024", "jansson_smith_1991"]
+notes = "Verbatim adapted coffee-cup prompt printed in Brundage et al. (2024), which explicitly cites Jansson and Smith (1991) as the challenge source."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_home_energy_conservation"
@@ -1895,6 +2158,105 @@ statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["bhatt_ammersdorfer_inkermann_2025"]
 notes = "Verbatim classroom project brief listed in Table 1 as Topic D."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_sustainable_washing_machine"
+prompt_id = "prompt_sustainable_washing_machine"
+problem_id = "ideation_sustainable_washing_machine"
+label = "Liao and MacDonald (2021) study prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["liao_macdonald_2021", "renji_liao_2025"]
+notes = "Verbatim sustainable-washing-machine prompt printed in the 2021 priming study and later named as one of four household design themes in Renji and Liao (2025)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_sub_saharan_wash_access_eli"
+prompt_id = "prompt_sub_saharan_wash_access_eli"
+problem_id = "ideation_sub_saharan_wash_access_eli"
+label = "Alzayed et al. (2024) WASH brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["alzayed_starkey_ritter_prabhu_2024"]
+notes = "Verbatim contextualized WASH design brief printed in the experiment section."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_hearing_impairment_group_conversations"
+prompt_id = "prompt_hearing_impairment_group_conversations"
+problem_id = "ideation_hearing_impairment_group_conversations"
+label = "Peng, Johnson, and Miller (2024) example prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["peng_johnson_miller_2024"]
+notes = "Verbatim example prompt from the Ability Difference and Limitation category in the 45-prompt dataset."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_delivery_truck_route_efficiency"
+prompt_id = "prompt_delivery_truck_route_efficiency"
+problem_id = "ideation_delivery_truck_route_efficiency"
+label = "Peng, Johnson, and Miller (2024) example prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["peng_johnson_miller_2024"]
+notes = "Verbatim example prompt from the Transportation and Mobility category in the 45-prompt dataset."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_reduce_construction_ecosystem_impact"
+prompt_id = "prompt_reduce_construction_ecosystem_impact"
+problem_id = "ideation_reduce_construction_ecosystem_impact"
+label = "Peng, Johnson, and Miller (2024) example prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["peng_johnson_miller_2024"]
+notes = "Verbatim example prompt from the Social and Environmental Systems category in the 45-prompt dataset."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_peanut_shelling_haiti_west_africa"
+prompt_id = "prompt_peanut_shelling_haiti_west_africa"
+problem_id = "ideation_peanut_shelling_haiti_west_africa"
+label = "Das, Meza, Xu, and Yang (2024) peanut-shelling brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["das_meza_xu_yang_2024"]
+notes = "Verbatim Appendix A peanut-shelling brief used in the tablet-versus-paper ideation study."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_milk_frothing_device"
+prompt_id = "prompt_milk_frothing_device"
+problem_id = "ideation_milk_frothing_device"
+label = "Das, Meza, Xu, and Yang (2024) milk-frothing brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["das_meza_xu_yang_2024"]
+notes = "Verbatim Appendix B milk-frothing brief used in the tablet-versus-paper ideation study."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_parallel_tube_wall_mount"
+prompt_id = "prompt_parallel_tube_wall_mount"
+problem_id = "ideation_parallel_tube_wall_mount"
+label = "Pearl and Meisel (2024) DfAM challenge"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["pearl_meisel_2024"]
+notes = "Verbatim additive-manufacturing design challenge printed in the procedure section."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_outdoor_toy_children_5_8"
+prompt_id = "prompt_outdoor_toy_children_5_8"
+problem_id = "ideation_outdoor_toy_children_5_8"
+label = "Duan et al. (2024) ideation task"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["duan_karthik_shi_jain_yang_ramani_2024"]
+notes = "Verbatim outdoor-toy ideation task used in the ConceptVis user study."
 status = "complete"
 
 [[studies]]
