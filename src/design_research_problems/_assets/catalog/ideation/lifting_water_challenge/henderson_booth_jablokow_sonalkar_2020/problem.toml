@@ -1,0 +1,38 @@
+problem_id = "ideation_lifting_water_challenge"
+title = "Lifting Water Challenge"
+summary = "A rural-water design challenge about lifting well water in Myanmar using only human power and low-cost equipment."
+kind = "text"
+statement = '''
+# Lifting Water Challenge
+
+Design a solution for rural farmers in Myanmar to lift water
+from at least 50ft below ground to ground level, use only human
+power, cost less than US $50, and work with existing tube wells
+in the ground that are 2 inches in diameter.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "water", "rural", "manual-power"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 60
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "henderson_booth_jablokow_sonalkar_2020"
+kind = "inline"
+authors = ["Daniel Henderson", "Thomas Booth", "Kathryn Jablokow", "Neeraj Sonalkar"]
+title = "Best Fits and Dark Horses: Can Design Teams Tell the Difference?"
+year = 2020
+venue = "ASME IDETC/CIE 2020, DETC2020-22589"
+formatted_text = "Henderson, Booth, Jablokow, and Sonalkar (2020). Best Fits and Dark Horses: Can Design Teams Tell the Difference? ASME IDETC/CIE 2020, DETC2020-22589."
+raw_text = "Henderson, Daniel, Thomas Booth, Kathryn Jablokow, and Neeraj Sonalkar (2020). Best Fits and Dark Horses: Can Design Teams Tell the Difference? ASME IDETC/CIE 2020, DETC2020-22589."
+provisional = true
+

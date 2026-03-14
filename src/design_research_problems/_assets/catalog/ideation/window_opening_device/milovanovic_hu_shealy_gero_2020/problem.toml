@@ -1,0 +1,55 @@
+problem_id = "ideation_window_opening_device"
+title = "Window Opening Device"
+summary = "An assistive-design brief for helping elderly nursing-home residents raise and lower stuck double-hung windows without electric power."
+kind = "text"
+statement = '''
+# Window Opening Device
+
+Your design team has been approached by Warm Heart Estates, a
+local nursing home, to design a new product to assist its elderly
+residents.
+
+The nursing home administrators have noticed that changes in
+humidity during the summer months cause the windows of the
+65-year old building to stick, thus requiring significant amounts
+of force to raise and lower the window panes. The force required
+to adjust the windows is often much too large for the nursing
+home tenants, making it very difficult for them to regulate their
+room temperature.
+
+Your team has been tasked with designing a device that will
+assist the elderly tenants with raising and lowering the
+building's windows. Since each window is not guaranteed to be
+located near an electrical socket, this device should not rely on
+electric power.
+
+The building's windows are double-hung. The double-hung window
+consists of an upper and lower sash that slide vertically in
+separate grooves in the side jambs.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "assistive-design"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "accessibility", "elderly", "household"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 10
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "milovanovic_hu_shealy_gero_2020"
+kind = "inline"
+authors = ["Julie Milovanovic", "Mo Hu", "Tripp Shealy", "John Gero"]
+title = "Evolution of Brain Network Connectivity in the Prefrontal Cortex During Concept Generation Using Brainstorming for a Design Task"
+year = 2020
+venue = "ASME IDETC/CIE 2020, DETC2020-22563"
+formatted_text = "Milovanovic, Hu, Shealy, and Gero (2020). Evolution of Brain Network Connectivity in the Prefrontal Cortex During Concept Generation Using Brainstorming for a Design Task. ASME IDETC/CIE 2020, DETC2020-22563."
+raw_text = "Milovanovic, Julie, Mo Hu, Tripp Shealy, and John Gero (2020). Evolution of Brain Network Connectivity in the Prefrontal Cortex During Concept Generation Using Brainstorming for a Design Task. ASME IDETC/CIE 2020, DETC2020-22563."
+provisional = true
+

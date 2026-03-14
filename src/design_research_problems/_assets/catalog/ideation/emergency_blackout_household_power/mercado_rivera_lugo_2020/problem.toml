@@ -1,0 +1,47 @@
+problem_id = "ideation_emergency_blackout_household_power"
+title = "Emergency Blackout Household Power"
+summary = "A household-energy design challenge about supplying essential appliances during emergency blackouts for low-income households in Puerto Rico."
+kind = "text"
+statement = '''
+# Emergency Blackout Household Power
+
+Design Challenge: How might we supply electric energy for
+essential household appliances during emergency blackout
+situations for low-income people in Puerto Rico?
+
+Design Directives:
+
+- Product should be affordable.
+- Product should work indoors.
+- Product should operate quietly.
+- Product should be weather-proof.
+- Product should be easy to set up and use.
+- Product should be portable.
+- Product should work with access to four hours of sunlight.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "energy", "household", "resilience"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 45
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "mercado_rivera_lugo_2020"
+kind = "inline"
+authors = ["Abimelec Mercado Rivera", "Jose E. Lugo"]
+title = "Exploration of the Timing of Introduction of Design Heuristic Cards to Early Design Brainstorming Sessions by Interdisciplinary Student Teams"
+year = 2020
+venue = "ASME IDETC/CIE 2020, DETC2020-22477"
+formatted_text = "Mercado Rivera and Lugo (2020). Exploration of the Timing of Introduction of Design Heuristic Cards to Early Design Brainstorming Sessions by Interdisciplinary Student Teams. ASME IDETC/CIE 2020, DETC2020-22477."
+raw_text = "Mercado Rivera, Abimelec, and Jose E. Lugo (2020). Exploration of the Timing of Introduction of Design Heuristic Cards to Early Design Brainstorming Sessions by Interdisciplinary Student Teams. ASME IDETC/CIE 2020, DETC2020-22477."
+provisional = true
+

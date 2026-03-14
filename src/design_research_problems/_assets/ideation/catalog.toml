@@ -683,6 +683,61 @@ formatted_text = "Kwon, Huang, and Goucher-Lambert (2021). Multi-Modal Search fo
 raw_text = "Kwon, Elisa, Forrest Huang, and Kosa Goucher-Lambert (2021). Multi-Modal Search for Inspirational Examples in Design. ASME IDETC/CIE 2021, DETC2021-71825."
 provisional = true
 
+[[citations]]
+key = "milovanovic_hu_shealy_gero_2020"
+kind = "inline"
+authors = ["Julie Milovanovic", "Mo Hu", "Tripp Shealy", "John Gero"]
+title = "Evolution of Brain Network Connectivity in the Prefrontal Cortex During Concept Generation Using Brainstorming for a Design Task"
+year = 2020
+venue = "ASME IDETC/CIE 2020, DETC2020-22563"
+formatted_text = "Milovanovic, Hu, Shealy, and Gero (2020). Evolution of Brain Network Connectivity in the Prefrontal Cortex During Concept Generation Using Brainstorming for a Design Task. ASME IDETC/CIE 2020, DETC2020-22563."
+raw_text = "Milovanovic, Julie, Mo Hu, Tripp Shealy, and John Gero (2020). Evolution of Brain Network Connectivity in the Prefrontal Cortex During Concept Generation Using Brainstorming for a Design Task. ASME IDETC/CIE 2020, DETC2020-22563."
+provisional = true
+
+[[citations]]
+key = "khan_maheshwary_arlitt_blessing_2020"
+kind = "inline"
+authors = ["Sumbul Khan", "Khushbu Maheshwary", "Ryan Arlitt", "Lucienne Blessing"]
+title = "Assessment of Conceptual Design Problems Comprising Design Rationale and Sketches"
+year = 2020
+venue = "ASME IDETC/CIE 2020, DETC2020-22376"
+formatted_text = "Khan, Maheshwary, Arlitt, and Blessing (2020). Assessment of Conceptual Design Problems Comprising Design Rationale and Sketches. ASME IDETC/CIE 2020, DETC2020-22376."
+raw_text = "Khan, Sumbul, Khushbu Maheshwary, Ryan Arlitt, and Lucienne Blessing (2020). Assessment of Conceptual Design Problems Comprising Design Rationale and Sketches. ASME IDETC/CIE 2020, DETC2020-22376."
+provisional = true
+
+[[citations]]
+key = "mercado_rivera_lugo_2020"
+kind = "inline"
+authors = ["Abimelec Mercado Rivera", "Jose E. Lugo"]
+title = "Exploration of the Timing of Introduction of Design Heuristic Cards to Early Design Brainstorming Sessions by Interdisciplinary Student Teams"
+year = 2020
+venue = "ASME IDETC/CIE 2020, DETC2020-22477"
+formatted_text = "Mercado Rivera and Lugo (2020). Exploration of the Timing of Introduction of Design Heuristic Cards to Early Design Brainstorming Sessions by Interdisciplinary Student Teams. ASME IDETC/CIE 2020, DETC2020-22477."
+raw_text = "Mercado Rivera, Abimelec, and Jose E. Lugo (2020). Exploration of the Timing of Introduction of Design Heuristic Cards to Early Design Brainstorming Sessions by Interdisciplinary Student Teams. ASME IDETC/CIE 2020, DETC2020-22477."
+provisional = true
+
+[[citations]]
+key = "yi_damen_toh_2020"
+kind = "inline"
+authors = ["Sue Yi", "Nicole B. Damen", "Christine A. Toh"]
+title = "Back and Forth: Using Conversation Analysis to Explore Dialogues of Sharedness of Mental Models"
+year = 2020
+venue = "ASME IDETC/CIE 2020, DETC2020-22515"
+formatted_text = "Yi, Damen, and Toh (2020). Back and Forth: Using Conversation Analysis to Explore Dialogues of Sharedness of Mental Models. ASME IDETC/CIE 2020, DETC2020-22515."
+raw_text = "Yi, Sue, Nicole B. Damen, and Christine A. Toh (2020). Back and Forth: Using Conversation Analysis to Explore Dialogues of Sharedness of Mental Models. ASME IDETC/CIE 2020, DETC2020-22515."
+provisional = true
+
+[[citations]]
+key = "henderson_booth_jablokow_sonalkar_2020"
+kind = "inline"
+authors = ["Daniel Henderson", "Thomas Booth", "Kathryn Jablokow", "Neeraj Sonalkar"]
+title = "Best Fits and Dark Horses: Can Design Teams Tell the Difference?"
+year = 2020
+venue = "ASME IDETC/CIE 2020, DETC2020-22589"
+formatted_text = "Henderson, Booth, Jablokow, and Sonalkar (2020). Best Fits and Dark Horses: Can Design Teams Tell the Difference? ASME IDETC/CIE 2020, DETC2020-22589."
+raw_text = "Henderson, Daniel, Thomas Booth, Kathryn Jablokow, and Neeraj Sonalkar (2020). Best Fits and Dark Horses: Can Design Teams Tell the Difference? ASME IDETC/CIE 2020, DETC2020-22589."
+provisional = true
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -1115,6 +1170,51 @@ external_aliases = []
 canonical_prompt_ids = ["prompt_outdoor_toy_children_5_8"]
 tags = ["toys", "children", "consumer"]
 notes = "Duan et al. (2024) uses this outdoor-toy design brief in a human-LLM ideation study."
+
+[[families]]
+family_id = "family_school_cafe_design"
+name = "School Cafe Design"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_school_cafe_design"]
+tags = ["education", "service", "space-planning"]
+notes = "Khan, Maheshwary, Arlitt, and Blessing (2020) quotes this lower-secondary school cafe design challenge in an assessment-rubric study."
+
+[[families]]
+family_id = "family_window_opening_device"
+name = "Window Opening Device"
+group = "accessibility-assistive"
+external_aliases = []
+canonical_prompt_ids = ["prompt_window_opening_device"]
+tags = ["accessibility", "mechanisms", "elderly"]
+notes = "Milovanovic, Hu, Shealy, and Gero (2020) prints this nursing-home window-assist brief in Appendix A."
+
+[[families]]
+family_id = "family_emergency_blackout_household_power"
+name = "Emergency Blackout Household Power"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_emergency_blackout_household_power"]
+tags = ["energy", "resilience", "household"]
+notes = "Mercado Rivera and Lugo (2020) prints this Puerto Rico blackout-resilience design challenge and directive set for interdisciplinary brainstorming teams."
+
+[[families]]
+family_id = "family_single_use_plastic_reduction_omaha"
+name = "Single-Use Plastic Reduction in Omaha"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_single_use_plastic_reduction_omaha"]
+tags = ["plastic", "waste", "urban"]
+notes = "Yi, Damen, and Toh (2020) prints this Omaha-focused single-use-plastic reduction brief in the team-mental-model study setup."
+
+[[families]]
+family_id = "family_lifting_water_challenge"
+name = "Lifting Water Challenge"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_lifting_water_challenge"]
+tags = ["water", "rural", "manual-power"]
+notes = "Henderson, Booth, Jablokow, and Sonalkar (2020) describes the Lifting Water Design Challenge (LWDC) for rural farmers in Myanmar."
 
 [[prompts]]
 prompt_id = "prompt_travel_exercise_device"
@@ -1846,6 +1946,61 @@ source_citation_keys = ["duan_karthik_shi_jain_yang_ramani_2024"]
 tags = ["toys", "children", "ideation"]
 status = "complete"
 variant_ids = ["variant_outdoor_toy_children_5_8"]
+
+[[prompts]]
+prompt_id = "prompt_school_cafe_design"
+problem_id = "ideation_school_cafe_design"
+family_id = "family_school_cafe_design"
+canonical_brief = "Your school has an unused room and your principal would like to convert it into a cafe for all students, parents, teachers and staff of your school. Each class is required to submit ideas of how the new cafe could be designed to better serve the members of the school as a design challenge. Based on your team's interpretation of common needs of the school population, illustrate an ideal design for the cafe. You may use diagrams, annotations, and sketches to support the explanation. Describe your design proposal and explain the rationale behind the design feature incorporated."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["khan_maheshwary_arlitt_blessing_2020"]
+tags = ["education", "service", "ideation"]
+status = "complete"
+variant_ids = ["variant_school_cafe_design"]
+
+[[prompts]]
+prompt_id = "prompt_window_opening_device"
+problem_id = "ideation_window_opening_device"
+family_id = "family_window_opening_device"
+canonical_brief = "Your design team has been approached by Warm Heart Estates, a local nursing home, to design a new product to assist its elderly residents. The nursing home administrators have noticed that changes in humidity during the summer months cause the windows of the 65-year old building to stick, thus requiring significant amounts of force to raise and lower the window panes. The force required to adjust the windows is often much too large for the nursing home tenants, making it very difficult for them to regulate their room temperature. Your team has been tasked with designing a device that will assist the elderly tenants with raising and lowering the building's windows. Since each window is not guaranteed to be located near an electrical socket, this device should not rely on electric power. The building's windows are double-hung."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["milovanovic_hu_shealy_gero_2020"]
+tags = ["assistive", "household", "ideation", "elderly"]
+status = "complete"
+variant_ids = ["variant_window_opening_device"]
+
+[[prompts]]
+prompt_id = "prompt_emergency_blackout_household_power"
+problem_id = "ideation_emergency_blackout_household_power"
+family_id = "family_emergency_blackout_household_power"
+canonical_brief = "How might we supply electric energy for essential household appliances during emergency blackout situations for low-income people in Puerto Rico? Product should be affordable, work indoors, operate quietly, be weather-proof, be easy to set up and use, be portable, and work with access to four hours of sunlight."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["mercado_rivera_lugo_2020"]
+tags = ["energy", "household", "ideation", "resilience"]
+status = "complete"
+variant_ids = ["variant_emergency_blackout_household_power"]
+
+[[prompts]]
+prompt_id = "prompt_single_use_plastic_reduction_omaha"
+problem_id = "ideation_single_use_plastic_reduction_omaha"
+family_id = "family_single_use_plastic_reduction_omaha"
+canonical_brief = "Develop concepts for a new, innovative product or system that will reduce the environmental impact of single-use plastic in Omaha, Nebraska."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["yi_damen_toh_2020"]
+tags = ["sustainability", "plastic", "ideation", "urban"]
+status = "complete"
+variant_ids = ["variant_single_use_plastic_reduction_omaha"]
+
+[[prompts]]
+prompt_id = "prompt_lifting_water_challenge"
+problem_id = "ideation_lifting_water_challenge"
+family_id = "family_lifting_water_challenge"
+canonical_brief = "Design a solution for rural farmers in Myanmar to lift water from at least 50ft below ground to ground level, use only human power, cost less than US $50, and work with existing tube wells in the ground that are 2 inches in diameter."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["henderson_booth_jablokow_sonalkar_2020"]
+tags = ["water", "rural", "ideation", "manual-power"]
+status = "complete"
+variant_ids = ["variant_lifting_water_challenge"]
 
 [[variants]]
 variant_id = "variant_travel_exercise_device"
@@ -2584,6 +2739,61 @@ statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["duan_karthik_shi_jain_yang_ramani_2024"]
 notes = "Verbatim outdoor-toy ideation task used in the ConceptVis user study."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_school_cafe_design"
+prompt_id = "prompt_school_cafe_design"
+problem_id = "ideation_school_cafe_design"
+label = "Khan et al. (2020) assessment prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["khan_maheshwary_arlitt_blessing_2020"]
+notes = "Verbatim school-cafe challenge quoted in the Design Odyssey assessment workshop materials."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_window_opening_device"
+prompt_id = "prompt_window_opening_device"
+problem_id = "ideation_window_opening_device"
+label = "Milovanovic et al. (2020) appendix brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["milovanovic_hu_shealy_gero_2020"]
+notes = "Verbatim appendix design task for an elderly window-opening assist device."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_emergency_blackout_household_power"
+prompt_id = "prompt_emergency_blackout_household_power"
+problem_id = "ideation_emergency_blackout_household_power"
+label = "Mercado Rivera and Lugo (2020) design challenge"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["mercado_rivera_lugo_2020"]
+notes = "Verbatim blackout-resilience challenge and directives used in the interdisciplinary brainstorming experiment."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_single_use_plastic_reduction_omaha"
+prompt_id = "prompt_single_use_plastic_reduction_omaha"
+problem_id = "ideation_single_use_plastic_reduction_omaha"
+label = "Yi, Damen, and Toh (2020) study prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["yi_damen_toh_2020"]
+notes = "Verbatim Omaha single-use-plastic reduction brief used before individual and team ideation phases."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_lifting_water_challenge"
+prompt_id = "prompt_lifting_water_challenge"
+problem_id = "ideation_lifting_water_challenge"
+label = "Henderson et al. (2020) workshop challenge"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["henderson_booth_jablokow_sonalkar_2020"]
+notes = "Verbatim Lifting Water Design Challenge (LWDC) description for Best Fit and Dark Horse team concepts."
 status = "complete"
 
 [[studies]]
