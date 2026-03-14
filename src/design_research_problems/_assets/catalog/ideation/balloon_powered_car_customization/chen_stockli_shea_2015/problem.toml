@@ -1,0 +1,50 @@
+problem_id = "ideation_balloon_powered_car_customization"
+title = "Balloon-Powered Car Customization"
+summary = "A reconstructed CAD and additive-manufacturing exercise about customizing a balloon-powered model car."
+kind = "text"
+statement = '''
+# Balloon-Powered Car Customization
+
+Design a balloon-powered model car assembly in which the body
+and wheels are customized.
+
+Requirements:
+
+- use a balloon fixed to a rear cylindrical mount for propulsion
+- customize the wheels from a provided template
+- customize the body within a provided bounding box
+- keep the body below 5 cm^3 of solid volume
+- keep the body continuous, manifold, and attached to the two
+  provided press-fit joints
+- plan for zero redesign iterations on the wheels and at most
+  one redesign iteration on the body
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = [
+  "human-subjects-ready",
+  "ideation-friendly",
+  "requirements-study-ready",
+]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "car", "balloon", "additive-manufacturing"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 120
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "chen_stockli_shea_2015"
+kind = "inline"
+authors = ["Tian Chen", "Fritz Stockli", "Kristina Shea"]
+title = "Design for Mass Customization Using Additive Manufacture: Case-Study of a Balloon-Powered Car"
+year = 2015
+venue = "Proceedings of the 20th International Conference on Engineering Design (ICED15)"
+formatted_text = "Chen, Stockli, and Shea (2015). Design for Mass Customization Using Additive Manufacture: Case-Study of a Balloon-Powered Car. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+raw_text = "Chen, Tian, Fritz Stockli, and Kristina Shea (2015). Design for Mass Customization Using Additive Manufacture: Case-Study of a Balloon-Powered Car. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+provisional = true

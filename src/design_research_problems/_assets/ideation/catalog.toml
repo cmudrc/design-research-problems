@@ -1199,6 +1199,56 @@ formatted_text = "Bertoni, Bertoni, and Johansson (2015). Analysing the Effects 
 raw_text = "Bertoni, Alessandro, Marco Bertoni, and Christian Johansson (2015). Analysing the Effects of Value Drivers and Knowledge Maturity in Preliminary Design Decision-Making. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
 provisional = true
 
+[[citations]]
+key = "yan_childs_2015"
+kind = "inline"
+authors = ["Yanliuxing Yan", "Peter R. N. Childs"]
+title = "Creativity Tool Selection for Design Engineers in Idea Generation"
+year = 2015
+venue = "Proceedings of the 20th International Conference on Engineering Design (ICED15)"
+formatted_text = "Yan and Childs (2015). Creativity Tool Selection for Design Engineers in Idea Generation. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+raw_text = "Yan, Yanliuxing, and Peter R. N. Childs (2015). Creativity Tool Selection for Design Engineers in Idea Generation. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+provisional = true
+
+[[citations]]
+key = "chen_stockli_shea_2015"
+kind = "inline"
+authors = ["Tian Chen", "Fritz Stockli", "Kristina Shea"]
+title = "Design for Mass Customization Using Additive Manufacture: Case-Study of a Balloon-Powered Car"
+year = 2015
+venue = "Proceedings of the 20th International Conference on Engineering Design (ICED15)"
+formatted_text = "Chen, Stockli, and Shea (2015). Design for Mass Customization Using Additive Manufacture: Case-Study of a Balloon-Powered Car. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+raw_text = "Chen, Tian, Fritz Stockli, and Kristina Shea (2015). Design for Mass Customization Using Additive Manufacture: Case-Study of a Balloon-Powered Car. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+provisional = true
+
+[[citations]]
+key = "garrett_underwood_jun_2013"
+kind = "inline"
+authors = ["David W. Garrett", "Peter J. Underwood", "Gyuchan Thomas Jun"]
+title = "The Development of a Lego Mindstorms-Based Curriculum for Design and Ergonomics Students"
+year = 2013
+venue = "Proceedings of the 19th International Conference on Engineering Design (ICED13)"
+formatted_text = "Garrett, Underwood, and Jun (2013). The Development of a Lego Mindstorms-Based Curriculum for Design and Ergonomics Students. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+raw_text = "Garrett, David W., Peter J. Underwood, and Gyuchan Thomas Jun (2013). The Development of a Lego Mindstorms-Based Curriculum for Design and Ergonomics Students. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+provisional = true
+
+[[citations]]
+key = "cardin_yue_jiang_deng_santhanakrishnan_2013"
+kind = "inline"
+authors = [
+  "Michel-Alexandre Cardin",
+  "Howard Ka-Ho Yue",
+  "Yixin Jiang",
+  "Yinghan Deng",
+  "Deepak Santhanakrishnan",
+]
+title = "Empirical Evaluation of Flexible Design Concept Generation Procedures: A Study in Emergency Services"
+year = 2013
+venue = "Proceedings of the 19th International Conference on Engineering Design (ICED13)"
+formatted_text = "Cardin, Yue, Jiang, Deng, and Santhanakrishnan (2013). Empirical Evaluation of Flexible Design Concept Generation Procedures: A Study in Emergency Services. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+raw_text = "Cardin, Michel-Alexandre, Howard Ka-Ho Yue, Yixin Jiang, Yinghan Deng, and Deepak Santhanakrishnan (2013). Empirical Evaluation of Flexible Design Concept Generation Procedures: A Study in Emergency Services. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+provisional = true
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -2126,6 +2176,42 @@ external_aliases = []
 canonical_prompt_ids = ["prompt_portable_barbecue_design"]
 tags = ["barbecue", "portable", "consumer"]
 notes = "Bertoni, Bertoni, and Johansson (2015) uses a portable-barbecue concept-selection task in a preliminary-design decision-making experiment."
+
+[[families]]
+family_id = "family_hoist_chain_spill_prevention"
+name = "Hoist Chain Spill Prevention"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_hoist_chain_spill_prevention"]
+tags = ["hoist", "chain", "safety"]
+notes = "Yan and Childs (2015) studies ideation on the Royal Albert Hall slack-chain spill problem."
+
+[[families]]
+family_id = "family_balloon_powered_car_customization"
+name = "Balloon-Powered Car Customization"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_balloon_powered_car_customization"]
+tags = ["car", "balloon", "additive-manufacturing"]
+notes = "Chen, Stockli, and Shea (2015) uses a constrained balloon-powered car customization exercise in a first-year CAD and AM course."
+
+[[families]]
+family_id = "family_line_following_teddy_bear_vehicle"
+name = "Line-Following Teddy-Bear Vehicle"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_line_following_teddy_bear_vehicle"]
+tags = ["vehicle", "line-following", "ergonomics"]
+notes = "Garrett, Underwood, and Jun (2013) develops a LEGO Mindstorms design task around transporting teddy-bear passengers on a line-following vehicle."
+
+[[families]]
+family_id = "family_flexible_fire_station_deployment"
+name = "Flexible Fire Station Deployment"
+group = "transport-infrastructure"
+external_aliases = []
+canonical_prompt_ids = ["prompt_flexible_fire_station_deployment"]
+tags = ["fire-stations", "emergency-services", "flexibility"]
+notes = "Cardin, Yue, Jiang, Deng, and Santhanakrishnan (2013) uses a hypothetical city fire-station deployment problem to study flexible concept generation."
 
 [[prompts]]
 prompt_id = "prompt_travel_exercise_device"
@@ -3484,6 +3570,50 @@ source_citation_keys = ["bertoni_bertoni_johansson_2015"]
 tags = ["barbecue", "portable", "consumer", "design"]
 status = "complete"
 variant_ids = ["variant_portable_barbecue_design"]
+
+[[prompts]]
+prompt_id = "prompt_hoist_chain_spill_prevention"
+problem_id = "ideation_hoist_chain_spill_prevention"
+family_id = "family_hoist_chain_spill_prevention"
+canonical_brief = "At the Royal Albert Hall, lengths of slack chain from electric chain hoists can occasionally spill from collection bags, posing possible risks to people below. Generate new ideas to prevent or better manage this chain spill problem without defaulting to impractical rigid industrial bags."
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["yan_childs_2015"]
+tags = ["hoist", "chain", "safety", "ideation"]
+status = "complete"
+variant_ids = ["variant_hoist_chain_spill_prevention"]
+
+[[prompts]]
+prompt_id = "prompt_balloon_powered_car_customization"
+problem_id = "ideation_balloon_powered_car_customization"
+family_id = "family_balloon_powered_car_customization"
+canonical_brief = "Design a balloon-powered model car assembly in which the body and wheels are customized. Use a balloon fixed to a rear cylindrical mount for propulsion, customize the wheels from a provided template, and customize the body within a provided bounding box while keeping it below 5 cm^3, continuous, manifold, and attached to the provided press-fit joints."
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["chen_stockli_shea_2015"]
+tags = ["car", "balloon", "additive-manufacturing", "design"]
+status = "complete"
+variant_ids = ["variant_balloon_powered_car_customization"]
+
+[[prompts]]
+prompt_id = "prompt_line_following_teddy_bear_vehicle"
+problem_id = "ideation_line_following_teddy_bear_vehicle"
+family_id = "family_line_following_teddy_bear_vehicle"
+canonical_brief = "Design an automated line-following vehicle for teddy-bear passengers. The final vehicle should complete a time trial around a simple oval track and carry two different passengers, switching them quickly at the midpoint."
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["garrett_underwood_jun_2013"]
+tags = ["vehicle", "line-following", "ergonomics", "design"]
+status = "complete"
+variant_ids = ["variant_line_following_teddy_bear_vehicle"]
+
+[[prompts]]
+prompt_id = "prompt_flexible_fire_station_deployment"
+problem_id = "ideation_flexible_fire_station_deployment"
+family_id = "family_flexible_fire_station_deployment"
+canonical_brief = "Develop a fire-station deployment and operations strategy for a hypothetical city in Asia. Use a provided five-sector city map, travel-time estimates, current fire rates, and basic, enhanced, and privatized station options to minimize average response time and lifecycle cost under uncertain future fire rates and a possible new factory."
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["cardin_yue_jiang_deng_santhanakrishnan_2013"]
+tags = ["fire-stations", "emergency-services", "infrastructure", "problem-solving"]
+status = "complete"
+variant_ids = ["variant_flexible_fire_station_deployment"]
 
 [[variants]]
 variant_id = "variant_travel_exercise_device"
@@ -4860,6 +4990,50 @@ statement_type = "study-specific"
 evidence_tier = "primary_reconstructed"
 source_citation_keys = ["bertoni_bertoni_johansson_2015"]
 notes = "Reconstructed from the experimental task description and customer-needs handout for conceptualizing and selecting a portable barbecue concept."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_hoist_chain_spill_prevention"
+prompt_id = "prompt_hoist_chain_spill_prevention"
+problem_id = "ideation_hoist_chain_spill_prevention"
+label = "Yan and Childs (2015) Royal Albert Hall chain-spill brief"
+statement_type = "study-specific"
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["yan_childs_2015"]
+notes = "Reconstructed from the printed description of the Royal Albert Hall chain-spill problem used during lateral-thinking ideation sessions."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_balloon_powered_car_customization"
+prompt_id = "prompt_balloon_powered_car_customization"
+problem_id = "ideation_balloon_powered_car_customization"
+label = "Chen, Stockli, and Shea (2015) balloon-car customization task"
+statement_type = "study-specific"
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["chen_stockli_shea_2015"]
+notes = "Reconstructed from the printed CAD and additive-manufacturing exercise description, template constraints, and customization rules."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_line_following_teddy_bear_vehicle"
+prompt_id = "prompt_line_following_teddy_bear_vehicle"
+problem_id = "ideation_line_following_teddy_bear_vehicle"
+label = "Garrett, Underwood, and Jun (2013) line-following teddy-bear vehicle task"
+statement_type = "study-specific"
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["garrett_underwood_jun_2013"]
+notes = "Reconstructed from the course task description for an automated line-following vehicle carrying teddy-bear passengers around an oval track."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_flexible_fire_station_deployment"
+prompt_id = "prompt_flexible_fire_station_deployment"
+problem_id = "ideation_flexible_fire_station_deployment"
+label = "Cardin et al. (2013) emergency-services deployment problem"
+statement_type = "study-specific"
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["cardin_yue_jiang_deng_santhanakrishnan_2013"]
+notes = "Reconstructed from the emergency-services deployment materials description, including sector map, uncertain factory placement, and fire-station options."
 status = "complete"
 
 [[studies]]

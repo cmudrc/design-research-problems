@@ -73,7 +73,7 @@ def test_registry_entries_filter_by_kind() -> None:
     assert set(MSEVAL_IDS).issubset(decision_ids)
     kinds = registry.by_kind(ProblemKind.TEXT)
     text_ids = [entry.problem_id for entry in kinds]
-    assert len(text_ids) == 122
+    assert len(text_ids) == 126
     assert "ideation_accessible_drinking_fountain" in text_ids
     assert "ideation_dark_hour_safety" in text_ids
     assert "ideation_forest_fire_detection" in text_ids

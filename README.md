@@ -13,7 +13,7 @@ discrete grammar-style problems behind a small, typed Python API.
 
 - Five problem families: text, decision, optimization, grammar, and MCP, plus a linked ideation metadata catalog.
 - Shared model contracts built around `Problem` and `ComputableProblem`, with family-specific subclasses on top.
-- A seed catalog that includes 122 ideation prompt records plus packaged decision, optimization, grammar, and MCP benchmarks.
+- A seed catalog that includes 126 ideation prompt records plus packaged decision, optimization, grammar, and MCP benchmarks.
 - Optional integrations for `trussme`, `pybamm`, `mcp`, Build123d, and external solver backends.
 - Typed metadata, a curated public API, runnable examples, and Sphinx docs.
 
