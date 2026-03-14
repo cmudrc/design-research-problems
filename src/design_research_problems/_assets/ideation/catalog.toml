@@ -974,6 +974,110 @@ formatted_text = "Camburn, Dunlap, Kuhr, Viswanathan, Linsey, Jensen, Crawford, 
 raw_text = "Camburn, Bradley A., Brock U. Dunlap, Rachel Kuhr, Vimal K. Viswanathan, Julie S. Linsey, Dan D. Jensen, Richard H. Crawford, Kevin Otto, and Kristin L. Wood (2013). Methods for Prototyping Strategies in Conceptual Phases of Design: Framework and Experimental Assessment. ASME IDETC/CIE 2013, DETC2013-13072."
 provisional = true
 
+[[citations]]
+key = "kelly_greentree_sosa_evans_2024"
+kind = "inline"
+authors = ["Nick Kelly", "Jess Greentree", "Ricardo Sosa", "Richard Evans"]
+title = "Automating Useful Representations of the Design Process from Design Protocols"
+year = 2024
+venue = "Design Computing and Cognition DCC'24"
+formatted_text = "Kelly, Greentree, Sosa, and Evans (2024). Automating Useful Representations of the Design Process from Design Protocols. Design Computing and Cognition DCC'24."
+raw_text = "Kelly, Nick, Jess Greentree, Ricardo Sosa, and Richard Evans (2024). Automating Useful Representations of the Design Process from Design Protocols. Design Computing and Cognition DCC'24."
+provisional = true
+
+[[citations]]
+key = "kimball_prabhu_2024"
+kind = "inline"
+authors = ["Rachel Kimball", "Rohan Prabhu"]
+title = "Thinking Divergently: Exploring the Effects of ADHD on Design Creativity and Cognitive Load"
+year = 2024
+venue = "Design Computing and Cognition DCC'24"
+formatted_text = "Kimball and Prabhu (2024). Thinking Divergently: Exploring the Effects of ADHD on Design Creativity and Cognitive Load. Design Computing and Cognition DCC'24."
+raw_text = "Kimball, Rachel, and Rohan Prabhu (2024). Thinking Divergently: Exploring the Effects of ADHD on Design Creativity and Cognitive Load. Design Computing and Cognition DCC'24."
+provisional = true
+
+[[citations]]
+key = "brown_prabhu_2024"
+kind = "inline"
+authors = ["Evan Brown", "Rohan Prabhu"]
+title = "Looking Within: Exploring the Effects of Social Identity-Based Reflection on Designers' Problem Framing Behavior"
+year = 2024
+venue = "Design Computing and Cognition DCC'24"
+formatted_text = "Brown and Prabhu (2024). Looking Within: Exploring the Effects of Social Identity-Based Reflection on Designers' Problem Framing Behavior. Design Computing and Cognition DCC'24."
+raw_text = "Brown, Evan, and Rohan Prabhu (2024). Looking Within: Exploring the Effects of Social Identity-Based Reflection on Designers' Problem Framing Behavior. Design Computing and Cognition DCC'24."
+provisional = true
+
+[[citations]]
+key = "gero_milovanovic_2024"
+kind = "inline"
+authors = ["John Gero", "Julie Milovanovic"]
+title = "Micro Analysis of Team Design: Temporal Formation and Dissolution of Subgroups While Designing"
+year = 2024
+venue = "Design Computing and Cognition DCC'24"
+formatted_text = "Gero and Milovanovic (2024). Micro Analysis of Team Design: Temporal Formation and Dissolution of Subgroups While Designing. Design Computing and Cognition DCC'24."
+raw_text = "Gero, John, and Julie Milovanovic (2024). Micro Analysis of Team Design: Temporal Formation and Dissolution of Subgroups While Designing. Design Computing and Cognition DCC'24."
+provisional = true
+
+[[citations]]
+key = "koolman_clay_li_jiang_goldstein_xie_demirel_sha_2024"
+kind = "inline"
+authors = [
+  "Elisa Koolman",
+  "John Z. Clay",
+  "Xingang Li",
+  "Rundong Jiang",
+  "Molly H. Goldstein",
+  "Charles Xie",
+  "H. Onan Demirel",
+  "Zhenghui Sha",
+]
+title = "A Multi-case Study of Traditional, Parametric, and Generative Design Thinking of Engineering Students"
+year = 2024
+venue = "Design Computing and Cognition DCC'24"
+formatted_text = "Koolman, Clay, Li, Jiang, Goldstein, Xie, Demirel, and Sha (2024). A Multi-case Study of Traditional, Parametric, and Generative Design Thinking of Engineering Students. Design Computing and Cognition DCC'24."
+raw_text = "Koolman, Elisa, John Z. Clay, Xingang Li, Rundong Jiang, Molly H. Goldstein, Charles Xie, H. Onan Demirel, and Zhenghui Sha (2024). A Multi-case Study of Traditional, Parametric, and Generative Design Thinking of Engineering Students. Design Computing and Cognition DCC'24."
+provisional = true
+
+[[citations]]
+key = "petersen_joo_takahashi_2015"
+kind = "inline"
+authors = ["Soren Ingomar Petersen", "Jaewoo Joo", "Shelley Takahashi"]
+title = "Inspirational Design Briefing Performance"
+year = 2015
+venue = "Proceedings of the 20th International Conference on Engineering Design (ICED15)"
+formatted_text = "Petersen, Joo, and Takahashi (2015). Inspirational Design Briefing Performance. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+raw_text = "Petersen, Soren Ingomar, Jaewoo Joo, and Shelley Takahashi (2015). Inspirational Design Briefing Performance. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+provisional = true
+
+[[citations]]
+key = "jagtap_larsson_hiort_olander_warell_khadilkar_2013"
+kind = "inline"
+authors = [
+  "Santosh Jagtap",
+  "Andreas Larsson",
+  "Viktor Hiort",
+  "Elin Olander",
+  "Anders Warell",
+  "Pramod Khadilkar",
+]
+title = "Fighting Poverty Through Design: Comparing Design Processes for the Base and the Top of the World Income Pyramid"
+year = 2013
+venue = "Proceedings of the 19th International Conference on Engineering Design (ICED13)"
+formatted_text = "Jagtap, Larsson, Hiort, Olander, Warell, and Khadilkar (2013). Fighting Poverty Through Design: Comparing Design Processes for the Base and the Top of the World Income Pyramid. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+raw_text = "Jagtap, Santosh, Andreas Larsson, Viktor Hiort, Elin Olander, Anders Warell, and Pramod Khadilkar (2013). Fighting Poverty Through Design: Comparing Design Processes for the Base and the Top of the World Income Pyramid. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+provisional = true
+
+[[citations]]
+key = "prudhomme_pourroy_summers_boujut_2013"
+kind = "inline"
+authors = ["Guy Prudhomme", "Franck Pourroy", "Joshua David Summers", "Jean-Francois Boujut"]
+title = "Enriching Requirement-Activities in Design Through French-US Instruction Comparison"
+year = 2013
+venue = "Proceedings of the 19th International Conference on Engineering Design (ICED13)"
+formatted_text = "Prudhomme, Pourroy, Summers, and Boujut (2013). Enriching Requirement-Activities in Design Through French-US Instruction Comparison. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+raw_text = "Prudhomme, Guy, Franck Pourroy, Joshua David Summers, and Jean-Francois Boujut (2013). Enriching Requirement-Activities in Design Through French-US Instruction Comparison. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+provisional = true
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -1727,6 +1831,81 @@ external_aliases = []
 canonical_prompt_ids = ["prompt_object_deposition_quarter_target"]
 tags = ["mechanisms", "competition", "deposition"]
 notes = "Camburn et al. (2013) uses this quarter-to-target deposition challenge to compare prototyping strategies."
+
+[[families]]
+family_id = "family_neighborhood_social_connection"
+name = "Neighborhood Social Connection"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_neighborhood_social_connection"]
+tags = ["community", "social", "service"]
+notes = "Kelly, Greentree, Sosa, and Evans (2024) uses the Zoe neighborhood brief to study representations of conceptual development in protocol data."
+
+[[families]]
+family_id = "family_collaborative_study_space"
+name = "Collaborative Study Space with Fewer Distractions"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_collaborative_study_space"]
+tags = ["education", "space", "collaboration"]
+notes = "Kimball and Prabhu (2024) prints this collaborative-study-space prompt in a divergent/convergent creativity study."
+
+[[families]]
+family_id = "family_sustainable_public_transit_system"
+name = "Sustainable Public Transit System"
+group = "transport-infrastructure"
+external_aliases = []
+canonical_prompt_ids = ["prompt_sustainable_public_transit_system"]
+tags = ["transport", "sustainability", "public-transit"]
+notes = "Brown and Prabhu (2024) uses this medium-sized-city transit brief in a problem-framing study with social-identity reflection."
+
+[[families]]
+family_id = "family_university_solar_farm_design"
+name = "University Solar Farm Design"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_university_solar_farm_design"]
+tags = ["solar", "energy", "campus"]
+notes = "Koolman et al. (2024) uses this university-site solar-farm task to compare traditional, parametric, and generative design thinking."
+
+[[families]]
+family_id = "family_handle_it_handheld_object"
+name = "Handle-It Handheld Object"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_handle_it_handheld_object"]
+tags = ["handheld", "consumer", "tool"]
+notes = "Petersen, Joo, and Takahashi (2015) reports this classroom handheld-object brief in an ICED study on inspirational design briefing."
+
+[[families]]
+family_id = "family_control_it_interface_controller"
+name = "Control-It Interface Controller"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_control_it_interface_controller"]
+tags = ["interface", "controller", "consumer"]
+notes = "Petersen, Joo, and Takahashi (2015) reports this controller-design studio brief with a screen and physical controls."
+
+[[families]]
+family_id = "family_temporary_hospital_shelter"
+name = "Temporary Hospital Shelter"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = [
+  "prompt_temporary_hospital_shelter_bop",
+  "prompt_temporary_hospital_shelter_top",
+]
+tags = ["emergency", "healthcare", "shelter"]
+notes = "Jagtap et al. (2013) compares BOP and TOP design processes using paired temporary-hospital shelter briefs."
+
+[[families]]
+family_id = "family_workshop_plate_holder"
+name = "Workshop Plate Holder"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_workshop_plate_holder"]
+tags = ["workshop", "fixture", "plates"]
+notes = "Prudhomme, Pourroy, Summers, and Boujut (2013) uses this wood-plate holding problem to compare requirements instruction approaches."
 
 [[prompts]]
 prompt_id = "prompt_travel_exercise_device"
@@ -2865,6 +3044,105 @@ source_citation_keys = ["camburn_dunlap_kuhr_viswanathan_linsey_jensen_crawford_
 tags = ["mechanisms", "competition", "deposition", "ideation"]
 status = "complete"
 variant_ids = ["variant_object_deposition_quarter_target"]
+
+[[prompts]]
+prompt_id = "prompt_neighborhood_social_connection"
+problem_id = "ideation_neighborhood_social_connection"
+family_id = "family_neighborhood_social_connection"
+canonical_brief = "Zoe has moved from an inner-city shared house into a quiet suburban street, near a small park. She has tried to befriend her neighbours but has noticed a general feeling of social isolation in her street. She believes that this is because people in the neighbourhood have no opportunities for interacting-even if/when they want to. She wants to change this situation and has plenty of time but limited financial resources to put into this as a 'project'. The trouble is that she is not sure where to begin. She has approached you because you're a designer, to see if you can come up with ideas for ways that she might approach this problem. She's open to anything that might work."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kelly_greentree_sosa_evans_2024"]
+tags = ["community", "social", "ideation"]
+status = "complete"
+variant_ids = ["variant_neighborhood_social_connection"]
+
+[[prompts]]
+prompt_id = "prompt_collaborative_study_space"
+problem_id = "ideation_collaborative_study_space"
+family_id = "family_collaborative_study_space"
+canonical_brief = "The College prides itself on fostering a collaborative academic environment. This environment is possible largely due to the design of the student spaces. There is a trade-off, however; with some of these design choices (e.g., glass walls), comes distraction. You are tasked with generating new solutions that enable collaboration in your desired study spaces while limiting distractions as much as possible. There are no wrong answers - solutions of all kinds are welcome!"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kimball_prabhu_2024"]
+tags = ["education", "spaces", "ideation"]
+status = "complete"
+variant_ids = ["variant_collaborative_study_space"]
+
+[[prompts]]
+prompt_id = "prompt_sustainable_public_transit_system"
+problem_id = "ideation_sustainable_public_transit_system"
+family_id = "family_sustainable_public_transit_system"
+canonical_brief = "Design a sustainable public transit system for a medium-sized city with a population of 500,000. The system should significantly reduce the carbon footprint of transportation in the city and improve air quality. It should be cost-effective and easy to use for commuters."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["brown_prabhu_2024"]
+tags = ["transport", "sustainability", "ideation"]
+status = "complete"
+variant_ids = ["variant_sustainable_public_transit_system"]
+
+[[prompts]]
+prompt_id = "prompt_university_solar_farm_design"
+problem_id = "ideation_university_solar_farm_design"
+family_id = "family_university_solar_farm_design"
+canonical_brief = "Design a solar farm using Aladdin on a university-owned space while maximizing profit and efficiency."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["koolman_clay_li_jiang_goldstein_xie_demirel_sha_2024"]
+tags = ["energy", "solar", "design"]
+status = "complete"
+variant_ids = ["variant_university_solar_farm_design"]
+
+[[prompts]]
+prompt_id = "prompt_handle_it_handheld_object"
+problem_id = "ideation_handle_it_handheld_object"
+family_id = "family_handle_it_handheld_object"
+canonical_brief = "Design a handheld object that performs a specific task in the kitchen, bathroom or garden. It could be a tool of some sort that cuts, picks, and holds or any other defined operation. The object should be mobile and has to be able to be picked up by one person easily. It can be with or without mechanics but should show its function clearly to the consumer. The handle part should lie fully in the user's hand. Think about a wide range of possible users and associated task to define an interesting object. The function can be very simple and you can concentrate on the aesthetic, ergonomic and material."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["petersen_joo_takahashi_2015"]
+tags = ["handheld", "consumer", "design"]
+status = "complete"
+variant_ids = ["variant_handle_it_handheld_object"]
+
+[[prompts]]
+prompt_id = "prompt_control_it_interface_controller"
+problem_id = "ideation_control_it_interface_controller"
+family_id = "family_control_it_interface_controller"
+canonical_brief = "Find your market segment and specify the controller, explore customer profile, user experience and expectations, form language, material and colour. Assemble and present the findings together with your concept conclusion (hypothesis). Two must haves are, that the product includes a screen and some dials or buttons interacting with each other and controlling some object or process. Develop your design through intense sketch work and create an interface design and orthographic views before starting your 3D model. You are not allowed to start a 3D model before the design development has been completed!"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["petersen_joo_takahashi_2015"]
+tags = ["interface", "controller", "design"]
+status = "complete"
+variant_ids = ["variant_control_it_interface_controller"]
+
+[[prompts]]
+prompt_id = "prompt_temporary_hospital_shelter_bop"
+problem_id = "ideation_temporary_hospital_shelter_bop"
+family_id = "family_temporary_hospital_shelter"
+canonical_brief = "A highly contagious and deadly disease called 'anthrax-d5' is spreading across a cluster of BOP communities in a developing country. This disease is transmitted only through contaminated food and water. A person infected with this disease needs to be hospitalized in order to save his/her life. The spread of this disease is such that the existing healthcare infrastructure (i.e. available number of hospitals) is inadequate to hospitalize and treat the large number of infected people. There is an urgent need to erect a number of temporary shelters that can be used as hospitals. For the cluster of BOP communities, where the 'anthrax-d5' is spreading at an enormous rate, design such a temporary shelter that can be used to hospitalize 5 infected people (per shelter). Each shelter also needs to accommodate basic healthcare facilities and healthcare staff consisting of 1 nurse. The time to install this shelter must be less than 2 hours. The shelter also needs to withstand different types of weather conditions."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["jagtap_larsson_hiort_olander_warell_khadilkar_2013"]
+tags = ["emergency", "healthcare", "shelter"]
+status = "complete"
+variant_ids = ["variant_temporary_hospital_shelter_bop"]
+
+[[prompts]]
+prompt_id = "prompt_temporary_hospital_shelter_top"
+problem_id = "ideation_temporary_hospital_shelter_top"
+family_id = "family_temporary_hospital_shelter"
+canonical_brief = "A highly contagious and deadly disease called 'anthrax-d5' is spreading across a city in a developed country. This disease is transmitted only through contaminated food and water. A person infected with this disease needs to be hospitalized in order to save his/her life. The spread of this disease is such that the existing healthcare infrastructure (i.e. available number of hospitals) is inadequate to hospitalize and treat the large number of infected people. There is an urgent need to erect a number of temporary shelters that can be used as hospitals. For the city in the developed country, where the 'anthrax-d5' is spreading at an enormous rate, design such a temporary shelter that can be used to hospitalize 5 infected people (per shelter). Each shelter also needs to accommodate basic healthcare facilities and healthcare staff consisting of 1 nurse. The time to install this shelter must be less than 2 hours. The shelter also needs to withstand different types of weather conditions."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["jagtap_larsson_hiort_olander_warell_khadilkar_2013"]
+tags = ["emergency", "healthcare", "shelter"]
+status = "complete"
+variant_ids = ["variant_temporary_hospital_shelter_top"]
+
+[[prompts]]
+prompt_id = "prompt_workshop_plate_holder"
+problem_id = "ideation_workshop_plate_holder"
+family_id = "family_workshop_plate_holder"
+canonical_brief = "A homeowner, in the workshop, needs to hold two plates of wood together for different activities. As a first example, the plates of wood need to be held in place as they are glued together and the glue cures. As a second example, the plates are held in place while a hole is drilled through them at the same time."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["prudhomme_pourroy_summers_boujut_2013"]
+tags = ["workshop", "fixture", "design"]
+status = "complete"
+variant_ids = ["variant_workshop_plate_holder"]
 
 [[variants]]
 variant_id = "variant_travel_exercise_device"
@@ -4010,6 +4288,116 @@ statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["camburn_dunlap_kuhr_viswanathan_linsey_jensen_crawford_otto_wood_2013"]
 notes = "Verbatim quarter-to-target deposition brief from the prototyping-strategies experiment."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_neighborhood_social_connection"
+prompt_id = "prompt_neighborhood_social_connection"
+problem_id = "ideation_neighborhood_social_connection"
+label = "Kelly et al. (2024) Zoe brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kelly_greentree_sosa_evans_2024"]
+notes = "Verbatim neighborhood social-connection brief centered on Zoe's suburban street."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_collaborative_study_space"
+prompt_id = "prompt_collaborative_study_space"
+problem_id = "ideation_collaborative_study_space"
+label = "Kimball and Prabhu (2024) study-space prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kimball_prabhu_2024"]
+notes = "Verbatim collaborative-study-space prompt used in the ADHD creativity study."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_sustainable_public_transit_system"
+prompt_id = "prompt_sustainable_public_transit_system"
+problem_id = "ideation_sustainable_public_transit_system"
+label = "Brown and Prabhu (2024) transit prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["brown_prabhu_2024"]
+notes = "Verbatim medium-sized-city public-transit brief used in the problem-framing experiment."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_university_solar_farm_design"
+prompt_id = "prompt_university_solar_farm_design"
+problem_id = "ideation_university_solar_farm_design"
+label = "Koolman et al. (2024) solar-farm task"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["koolman_clay_li_jiang_goldstein_xie_demirel_sha_2024"]
+notes = "Verbatim curriculum task asking students to design a solar farm on university-owned space while maximizing profit and efficiency."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_personal_entertainment_system_gero_milovanovic_2024"
+prompt_id = "prompt_personal_entertainment_system"
+problem_id = "ideation_personal_entertainment_system"
+label = "Gero and Milovanovic (2024) family-use 2025 brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["gero_milovanovic_2024"]
+notes = "Verbatim appendix-style team brief for a personal assistant and entertainment system suitable for family use in the year 2025."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_handle_it_handheld_object"
+prompt_id = "prompt_handle_it_handheld_object"
+problem_id = "ideation_handle_it_handheld_object"
+label = "Petersen, Joo, and Takahashi (2015) Handle It brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["petersen_joo_takahashi_2015"]
+notes = "Verbatim classroom project brief for designing a handheld object for the kitchen, bathroom, or garden."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_control_it_interface_controller"
+prompt_id = "prompt_control_it_interface_controller"
+problem_id = "ideation_control_it_interface_controller"
+label = "Petersen, Joo, and Takahashi (2015) Control It brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["petersen_joo_takahashi_2015"]
+notes = "Verbatim classroom controller-design brief requiring a screen plus dials or buttons."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_temporary_hospital_shelter_bop"
+prompt_id = "prompt_temporary_hospital_shelter_bop"
+problem_id = "ideation_temporary_hospital_shelter_bop"
+label = "Jagtap et al. (2013) BOP temporary hospital brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["jagtap_larsson_hiort_olander_warell_khadilkar_2013"]
+notes = "Verbatim BOP-market temporary-hospital shelter problem statement."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_temporary_hospital_shelter_top"
+prompt_id = "prompt_temporary_hospital_shelter_top"
+problem_id = "ideation_temporary_hospital_shelter_top"
+label = "Jagtap et al. (2013) TOP temporary hospital brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["jagtap_larsson_hiort_olander_warell_khadilkar_2013"]
+notes = "Verbatim TOP-market temporary-hospital shelter problem statement."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_workshop_plate_holder"
+prompt_id = "prompt_workshop_plate_holder"
+problem_id = "ideation_workshop_plate_holder"
+label = "Prudhomme et al. (2013) plate-holder brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["prudhomme_pourroy_summers_boujut_2013"]
+notes = "Verbatim workshop brief about holding two wood plates together for gluing and drilling."
 status = "complete"
 
 [[studies]]
