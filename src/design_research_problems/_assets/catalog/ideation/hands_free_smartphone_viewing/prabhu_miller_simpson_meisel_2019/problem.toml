@@ -1,0 +1,38 @@
+problem_id = "ideation_hands_free_smartphone_viewing"
+title = "Hands-Free Smartphone Viewing"
+summary = "An additive-manufacturing design brief for a low-material, fast-printing hands-free smartphone-viewing solution."
+kind = "text"
+statement = '''
+# Hands-Free Smartphone Viewing
+
+Design a fully 3D-printable solution to enable hands-free
+viewing of content on a smartphone. You can design your
+solution to fit any phone of your choice. Design such that you
+use the least amount of print material as possible. It should
+also print as fast as possible.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "smartphone", "accessory", "manufacturing"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "prabhu_miller_simpson_meisel_2019"
+kind = "inline"
+authors = ["Rohan Prabhu", "Scarlett R. Miller", "Timothy W. Simpson", "Nicholas A. Meisel"]
+title = "Complex Solutions for Complex Problems?: Exploring the Effects of Task Complexity on Student Use of Design for Additive Manufacturing and Creativity"
+year = 2019
+venue = "ASME IDETC/CIE 2019, DETC2019-97474"
+formatted_text = "Prabhu, Miller, Simpson, and Meisel (2019). Complex Solutions for Complex Problems?: Exploring the Effects of Task Complexity on Student Use of Design for Additive Manufacturing and Creativity. ASME IDETC/CIE 2019, DETC2019-97474."
+raw_text = "Prabhu, Rohan, Scarlett R. Miller, Timothy W. Simpson, and Nicholas A. Meisel (2019). Complex Solutions for Complex Problems?: Exploring the Effects of Task Complexity on Student Use of Design for Additive Manufacturing and Creativity. ASME IDETC/CIE 2019, DETC2019-97474."
+provisional = true

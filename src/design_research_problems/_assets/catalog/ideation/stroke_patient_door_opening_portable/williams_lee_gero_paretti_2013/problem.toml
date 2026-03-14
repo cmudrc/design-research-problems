@@ -1,0 +1,45 @@
+problem_id = "ideation_stroke_patient_door_opening_portable"
+title = "Portable One-Handed Door Opening for Stroke Patients"
+summary = "A portability-constrained variant of the stroke-patient door-opening brief."
+kind = "text"
+statement = '''
+# Portable One-Handed Door Opening for Stroke Patients
+
+Your design team has been hired by the Metropolitan
+Rehabilitation Institute, the leading rehabilitation hospital in
+the country, to design a new portable device to help stroke
+patients open doors.
+
+Many individuals who have had a stroke are unable to perform
+bilateral tasks, meaning they have limited or no use of one
+upper extremity. It is particularly difficult for these people
+not only to unlock and turn the knob but also to push or pull
+the door open. Your design team has been asked to create a
+system that allows a person to unlock and open the door at the
+same time with one hand.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "accessibility", "door", "one-handed", "portable"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "pair"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "williams_lee_gero_paretti_2013"
+kind = "inline"
+authors = ["Christopher B. Williams", "Yoon Lee", "John Gero", "Marie C. Paretti"]
+title = "Exploring the Effects of the Design Prompt on Students' Design Cognition"
+year = 2013
+venue = "ASME IDETC/CIE 2013, DETC2013-13557"
+formatted_text = "Williams, Lee, Gero, and Paretti (2013). Exploring the Effects of the Design Prompt on Students' Design Cognition. ASME IDETC/CIE 2013, DETC2013-13557."
+raw_text = "Williams, Christopher B., Yoon Lee, John Gero, and Marie C. Paretti (2013). Exploring the Effects of the Design Prompt on Students' Design Cognition. ASME IDETC/CIE 2013, DETC2013-13557."
+provisional = true

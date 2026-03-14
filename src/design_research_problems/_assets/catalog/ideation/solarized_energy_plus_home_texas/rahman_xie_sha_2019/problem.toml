@@ -1,0 +1,49 @@
+problem_id = "ideation_solarized_energy_plus_home_texas"
+title = "Solarized Energy-Plus Home in Texas"
+summary = "A constrained house-design task about creating a solarized energy-plus home in Texas within a fixed budget."
+kind = "text"
+statement = '''
+# Solarized Energy-Plus Home in Texas
+
+Design a solarized energy-plus home in Texas with a budget of
+$200,000.
+
+Objective:
+
+- Maximize the annual net energy (ANE) given the budget.
+
+Requirements and constraints:
+
+- One story
+- More than 4 windows
+- Window area greater than 1.44 m2
+- At least 1 door
+- Door size greater than 1.2 m x 2 m
+- Wall height greater than 2.5 m
+- Distance between ridge and panel greater than 0
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "housing", "energy", "architecture"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 60
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "rahman_xie_sha_2019"
+kind = "inline"
+authors = ["Molla Hafizur Rahman", "Charles Xie", "Zhenghui Sha"]
+title = "A Deep Learning Based Approach to Predict Sequential Design Decisions"
+year = 2019
+venue = "ASME IDETC/CIE 2019, DETC2019-97625"
+formatted_text = "Rahman, Xie, and Sha (2019). A Deep Learning Based Approach to Predict Sequential Design Decisions. ASME IDETC/CIE 2019, DETC2019-97625."
+raw_text = "Rahman, Molla Hafizur, Charles Xie, and Zhenghui Sha (2019). A Deep Learning Based Approach to Predict Sequential Design Decisions. ASME IDETC/CIE 2019, DETC2019-97625."
+provisional = true

@@ -1,0 +1,47 @@
+problem_id = "ideation_object_deposition_quarter_target"
+title = "Quarter Object Deposition Challenge"
+summary = "A conceptual design challenge about moving a quarter to a floor target without using human energy at release."
+kind = "text"
+statement = '''
+# Quarter Object Deposition Challenge
+
+Move an object (a quarter) to a target without using human
+energy during release. The target is an X on the floor. The
+device must start behind a line and then somehow move the
+object to the target.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "mechanisms", "competition", "deposition"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "camburn_dunlap_kuhr_viswanathan_linsey_jensen_crawford_otto_wood_2013"
+kind = "inline"
+authors = [
+  "Bradley A. Camburn",
+  "Brock U. Dunlap",
+  "Rachel Kuhr",
+  "Vimal K. Viswanathan",
+  "Julie S. Linsey",
+  "Dan D. Jensen",
+  "Richard H. Crawford",
+  "Kevin Otto",
+  "Kristin L. Wood",
+]
+title = "Methods for Prototyping Strategies in Conceptual Phases of Design: Framework and Experimental Assessment"
+year = 2013
+venue = "ASME IDETC/CIE 2013, DETC2013-13072"
+formatted_text = "Camburn, Dunlap, Kuhr, Viswanathan, Linsey, Jensen, Crawford, Otto, and Wood (2013). Methods for Prototyping Strategies in Conceptual Phases of Design: Framework and Experimental Assessment. ASME IDETC/CIE 2013, DETC2013-13072."
+raw_text = "Camburn, Bradley A., Brock U. Dunlap, Rachel Kuhr, Vimal K. Viswanathan, Julie S. Linsey, Dan D. Jensen, Richard H. Crawford, Kevin Otto, and Kristin L. Wood (2013). Methods for Prototyping Strategies in Conceptual Phases of Design: Framework and Experimental Assessment. ASME IDETC/CIE 2013, DETC2013-13072."
+provisional = true

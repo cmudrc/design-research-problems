@@ -738,6 +738,242 @@ formatted_text = "Henderson, Booth, Jablokow, and Sonalkar (2020). Best Fits and
 raw_text = "Henderson, Daniel, Thomas Booth, Kathryn Jablokow, and Neeraj Sonalkar (2020). Best Fits and Dark Horses: Can Design Teams Tell the Difference? ASME IDETC/CIE 2020, DETC2020-22589."
 provisional = true
 
+[[citations]]
+key = "elena_summers_2019"
+kind = "inline"
+authors = ["Maria Vittoria Elena", "Joshua D. Summers"]
+title = "Requirement Generation: Lecture Intervention Impact on Variety and Novelty"
+year = 2019
+venue = "ASME IDETC/CIE 2019, DETC2019-97528"
+formatted_text = "Elena and Summers (2019). Requirement Generation: Lecture Intervention Impact on Variety and Novelty. ASME IDETC/CIE 2019, DETC2019-97528."
+raw_text = "Elena, Maria Vittoria, and Joshua D. Summers (2019). Requirement Generation: Lecture Intervention Impact on Variety and Novelty. ASME IDETC/CIE 2019, DETC2019-97528."
+provisional = true
+
+[[citations]]
+key = "deo_holtta_otto_bhalerao_malge_2019"
+kind = "inline"
+authors = ["Saurabh Deo", "Katja Holtta-Otto", "Yogesh Bhalerao", "Abhijeet Malge"]
+title = "Engineering Design Concept Generation: The Effect of Concept Combination and Classification"
+year = 2019
+venue = "ASME IDETC/CIE 2019, DETC2019-97819"
+formatted_text = "Deo, Holtta-Otto, Bhalerao, and Malge (2019). Engineering Design Concept Generation: The Effect of Concept Combination and Classification. ASME IDETC/CIE 2019, DETC2019-97819."
+raw_text = "Deo, Saurabh, Katja Holtta-Otto, Yogesh Bhalerao, and Abhijeet Malge (2019). Engineering Design Concept Generation: The Effect of Concept Combination and Classification. ASME IDETC/CIE 2019, DETC2019-97819."
+provisional = true
+
+[[citations]]
+key = "rahman_xie_sha_2019"
+kind = "inline"
+authors = ["Molla Hafizur Rahman", "Charles Xie", "Zhenghui Sha"]
+title = "A Deep Learning Based Approach to Predict Sequential Design Decisions"
+year = 2019
+venue = "ASME IDETC/CIE 2019, DETC2019-97625"
+formatted_text = "Rahman, Xie, and Sha (2019). A Deep Learning Based Approach to Predict Sequential Design Decisions. ASME IDETC/CIE 2019, DETC2019-97625."
+raw_text = "Rahman, Molla Hafizur, Charles Xie, and Zhenghui Sha (2019). A Deep Learning Based Approach to Predict Sequential Design Decisions. ASME IDETC/CIE 2019, DETC2019-97625."
+provisional = true
+
+[[citations]]
+key = "prabhu_miller_simpson_meisel_2019"
+kind = "inline"
+authors = ["Rohan Prabhu", "Scarlett R. Miller", "Timothy W. Simpson", "Nicholas A. Meisel"]
+title = "Complex Solutions for Complex Problems?: Exploring the Effects of Task Complexity on Student Use of Design for Additive Manufacturing and Creativity"
+year = 2019
+venue = "ASME IDETC/CIE 2019, DETC2019-97474"
+formatted_text = "Prabhu, Miller, Simpson, and Meisel (2019). Complex Solutions for Complex Problems?: Exploring the Effects of Task Complexity on Student Use of Design for Additive Manufacturing and Creativity. ASME IDETC/CIE 2019, DETC2019-97474."
+raw_text = "Prabhu, Rohan, Scarlett R. Miller, Timothy W. Simpson, and Nicholas A. Meisel (2019). Complex Solutions for Complex Problems?: Exploring the Effects of Task Complexity on Student Use of Design for Additive Manufacturing and Creativity. ASME IDETC/CIE 2019, DETC2019-97474."
+provisional = true
+
+[[citations]]
+key = "raviselvam_subburaj_wood_2019"
+kind = "inline"
+authors = ["Sujithra Raviselvam", "Karupppasamy Subburaj", "Kristin L. Wood"]
+title = "An Extreme User Approach to Identify Latent Needs: Adaptation and Application in Medical Device Design"
+year = 2019
+venue = "ASME IDETC/CIE 2019, DETC2019-98266"
+formatted_text = "Raviselvam, Subburaj, and Wood (2019). An Extreme User Approach to Identify Latent Needs: Adaptation and Application in Medical Device Design. ASME IDETC/CIE 2019, DETC2019-98266."
+raw_text = "Raviselvam, Sujithra, Karupppasamy Subburaj, and Kristin L. Wood (2019). An Extreme User Approach to Identify Latent Needs: Adaptation and Application in Medical Device Design. ASME IDETC/CIE 2019, DETC2019-98266."
+provisional = true
+
+[[citations]]
+key = "kang_kai_siang_chia_koronis_silva_2018"
+kind = "inline"
+authors = ["Jacob Kang Kai Siang", "Pei Zhi Chia", "Georgios Koronis", "Arlindo Silva"]
+title = "Exploring the Use of a Full Factorial Design of Experiment to Study Design Briefs for Creative Ideation"
+year = 2018
+venue = "ASME IDETC/CIE 2018, DETC2018-85794"
+formatted_text = "Kang Kai Siang, Chia, Koronis, and Silva (2018). Exploring the Use of a Full Factorial Design of Experiment to Study Design Briefs for Creative Ideation. ASME IDETC/CIE 2018, DETC2018-85794."
+raw_text = "Kang Kai Siang, Jacob, Pei Zhi Chia, Georgios Koronis, and Arlindo Silva (2018). Exploring the Use of a Full Factorial Design of Experiment to Study Design Briefs for Creative Ideation. ASME IDETC/CIE 2018, DETC2018-85794."
+provisional = true
+
+[[citations]]
+key = "raviselvam_anderson_holtta_otto_wood_2018"
+kind = "inline"
+authors = ["Sujithra Raviselvam", "David Anderson", "Katja Holtta-Otto", "Kristin L. Wood"]
+title = "Systematic Framework to Apply Extraordinary User Perspective to Capture Latent Needs Among Ordinary Users"
+year = 2018
+venue = "ASME IDETC/CIE 2018, DETC2018-86263"
+formatted_text = "Raviselvam, Anderson, Holtta-Otto, and Wood (2018). Systematic Framework to Apply Extraordinary User Perspective to Capture Latent Needs Among Ordinary Users. ASME IDETC/CIE 2018, DETC2018-86263."
+raw_text = "Raviselvam, Sujithra, David Anderson, Katja Holtta-Otto, and Kristin L. Wood (2018). Systematic Framework to Apply Extraordinary User Perspective to Capture Latent Needs Among Ordinary Users. ASME IDETC/CIE 2018, DETC2018-86263."
+provisional = true
+
+[[citations]]
+key = "shealy_hu_gero_2018"
+kind = "inline"
+authors = ["Tripp Shealy", "Mo Hu", "John Gero"]
+title = "Patterns of Cortical Activation When Using Concept Generation Techniques of Brainstorming, Morphological Analysis, and TRIZ"
+year = 2018
+venue = "ASME IDETC/CIE 2018, DETC2018-86272"
+formatted_text = "Shealy, Hu, and Gero (2018). Patterns of Cortical Activation When Using Concept Generation Techniques of Brainstorming, Morphological Analysis, and TRIZ. ASME IDETC/CIE 2018, DETC2018-86272."
+raw_text = "Shealy, Tripp, Mo Hu, and John Gero (2018). Patterns of Cortical Activation When Using Concept Generation Techniques of Brainstorming, Morphological Analysis, and TRIZ. ASME IDETC/CIE 2018, DETC2018-86272."
+provisional = true
+
+[[citations]]
+key = "levy_hilton_tomko_linsey_2017"
+kind = "inline"
+authors = ["Bryan Levy", "Ethan Hilton", "Megan Tomko", "Julie Linsey"]
+title = "Investigating Problem Similarity Through Study of Between-Subject and Within-Subject Experiments"
+year = 2017
+venue = "ASME IDETC/CIE 2017, DETC2017-68428"
+formatted_text = "Levy, Hilton, Tomko, and Linsey (2017). Investigating Problem Similarity Through Study of Between-Subject and Within-Subject Experiments. ASME IDETC/CIE 2017, DETC2017-68428."
+raw_text = "Levy, Bryan, Ethan Hilton, Megan Tomko, and Julie Linsey (2017). Investigating Problem Similarity Through Study of Between-Subject and Within-Subject Experiments. ASME IDETC/CIE 2017, DETC2017-68428."
+provisional = true
+
+[[citations]]
+key = "barclift_simpson_nusiner_miller_2017"
+kind = "inline"
+authors = ["Michael Barclift", "Timothy W. Simpson", "Maria Alessandra Nusiner", "Scarlett Miller"]
+title = "An Investigation Into the Driving Factors of Creativity in Design for Additive Manufacturing"
+year = 2017
+venue = "ASME IDETC/CIE 2017, DETC2017-68395"
+formatted_text = "Barclift, Simpson, Nusiner, and Miller (2017). An Investigation Into the Driving Factors of Creativity in Design for Additive Manufacturing. ASME IDETC/CIE 2017, DETC2017-68395."
+raw_text = "Barclift, Michael, Timothy W. Simpson, Maria Alessandra Nusiner, and Scarlett Miller (2017). An Investigation Into the Driving Factors of Creativity in Design for Additive Manufacturing. ASME IDETC/CIE 2017, DETC2017-68395."
+provisional = true
+
+[[citations]]
+key = "kumar_mocko_2016"
+kind = "inline"
+authors = ["Varun Kumar", "Gregory Mocko"]
+title = "Similarity of Engineering Design Problems to Enable Reuse in Design Research Experiments"
+year = 2016
+venue = "ASME IDETC/CIE 2016, DETC2016-60474"
+formatted_text = "Kumar and Mocko (2016). Similarity of Engineering Design Problems to Enable Reuse in Design Research Experiments. ASME IDETC/CIE 2016, DETC2016-60474."
+raw_text = "Kumar, Varun, and Gregory Mocko (2016). Similarity of Engineering Design Problems to Enable Reuse in Design Research Experiments. ASME IDETC/CIE 2016, DETC2016-60474."
+provisional = true
+
+[[citations]]
+key = "johnson_cheeley_caldwell_green_2016"
+kind = "inline"
+authors = ["Tyler A. Johnson", "Avery Cheeley", "Benjamin W. Caldwell", "Matthew G. Green"]
+title = "Comparison and Extensions of Novelty Metrics for Problem-Solving Tasks"
+year = 2016
+venue = "ASME IDETC/CIE 2016, DETC2016-60319"
+formatted_text = "Johnson, Cheeley, Caldwell, and Green (2016). Comparison and Extensions of Novelty Metrics for Problem-Solving Tasks. ASME IDETC/CIE 2016, DETC2016-60319."
+raw_text = "Johnson, Tyler A., Avery Cheeley, Benjamin W. Caldwell, and Matthew G. Green (2016). Comparison and Extensions of Novelty Metrics for Problem-Solving Tasks. ASME IDETC/CIE 2016, DETC2016-60319."
+provisional = true
+
+[[citations]]
+key = "lim_camburn_huang_moreno_wood_2016"
+kind = "inline"
+authors = [
+  "Shi Ying Candice Lim",
+  "Bradley Adam Camburn",
+  "Zack Huang",
+  "Diana Moreno",
+  "Kristin L. Wood",
+]
+title = "Design Concept Structures in Massive Group Ideation"
+year = 2016
+venue = "ASME IDETC/CIE 2016, DETC2016-59805"
+formatted_text = "Lim, Camburn, Huang, Moreno, and Wood (2016). Design Concept Structures in Massive Group Ideation. ASME IDETC/CIE 2016, DETC2016-59805."
+raw_text = "Lim, Shi Ying Candice, Bradley Adam Camburn, Zack Huang, Diana Moreno, and Kristin L. Wood (2016). Design Concept Structures in Massive Group Ideation. ASME IDETC/CIE 2016, DETC2016-59805."
+provisional = true
+
+[[citations]]
+key = "zheng_miller_2016"
+kind = "inline"
+authors = ["Xuan Zheng", "Scarlett R. Miller"]
+title = "How Do I Choose? The Influence of Concept Selection Methods on Student Team Decision-Making"
+year = 2016
+venue = "ASME IDETC/CIE 2016, DETC2016-60333"
+formatted_text = "Zheng and Miller (2016). How Do I Choose? The Influence of Concept Selection Methods on Student Team Decision-Making. ASME IDETC/CIE 2016, DETC2016-60333."
+raw_text = "Zheng, Xuan, and Scarlett R. Miller (2016). How Do I Choose? The Influence of Concept Selection Methods on Student Team Decision-Making. ASME IDETC/CIE 2016, DETC2016-60333."
+provisional = true
+
+[[citations]]
+key = "dinar_park_shah_2015"
+kind = "inline"
+authors = ["Mahmoud Dinar", "Yong-Seok Park", "Jami J. Shah"]
+title = "Evaluating the Effectiveness of Problem Formulation and Ideation Skills Learned Throughout an Engineering Design Course"
+year = 2015
+venue = "ASME IDETC/CIE 2015, DETC2015-46542"
+formatted_text = "Dinar, Park, and Shah (2015). Evaluating the Effectiveness of Problem Formulation and Ideation Skills Learned Throughout an Engineering Design Course. ASME IDETC/CIE 2015, DETC2015-46542."
+raw_text = "Dinar, Mahmoud, Yong-Seok Park, and Jami J. Shah (2015). Evaluating the Effectiveness of Problem Formulation and Ideation Skills Learned Throughout an Engineering Design Course. ASME IDETC/CIE 2015, DETC2015-46542."
+provisional = true
+
+[[citations]]
+key = "sullivan_hardin_2015"
+kind = "inline"
+authors = ["Gerald A. Sullivan", "Jon-Michael Hardin"]
+title = "The Can Crusher Project: A Multi-Semester Design Project to Enhance Retention of Engineering Skill Sets"
+year = 2015
+venue = "ASME IDETC/CIE 2015, DETC2015-47417"
+formatted_text = "Sullivan and Hardin (2015). The Can Crusher Project: A Multi-Semester Design Project to Enhance Retention of Engineering Skill Sets. ASME IDETC/CIE 2015, DETC2015-47417."
+raw_text = "Sullivan, Gerald A., and Jon-Michael Hardin (2015). The Can Crusher Project: A Multi-Semester Design Project to Enhance Retention of Engineering Skill Sets. ASME IDETC/CIE 2015, DETC2015-47417."
+provisional = true
+
+[[citations]]
+key = "dinar_shah_2014"
+kind = "inline"
+authors = ["Mahmoud Dinar", "Jami J. Shah"]
+title = "Enhancing Design Problem Formulation Skills for Engineering Design Students"
+year = 2014
+venue = "ASME IDETC/CIE 2014, DETC2014-35508"
+formatted_text = "Dinar and Shah (2014). Enhancing Design Problem Formulation Skills for Engineering Design Students. ASME IDETC/CIE 2014, DETC2014-35508."
+raw_text = "Dinar, Mahmoud, and Jami J. Shah (2014). Enhancing Design Problem Formulation Skills for Engineering Design Students. ASME IDETC/CIE 2014, DETC2014-35508."
+provisional = true
+
+[[citations]]
+key = "williams_lee_gero_paretti_2013"
+kind = "inline"
+authors = ["Christopher B. Williams", "Yoon Lee", "John Gero", "Marie C. Paretti"]
+title = "Exploring the Effects of the Design Prompt on Students' Design Cognition"
+year = 2013
+venue = "ASME IDETC/CIE 2013, DETC2013-13557"
+formatted_text = "Williams, Lee, Gero, and Paretti (2013). Exploring the Effects of the Design Prompt on Students' Design Cognition. ASME IDETC/CIE 2013, DETC2013-13557."
+raw_text = "Williams, Christopher B., Yoon Lee, John Gero, and Marie C. Paretti (2013). Exploring the Effects of the Design Prompt on Students' Design Cognition. ASME IDETC/CIE 2013, DETC2013-13557."
+provisional = true
+
+[[citations]]
+key = "neeley_lim_zhu_yang_2013"
+kind = "inline"
+authors = ["W. Lawrence Neeley, Jr.", "Kirsten Lim", "April Zhu", "Maria C. Yang"]
+title = "Building Fast to Think Faster: Exploiting Rapid Prototyping to Accelerate Ideation During Early Stage Design"
+year = 2013
+venue = "ASME IDETC/CIE 2013, DETC2013-12635"
+formatted_text = "Neeley, Lim, Zhu, and Yang (2013). Building Fast to Think Faster: Exploiting Rapid Prototyping to Accelerate Ideation During Early Stage Design. ASME IDETC/CIE 2013, DETC2013-12635."
+raw_text = "Neeley, W. Lawrence, Jr., Kirsten Lim, April Zhu, and Maria C. Yang (2013). Building Fast to Think Faster: Exploiting Rapid Prototyping to Accelerate Ideation During Early Stage Design. ASME IDETC/CIE 2013, DETC2013-12635."
+provisional = true
+
+[[citations]]
+key = "camburn_dunlap_kuhr_viswanathan_linsey_jensen_crawford_otto_wood_2013"
+kind = "inline"
+authors = [
+  "Bradley A. Camburn",
+  "Brock U. Dunlap",
+  "Rachel Kuhr",
+  "Vimal K. Viswanathan",
+  "Julie S. Linsey",
+  "Dan D. Jensen",
+  "Richard H. Crawford",
+  "Kevin Otto",
+  "Kristin L. Wood",
+]
+title = "Methods for Prototyping Strategies in Conceptual Phases of Design: Framework and Experimental Assessment"
+year = 2013
+venue = "ASME IDETC/CIE 2013, DETC2013-13072"
+formatted_text = "Camburn, Dunlap, Kuhr, Viswanathan, Linsey, Jensen, Crawford, Otto, and Wood (2013). Methods for Prototyping Strategies in Conceptual Phases of Design: Framework and Experimental Assessment. ASME IDETC/CIE 2013, DETC2013-13072."
+raw_text = "Camburn, Bradley A., Brock U. Dunlap, Rachel Kuhr, Vimal K. Viswanathan, Julie S. Linsey, Dan D. Jensen, Richard H. Crawford, Kevin Otto, and Kristin L. Wood (2013). Methods for Prototyping Strategies in Conceptual Phases of Design: Framework and Experimental Assessment. ASME IDETC/CIE 2013, DETC2013-13072."
+provisional = true
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -1215,6 +1451,282 @@ external_aliases = []
 canonical_prompt_ids = ["prompt_lifting_water_challenge"]
 tags = ["water", "rural", "manual-power"]
 notes = "Henderson, Booth, Jablokow, and Sonalkar (2020) describes the Lifting Water Design Challenge (LWDC) for rural farmers in Myanmar."
+
+[[families]]
+family_id = "family_bicycle_safety_lock"
+name = "Bicycle Safety Lock"
+group = "transport-infrastructure"
+external_aliases = []
+canonical_prompt_ids = ["prompt_bicycle_safety_lock"]
+tags = ["bicycle", "security", "transport"]
+notes = "Elena and Summers (2019) prints the bicycle safety lock brief in full as a paired comparison task with book picking."
+
+[[families]]
+family_id = "family_next_generation_garbage_picker"
+name = "Next-Generation Garbage Picker"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_next_generation_garbage_picker"]
+tags = ["waste", "consumer", "ideation"]
+notes = "Deo, Holtta-Otto, Bhalerao, and Malge (2019) uses an unconstrained next-generation garbage-picker brief for concept-generation experiments."
+
+[[families]]
+family_id = "family_solarized_energy_plus_home_texas"
+name = "Solarized Energy-Plus Home in Texas"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_solarized_energy_plus_home_texas"]
+tags = ["housing", "energy", "architecture"]
+notes = "Rahman, Xie, and Sha (2019) describes a constrained house-design task for a solarized energy-plus home in Texas."
+
+[[families]]
+family_id = "family_hands_free_smartphone_viewing"
+name = "Hands-Free Smartphone Viewing"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_hands_free_smartphone_viewing"]
+tags = ["smartphone", "accessory", "additive-manufacturing"]
+notes = "Prabhu, Miller, Simpson, and Meisel (2019) prints this additive-manufacturing design challenge as the study's simple task."
+
+[[families]]
+family_id = "family_3d_printable_wind_turbine_tower"
+name = "3D-Printable Wind Turbine Tower"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_3d_printable_wind_turbine_tower"]
+tags = ["tower", "energy", "additive-manufacturing"]
+notes = "Prabhu, Miller, Simpson, and Meisel (2019) prints this additive-manufacturing design challenge as the study's complex task."
+
+[[families]]
+family_id = "family_guidewire_safety"
+name = "Guidewire Safety"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_guidewire_safety"]
+tags = ["medical", "guidewire", "safety"]
+notes = "Raviselvam, Subburaj, and Wood (2019) lists this healthcare-course device brief in the selected-projects table."
+
+[[families]]
+family_id = "family_biopsy_needle_stabilizer"
+name = "Biopsy Needle Stabilizer"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_biopsy_needle_stabilizer"]
+tags = ["medical", "biopsy", "stabilization"]
+notes = "Raviselvam, Subburaj, and Wood (2019) lists this healthcare-course device brief in the selected-projects table."
+
+[[families]]
+family_id = "family_shoulder_dislocation_reduction_aid"
+name = "Shoulder Dislocation Reduction Aid"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_shoulder_dislocation_reduction_aid"]
+tags = ["medical", "orthopedic", "clinical"]
+notes = "Raviselvam, Subburaj, and Wood (2019) lists this healthcare-course device brief in the selected-projects table."
+
+[[families]]
+family_id = "family_guidewire_threading_assist"
+name = "Guidewire Threading Assist"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_guidewire_threading_assist"]
+tags = ["medical", "guidewire", "procedure"]
+notes = "Raviselvam, Subburaj, and Wood (2019) lists this healthcare-course device brief in the selected-projects table."
+
+[[families]]
+family_id = "family_neonatal_health_monitor"
+name = "Neonatal Health Monitor"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_neonatal_health_monitor"]
+tags = ["medical", "neonatal", "monitoring"]
+notes = "Raviselvam, Subburaj, and Wood (2019) lists this healthcare-course device brief in the selected-projects table."
+
+[[families]]
+family_id = "family_hospital_blood_pressure_measurement"
+name = "Hospital Blood Pressure Measurement"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_hospital_blood_pressure_measurement"]
+tags = ["medical", "blood-pressure", "monitoring"]
+notes = "Raviselvam, Subburaj, and Wood (2019) lists this healthcare-course device brief in the selected-projects table."
+
+[[families]]
+family_id = "family_orange_juice_extraction_device"
+name = "Orange Juice Extraction Device"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = [
+  "prompt_orange_juice_extraction_device",
+  "prompt_orange_juice_extraction_device_quantified",
+]
+tags = ["kitchen", "appliance", "consumer"]
+notes = "Kang Kai Siang, Chia, Koronis, and Silva (2018) studies how altered brief information affects concepts for an at-home orange-juice extraction device."
+
+[[families]]
+family_id = "family_medication_syringe_redesign"
+name = "Medication Syringe Redesign"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_medication_syringe_redesign"]
+tags = ["medical", "syringe", "requirements"]
+notes = "Raviselvam, Anderson, Holtta-Otto, and Wood (2018) uses a medication-syringe needs-and-opportunities task in an empathic-design experiment."
+
+[[families]]
+family_id = "family_hearing_impaired_alarm_clock"
+name = "Alarm Clock for the Hearing Impaired"
+group = "accessibility-assistive"
+external_aliases = []
+canonical_prompt_ids = ["prompt_hearing_impaired_alarm_clock"]
+tags = ["accessibility", "alarm", "consumer"]
+notes = "Shealy, Hu, and Gero (2018) lists this short concept-generation task in a neurocognition study alongside window and blind-measuring tasks."
+
+[[families]]
+family_id = "family_personal_alarm_clock"
+name = "Personal Alarm Clock"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_personal_alarm_clock"]
+tags = ["alarm", "consumer", "portable"]
+notes = "Levy, Hilton, Tomko, and Linsey (2017) prints this low-disturbance personal-alarm-clock brief in the problem-similarity appendix."
+
+[[families]]
+family_id = "family_coconut_harvesting_assist"
+name = "Coconut Harvesting Assist"
+group = "food-agriculture"
+external_aliases = []
+canonical_prompt_ids = ["prompt_coconut_harvesting_assist"]
+tags = ["agriculture", "harvesting", "safety"]
+notes = "Levy, Hilton, Tomko, and Linsey (2017) prints this coconut-harvesting brief in the problem-similarity appendix."
+
+[[families]]
+family_id = "family_marshmallow_support_tower"
+name = "Marshmallow Support Tower"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_marshmallow_support_tower"]
+tags = ["structure", "additive-manufacturing", "challenge"]
+notes = "Barclift, Simpson, Nusiner, and Miller (2017) prints this additive-manufacturing tower challenge and its build constraints."
+
+[[families]]
+family_id = "family_office_sit_stand_table"
+name = "Office Sit-Stand Table"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_office_sit_stand_table"]
+tags = ["office", "furniture", "ergonomics"]
+notes = "Kumar and Mocko (2016) reprints this sit-stand office-table brief as an example design problem in the problem-similarity study."
+
+[[families]]
+family_id = "family_apartment_cooling_problem"
+name = "Apartment Cooling Problem"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_apartment_cooling_problem"]
+tags = ["cooling", "consumer", "problem-solving"]
+notes = "Johnson, Cheeley, Caldwell, and Green (2016) prints this everyday apartment-cooling PST prompt as an example problem-solving task."
+
+[[families]]
+family_id = "family_next_generation_public_transportation"
+name = "Next-Generation Public Transportation"
+group = "transport-infrastructure"
+external_aliases = []
+canonical_prompt_ids = ["prompt_next_generation_public_transportation"]
+tags = ["transport", "public", "systems"]
+notes = "Lim, Camburn, Huang, Moreno, and Wood (2016) asks 2,400 participants to ideate on this exact public-transportation prompt in a massive-group ideation study."
+
+[[families]]
+family_id = "family_pittsadelphia_freight_shipping_system"
+name = "Pittsadelphia Freight Shipping System"
+group = "transport-infrastructure"
+external_aliases = []
+canonical_prompt_ids = ["prompt_pittsadelphia_freight_shipping_system"]
+tags = ["freight", "shipping", "transport"]
+notes = "Zheng and Miller (2016) gives first-year engineering students this fictional-city freight-shipping brief before concept generation and concept selection."
+
+[[families]]
+family_id = "family_goofy_gopher_golf_ball_collection"
+name = "Goofy Gopher Golf-Ball Collection"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_goofy_gopher_golf_ball_collection"]
+tags = ["competition", "golf", "collection"]
+notes = "Dinar, Park, and Shah (2015) assigns this competitive golf-ball collection device brief as the first design problem in an advanced product design course."
+
+[[families]]
+family_id = "family_shot_buddy_basketball_return"
+name = "Shot Buddy Basketball Return"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_shot_buddy_basketball_return"]
+tags = ["basketball", "sports", "training"]
+notes = "Dinar, Park, and Shah (2015) uses this basketball-return device brief as the second course design problem."
+
+[[families]]
+family_id = "family_autonomous_surveillance_vehicle"
+name = "Autonomous Surveillance Vehicle"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_autonomous_surveillance_vehicle"]
+tags = ["autonomy", "robotics", "surveillance"]
+notes = "Dinar, Park, and Shah (2015) assigns this autonomous perimeter-tour vehicle brief as the third course design problem."
+
+[[families]]
+family_id = "family_motorized_can_crusher"
+name = "Motorized Can Crusher"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_motorized_can_crusher"]
+tags = ["recycling", "mechanisms", "manufacturing"]
+notes = "Sullivan and Hardin (2015) defines this lead-screw-and-Arduino can-crusher build brief for a senior mechanical design project."
+
+[[families]]
+family_id = "family_burrito_making_device"
+name = "Burrito Making Device"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_burrito_making_device"]
+tags = ["food", "automation", "service"]
+notes = "Worinkeng and Summers (2014) uses this tailgate burrito-making brief to study how requirement types affect concept quality and quantity."
+
+[[families]]
+family_id = "family_lego_block_scrapyard_collection"
+name = "Lego-Block Scrapyard Collection"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_lego_block_scrapyard_collection"]
+tags = ["competition", "lego", "collection"]
+notes = "Dinar and Shah (2014) assigns this Lego-block collection-and-dumping challenge as the third course design problem."
+
+[[families]]
+family_id = "family_stroke_patient_door_opening"
+name = "One-Handed Door Opening for Stroke Patients"
+group = "accessibility-assistive"
+external_aliases = []
+canonical_prompt_ids = [
+  "prompt_stroke_patient_door_opening",
+  "prompt_stroke_patient_door_opening_portable",
+]
+tags = ["accessibility", "door", "one-handed"]
+notes = "Williams, Lee, Gero, and Paretti (2013) compares a base stroke-patient door-opening brief against a portable-constraint variant."
+
+[[families]]
+family_id = "family_cardboard_tower_structure"
+name = "Free-Standing Cardboard Tower"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_cardboard_tower_structure"]
+tags = ["structure", "cardboard", "challenge"]
+notes = "Neeley, Lim, Zhu, and Yang (2013) uses this one-sheet cardboard tower brief to study rapid prototyping in early-stage design."
+
+[[families]]
+family_id = "family_object_deposition_quarter_target"
+name = "Quarter Object Deposition Challenge"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_object_deposition_quarter_target"]
+tags = ["mechanisms", "competition", "deposition"]
+notes = "Camburn et al. (2013) uses this quarter-to-target deposition challenge to compare prototyping strategies."
 
 [[prompts]]
 prompt_id = "prompt_travel_exercise_device"
@@ -2001,6 +2513,358 @@ source_citation_keys = ["henderson_booth_jablokow_sonalkar_2020"]
 tags = ["water", "rural", "ideation", "manual-power"]
 status = "complete"
 variant_ids = ["variant_lifting_water_challenge"]
+
+[[prompts]]
+prompt_id = "prompt_bicycle_safety_lock"
+problem_id = "ideation_bicycle_safety_lock"
+family_id = "family_bicycle_safety_lock"
+canonical_brief = "Design a safety lock for a bicycle that is to be permanently fastened to it (not to be removed when being used). The lock is to be a lasting accessory, yet can still be removed or adjusted if necessary. It should be small enough to be non-obtrusive to the bicyclist while riding and should be light weight and relatively inexpensive."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["elena_summers_2019"]
+tags = ["bicycle", "security", "transport", "ideation"]
+status = "complete"
+variant_ids = ["variant_bicycle_safety_lock"]
+
+[[prompts]]
+prompt_id = "prompt_next_generation_garbage_picker"
+problem_id = "ideation_next_generation_garbage_picker"
+family_id = "family_next_generation_garbage_picker"
+canonical_brief = "The participants were asked to propose concepts for a next generation garbage picker."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["deo_holtta_otto_bhalerao_malge_2019"]
+tags = ["waste", "consumer", "ideation"]
+status = "complete"
+variant_ids = ["variant_next_generation_garbage_picker"]
+
+[[prompts]]
+prompt_id = "prompt_solarized_energy_plus_home_texas"
+problem_id = "ideation_solarized_energy_plus_home_texas"
+family_id = "family_solarized_energy_plus_home_texas"
+canonical_brief = "Design a solarized energy-plus home in Texas with the budget of $200,000. The design objective is to maximize the annual net energy given the budget, while meeting these requirements and constraints: one story, more than four windows, window area above 1.44 m2, at least one door, door size above 1.2 m by 2 m, wall height above 2.5 m, and distance between ridge and panel above 0."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["rahman_xie_sha_2019"]
+tags = ["housing", "energy", "architecture", "design-task"]
+status = "complete"
+variant_ids = ["variant_solarized_energy_plus_home_texas"]
+
+[[prompts]]
+prompt_id = "prompt_hands_free_smartphone_viewing"
+problem_id = "ideation_hands_free_smartphone_viewing"
+family_id = "family_hands_free_smartphone_viewing"
+canonical_brief = "Design a fully 3D-printable solution to enable hands-free viewing of content on a smartphone. You can design your solution to fit any phone of your choice. Design such that you use the least amount of print material as possible. It should also print as fast as possible."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["prabhu_miller_simpson_meisel_2019"]
+tags = ["smartphone", "additive-manufacturing", "ideation"]
+status = "complete"
+variant_ids = ["variant_hands_free_smartphone_viewing"]
+
+[[prompts]]
+prompt_id = "prompt_3d_printable_wind_turbine_tower"
+problem_id = "ideation_3d_printable_wind_turbine_tower"
+family_id = "family_3d_printable_wind_turbine_tower"
+canonical_brief = "Design a fully 3D printable free-standing tower for a down-scaled wind turbine. The tower must support a motor-blade assembly and must attach to the assembly through a T-slot of given dimensions. The assembly must be able to slide into the slot and stay in place. The motor-blade assembly will include the male side of the T-slot. The objective of the challenge is to minimize the print material and the print time while satisfying these constraints: height at least 18 inches, support a 150 gram motor plus 150 gram blades, maximum base footprint 3.5 inches by 3.5 inches, and all necessary components completed in one build within a build volume of 11.6 inches by 7.6 inches by 6.5 inches."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["prabhu_miller_simpson_meisel_2019"]
+tags = ["tower", "energy", "additive-manufacturing", "ideation"]
+status = "complete"
+variant_ids = ["variant_3d_printable_wind_turbine_tower"]
+
+[[prompts]]
+prompt_id = "prompt_guidewire_safety"
+problem_id = "ideation_guidewire_safety"
+family_id = "family_guidewire_safety"
+canonical_brief = "To design a guidewire that's safe and prevents human errors."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+tags = ["medical", "guidewire", "safety", "design-task"]
+status = "complete"
+variant_ids = ["variant_guidewire_safety"]
+
+[[prompts]]
+prompt_id = "prompt_biopsy_needle_stabilizer"
+problem_id = "ideation_biopsy_needle_stabilizer"
+family_id = "family_biopsy_needle_stabilizer"
+canonical_brief = "To design a stabilizer that enhances the usability of a biopsy needle."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+tags = ["medical", "biopsy", "stabilization", "design-task"]
+status = "complete"
+variant_ids = ["variant_biopsy_needle_stabilizer"]
+
+[[prompts]]
+prompt_id = "prompt_shoulder_dislocation_reduction_aid"
+problem_id = "ideation_shoulder_dislocation_reduction_aid"
+family_id = "family_shoulder_dislocation_reduction_aid"
+canonical_brief = "To design a product that eases the shoulder retention process."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+tags = ["medical", "orthopedic", "clinical", "design-task"]
+status = "complete"
+variant_ids = ["variant_shoulder_dislocation_reduction_aid"]
+
+[[prompts]]
+prompt_id = "prompt_guidewire_threading_assist"
+problem_id = "ideation_guidewire_threading_assist"
+family_id = "family_guidewire_threading_assist"
+canonical_brief = "To design a solution to specifically ease the process of threading the guide wire."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+tags = ["medical", "guidewire", "procedure", "design-task"]
+status = "complete"
+variant_ids = ["variant_guidewire_threading_assist"]
+
+[[prompts]]
+prompt_id = "prompt_neonatal_health_monitor"
+problem_id = "ideation_neonatal_health_monitor"
+family_id = "family_neonatal_health_monitor"
+canonical_brief = "To design a product to aid nurses monitor the health status of neonates."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+tags = ["medical", "neonatal", "monitoring", "design-task"]
+status = "complete"
+variant_ids = ["variant_neonatal_health_monitor"]
+
+[[prompts]]
+prompt_id = "prompt_hospital_blood_pressure_measurement"
+problem_id = "ideation_hospital_blood_pressure_measurement"
+family_id = "family_hospital_blood_pressure_measurement"
+canonical_brief = "To design a non-intrusive way to measure blood pressure among hospitalized patients."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+tags = ["medical", "blood-pressure", "monitoring", "design-task"]
+status = "complete"
+variant_ids = ["variant_hospital_blood_pressure_measurement"]
+
+[[prompts]]
+prompt_id = "prompt_orange_juice_extraction_device"
+problem_id = "ideation_orange_juice_extraction_device"
+family_id = "family_orange_juice_extraction_device"
+canonical_brief = "Design a device to extract orange juice from fresh oranges at home."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kang_kai_siang_chia_koronis_silva_2018"]
+tags = ["kitchen", "citrus", "consumer", "ideation"]
+status = "complete"
+variant_ids = ["variant_orange_juice_extraction_device"]
+
+[[prompts]]
+prompt_id = "prompt_orange_juice_extraction_device_quantified"
+problem_id = "ideation_orange_juice_extraction_device_quantified"
+family_id = "family_orange_juice_extraction_device"
+canonical_brief = "Design a device to extract orange juice from fresh oranges at home. Target cost: $20. Easy to manufacture: do not use more than 2 manufacturing processes. Machine washable: no significant damage after 100 washes. Small footprint: fit within a volume of 15 x 15 x 15 cm3. Do not use blenders or blender-type machines as a base for designs."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kang_kai_siang_chia_koronis_silva_2018"]
+tags = ["kitchen", "citrus", "consumer", "ideation", "constraints"]
+status = "complete"
+variant_ids = ["variant_orange_juice_extraction_device_quantified"]
+
+[[prompts]]
+prompt_id = "prompt_medication_syringe_redesign"
+problem_id = "ideation_medication_syringe_redesign"
+family_id = "family_medication_syringe_redesign"
+canonical_brief = "List the specific design needs and design opportunities with respect to size, shape, weight, material, safety, ergonomics, and other specific features associated with a medication syringe."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_anderson_holtta_otto_wood_2018"]
+tags = ["medical", "syringe", "requirements", "design-task"]
+status = "complete"
+variant_ids = ["variant_medication_syringe_redesign"]
+
+[[prompts]]
+prompt_id = "prompt_hearing_impaired_alarm_clock"
+problem_id = "ideation_hearing_impaired_alarm_clock"
+family_id = "family_hearing_impaired_alarm_clock"
+canonical_brief = "Design an alarm clock for the hearing impaired."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["shealy_hu_gero_2018"]
+tags = ["accessibility", "alarm", "consumer", "ideation"]
+status = "complete"
+variant_ids = ["variant_hearing_impaired_alarm_clock"]
+
+[[prompts]]
+prompt_id = "prompt_personal_alarm_clock"
+problem_id = "ideation_personal_alarm_clock"
+family_id = "family_personal_alarm_clock"
+canonical_brief = "Alarm clocks are widely used to help individuals wake from slumber. However, when used in shared spaces like dorm rooms, they will often disturb those around them. The goal of this problem is to design a low-cost alarm clock for individual use that will not disturb others. The clock should be portable for use in a variety of situations such as on the bus, in the library, or in a classroom. Customer needs: must wake up individual with no disturbance to others, must be portable and lightweight, must be safe for user, electrical outlets are not available as a constant power source, low cost."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["levy_hilton_tomko_linsey_2017"]
+tags = ["alarm", "consumer", "portable", "ideation"]
+status = "complete"
+variant_ids = ["variant_personal_alarm_clock"]
+
+[[prompts]]
+prompt_id = "prompt_coconut_harvesting_assist"
+problem_id = "ideation_coconut_harvesting_assist"
+family_id = "family_coconut_harvesting_assist"
+canonical_brief = "In certain places like the Philippines, Indonesia, and India, coconut harvesting is a major practice. The current process requires a skilled person to climb the tree and cut down the coconuts. The average height of a coconut tree is 35-40 feet and though there are grooves along the tree that make it easier to climb, the tree surface becomes very slippery during the rainy seasons. The current process may take as long as 12 hours for large farms that average 150 trees. The goal of this problem is to design a low-cost product to improve the coconut harvesting process so that it is safer and can be done more quickly. Customer needs: must remove coconut with little damage to fruit and tree, must be safer to operate than current method, must harvest coconuts quicker than current method, electrical outlets are not available as a power source, low cost."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["levy_hilton_tomko_linsey_2017"]
+tags = ["agriculture", "harvesting", "safety", "ideation"]
+status = "complete"
+variant_ids = ["variant_coconut_harvesting_assist"]
+
+[[prompts]]
+prompt_id = "prompt_marshmallow_support_tower"
+problem_id = "ideation_marshmallow_support_tower"
+family_id = "family_marshmallow_support_tower"
+canonical_brief = "Design the tallest free-standing structure that can support a marshmallow using additive manufacturing. The prompt constrained participants to design within the build volume of a MakerBot Replicator Desktop 3D printer (251 mm x 198 mm x 149 mm). All support material had to be removed during assembly, the final printed structure could not weigh more than 100 g, and the structure with all corresponding parts had to be aggregated and printed in one build job."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["barclift_simpson_nusiner_miller_2017"]
+tags = ["structure", "additive-manufacturing", "challenge", "ideation"]
+status = "complete"
+variant_ids = ["variant_marshmallow_support_tower"]
+
+[[prompts]]
+prompt_id = "prompt_office_sit_stand_table"
+problem_id = "ideation_office_sit_stand_table"
+family_id = "family_office_sit_stand_table"
+canonical_brief = "It is asked to design a new table for offices that allows alternate sitting and stand up work. There are a lot of people who must work on sitting position the full day. The possibility to alternate positions during working time could drive to an improvement in health and productivity. The current tables that allow combining positions in work have limited surface, not enough for design, architecture and engineering needs."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kumar_mocko_2016"]
+tags = ["office", "furniture", "ergonomics", "ideation"]
+status = "complete"
+variant_ids = ["variant_office_sit_stand_table"]
+
+[[prompts]]
+prompt_id = "prompt_apartment_cooling_problem"
+problem_id = "ideation_apartment_cooling_problem"
+family_id = "family_apartment_cooling_problem"
+canonical_brief = "Judy complains that her apartment is too hot and humid in the summer and her fan isn't enough to keep her cool. She asks you to use your engineering design skills to think of some solutions to her problem. List as many ideas as you can for ways to keep Judy cool in her apartment."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["johnson_cheeley_caldwell_green_2016"]
+tags = ["cooling", "consumer", "problem-solving", "ideation"]
+status = "complete"
+variant_ids = ["variant_apartment_cooling_problem"]
+
+[[prompts]]
+prompt_id = "prompt_next_generation_public_transportation"
+problem_id = "ideation_next_generation_public_transportation"
+family_id = "family_next_generation_public_transportation"
+canonical_brief = "Design the next generation of public transportation."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["lim_camburn_huang_moreno_wood_2016"]
+tags = ["transport", "public", "ideation"]
+status = "complete"
+variant_ids = ["variant_next_generation_public_transportation"]
+
+[[prompts]]
+prompt_id = "prompt_pittsadelphia_freight_shipping_system"
+problem_id = "ideation_pittsadelphia_freight_shipping_system"
+family_id = "family_pittsadelphia_freight_shipping_system"
+canonical_brief = "Pittsadelphia is looking for the design of a cost-effective freight shipping system that reduces smog and meets EPA requirements, while maintaining or increasing freight capacity into and out of this important port city."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["zheng_miller_2016"]
+tags = ["freight", "shipping", "transport", "ideation"]
+status = "complete"
+variant_ids = ["variant_pittsadelphia_freight_shipping_system"]
+
+[[prompts]]
+prompt_id = "prompt_goofy_gopher_golf_ball_collection"
+problem_id = "ideation_goofy_gopher_golf_ball_collection"
+family_id = "family_goofy_gopher_golf_ball_collection"
+canonical_brief = "Design a device that collected more golf balls than an opponent's device and stored them in the respective silos. Balls of different color had different points. Stealing balls from the opponents and interfering with the operation of their devices was allowed."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["dinar_park_shah_2015"]
+tags = ["competition", "golf", "collection", "ideation"]
+status = "complete"
+variant_ids = ["variant_goofy_gopher_golf_ball_collection"]
+
+[[prompts]]
+prompt_id = "prompt_shot_buddy_basketball_return"
+problem_id = "ideation_shot_buddy_basketball_return"
+family_id = "family_shot_buddy_basketball_return"
+canonical_brief = "Design the shot buddy, a device which could return shot basketballs to the shooter, whether the basket was made or missed. The device must be able to automatically adjust the return angle based on the position of the shooter when the ball is shot. The shooter may be initially located anywhere within a 25' semicircle with respect to the basket. It must also accurately and quickly return balls to the shooter and not block the shooters access to the basket. Ideally, the return speed would be adjustable to accommodate different skill levels. The device should be user friendly for kids ages 10-18, easy to setup and applicable to a wide variety of basket types. The device should be affordable for the average family."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["dinar_park_shah_2015"]
+tags = ["basketball", "sports", "training", "ideation"]
+status = "complete"
+variant_ids = ["variant_shot_buddy_basketball_return"]
+
+[[prompts]]
+prompt_id = "prompt_autonomous_surveillance_vehicle"
+problem_id = "ideation_autonomous_surveillance_vehicle"
+family_id = "family_autonomous_surveillance_vehicle"
+canonical_brief = "Design an autonomous surveillance vehicle to automatically and periodically tour the perimeter of two structures, stopping as close as possible to the start point."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["dinar_park_shah_2015"]
+tags = ["autonomy", "robotics", "surveillance", "ideation"]
+status = "complete"
+variant_ids = ["variant_autonomous_surveillance_vehicle"]
+
+[[prompts]]
+prompt_id = "prompt_motorized_can_crusher"
+problem_id = "ideation_motorized_can_crusher"
+family_id = "family_motorized_can_crusher"
+canonical_brief = "Students must design a can crusher that is capable of reducing a standard aluminum beverage can to a height of 1 in. The crush force for the device must be produced by a lead screw driven by a 40W gear motor, and the can crusher is to be controlled by an Arduino micro-controller that monitors the ram's home and end-of-travel positions."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["sullivan_hardin_2015"]
+tags = ["recycling", "mechanisms", "manufacturing", "ideation"]
+status = "complete"
+variant_ids = ["variant_motorized_can_crusher"]
+
+[[prompts]]
+prompt_id = "prompt_burrito_making_device"
+problem_id = "ideation_burrito_making_device"
+family_id = "family_burrito_making_device"
+canonical_brief = "The Mechanical Engineering Department is hosting a tailgate party and has invited alumni. The department wishes to feed burritos to a party of 100 during the half time. The task for manually making the burritos for these many people is laborious. Thus the goal is to design a burrito making device for the department."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["joshi_summers_2014"]
+tags = ["food", "automation", "service", "ideation"]
+status = "complete"
+variant_ids = ["variant_burrito_making_device"]
+
+[[prompts]]
+prompt_id = "prompt_lego_block_scrapyard_collection"
+problem_id = "ideation_lego_block_scrapyard_collection"
+family_id = "family_lego_block_scrapyard_collection"
+canonical_brief = "Design a device that collects Lego blocks from a scrapyard and dumps it into a bin either through a ramp or a trap door. The device should fit in an 18 x 18 x 18 envelope prior to the starting position. Human contact with the device is not allowed once it begins operation. Two minutes are given to set up the device at the start line and 3 minutes to do the job. The number of objects one can put in the bin determines the score."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["dinar_shah_2014"]
+tags = ["competition", "lego", "collection", "ideation"]
+status = "complete"
+variant_ids = ["variant_lego_block_scrapyard_collection"]
+
+[[prompts]]
+prompt_id = "prompt_stroke_patient_door_opening"
+problem_id = "ideation_stroke_patient_door_opening"
+family_id = "family_stroke_patient_door_opening"
+canonical_brief = "Your design team has been hired by the Metropolitan Rehabilitation Institute, the leading rehabilitation hospital in the country, to design a new device to help stroke patients open doors. Many individuals who have had a stroke are unable to perform bilateral tasks, meaning they have limited or no use of one upper extremity. It is particularly difficult for these people not only to unlock and turn the knob but also to push or pull the door open. Your design team has been asked to create a system that allows a person to unlock and open the door at the same time with one hand."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["williams_lee_gero_paretti_2013"]
+tags = ["accessibility", "door", "one-handed", "ideation"]
+status = "complete"
+variant_ids = ["variant_stroke_patient_door_opening"]
+
+[[prompts]]
+prompt_id = "prompt_stroke_patient_door_opening_portable"
+problem_id = "ideation_stroke_patient_door_opening_portable"
+family_id = "family_stroke_patient_door_opening"
+canonical_brief = "Your design team has been hired by the Metropolitan Rehabilitation Institute, the leading rehabilitation hospital in the country, to design a new portable device to help stroke patients open doors. Many individuals who have had a stroke are unable to perform bilateral tasks, meaning they have limited or no use of one upper extremity. It is particularly difficult for these people not only to unlock and turn the knob but also to push or pull the door open. Your design team has been asked to create a system that allows a person to unlock and open the door at the same time with one hand."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["williams_lee_gero_paretti_2013"]
+tags = ["accessibility", "door", "one-handed", "portable", "ideation"]
+status = "complete"
+variant_ids = ["variant_stroke_patient_door_opening_portable"]
+
+[[prompts]]
+prompt_id = "prompt_cardboard_tower_structure"
+problem_id = "ideation_cardboard_tower_structure"
+family_id = "family_cardboard_tower_structure"
+canonical_brief = "Build a cardboard structure that is as tall as possible using only one A4-sized sheet of corrugated cardboard. The tower must be free-standing and cannot lean against another object or latch onto the table."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["neeley_lim_zhu_yang_2013"]
+tags = ["structure", "cardboard", "challenge", "ideation"]
+status = "complete"
+variant_ids = ["variant_cardboard_tower_structure"]
+
+[[prompts]]
+prompt_id = "prompt_object_deposition_quarter_target"
+problem_id = "ideation_object_deposition_quarter_target"
+family_id = "family_object_deposition_quarter_target"
+canonical_brief = "Move an object (a quarter) to a target without using human energy during release. The target is an X on the floor. The device must start behind a line and then somehow move the object to the target."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["camburn_dunlap_kuhr_viswanathan_linsey_jensen_crawford_otto_wood_2013"]
+tags = ["mechanisms", "competition", "deposition", "ideation"]
+status = "complete"
+variant_ids = ["variant_object_deposition_quarter_target"]
 
 [[variants]]
 variant_id = "variant_travel_exercise_device"
@@ -2794,6 +3658,358 @@ statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["henderson_booth_jablokow_sonalkar_2020"]
 notes = "Verbatim Lifting Water Design Challenge (LWDC) description for Best Fit and Dark Horse team concepts."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_bicycle_safety_lock"
+prompt_id = "prompt_bicycle_safety_lock"
+problem_id = "ideation_bicycle_safety_lock"
+label = "Elena and Summers (2019) design problem table"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["elena_summers_2019"]
+notes = "Verbatim bicycle safety lock prompt printed in Table 3 of the requirement-generation study."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_next_generation_garbage_picker"
+prompt_id = "prompt_next_generation_garbage_picker"
+problem_id = "ideation_next_generation_garbage_picker"
+label = "Deo et al. (2019) design challenge"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["deo_holtta_otto_bhalerao_malge_2019"]
+notes = "Verbatim next-generation garbage-picker challenge statement; the paper notes that no design requirements were imposed."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_solarized_energy_plus_home_texas"
+prompt_id = "prompt_solarized_energy_plus_home_texas"
+problem_id = "ideation_solarized_energy_plus_home_texas"
+label = "Rahman, Xie, and Sha (2019) case-study task"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["rahman_xie_sha_2019"]
+notes = "Verbatim house-design task and requirement table used for sequential-decision modeling in Energy3D."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_hands_free_smartphone_viewing"
+prompt_id = "prompt_hands_free_smartphone_viewing"
+problem_id = "ideation_hands_free_smartphone_viewing"
+label = "Prabhu et al. (2019) simple task"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["prabhu_miller_simpson_meisel_2019"]
+notes = "Verbatim simple additive-manufacturing task printed in the DfAM classroom experiment."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_3d_printable_wind_turbine_tower"
+prompt_id = "prompt_3d_printable_wind_turbine_tower"
+problem_id = "ideation_3d_printable_wind_turbine_tower"
+label = "Prabhu et al. (2019) complex task"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["prabhu_miller_simpson_meisel_2019"]
+notes = "Verbatim complex additive-manufacturing task with four printed constraints from the DfAM classroom experiment."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_guidewire_safety"
+prompt_id = "prompt_guidewire_safety"
+problem_id = "ideation_guidewire_safety"
+label = "Raviselvam, Subburaj, and Wood (2019) project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+notes = "One-line project brief recovered from the selected medical-device projects table with OCR-assisted layout review."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_biopsy_needle_stabilizer"
+prompt_id = "prompt_biopsy_needle_stabilizer"
+problem_id = "ideation_biopsy_needle_stabilizer"
+label = "Raviselvam, Subburaj, and Wood (2019) project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+notes = "One-line project brief recovered from the selected medical-device projects table with OCR-assisted layout review."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_shoulder_dislocation_reduction_aid"
+prompt_id = "prompt_shoulder_dislocation_reduction_aid"
+problem_id = "ideation_shoulder_dislocation_reduction_aid"
+label = "Raviselvam, Subburaj, and Wood (2019) project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+notes = "One-line project brief recovered from the selected medical-device projects table with OCR-assisted layout review."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_guidewire_threading_assist"
+prompt_id = "prompt_guidewire_threading_assist"
+problem_id = "ideation_guidewire_threading_assist"
+label = "Raviselvam, Subburaj, and Wood (2019) project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+notes = "One-line project brief recovered from the selected medical-device projects table with OCR-assisted layout review."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_neonatal_health_monitor"
+prompt_id = "prompt_neonatal_health_monitor"
+problem_id = "ideation_neonatal_health_monitor"
+label = "Raviselvam, Subburaj, and Wood (2019) project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+notes = "One-line project brief recovered from the selected medical-device projects table with OCR-assisted layout review."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_hospital_blood_pressure_measurement"
+prompt_id = "prompt_hospital_blood_pressure_measurement"
+problem_id = "ideation_hospital_blood_pressure_measurement"
+label = "Raviselvam, Subburaj, and Wood (2019) project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_subburaj_wood_2019"]
+notes = "One-line project brief recovered from the selected medical-device projects table with OCR-assisted layout review."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_orange_juice_extraction_device"
+prompt_id = "prompt_orange_juice_extraction_device"
+problem_id = "ideation_orange_juice_extraction_device"
+label = "Kang Kai Siang et al. (2018) baseline brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kang_kai_siang_chia_koronis_silva_2018"]
+notes = "Verbatim baseline prompt used across all 16 classes in the orange-juicer design-brief experiment."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_orange_juice_extraction_device_quantified"
+prompt_id = "prompt_orange_juice_extraction_device_quantified"
+problem_id = "ideation_orange_juice_extraction_device_quantified"
+label = "Kang Kai Siang et al. (2018) quantitative brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kang_kai_siang_chia_koronis_silva_2018"]
+notes = "Verbatim quantitative-requirements brief with explicit cost, manufacturability, washability, footprint, and no-blender constraints."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_medication_syringe_redesign"
+prompt_id = "prompt_medication_syringe_redesign"
+problem_id = "ideation_medication_syringe_redesign"
+label = "Raviselvam et al. (2018) needs-generation task"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["raviselvam_anderson_holtta_otto_wood_2018"]
+notes = "Verbatim medication-syringe needs-and-opportunities task used before the empathic-tool treatment."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_hearing_impaired_alarm_clock"
+prompt_id = "prompt_hearing_impaired_alarm_clock"
+problem_id = "ideation_hearing_impaired_alarm_clock"
+label = "Shealy, Hu, and Gero (2018) second design task"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["shealy_hu_gero_2018"]
+notes = "Verbatim short design task from the neurocognition study that paired brainstorming, morphological analysis, and TRIZ with three prompts."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_personal_alarm_clock"
+prompt_id = "prompt_personal_alarm_clock"
+problem_id = "ideation_personal_alarm_clock"
+label = "Levy et al. (2017) rewritten appendix brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["levy_hilton_tomko_linsey_2017"]
+notes = "Verbatim rewritten appendix brief from the problem-similarity study."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_coconut_harvesting_assist"
+prompt_id = "prompt_coconut_harvesting_assist"
+problem_id = "ideation_coconut_harvesting_assist"
+label = "Levy et al. (2017) rewritten appendix brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["levy_hilton_tomko_linsey_2017"]
+notes = "Verbatim rewritten appendix brief from the problem-similarity study."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_marshmallow_support_tower"
+prompt_id = "prompt_marshmallow_support_tower"
+problem_id = "ideation_marshmallow_support_tower"
+label = "Barclift et al. (2017) DFAM challenge"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["barclift_simpson_nusiner_miller_2017"]
+notes = "Verbatim tower challenge plus printed MakerBot build constraints from the DFAM creativity study."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_office_sit_stand_table"
+prompt_id = "prompt_office_sit_stand_table"
+problem_id = "ideation_office_sit_stand_table"
+label = "Kumar and Mocko (2016) reprinted example brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kumar_mocko_2016"]
+notes = "Verbatim office-table brief reprinted in Table 1 as an example problem used in design-research experiments."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_apartment_cooling_problem"
+prompt_id = "prompt_apartment_cooling_problem"
+problem_id = "ideation_apartment_cooling_problem"
+label = "Johnson et al. (2016) PST prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["johnson_cheeley_caldwell_green_2016"]
+notes = "Verbatim fan/apartment problem-solving-task prompt printed as Figure 1 in the novelty-metrics paper."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_next_generation_public_transportation"
+prompt_id = "prompt_next_generation_public_transportation"
+problem_id = "ideation_next_generation_public_transportation"
+label = "Lim et al. (2016) massive-group ideation prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["lim_camburn_huang_moreno_wood_2016"]
+notes = "Verbatim prompt quoted in the experimental approach section of the massive-group ideation study."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_pittsadelphia_freight_shipping_system"
+prompt_id = "prompt_pittsadelphia_freight_shipping_system"
+problem_id = "ideation_pittsadelphia_freight_shipping_system"
+label = "Zheng and Miller (2016) class project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["zheng_miller_2016"]
+notes = "Verbatim first-year class project brief; the paper also notes that students were given example directions such as cleaner locomotives or alternate freight modes."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_goofy_gopher_golf_ball_collection"
+prompt_id = "prompt_goofy_gopher_golf_ball_collection"
+problem_id = "ideation_goofy_gopher_golf_ball_collection"
+label = "Dinar et al. (2015) Goofy Gopher brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["dinar_park_shah_2015"]
+notes = "Verbatim competitive golf-ball collection prompt from the first course design problem."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_shot_buddy_basketball_return"
+prompt_id = "prompt_shot_buddy_basketball_return"
+problem_id = "ideation_shot_buddy_basketball_return"
+label = "Dinar et al. (2015) shot buddy brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["dinar_park_shah_2015"]
+notes = "Verbatim basketball-return device brief from the second course design problem."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_autonomous_surveillance_vehicle"
+prompt_id = "prompt_autonomous_surveillance_vehicle"
+problem_id = "ideation_autonomous_surveillance_vehicle"
+label = "Dinar et al. (2015) surveillance vehicle brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["dinar_park_shah_2015"]
+notes = "Verbatim autonomous perimeter-tour vehicle brief from the third course design problem."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_motorized_can_crusher"
+prompt_id = "prompt_motorized_can_crusher"
+problem_id = "ideation_motorized_can_crusher"
+label = "Sullivan and Hardin (2015) senior project brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["sullivan_hardin_2015"]
+notes = "Verbatim can-crusher project requirements plus the lead-screw motorization and Arduino control constraints."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_burrito_making_device"
+prompt_id = "prompt_burrito_making_device"
+problem_id = "ideation_burrito_making_device"
+label = "Worinkeng and Summers (2014) burrito brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["joshi_summers_2014"]
+notes = "Verbatim burrito-making device brief used across the requirement-type experiment."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_lego_block_scrapyard_collection"
+prompt_id = "prompt_lego_block_scrapyard_collection"
+problem_id = "ideation_lego_block_scrapyard_collection"
+label = "Dinar and Shah (2014) Lego challenge brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["dinar_shah_2014"]
+notes = "Verbatim Lego-block collection-and-dumping challenge plus the envelope, setup, and scoring constraints."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_stroke_patient_door_opening"
+prompt_id = "prompt_stroke_patient_door_opening"
+problem_id = "ideation_stroke_patient_door_opening"
+label = "Williams et al. (2013) base door-opening brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["williams_lee_gero_paretti_2013"]
+notes = "Verbatim control-group prompt for the stroke-patient door-opening study."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_stroke_patient_door_opening_portable"
+prompt_id = "prompt_stroke_patient_door_opening_portable"
+problem_id = "ideation_stroke_patient_door_opening_portable"
+label = "Williams et al. (2013) portable variant"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["williams_lee_gero_paretti_2013"]
+notes = "Verbatim experimental-group prompt with the added portability requirement."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_cardboard_tower_structure"
+prompt_id = "prompt_cardboard_tower_structure"
+problem_id = "ideation_cardboard_tower_structure"
+label = "Neeley et al. (2013) cardboard tower brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["neeley_lim_zhu_yang_2013"]
+notes = "Verbatim one-sheet cardboard tower challenge with the free-standing constraint."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_object_deposition_quarter_target"
+prompt_id = "prompt_object_deposition_quarter_target"
+problem_id = "ideation_object_deposition_quarter_target"
+label = "Camburn et al. (2013) deposition challenge"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["camburn_dunlap_kuhr_viswanathan_linsey_jensen_crawford_otto_wood_2013"]
+notes = "Verbatim quarter-to-target deposition brief from the prototyping-strategies experiment."
 status = "complete"
 
 [[studies]]

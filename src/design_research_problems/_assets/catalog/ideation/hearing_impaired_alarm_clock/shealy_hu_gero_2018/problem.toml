@@ -1,0 +1,34 @@
+problem_id = "ideation_hearing_impaired_alarm_clock"
+title = "Alarm Clock for the Hearing Impaired"
+summary = "A short accessibility-focused concept-generation task for an alarm clock usable by people with hearing impairments."
+kind = "text"
+statement = '''
+# Alarm Clock for the Hearing Impaired
+
+Design an alarm clock for the hearing impaired.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "accessibility", "alarm", "consumer"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 15
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "shealy_hu_gero_2018"
+kind = "inline"
+authors = ["Tripp Shealy", "Mo Hu", "John Gero"]
+title = "Patterns of Cortical Activation When Using Concept Generation Techniques of Brainstorming, Morphological Analysis, and TRIZ"
+year = 2018
+venue = "ASME IDETC/CIE 2018, DETC2018-86272"
+formatted_text = "Shealy, Hu, and Gero (2018). Patterns of Cortical Activation When Using Concept Generation Techniques of Brainstorming, Morphological Analysis, and TRIZ. ASME IDETC/CIE 2018, DETC2018-86272."
+raw_text = "Shealy, Tripp, Mo Hu, and John Gero (2018). Patterns of Cortical Activation When Using Concept Generation Techniques of Brainstorming, Morphological Analysis, and TRIZ. ASME IDETC/CIE 2018, DETC2018-86272."
+provisional = true

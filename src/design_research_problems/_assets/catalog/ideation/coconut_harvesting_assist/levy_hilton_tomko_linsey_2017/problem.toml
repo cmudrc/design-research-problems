@@ -1,0 +1,52 @@
+problem_id = "ideation_coconut_harvesting_assist"
+title = "Coconut Harvesting Assist"
+summary = "An agricultural design brief about making coconut harvesting safer, faster, and low cost without grid power."
+kind = "text"
+statement = '''
+# Coconut Harvesting Assist
+
+In certain places like the Philippines, Indonesia, and India,
+coconut harvesting is a major practice. The current process
+requires a skilled person to climb the tree and cut down the
+coconuts. The average height of a coconut tree is 35-40 feet
+and though there are grooves along the tree that make it easier
+to climb, the tree surface becomes very slippery during the
+rainy seasons. The current process may take as long as 12 hours
+for large farms that average 150 trees. The goal of this problem
+is to design a low-cost product to improve the coconut
+harvesting process so that it is safer and can be done more
+quickly.
+
+Customer Needs:
+
+- Must remove coconut with little damage to fruit and tree
+- Must be safer to operate than current method
+- Must harvest coconuts quicker than current method
+- Electrical outlets are not available as a power source
+- Low cost
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "agriculture", "harvesting", "safety"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 48
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "levy_hilton_tomko_linsey_2017"
+kind = "inline"
+authors = ["Bryan Levy", "Ethan Hilton", "Megan Tomko", "Julie Linsey"]
+title = "Investigating Problem Similarity Through Study of Between-Subject and Within-Subject Experiments"
+year = 2017
+venue = "ASME IDETC/CIE 2017, DETC2017-68428"
+formatted_text = "Levy, Hilton, Tomko, and Linsey (2017). Investigating Problem Similarity Through Study of Between-Subject and Within-Subject Experiments. ASME IDETC/CIE 2017, DETC2017-68428."
+raw_text = "Levy, Bryan, Ethan Hilton, Megan Tomko, and Julie Linsey (2017). Investigating Problem Similarity Through Study of Between-Subject and Within-Subject Experiments. ASME IDETC/CIE 2017, DETC2017-68428."
+provisional = true
