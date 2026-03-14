@@ -1,0 +1,34 @@
+problem_id = "ideation_household_waste_disposal_unit"
+title = "Multi-compartment Disposal Unit for Household Waste"
+summary = "A design-challenge prompt about creating a multi-compartment disposal unit for household waste."
+kind = "text"
+statement = '''
+# Multi-compartment Disposal Unit for Household Waste
+
+Design a multi-compartment disposal unit for household waste.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "household", "waste", "consumer"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "kwon_huang_goucher_lambert_2021"
+kind = "inline"
+authors = ["Elisa Kwon", "Forrest Huang", "Kosa Goucher-Lambert"]
+title = "Multi-Modal Search for Inspirational Examples in Design"
+year = 2021
+venue = "ASME IDETC/CIE 2021, DETC2021-71825"
+formatted_text = "Kwon, Huang, and Goucher-Lambert (2021). Multi-Modal Search for Inspirational Examples in Design. ASME IDETC/CIE 2021, DETC2021-71825."
+raw_text = "Kwon, Elisa, Forrest Huang, and Kosa Goucher-Lambert (2021). Multi-Modal Search for Inspirational Examples in Design. ASME IDETC/CIE 2021, DETC2021-71825."
+provisional = true

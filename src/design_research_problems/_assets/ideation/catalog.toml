@@ -650,6 +650,39 @@ formatted_text = "Tan, Foong, and Holtta-Otto (2022). Aerial Robot Design Princi
 raw_text = "Tan, Chee How, Shaohui Foong, and Katja Holtta-Otto (2022). Aerial Robot Design Principles in Creative Idea Generation and Evolution. ASME IDETC/CIE 2022, DETC2022-90024."
 provisional = true
 
+[[citations]]
+key = "arabian_shu_2021"
+kind = "inline"
+authors = ["K Arabian", "L H Shu"]
+title = "Sustainable Creativity: Overcoming the Challenge of Scale When Repurposing Wind-Turbine Blades"
+year = 2021
+venue = "ASME IDETC/CIE 2021, DETC2021-70668"
+formatted_text = "Arabian and Shu (2021). Sustainable Creativity: Overcoming the Challenge of Scale When Repurposing Wind-Turbine Blades. ASME IDETC/CIE 2021, DETC2021-70668."
+raw_text = "Arabian, K., and L. H. Shu (2021). Sustainable Creativity: Overcoming the Challenge of Scale When Repurposing Wind-Turbine Blades. ASME IDETC/CIE 2021, DETC2021-70668."
+provisional = true
+
+[[citations]]
+key = "patel_summers_karmakar_2021"
+kind = "inline"
+authors = ["Akash Patel", "Joshua D. Summers", "Sourabh Karmakar"]
+title = "Influence of Different Representation of Requirements on Idea Generation: An Experimental Study"
+year = 2021
+venue = "ASME IDETC/CIE 2021, DETC2021-70805"
+formatted_text = "Patel, Summers, and Karmakar (2021). Influence of Different Representation of Requirements on Idea Generation: An Experimental Study. ASME IDETC/CIE 2021, DETC2021-70805."
+raw_text = "Patel, Akash, Joshua D. Summers, and Sourabh Karmakar (2021). Influence of Different Representation of Requirements on Idea Generation: An Experimental Study. ASME IDETC/CIE 2021, DETC2021-70805."
+provisional = true
+
+[[citations]]
+key = "kwon_huang_goucher_lambert_2021"
+kind = "inline"
+authors = ["Elisa Kwon", "Forrest Huang", "Kosa Goucher-Lambert"]
+title = "Multi-Modal Search for Inspirational Examples in Design"
+year = 2021
+venue = "ASME IDETC/CIE 2021, DETC2021-71825"
+formatted_text = "Kwon, Huang, and Goucher-Lambert (2021). Multi-Modal Search for Inspirational Examples in Design. ASME IDETC/CIE 2021, DETC2021-71825."
+raw_text = "Kwon, Elisa, Forrest Huang, and Kosa Goucher-Lambert (2021). Multi-Modal Search for Inspirational Examples in Design. ASME IDETC/CIE 2021, DETC2021-71825."
+provisional = true
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -838,7 +871,16 @@ external_aliases = []
 derived_from_family_id = "family_book_picking"
 canonical_prompt_ids = ["prompt_wheelchair_peach_picking"]
 tags = ["agriculture", "assistive"]
-notes = "Derived prompt family linked to book-picking in the secondary synthesis."
+notes = "Derived prompt family linked to book-picking in the secondary synthesis; Patel, Summers, and Karmakar (2021) later reprints a fuller participant-facing version."
+
+[[families]]
+family_id = "family_wheelchair_dorm_room_work_desk"
+name = "Wheelchair Dorm Room Work Desk"
+group = "accessibility-assistive"
+external_aliases = []
+canonical_prompt_ids = ["prompt_wheelchair_dorm_room_work_desk"]
+tags = ["accessibility", "furniture", "space-saving"]
+notes = "Patel, Summers, and Karmakar (2021) prints this dorm-room desk brief in a study on requirement representation."
 
 [[families]]
 family_id = "family_campus_mobility"
@@ -902,6 +944,24 @@ external_aliases = []
 canonical_prompt_ids = ["prompt_home_energy_conservation"]
 tags = ["sustainability", "energy", "home"]
 notes = "Original training problem introduced by Goucher-Lambert and Cagan (2019)."
+
+[[families]]
+family_id = "family_wind_turbine_blade_repurposing"
+name = "Wind-turbine Blade Repurposing"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_wind_turbine_blade_repurposing"]
+tags = ["sustainability", "reuse", "wind-energy"]
+notes = "Arabian and Shu (2021) prints a reusable wind-turbine-blade repurposing activity packet focused on end-of-life reuse."
+
+[[families]]
+family_id = "family_household_waste_disposal_unit"
+name = "Household Waste Disposal Unit"
+group = "sustainability-waste"
+external_aliases = []
+canonical_prompt_ids = ["prompt_household_waste_disposal_unit"]
+tags = ["household", "waste", "consumer"]
+notes = "Kwon, Huang, and Goucher-Lambert (2021) states this household-waste design challenge in the multi-modal example-search study."
 
 [[families]]
 family_id = "family_dark_hour_safety"
@@ -1401,12 +1461,26 @@ variant_ids = ["variant_injured_athlete_campus_mobility"]
 prompt_id = "prompt_wheelchair_peach_picking"
 problem_id = "ideation_wheelchair_peach_picking"
 family_id = "family_peach_picking"
-canonical_brief = "Design a manual device that lets a wheelchair user pick peaches and collect them in a basket without damaging or dropping fruit."
-evidence_tier = "primary_reconstructed"
-source_citation_keys = ["joshi_summers_2014"]
+canonical_brief = "Emma is a 19-year-old mechanical engineering student at Clemson. She suffered a car accident couple of years back which left her in a wheelchair. Before the accident Emma loved the outdoors and picking fruits with her family. During the next summer break, she and her family have decided to go picking peaches. Since she is in a wheelchair, she has a limited range of reach, especially for height. Due to this limitation, she cannot experience the pleasure of picking peaches with her family. The family has asked Clemson University to help design a device that will allow Emma, who is in a wheelchair, to experience the joy of picking peaches from the tree with her whole family. The device should be manually operated, attached to the wheelchair, not damage the fruit or let it fall on the ground while picking, and cost no more than 100 dollars."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["joshi_summers_2014", "patel_summers_karmakar_2021"]
 tags = ["agriculture", "assistive", "requirements", "asme"]
-status = "needs_primary_fill"
-variant_ids = ["variant_wheelchair_peach_picking"]
+status = "complete"
+variant_ids = [
+  "variant_wheelchair_peach_picking",
+  "variant_wheelchair_peach_picking_patel_summers_karmakar_2021",
+]
+
+[[prompts]]
+prompt_id = "prompt_wheelchair_dorm_room_work_desk"
+problem_id = "ideation_wheelchair_dorm_room_work_desk"
+family_id = "family_wheelchair_dorm_room_work_desk"
+canonical_brief = "Emily is a freshman at Clemson University. She suffered an accident at age 10 which left her in a wheelchair. Because she will live in a dorm room on campus, she has asked Clemson University to design a desk that will be able to alternate position and save space in the room. The desk should have 2 states, desk state and non-desk state; be manually operated; take less than 10 seconds to go from state A to state B; include a storage system for commonly used office supplies; and cost less than 100 dollars."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["patel_summers_karmakar_2021"]
+tags = ["accessibility", "furniture", "requirements", "asme"]
+status = "complete"
+variant_ids = ["variant_wheelchair_dorm_room_work_desk"]
 
 [[prompts]]
 prompt_id = "prompt_one_handed_lidded_container_opening"
@@ -1596,6 +1670,28 @@ source_citation_keys = ["wojciechowski_olagoke_ng_wacnik_kramer_2025"]
 tags = ["cleaning", "safety", "ideation"]
 status = "complete"
 variant_ids = ["variant_entryway_track_removal"]
+
+[[prompts]]
+prompt_id = "prompt_wind_turbine_blade_repurposing"
+problem_id = "ideation_wind_turbine_blade_repurposing"
+family_id = "family_wind_turbine_blade_repurposing"
+canonical_brief = "In this next task you will be asked to generate many alternate uses for different wind-turbine blade sections. According to the Global Wind Energy Council, as of the end of 2019 there are over 650,000 wind turbine installations globally. As wind turbines age and retire, their disposal must be considered. Wind turbine blades are made of materials such as glass-fiber reinforced polyester to increase lightweightness, stability, and corrosion-resistance. Such composites are often challenging to recycle; therefore, we must find alternatives to disposal. However, this is also an opportunity to repurpose the used wind-turbine blades for other creative uses. Please do NOT reuse such parts in wind-turbine, airplane or similar applications that risk safety. You should maximize the amount of material reused for each part, which is made of fiber-reinforced composites and not meltable. You will have 10 minutes each to generate alternate uses for a total of two wind-turbine blade sections."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["arabian_shu_2021"]
+tags = ["sustainability", "reuse", "ideation"]
+status = "complete"
+variant_ids = ["variant_wind_turbine_blade_repurposing"]
+
+[[prompts]]
+prompt_id = "prompt_household_waste_disposal_unit"
+problem_id = "ideation_household_waste_disposal_unit"
+family_id = "family_household_waste_disposal_unit"
+canonical_brief = "Design a multi-compartment disposal unit for household waste."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kwon_huang_goucher_lambert_2021"]
+tags = ["household", "waste", "ideation"]
+status = "complete"
+variant_ids = ["variant_household_waste_disposal_unit"]
 
 [[prompts]]
 prompt_id = "prompt_forest_fire_detection"
@@ -2102,6 +2198,50 @@ evidence_tier = "primary_reconstructed"
 source_citation_keys = ["joshi_summers_2014"]
 notes = "Reconstructed from the accessible study description; verify full primary wording before publication."
 status = "needs_primary_fill"
+
+[[variants]]
+variant_id = "variant_wheelchair_peach_picking_patel_summers_karmakar_2021"
+prompt_id = "prompt_wheelchair_peach_picking"
+problem_id = "ideation_wheelchair_peach_picking"
+label = "Patel, Summers, and Karmakar (2021) problem statement"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["patel_summers_karmakar_2021"]
+notes = "Verbatim peach-picking problem statement reprinted in the requirements-representation experiment."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_wheelchair_dorm_room_work_desk"
+prompt_id = "prompt_wheelchair_dorm_room_work_desk"
+problem_id = "ideation_wheelchair_dorm_room_work_desk"
+label = "Patel, Summers, and Karmakar (2021) problem statement"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["patel_summers_karmakar_2021"]
+notes = "Verbatim dorm-room desk problem statement used in the requirements-representation experiment."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_wind_turbine_blade_repurposing"
+prompt_id = "prompt_wind_turbine_blade_repurposing"
+problem_id = "ideation_wind_turbine_blade_repurposing"
+label = "Arabian and Shu (2021) appendix instructions"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["arabian_shu_2021"]
+notes = "Verbatim wind-turbine-blade repurposing activity instructions; the printed packet pairs this text with to-scale blade-section images."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_household_waste_disposal_unit"
+prompt_id = "prompt_household_waste_disposal_unit"
+problem_id = "ideation_household_waste_disposal_unit"
+label = "Kwon, Huang, and Goucher-Lambert (2021) design challenge"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kwon_huang_goucher_lambert_2021"]
+notes = "Verbatim household-waste design challenge used in the multi-modal inspirational-example search study."
+status = "complete"
 
 [[variants]]
 variant_id = "variant_one_handed_lidded_container_opening"

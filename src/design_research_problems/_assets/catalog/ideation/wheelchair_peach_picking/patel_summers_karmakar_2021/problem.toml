@@ -1,0 +1,67 @@
+problem_id = "ideation_wheelchair_peach_picking"
+title = "Wheelchair Peach Picking"
+summary = "A participant-facing ASME ideation brief about helping a wheelchair user pick peaches with family while avoiding fruit damage."
+kind = "text"
+statement = '''
+# Wheelchair Peach Picking
+
+Emma is a 19-year-old mechanical engineering student at Clemson. She
+suffered a car accident couple of years back which left her in a
+wheelchair. Before the accident Emma loved the outdoors and picking
+fruits with her family. During the next summer break, she and her
+family have decided to go picking peaches. Since she is in a
+wheelchair, she has a limited range of reach, especially for height. Due
+to this limitation, she cannot experience the pleasure of picking
+peaches with her family. For her 20th birthday her family has decided
+to surprise her with a device that will help her pick peaches while in a
+wheelchair.
+
+The family has asked Clemson University to help design a device that
+will allow Emma, who is in a wheelchair, to experience the joy of
+picking peaches from the tree with her whole family.
+
+The family would like the device to:
+
+- be manually operated
+- be attached to the wheelchair
+- not damage the fruit
+- keep the fruit from falling on the ground while picking
+- cost no more than 100 dollars
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly", "requirements-study-ready"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "assistive-design"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "accessibility", "agriculture", "asme"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "requirement-coverage"
+
+[[citations]]
+key = "joshi_summers_2014"
+kind = "inline"
+authors = ["Shraddha Joshi", "Joshua D. Summers"]
+title = "Impact of Requirements Elicitation Activity on Idea Generation: A Designer Study"
+year = 2014
+venue = "ASME IDETC/CIE, DETC2014-35022"
+doi = "10.1115/DETC2014-35022"
+url = "https://doi.org/10.1115/DETC2014-35022"
+formatted_text = "Joshi and Summers (2014). Impact of Requirements Elicitation Activity on Idea Generation: A Designer Study."
+raw_text = "Joshi and Summers (2014). Impact of Requirements Elicitation Activity on Idea Generation: A Designer Study. ASME IDETC/CIE. DOI: 10.1115/DETC2014-35022."
+
+[[citations]]
+key = "patel_summers_karmakar_2021"
+kind = "inline"
+authors = ["Akash Patel", "Joshua D. Summers", "Sourabh Karmakar"]
+title = "Influence of Different Representation of Requirements on Idea Generation: An Experimental Study"
+year = 2021
+venue = "ASME IDETC/CIE 2021, DETC2021-70805"
+formatted_text = "Patel, Summers, and Karmakar (2021). Influence of Different Representation of Requirements on Idea Generation: An Experimental Study. ASME IDETC/CIE 2021, DETC2021-70805."
+raw_text = "Patel, Akash, Joshua D. Summers, and Sourabh Karmakar (2021). Influence of Different Representation of Requirements on Idea Generation: An Experimental Study. ASME IDETC/CIE 2021, DETC2021-70805."
+provisional = true
