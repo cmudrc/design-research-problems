@@ -1,0 +1,50 @@
+problem_id = "ideation_architects_office_layout"
+title = "Architect's Office Layout"
+summary = "An architectural layout brief about allocating a complete office program within a constrained skyscraper floor plan."
+kind = "text"
+statement = '''
+# Architect's Office Layout
+
+Allocate the required spaces for an architect's office within a
+given one-level rectangular floor plan in a skyscraper,
+prioritising circulation.
+
+Required spaces:
+
+- head office and private secretary space
+- waiting area with small exhibition
+- two meeting rooms
+- 3-4 management offices
+- two telecommunication offices
+- three consultant spaces
+- five design-team spaces
+- two IT offices
+- two technical studies units
+- one construction expertise unit
+- two service areas with kitchenette
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "design-exploration"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "architecture", "layout", "office"]
+deliverable_type = "layouts"
+timebox_hint_minutes = 15
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "al_sayed_2012"
+kind = "inline"
+authors = ["Kinda Al Sayed"]
+title = "On the Evolution of Thoughts, Shapes and Space in Architectural Design"
+year = 2012
+venue = "Design Computing and Cognition DCC'12"
+formatted_text = "Al Sayed (2012). On the Evolution of Thoughts, Shapes and Space in Architectural Design. Design Computing and Cognition DCC'12."
+raw_text = "Al Sayed, Kinda (2012). On the Evolution of Thoughts, Shapes and Space in Architectural Design. Design Computing and Cognition DCC'12."
+provisional = true

@@ -22,8 +22,8 @@ Evidence Tiers
 
 The current ideation corpus includes:
 
-- 111 prompt records with usable packaged text,
-- 113 source-specific or derivative variants,
-- 88 prompt families, all of which now point to at least one packaged prompt,
+- 122 prompt records with usable packaged text,
+- 124 source-specific or derivative variants,
+- 99 prompt families, all of which now point to at least one packaged prompt,
 - 6 study summaries, and
 - no stub-only family records.

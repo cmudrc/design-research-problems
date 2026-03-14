@@ -1,0 +1,43 @@
+problem_id = "ideation_portable_barbecue_design"
+title = "Portable Barbecue Design"
+summary = "A preliminary-design task about generating and selecting a portable barbecue concept."
+kind = "text"
+statement = '''
+# Portable Barbecue Design
+
+Conceptualize, design, and select a portable barbecue.
+
+The concept may incrementally or radically innovate an existing
+model and should address the needs to be:
+
+- easy to clean
+- resistant to rust
+- safe
+- easy to move and carry
+- capable of homogeneous heat distribution on the grilling surface
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly", "requirements-study-ready"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "barbecue", "portable", "consumer"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 90
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "bertoni_bertoni_johansson_2015"
+kind = "inline"
+authors = ["Alessandro Bertoni", "Marco Bertoni", "Christian Johansson"]
+title = "Analysing the Effects of Value Drivers and Knowledge Maturity in Preliminary Design Decision-Making"
+year = 2015
+venue = "Proceedings of the 20th International Conference on Engineering Design (ICED15)"
+formatted_text = "Bertoni, Bertoni, and Johansson (2015). Analysing the Effects of Value Drivers and Knowledge Maturity in Preliminary Design Decision-Making. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+raw_text = "Bertoni, Alessandro, Marco Bertoni, and Christian Johansson (2015). Analysing the Effects of Value Drivers and Knowledge Maturity in Preliminary Design Decision-Making. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+provisional = true

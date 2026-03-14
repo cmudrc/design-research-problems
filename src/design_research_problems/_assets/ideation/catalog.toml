@@ -1078,6 +1078,127 @@ formatted_text = "Prudhomme, Pourroy, Summers, and Boujut (2013). Enriching Requ
 raw_text = "Prudhomme, Guy, Franck Pourroy, Joshua David Summers, and Jean-Francois Boujut (2013). Enriching Requirement-Activities in Design Through French-US Instruction Comparison. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
 provisional = true
 
+[[citations]]
+key = "yilmaz_daly_seifert_gonzalez_2010"
+kind = "inline"
+authors = ["Seda Yilmaz", "Shanna R. Daly", "Colleen M. Seifert", "Richard Gonzalez"]
+title = "A Comparison of Cognitive Heuristics Use between Engineers and Industrial Designers"
+year = 2010
+venue = "Design Computing and Cognition DCC'10"
+formatted_text = "Yilmaz, Daly, Seifert, and Gonzalez (2010). A Comparison of Cognitive Heuristics Use between Engineers and Industrial Designers. Design Computing and Cognition DCC'10."
+raw_text = "Yilmaz, Seda, Shanna R. Daly, Colleen M. Seifert, and Richard Gonzalez (2010). A Comparison of Cognitive Heuristics Use between Engineers and Industrial Designers. Design Computing and Cognition DCC'10."
+provisional = true
+
+[[citations]]
+key = "toh_miller_kremer_2012"
+kind = "inline"
+authors = ["Christine Toh", "Scarlett Miller", "Gul Kremer"]
+title = "Mitigating Design Fixation Effects in Engineering Design Through Product Dissection Activities"
+year = 2012
+venue = "Design Computing and Cognition DCC'12"
+formatted_text = "Toh, Miller, and Kremer (2012). Mitigating Design Fixation Effects in Engineering Design Through Product Dissection Activities. Design Computing and Cognition DCC'12."
+raw_text = "Toh, Christine, Scarlett Miller, and Gul Kremer (2012). Mitigating Design Fixation Effects in Engineering Design Through Product Dissection Activities. Design Computing and Cognition DCC'12."
+provisional = true
+
+[[citations]]
+key = "al_sayed_2012"
+kind = "inline"
+authors = ["Kinda Al Sayed"]
+title = "On the Evolution of Thoughts, Shapes and Space in Architectural Design"
+year = 2012
+venue = "Design Computing and Cognition DCC'12"
+formatted_text = "Al Sayed (2012). On the Evolution of Thoughts, Shapes and Space in Architectural Design. Design Computing and Cognition DCC'12."
+raw_text = "Al Sayed, Kinda (2012). On the Evolution of Thoughts, Shapes and Space in Architectural Design. Design Computing and Cognition DCC'12."
+provisional = true
+
+[[citations]]
+key = "el_khouly_penn_2012"
+kind = "inline"
+authors = ["T. El-Khouly", "A. Penn"]
+title = "An Empirical Case Study on Architectural Design Process"
+year = 2012
+venue = "Design Computing and Cognition DCC'12"
+formatted_text = "El-Khouly and Penn (2012). An Empirical Case Study on Architectural Design Process. Design Computing and Cognition DCC'12."
+raw_text = "El-Khouly, T., and A. Penn (2012). An Empirical Case Study on Architectural Design Process. Design Computing and Cognition DCC'12."
+provisional = true
+
+[[citations]]
+key = "pauwels_strobbe_derboven_de_meyer_2014"
+kind = "inline"
+authors = ["Pieter Pauwels", "Tiemen Strobbe", "Jeroen Derboven", "Ronald De Meyer"]
+title = "Conversation and Critique Within the Architectural Design Process: A Linkograph Analysis"
+year = 2014
+venue = "Design Computing and Cognition DCC'14"
+formatted_text = "Pauwels, Strobbe, Derboven, and De Meyer (2014). Conversation and Critique Within the Architectural Design Process: A Linkograph Analysis. Design Computing and Cognition DCC'14."
+raw_text = "Pauwels, Pieter, Tiemen Strobbe, Jeroen Derboven, and Ronald De Meyer (2014). Conversation and Critique Within the Architectural Design Process: A Linkograph Analysis. Design Computing and Cognition DCC'14."
+provisional = true
+
+[[citations]]
+key = "kazakci_hatchuel_gillier_piat_2014"
+kind = "inline"
+authors = ["Akin O. Kazakci", "Thomas Gillier", "Gerald Piat", "Armand Hatchuel"]
+title = "Brainstorming vs. Creative Design Reasoning: A Theory-Driven Experimental Investigation of Novelty, Feasibility and Value of Ideas"
+year = 2014
+venue = "Design Computing and Cognition DCC'14"
+formatted_text = "Kazakci, Gillier, Piat, and Hatchuel (2014). Brainstorming vs. Creative Design Reasoning: A Theory-Driven Experimental Investigation of Novelty, Feasibility and Value of Ideas. Design Computing and Cognition DCC'14."
+raw_text = "Kazakci, Akin O., Thomas Gillier, Gerald Piat, and Armand Hatchuel (2014). Brainstorming vs. Creative Design Reasoning: A Theory-Driven Experimental Investigation of Novelty, Feasibility and Value of Ideas. Design Computing and Cognition DCC'14."
+provisional = true
+
+[[citations]]
+key = "goel_zhang_wiltgen_zhang_vattam_yen_2014"
+kind = "inline"
+authors = ["Ashok Goel", "Gongbo Zhang", "Bryan Wiltgen", "Yuqi Zhang", "Swaroop Vattam", "Jeannette Yen"]
+title = "The Design Study Library: Compiling, Analyzing and Using Biologically Inspired Design Case Studies"
+year = 2014
+venue = "Design Computing and Cognition DCC'14"
+formatted_text = "Goel, Zhang, Wiltgen, Zhang, Vattam, and Yen (2014). The Design Study Library: Compiling, Analyzing and Using Biologically Inspired Design Case Studies. Design Computing and Cognition DCC'14."
+raw_text = "Goel, Ashok, Gongbo Zhang, Bryan Wiltgen, Yuqi Zhang, Swaroop Vattam, and Jeannette Yen (2014). The Design Study Library: Compiling, Analyzing and Using Biologically Inspired Design Case Studies. Design Computing and Cognition DCC'14."
+provisional = true
+
+[[citations]]
+key = "dorta_beaudry_marchand_pierini_2018"
+kind = "inline"
+authors = ["Tomas Dorta", "Emmanuel Beaudry Marchand", "Davide Pierini"]
+title = "Externalizing Co-Design Cognition through Immersive Retrospection"
+year = 2018
+venue = "Design Computing and Cognition DCC'18"
+formatted_text = "Dorta, Beaudry Marchand, and Pierini (2018). Externalizing Co-Design Cognition through Immersive Retrospection. Design Computing and Cognition DCC'18."
+raw_text = "Dorta, Tomas, Emmanuel Beaudry Marchand, and Davide Pierini (2018). Externalizing Co-Design Cognition through Immersive Retrospection. Design Computing and Cognition DCC'18."
+provisional = true
+
+[[citations]]
+key = "neramballi_sakao_gero_2018"
+kind = "inline"
+authors = ["Abhijna Neramballi", "Tomohiko Sakao", "John S. Gero"]
+title = "What do experienced practitioners discuss when designing Product/Service Systems?"
+year = 2018
+venue = "Design Computing and Cognition DCC'18"
+formatted_text = "Neramballi, Sakao, and Gero (2018). What do experienced practitioners discuss when designing Product/Service Systems? Design Computing and Cognition DCC'18."
+raw_text = "Neramballi, Abhijna, Tomohiko Sakao, and John S. Gero (2018). What do experienced practitioners discuss when designing Product/Service Systems? Design Computing and Cognition DCC'18."
+provisional = true
+
+[[citations]]
+key = "leroy_tyl_vallet_cluzel_2015"
+kind = "inline"
+authors = ["Yann Leroy", "Benjamin Tyl", "Flore Vallet", "Francois Cluzel"]
+title = "Environmental Evaluation of Ideas in Early Phases: A Challenging Issue for Design Teams"
+year = 2015
+venue = "Proceedings of the 20th International Conference on Engineering Design (ICED15)"
+formatted_text = "Leroy, Tyl, Vallet, and Cluzel (2015). Environmental Evaluation of Ideas in Early Phases: A Challenging Issue for Design Teams. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+raw_text = "Leroy, Yann, Benjamin Tyl, Flore Vallet, and Francois Cluzel (2015). Environmental Evaluation of Ideas in Early Phases: A Challenging Issue for Design Teams. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+provisional = true
+
+[[citations]]
+key = "bertoni_bertoni_johansson_2015"
+kind = "inline"
+authors = ["Alessandro Bertoni", "Marco Bertoni", "Christian Johansson"]
+title = "Analysing the Effects of Value Drivers and Knowledge Maturity in Preliminary Design Decision-Making"
+year = 2015
+venue = "Proceedings of the 20th International Conference on Engineering Design (ICED15)"
+formatted_text = "Bertoni, Bertoni, and Johansson (2015). Analysing the Effects of Value Drivers and Knowledge Maturity in Preliminary Design Decision-Making. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+raw_text = "Bertoni, Alessandro, Marco Bertoni, and Christian Johansson (2015). Analysing the Effects of Value Drivers and Knowledge Maturity in Preliminary Design Decision-Making. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+provisional = true
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -1906,6 +2027,105 @@ external_aliases = []
 canonical_prompt_ids = ["prompt_workshop_plate_holder"]
 tags = ["workshop", "fixture", "plates"]
 notes = "Prudhomme, Pourroy, Summers, and Boujut (2013) uses this wood-plate holding problem to compare requirements instruction approaches."
+
+[[families]]
+family_id = "family_solar_powered_cooking_device"
+name = "Solar-Powered Cooking Device"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_solar_powered_cooking_device"]
+tags = ["solar", "cooking", "portable"]
+notes = "Yilmaz, Daly, Seifert, and Gonzalez (2010) uses this open-ended solar-cooking brief to compare heuristic use across engineering and industrial design."
+
+[[families]]
+family_id = "family_electric_toothbrush_portability_redesign"
+name = "Electric Toothbrush Portability Redesign"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_electric_toothbrush_portability_redesign"]
+tags = ["toothbrush", "portability", "redesign"]
+notes = "Toh, Miller, and Kremer (2012) assigns a team redesign of an electric toothbrush for increased portability."
+
+[[families]]
+family_id = "family_architects_office_layout"
+name = "Architect's Office Layout"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_architects_office_layout"]
+tags = ["architecture", "layout", "office"]
+notes = "Al Sayed (2012) studies architects allocating required spaces in a constrained office floor plan while prioritising circulation."
+
+[[families]]
+family_id = "family_expo_shanghai_pavilion"
+name = "Expo-Shanghai Pavilion"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_expo_shanghai_pavilion"]
+tags = ["architecture", "pavilion", "exhibition"]
+notes = "El-Khouly and Penn (2012) reports an open-ended pavilion brief set in Expo-Shanghai 2010."
+
+[[families]]
+family_id = "family_high_rise_cohousing_redevelopment"
+name = "High-Rise Cohousing Redevelopment"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_high_rise_cohousing_redevelopment"]
+tags = ["architecture", "housing", "cohousing"]
+notes = "Pauwels, Strobbe, Derboven, and De Meyer (2014) prints a constrained Antwerp high-rise redevelopment brief centered on cohousing."
+
+[[families]]
+family_id = "family_antarctica_immersive_museum"
+name = "Antarctica Immersive Museum"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_antarctica_immersive_museum"]
+tags = ["museum", "architecture", "mobility"]
+notes = "Kazakci, Gillier, Piat, and Hatchuel (2014) uses this breakthrough mobile museum brief in a design-reasoning experiment."
+
+[[families]]
+family_id = "family_solar_thermal_collector_heat_regulation"
+name = "Solar Thermal Collector Heat Regulation"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_solar_thermal_collector_heat_regulation"]
+tags = ["solar", "heat-regulation", "bio-inspired"]
+notes = "Goel, Zhang, Wiltgen, Zhang, Vattam, and Yen (2014) gives participants a bio-inspired task to address overheating in solar thermal collectors."
+
+[[families]]
+family_id = "family_campus_self_sufficient_eating_area"
+name = "Campus Self-Sufficient Eating Area"
+group = "other-ideation"
+external_aliases = []
+canonical_prompt_ids = ["prompt_campus_self_sufficient_eating_area"]
+tags = ["campus", "eating", "self-sufficient"]
+notes = "Dorta, Beaudry Marchand, and Pierini (2018) uses this ad-hoc campus eating-area brief in collaborative virtual sketching sessions."
+
+[[families]]
+family_id = "family_office_coffee_machine_pss_redesign"
+name = "Office Coffee Machine PSS Redesign"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_office_coffee_machine_pss_redesign"]
+tags = ["coffee", "pss", "resource-efficiency"]
+notes = "Neramballi, Sakao, and Gero (2018) prints a redesign brief for an office coffee-machine product/service offering."
+
+[[families]]
+family_id = "family_interactive_parking_meter_kiosk"
+name = "Interactive Parking Meter Kiosk"
+group = "transport-infrastructure"
+external_aliases = []
+canonical_prompt_ids = ["prompt_interactive_parking_meter_kiosk"]
+tags = ["parking", "kiosk", "urban-services"]
+notes = "Leroy, Tyl, Vallet, and Cluzel (2015) reproduces the public contest brief for turning a parking meter into an interactive kiosk."
+
+[[families]]
+family_id = "family_portable_barbecue_design"
+name = "Portable Barbecue Design"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_portable_barbecue_design"]
+tags = ["barbecue", "portable", "consumer"]
+notes = "Bertoni, Bertoni, and Johansson (2015) uses a portable-barbecue concept-selection task in a preliminary-design decision-making experiment."
 
 [[prompts]]
 prompt_id = "prompt_travel_exercise_device"
@@ -3143,6 +3363,127 @@ source_citation_keys = ["prudhomme_pourroy_summers_boujut_2013"]
 tags = ["workshop", "fixture", "design"]
 status = "complete"
 variant_ids = ["variant_workshop_plate_holder"]
+
+[[prompts]]
+prompt_id = "prompt_solar_powered_cooking_device"
+problem_id = "ideation_solar_powered_cooking_device"
+family_id = "family_solar_powered_cooking_device"
+canonical_brief = "Design a solar-powered cooking device that is inexpensive, portable, and suitable for family use."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["yilmaz_daly_seifert_gonzalez_2010"]
+tags = ["solar", "cooking", "portable", "ideation"]
+status = "complete"
+variant_ids = ["variant_solar_powered_cooking_device"]
+
+[[prompts]]
+prompt_id = "prompt_electric_toothbrush_portability_redesign"
+problem_id = "ideation_electric_toothbrush_portability_redesign"
+family_id = "family_electric_toothbrush_portability_redesign"
+canonical_brief = "Redesign an electric toothbrush for increased portability."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["toh_miller_kremer_2012"]
+tags = ["toothbrush", "portability", "redesign", "ideation"]
+status = "complete"
+variant_ids = ["variant_electric_toothbrush_portability_redesign"]
+
+[[prompts]]
+prompt_id = "prompt_architects_office_layout"
+problem_id = "ideation_architects_office_layout"
+family_id = "family_architects_office_layout"
+canonical_brief = "Allocate the required spaces for an architect's office within a given one-level rectangular floor plan in a skyscraper, prioritising circulation. Required spaces include: head office and private secretary space, waiting area with small exhibition, two meeting rooms, 3-4 management offices, two telecommunication offices, three consultant spaces, five design-team spaces, two IT offices, two technical studies units, one construction expertise unit, and two service areas with kitchenette."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["al_sayed_2012"]
+tags = ["architecture", "layout", "office", "design"]
+status = "complete"
+variant_ids = ["variant_architects_office_layout"]
+
+[[prompts]]
+prompt_id = "prompt_expo_shanghai_pavilion"
+problem_id = "ideation_expo_shanghai_pavilion"
+family_id = "family_expo_shanghai_pavilion"
+canonical_brief = "Design a pavilion at Expo-Shanghai, 2010, presenting an image of your country from your own perception."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["el_khouly_penn_2012"]
+tags = ["architecture", "pavilion", "exhibition", "ideation"]
+status = "complete"
+variant_ids = ["variant_expo_shanghai_pavilion"]
+
+[[prompts]]
+prompt_id = "prompt_high_rise_cohousing_redevelopment"
+problem_id = "ideation_high_rise_cohousing_redevelopment"
+family_id = "family_high_rise_cohousing_redevelopment"
+canonical_brief = "Design an alternative concept for three outdated high-rise apartment buildings in Antwerp, Belgium, and investigate how cohousing can be accommodated in this building type. The site must incorporate about 300 living units, facilities for cohousing, and sufficient parking, while addressing sunlight, safety and comfort, fire safety and accessibility, privacy, wind turbulence, and structural constraints."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["pauwels_strobbe_derboven_de_meyer_2014"]
+tags = ["architecture", "housing", "cohousing", "ideation"]
+status = "complete"
+variant_ids = ["variant_high_rise_cohousing_redevelopment"]
+
+[[prompts]]
+prompt_id = "prompt_antarctica_immersive_museum"
+problem_id = "ideation_antarctica_immersive_museum"
+family_id = "family_antarctica_immersive_museum"
+canonical_brief = "Elaborate a breakthrough museum concept that gives the visitor an immersive experience in an Antarctica-like world. The museum should make people sensitive to the imperative of protecting Antarctica, be mobile and deployable worldwide, be practical to install and transport, be as eco-friendly as possible, and have a size of approximately 3,600 m2."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kazakci_hatchuel_gillier_piat_2014"]
+tags = ["museum", "architecture", "immersive", "ideation"]
+status = "complete"
+variant_ids = ["variant_antarctica_immersive_museum"]
+
+[[prompts]]
+prompt_id = "prompt_solar_thermal_collector_heat_regulation"
+problem_id = "ideation_solar_thermal_collector_heat_regulation"
+family_id = "family_solar_thermal_collector_heat_regulation"
+canonical_brief = "Fix the overheating problem in solar thermal collectors. Develop a bio-inspired heat regulation system that can fit onto an existing absorber to constantly maintain suitable temperature, and a bio-inspired feedback control system that regulates the temperature of glycol by operating the heat regulation system."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goel_zhang_wiltgen_zhang_vattam_yen_2014"]
+tags = ["solar", "bio-inspired", "heat-regulation", "design"]
+status = "complete"
+variant_ids = ["variant_solar_thermal_collector_heat_regulation"]
+
+[[prompts]]
+prompt_id = "prompt_campus_self_sufficient_eating_area"
+problem_id = "ideation_campus_self_sufficient_eating_area"
+family_id = "family_campus_self_sufficient_eating_area"
+canonical_brief = "Propose a new concept for a self-sufficient eating area of a campus building."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["dorta_beaudry_marchand_pierini_2018"]
+tags = ["campus", "eating", "self-sufficient", "ideation"]
+status = "complete"
+variant_ids = ["variant_campus_self_sufficient_eating_area"]
+
+[[prompts]]
+prompt_id = "prompt_office_coffee_machine_pss_redesign"
+problem_id = "ideation_office_coffee_machine_pss_redesign"
+family_id = "family_office_coffee_machine_pss_redesign"
+canonical_brief = "Redesign an office coffee-machine product/service offering to improve resource efficiency. The offering is provided by a hypothetical Swedish company to university staff and guests, and may be improved through changes to the product, the related services, or the payment model."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["neramballi_sakao_gero_2018"]
+tags = ["coffee", "pss", "resource-efficiency", "design"]
+status = "complete"
+variant_ids = ["variant_office_coffee_machine_pss_redesign"]
+
+[[prompts]]
+prompt_id = "prompt_interactive_parking_meter_kiosk"
+problem_id = "ideation_interactive_parking_meter_kiosk"
+family_id = "family_interactive_parking_meter_kiosk"
+canonical_brief = "If you transform a pay and display parking meter into an interactive kiosk, what application or service useful in your everyday life should be available? The proposal should not affect the appearance of the housing, should be relevant to a larger community, should use one or more of the terminal's functionalities, and should be useful now or in the very near future."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["leroy_tyl_vallet_cluzel_2015"]
+tags = ["parking", "kiosk", "urban-services", "ideation"]
+status = "complete"
+variant_ids = ["variant_interactive_parking_meter_kiosk"]
+
+[[prompts]]
+prompt_id = "prompt_portable_barbecue_design"
+problem_id = "ideation_portable_barbecue_design"
+family_id = "family_portable_barbecue_design"
+canonical_brief = "Conceptualize, design, and select a portable barbecue. The concept may incrementally or radically innovate an existing model and should address the needs to be easy to clean, resistant to rust, safe, easy to move and carry, and capable of homogeneous heat distribution on the grilling surface."
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["bertoni_bertoni_johansson_2015"]
+tags = ["barbecue", "portable", "consumer", "design"]
+status = "complete"
+variant_ids = ["variant_portable_barbecue_design"]
 
 [[variants]]
 variant_id = "variant_travel_exercise_device"
@@ -4398,6 +4739,127 @@ statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["prudhomme_pourroy_summers_boujut_2013"]
 notes = "Verbatim workshop brief about holding two wood plates together for gluing and drilling."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_solar_powered_cooking_device"
+prompt_id = "prompt_solar_powered_cooking_device"
+problem_id = "ideation_solar_powered_cooking_device"
+label = "Yilmaz et al. (2010) solar-cooking brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["yilmaz_daly_seifert_gonzalez_2010"]
+notes = "Quoted open-ended design task about an inexpensive, portable solar-powered cooking device for family use."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_electric_toothbrush_portability_redesign"
+prompt_id = "prompt_electric_toothbrush_portability_redesign"
+problem_id = "ideation_electric_toothbrush_portability_redesign"
+label = "Toh, Miller, and Kremer (2012) toothbrush redesign task"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["toh_miller_kremer_2012"]
+notes = "Verbatim redesign assignment asking teams to improve an electric toothbrush for increased portability."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_architects_office_layout"
+prompt_id = "prompt_architects_office_layout"
+problem_id = "ideation_architects_office_layout"
+label = "Al Sayed (2012) architect's office brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["al_sayed_2012"]
+notes = "Verbatim office-space allocation brief plus required room program for a constrained skyscraper floor plan."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_expo_shanghai_pavilion"
+prompt_id = "prompt_expo_shanghai_pavilion"
+problem_id = "ideation_expo_shanghai_pavilion"
+label = "El-Khouly and Penn (2012) pavilion brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["el_khouly_penn_2012"]
+notes = "Verbatim open-ended brief asking the designer to represent her country through an Expo-Shanghai pavilion."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_high_rise_cohousing_redevelopment"
+prompt_id = "prompt_high_rise_cohousing_redevelopment"
+problem_id = "ideation_high_rise_cohousing_redevelopment"
+label = "Pauwels et al. (2014) Antwerp high-rise brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["pauwels_strobbe_derboven_de_meyer_2014"]
+notes = "Verbatim Antwerp high-rise redevelopment brief including the cohousing framing and printed constraints."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_antarctica_immersive_museum"
+prompt_id = "prompt_antarctica_immersive_museum"
+problem_id = "ideation_antarctica_immersive_museum"
+label = "Kazakci et al. (2014) Antarctica museum brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["kazakci_hatchuel_gillier_piat_2014"]
+notes = "Verbatim breakthrough-museum brief with mobility, eco-friendliness, and Antarctica-awareness constraints."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_solar_thermal_collector_heat_regulation"
+prompt_id = "prompt_solar_thermal_collector_heat_regulation"
+problem_id = "ideation_solar_thermal_collector_heat_regulation"
+label = "Goel et al. (2014) solar-collector overheating task"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["goel_zhang_wiltgen_zhang_vattam_yen_2014"]
+notes = "Verbatim DSL pilot-study task about bio-inspired heat regulation and feedback control for solar thermal collectors."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_campus_self_sufficient_eating_area"
+prompt_id = "prompt_campus_self_sufficient_eating_area"
+problem_id = "ideation_campus_self_sufficient_eating_area"
+label = "Dorta, Beaudry Marchand, and Pierini (2018) campus brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["dorta_beaudry_marchand_pierini_2018"]
+notes = "Verbatim ad-hoc project brief about a self-sufficient eating area for a campus building."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_office_coffee_machine_pss_redesign"
+prompt_id = "prompt_office_coffee_machine_pss_redesign"
+problem_id = "ideation_office_coffee_machine_pss_redesign"
+label = "Neramballi, Sakao, and Gero (2018) coffee PSS brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["neramballi_sakao_gero_2018"]
+notes = "Appendix-backed office coffee-machine PSS redesign brief focused on resource efficiency."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_interactive_parking_meter_kiosk"
+prompt_id = "prompt_interactive_parking_meter_kiosk"
+problem_id = "ideation_interactive_parking_meter_kiosk"
+label = "Leroy et al. (2015) parking-meter contest brief"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["leroy_tyl_vallet_cluzel_2015"]
+notes = "Verbatim public contest brief for turning a pay-and-display parking meter into an interactive kiosk."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_portable_barbecue_design"
+prompt_id = "prompt_portable_barbecue_design"
+problem_id = "ideation_portable_barbecue_design"
+label = "Bertoni, Bertoni, and Johansson (2015) portable barbecue task"
+statement_type = "study-specific"
+evidence_tier = "primary_reconstructed"
+source_citation_keys = ["bertoni_bertoni_johansson_2015"]
+notes = "Reconstructed from the experimental task description and customer-needs handout for conceptualizing and selecting a portable barbecue concept."
 status = "complete"
 
 [[studies]]

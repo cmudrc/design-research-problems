@@ -1,0 +1,35 @@
+problem_id = "ideation_solar_powered_cooking_device"
+title = "Solar-Powered Cooking Device"
+summary = "An open-ended product-design brief about creating an inexpensive, portable solar cooker suitable for family use."
+kind = "text"
+statement = '''
+# Solar-Powered Cooking Device
+
+Design a solar-powered cooking device that is inexpensive,
+portable, and suitable for family use.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "solar", "cooking", "portable"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "yilmaz_daly_seifert_gonzalez_2010"
+kind = "inline"
+authors = ["Seda Yilmaz", "Shanna R. Daly", "Colleen M. Seifert", "Richard Gonzalez"]
+title = "A Comparison of Cognitive Heuristics Use between Engineers and Industrial Designers"
+year = 2010
+venue = "Design Computing and Cognition DCC'10"
+formatted_text = "Yilmaz, Daly, Seifert, and Gonzalez (2010). A Comparison of Cognitive Heuristics Use between Engineers and Industrial Designers. Design Computing and Cognition DCC'10."
+raw_text = "Yilmaz, Seda, Shanna R. Daly, Colleen M. Seifert, and Richard Gonzalez (2010). A Comparison of Cognitive Heuristics Use between Engineers and Industrial Designers. Design Computing and Cognition DCC'10."
+provisional = true
