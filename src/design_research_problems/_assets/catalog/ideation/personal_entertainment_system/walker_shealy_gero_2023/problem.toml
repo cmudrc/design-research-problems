@@ -1,0 +1,34 @@
+problem_id = "ideation_personal_entertainment_system"
+title = "Future Personal Entertainment System"
+summary = "A short future-facing ideation brief used in a think-aloud fNIRS study of new idea generation during engineering design."
+kind = "text"
+statement = '''
+# Future Personal Entertainment System
+
+Design a future personal entertainment system.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "consumer", "electronics", "entertainment"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "walker_shealy_gero_2023"
+kind = "inline"
+authors = ["Emma Walker", "Tripp Shealy", "John Gero"]
+title = "Neurocognition of New Ideas During Engineering Design"
+year = 2023
+venue = "ASME IDETC/CIE 2023, DETC2023-117127"
+formatted_text = "Walker, Shealy, and Gero (2023). Neurocognition of New Ideas During Engineering Design. ASME IDETC/CIE 2023, DETC2023-117127."
+raw_text = "Walker, Emma, Tripp Shealy, and John Gero (2023). Neurocognition of New Ideas During Engineering Design. ASME IDETC/CIE 2023, DETC2023-117127."
+provisional = true

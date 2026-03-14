@@ -610,6 +610,17 @@ formatted_text = "Renji and Liao (2025). Designing Trust: How System-Level Desig
 raw_text = "Renji, Naveen Mathews, and Ting Liao (2025). Designing Trust: How System-Level Design Attributes Shape AI-Assisted Design Ideation. ASME IDETC/CIE 2025, DETC2025-168783."
 provisional = false
 
+[[citations]]
+key = "walker_shealy_gero_2023"
+kind = "inline"
+authors = ["Emma Walker", "Tripp Shealy", "John Gero"]
+title = "Neurocognition of New Ideas During Engineering Design"
+year = 2023
+venue = "ASME IDETC/CIE 2023, DETC2023-117127"
+formatted_text = "Walker, Shealy, and Gero (2023). Neurocognition of New Ideas During Engineering Design. ASME IDETC/CIE 2023, DETC2023-117127."
+raw_text = "Walker, Emma, Tripp Shealy, and John Gero (2023). Neurocognition of New Ideas During Engineering Design. ASME IDETC/CIE 2023, DETC2023-117127."
+provisional = true
+
 [[families]]
 family_id = "family_chocolate_packaging"
 name = "Chocolate Packaging"
@@ -915,6 +926,15 @@ external_aliases = []
 canonical_prompt_ids = ["prompt_sustainable_washing_machine"]
 tags = ["appliance", "sustainability", "consumer"]
 notes = "Liao and MacDonald (2021) prints the full sustainable washing-machine ideation brief; Renji and Liao (2025) later cites washing machines as one of four household design themes used with AIDA."
+
+[[families]]
+family_id = "family_personal_entertainment_system"
+name = "Personal Entertainment System"
+group = "consumer-household"
+external_aliases = []
+canonical_prompt_ids = ["prompt_personal_entertainment_system"]
+tags = ["entertainment", "electronics", "consumer"]
+notes = "Walker, Shealy, and Gero (2023) reports this future-personal-entertainment prompt in a think-aloud fNIRS study on new idea generation."
 
 [[families]]
 family_id = "family_sub_saharan_wash_access"
@@ -1530,6 +1550,17 @@ source_citation_keys = ["liao_macdonald_2021", "renji_liao_2025"]
 tags = ["appliance", "sustainability", "ideation"]
 status = "complete"
 variant_ids = ["variant_sustainable_washing_machine"]
+
+[[prompts]]
+prompt_id = "prompt_personal_entertainment_system"
+problem_id = "ideation_personal_entertainment_system"
+family_id = "family_personal_entertainment_system"
+canonical_brief = "Design a future personal entertainment system."
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["walker_shealy_gero_2023"]
+tags = ["entertainment", "electronics", "ideation"]
+status = "complete"
+variant_ids = ["variant_personal_entertainment_system"]
 
 [[prompts]]
 prompt_id = "prompt_sub_saharan_wash_access_eli"
@@ -2169,6 +2200,17 @@ statement_type = "study-specific"
 evidence_tier = "primary_verbatim"
 source_citation_keys = ["liao_macdonald_2021", "renji_liao_2025"]
 notes = "Verbatim sustainable-washing-machine prompt printed in the 2021 priming study and later named as one of four household design themes in Renji and Liao (2025)."
+status = "complete"
+
+[[variants]]
+variant_id = "variant_personal_entertainment_system"
+prompt_id = "prompt_personal_entertainment_system"
+problem_id = "ideation_personal_entertainment_system"
+label = "Walker, Shealy, and Gero (2023) study prompt"
+statement_type = "study-specific"
+evidence_tier = "primary_verbatim"
+source_citation_keys = ["walker_shealy_gero_2023"]
+notes = "The accessible methods section reports the participant-facing task as designing a future personal entertainment system during a think-aloud session."
 status = "complete"
 
 [[variants]]
