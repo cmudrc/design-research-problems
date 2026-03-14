@@ -793,12 +793,12 @@ def _load_pybamm_direct_temperature_trace_c(
         "Cell temperature [K]",
     ):
         try:
-            values = numpy.array(solution[variable_name](sample_times_s), dtype=float, copy=False)
+            values = numpy.asarray(solution[variable_name](sample_times_s), dtype=float)
         except Exception:
             continue
         if values.ndim > 1:
-            values = numpy.array(values.reshape(values.shape[0], -1).mean(axis=1), dtype=float, copy=False)
-        return numpy.array(values - 273.15, dtype=float, copy=False)
+            values = numpy.asarray(values.reshape(values.shape[0], -1).mean(axis=1), dtype=float)
+        return numpy.asarray(values - 273.15, dtype=float)
     raise KeyError("No supported PyBaMM cell temperature variable was available.")
 
 
@@ -813,10 +813,10 @@ def _load_pybamm_direct_heat_trace_w(
         "Ohmic heating [W]",
     ):
         try:
-            values = numpy.array(solution[variable_name](sample_times_s), dtype=float, copy=False)
+            values = numpy.asarray(solution[variable_name](sample_times_s), dtype=float)
         except Exception:
             continue
-        return numpy.array(values.reshape(-1), dtype=float, copy=False)
+        return numpy.asarray(values.reshape(-1), dtype=float)
     return numpy.zeros(len(sample_times_s), dtype=float)
 
 

@@ -747,11 +747,8 @@ def _two_rc_trace_residuals(
         secondary_transient_resistance_ohm=max(1.0e-6, float(values[3])),
         secondary_transient_capacitance_f=max(1.0, float(values[4]) / max(float(values[3]), 1.0e-6)),
     )
-    residuals: NDArray[numpy.float64] = numpy.array(
-        simulated - numpy.array(trace.voltage_v, dtype=float, copy=False),
-        dtype=float,
-        copy=False,
-    )
+    observed_voltage = numpy.asarray(trace.voltage_v, dtype=float)
+    residuals: NDArray[numpy.float64] = numpy.asarray(simulated - observed_voltage, dtype=float)
     return residuals
 
 

@@ -1158,6 +1158,28 @@ def test_load_battery_cell_model_two_rc_mode_uses_fitted_trace_bundle(
     battery_cell_model._load_battery_cell_model_cached.cache_clear()
 
 
+def test_two_rc_trace_residuals_accept_tuple_voltage_trace() -> None:
+    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+
+    trace = battery_cell_model._BatteryCurrentTrace(
+        initial_soc=0.5,
+        temperature_c=25.0,
+        time_s=(0.0, 1.0, 2.0),
+        current_a=(0.0, 0.0, 0.0),
+        voltage_v=(4.0, 4.0, 4.0),
+    )
+    residuals = battery_cell_model._two_rc_trace_residuals(
+        numpy.array([0.01, 0.02, 8.0, 0.01, 100.0], dtype=float),
+        trace,
+        capacity_ah=2.5,
+        open_circuit_voltage_v=tuple(4.0 for _ in battery_cell_model._TWO_RC_REFERENCE_SOC_GRID),
+    )
+
+    assert residuals.dtype == numpy.float64
+    assert residuals.shape == (3,)
+    assert numpy.allclose(residuals, 0.0)
+
+
 def test_evaluate_battery_circuit_uses_pybamm_direct_path(monkeypatch: pytest.MonkeyPatch) -> None:
     from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
 
