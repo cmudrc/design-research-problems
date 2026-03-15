@@ -1732,6 +1732,67 @@ class Battery18650T1RectangularSurrogateOptimizationProblem(Battery18650Tier1Ser
     def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
         return self._outcome_from_variables(variables).metrics
 
+    def solve(
+        self,
+        initial_solution: NDArray[numpy.float64] | None = None,
+        seed: int | None = None,
+        maxiter: int = 200,
+    ) -> OptimizationResult:
+        """Search the discrete ``S x P`` grid using the public tier-1 evaluator path."""
+        if initial_solution is None:
+            anchor = self.generate_initial_solution(seed=seed)
+        else:
+            anchor = self._normalize_vector(initial_solution)
+        if anchor.shape != (2,):
+            raise ValueError(f"Expected a 2-variable design vector, received shape {anchor.shape!r}.")
+
+        anchor_series, anchor_parallel = self._normalized_counts(anchor)
+        candidates = [
+            numpy.array([float(series_count), float(parallel_count)], dtype=float)
+            for series_count in range(1, self._max_series_count() + 1)
+            for parallel_count in range(1, self._max_parallel_count() + 1)
+        ]
+        candidates.sort(
+            key=lambda candidate: (
+                abs(int(candidate[0]) - anchor_series) + abs(int(candidate[1]) - anchor_parallel),
+                abs(int(candidate[0]) - self._default_series_count()),
+                int(candidate[0]),
+                int(candidate[1]),
+            )
+        )
+        budget = max(1, min(maxiter, len(candidates)))
+
+        best_vector = candidates[0]
+        best_score = math.inf
+        evaluations = 0
+        for candidate in candidates[:budget]:
+            score = self.objective(candidate)
+            evaluations += 1
+            if score < best_score:
+                best_score = score
+                best_vector = candidate
+
+        best_metrics = self._metrics_from_variables(best_vector)
+        max_violation = self.max_constraint_violation(best_vector)
+        if max_violation <= 1.0e-9:
+            message = (
+                "Evaluated the nearest rectangular battery grids and found a feasible public baseline "
+                f"(cost ${best_metrics.cost_usd:.2f})."
+            )
+        else:
+            message = (
+                "Evaluated the nearest rectangular battery grids and returned a best-effort public design "
+                f"(cost ${best_metrics.cost_usd:.2f}, max violation {max_violation:.3g})."
+            )
+        return OptimizationResult(
+            x=best_vector.copy(),
+            fun=self.objective(best_vector),
+            success=max_violation <= 1.0e-9,
+            message=message,
+            nit=budget,
+            nfev=evaluations,
+        )
+
     def _width_margin(self, variables: NDArray[numpy.float64]) -> float:
         return self.requirements.max_width_mm - float(self._summary_from_variables(variables).design_width)
 

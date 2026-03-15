@@ -67,6 +67,7 @@ def _patch_battery_loaders(monkeypatch: pytest.MonkeyPatch) -> None:
     from design_research_problems.problems.optimization import _battery_tiers
 
     monkeypatch.setattr(_battery_problem_base, "load_18650_cell_model", _static_cell_model)
+    monkeypatch.setattr(_battery_tiers, "load_18650_cell_model", lambda *args, **kwargs: _static_cell_model())
     monkeypatch.setattr(_battery_adapters, "load_18650_cell_model", lambda config=None: _static_cell_model())
     monkeypatch.setattr(_battery_adapters, "load_battery_thermal_priors", lambda config=None: _static_thermal_priors())
     monkeypatch.setattr(battery_circuit, "load_battery_cell_model", lambda config=None: _static_cell_model())
