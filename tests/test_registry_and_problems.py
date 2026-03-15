@@ -95,7 +95,7 @@ def test_registry_entries_filter_by_kind() -> None:
     )
     optimization_kinds = registry.by_kind(ProblemKind.OPTIMIZATION)
     optimization_ids = [entry.problem_id for entry in optimization_kinds]
-    assert len(optimization_ids) == 11
+    assert len(optimization_ids) == 12
     assert "battery_pack_18650_open_ended_capacity_max" in optimization_ids
     assert "battery_pack_18650_series_parallel_cost_min" in optimization_ids
     assert "gmpb_default_dynamic_min" in optimization_ids
@@ -104,6 +104,7 @@ def test_registry_entries_filter_by_kind() -> None:
     assert "planar_truss_span_fos_max" in optimization_ids
     assert "space_truss_span_mass_min" in optimization_ids
     assert "wind_farm_grid_qkp_power_max" in optimization_ids
+    assert "worker_hours_competing_projects_value_tracking_min" in optimization_ids
     assert "planar_truss_span_member_count_min" not in optimization_ids
     assert "planar_truss_span_total_length_min" not in optimization_ids
     mcp_kinds = registry.by_kind(ProblemKind.MCP)
@@ -359,6 +360,7 @@ def test_registry_search_filters_by_feature_flags() -> None:
         "space_truss_span_mass_min",
         "treadle_pump_ide_material_min",
         "wind_farm_grid_qkp_power_max",
+        "worker_hours_competing_projects_value_tracking_min",
     ]
     text_matches = registry.search(
         kind=ProblemKind.TEXT,

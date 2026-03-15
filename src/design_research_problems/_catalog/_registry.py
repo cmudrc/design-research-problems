@@ -81,6 +81,8 @@ type _OptimizationProblemId = Literal[
     "planar_truss_span_fos_max",
     "space_truss_span_mass_min",
     "treadle_pump_ide_material_min",
+    "wind_farm_grid_qkp_power_max",
+    "worker_hours_competing_projects_value_tracking_min",
 ]
 
 _ProblemSubT = TypeVar("_ProblemSubT", bound=Problem)

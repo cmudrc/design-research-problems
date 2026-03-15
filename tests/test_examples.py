@@ -147,6 +147,16 @@ def test_gmpb_optimization_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
+def test_worker_hours_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/worker_hours_allocation.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "Competing-projects worker-hours benchmark" in completed.stdout
+    assert "task_count 8" in completed.stdout
+    assert "worker_count 5" in completed.stdout
+    assert "solved_tracking_error" in completed.stdout
+
+
+@pytest.mark.examples_smoke
 def test_open_ended_battery_grammar_example_runs() -> None:
     completed = _run_example("examples/grammar/battery_pack_18650_open_ended.py")
     assert completed.returncode == 0, completed.stderr

@@ -21,6 +21,7 @@ optimizer example to use the optional `pymoo` or `nevergrad` solver backends.
 - `optimization/moneymaker_hip_pump.py`: inspect the MoneyMaker Hip Pump packaged baseline and SciPy SLSQP solver.
 - `optimization/pill_problem.py`: inspect a feasible seeded start and the built-in pill solver.
 - `optimization/wind_farm_layout.py`: inspect the compact grid-based wind-farm layout benchmark derived from the 2016 Quan and Kim QKP formulation.
+- `optimization/worker_hours_allocation.py`: inspect the compact competing-projects worker-hours allocation benchmark derived from Freiheit's 2015 value-tracking case study.
 - `grammar/planar_truss_span.py`: build a simple truss grammar state and evaluate it when `trussme` is installed.
 - `grammar/space_truss_span.py`: build a simple 3D space-truss grammar state and evaluate it when `trussme` is installed.
 - `optimization/space_truss_span_mass_min.py`: inspect the packaged 3D space-truss structural optimizer and its chosen topology.
