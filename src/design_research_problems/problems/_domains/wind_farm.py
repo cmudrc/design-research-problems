@@ -12,6 +12,9 @@ from numpy.typing import NDArray
 DirectionProfile = tuple[tuple[float, float], ...]
 """Deterministic `(direction_deg, probability)` profile."""
 
+ContinuousWindProfile = tuple[tuple[float, float, float], ...]
+"""Deterministic `(direction_deg, probability, wind_speed_mps)` profile."""
+
 DEFAULT_WIND_DIRECTION_PROFILES: Final[dict[str, DirectionProfile]] = {
     "east_skewed_seed": (
         (0.0, 0.05),
@@ -26,6 +29,15 @@ DEFAULT_WIND_DIRECTION_PROFILES: Final[dict[str, DirectionProfile]] = {
     "uniform_seed": tuple((45.0 * index, 0.125) for index in range(8)),
 }
 """In-package directional profiles for compact wind-farm seeds."""
+
+DEFAULT_CONTINUOUS_WIND_PROFILES: Final[dict[str, ContinuousWindProfile]] = {
+    "quan_kim_2015_reduced": (
+        (30.0, 0.20, 7.0),
+        (90.0, 0.16, 5.0),
+        (150.0, 0.16, 5.0),
+    ),
+}
+"""Continuous-layout directional profiles with explicit average wind speeds."""
 
 
 @dataclass(frozen=True)
@@ -58,6 +70,22 @@ class WindFarmLayoutBackend:
     """Directional profile values used by the wake proxy."""
 
 
+@dataclass(frozen=True)
+class UnrestrictedWindFarmLayoutState:
+    """Decoded state for a continuous-position wind-farm layout."""
+
+    coordinates_m: tuple[tuple[float, float], ...]
+    """Ordered turbine coordinates in meters."""
+    weighted_wake_deficit_mps: float
+    """Probability-weighted worst directional wind-speed deficit."""
+    directional_wake_deficits_mps: tuple[float, ...]
+    """Worst wake deficit for each tracked wind direction."""
+    directional_overlap_counts: tuple[int, ...]
+    """Number of ordered overlapping wake pairs in each direction."""
+    minimum_l1_spacing_m: float
+    """Smallest pairwise Manhattan spacing among all turbines."""
+
+
 def get_direction_profile(direction_profile_name: str) -> DirectionProfile:
     """Return one named in-package wind-direction profile.
 
@@ -73,6 +101,24 @@ def get_direction_profile(direction_profile_name: str) -> DirectionProfile:
     profile = DEFAULT_WIND_DIRECTION_PROFILES.get(direction_profile_name)
     if profile is None:
         raise ValueError(f"direction_profile_name must be one of {sorted(DEFAULT_WIND_DIRECTION_PROFILES)}.")
+    return profile
+
+
+def get_continuous_wind_profile(direction_profile_name: str) -> ContinuousWindProfile:
+    """Return one named continuous-layout directional profile.
+
+    Args:
+        direction_profile_name: Stable profile name.
+
+    Returns:
+        Directional profile tuple with average wind speeds.
+
+    Raises:
+        ValueError: If the profile name is unknown.
+    """
+    profile = DEFAULT_CONTINUOUS_WIND_PROFILES.get(direction_profile_name)
+    if profile is None:
+        raise ValueError(f"direction_profile_name must be one of {sorted(DEFAULT_CONTINUOUS_WIND_PROFILES)}.")
     return profile
 
 
@@ -104,6 +150,27 @@ def build_grid_coordinates(grid_rows: int, grid_cols: int, edge_length_m: float)
     return tuple(coordinates)
 
 
+def flatten_coordinates(coordinates_m: tuple[tuple[float, float], ...]) -> NDArray[numpy.float64]:
+    """Flatten one ordered coordinate tuple into a solver vector."""
+    flattened: list[float] = []
+    for x_coord, y_coord in coordinates_m:
+        flattened.extend((x_coord, y_coord))
+    return numpy.array(flattened, dtype=float)
+
+
+def decode_coordinate_vector(
+    variables: NDArray[numpy.float64],
+    *,
+    turbine_count: int,
+) -> tuple[tuple[float, float], ...]:
+    """Decode one flat coordinate vector into ordered `(x, y)` pairs."""
+    candidate = numpy.array(variables, dtype=float, copy=False)
+    expected_shape = (2 * turbine_count,)
+    if candidate.shape != expected_shape:
+        raise ValueError(f"variables must match the flattened wind layout shape {expected_shape}.")
+    return tuple((float(candidate[2 * index]), float(candidate[(2 * index) + 1])) for index in range(turbine_count))
+
+
 def build_conflicting_pairs(
     coordinates_m: tuple[tuple[float, float], ...],
     minimum_spacing_m: float,
@@ -129,6 +196,33 @@ def build_conflicting_pairs(
             if distance(point_i, point_j) + 1e-9 < minimum_spacing_m:
                 pairs.append((index_i, index_j))
     return tuple(pairs)
+
+
+def count_l1_spacing_violations(
+    coordinates_m: tuple[tuple[float, float], ...],
+    *,
+    minimum_spacing_m: float,
+) -> int:
+    """Count how many turbine pairs violate a Manhattan-spacing threshold."""
+    if minimum_spacing_m <= 0.0:
+        raise ValueError("minimum_spacing_m must be positive.")
+    count = 0
+    for index_i, point_i in enumerate(coordinates_m[:-1]):
+        for point_j in coordinates_m[index_i + 1 :]:
+            if l1_distance(point_i, point_j) + 1e-9 < minimum_spacing_m:
+                count += 1
+    return count
+
+
+def minimum_l1_spacing(coordinates_m: tuple[tuple[float, float], ...]) -> float:
+    """Return the smallest pairwise Manhattan spacing for one layout."""
+    if len(coordinates_m) < 2:
+        return math.inf
+    minimum = math.inf
+    for index_i, point_i in enumerate(coordinates_m[:-1]):
+        for point_j in coordinates_m[index_i + 1 :]:
+            minimum = min(minimum, l1_distance(point_i, point_j))
+    return minimum
 
 
 def build_pairwise_loss_matrix(
@@ -184,6 +278,68 @@ def build_pairwise_loss_matrix(
     return matrix
 
 
+def wake_speed_deficit_mps(
+    downwind_distance_m: float,
+    *,
+    rotor_diameter_m: float,
+    thrust_coefficient: float,
+    wake_expansion_coefficient: float,
+    wind_speed_mps: float,
+) -> float:
+    """Return the Jensen-style wind-speed deficit used by the 2015 MILP paper."""
+    if downwind_distance_m <= 0.0:
+        return 0.0
+    if rotor_diameter_m <= 0.0:
+        raise ValueError("rotor_diameter_m must be positive.")
+    if not 0.0 <= thrust_coefficient <= 1.0:
+        raise ValueError("thrust_coefficient must lie in [0, 1].")
+    if wake_expansion_coefficient < 0.0:
+        raise ValueError("wake_expansion_coefficient must be nonnegative.")
+    if wind_speed_mps <= 0.0:
+        raise ValueError("wind_speed_mps must be positive.")
+
+    expanded_diameter = rotor_diameter_m + (2.0 * wake_expansion_coefficient * downwind_distance_m)
+    retained_speed_fraction = max(0.0, 1.0 - (thrust_coefficient * rotor_diameter_m**2 / expanded_diameter**2))
+    return float(wind_speed_mps * (1.0 - math.sqrt(retained_speed_fraction)))
+
+
+def directed_wake_deficit_mps(
+    point_i: tuple[float, float],
+    point_j: tuple[float, float],
+    *,
+    direction_deg: float,
+    wind_speed_mps: float,
+    rotor_diameter_m: float,
+    thrust_coefficient: float,
+    wake_expansion_coefficient: float,
+    wake_membership_alpha: float,
+) -> float:
+    """Return the directional wake deficit from one turbine to another."""
+    if not 0.0 <= wake_membership_alpha <= 1.0:
+        raise ValueError("wake_membership_alpha must lie in [0, 1].")
+
+    delta_x = point_j[0] - point_i[0]
+    delta_y = point_j[1] - point_i[1]
+    direction_x, direction_y = direction_vector(direction_deg)
+    downwind_distance = (delta_x * direction_x) + (delta_y * direction_y)
+    if downwind_distance <= 0.0:
+        return 0.0
+
+    lateral_distance = abs((-direction_y * delta_x) + (direction_x * delta_y))
+    wake_half_width = (wake_expansion_coefficient * downwind_distance) + (
+        (1.0 - wake_membership_alpha) * 0.5 * rotor_diameter_m
+    )
+    if lateral_distance > wake_half_width + 1e-9:
+        return 0.0
+    return wake_speed_deficit_mps(
+        downwind_distance,
+        rotor_diameter_m=rotor_diameter_m,
+        thrust_coefficient=thrust_coefficient,
+        wake_expansion_coefficient=wake_expansion_coefficient,
+        wind_speed_mps=wind_speed_mps,
+    )
+
+
 def create_wind_farm_layout_backend(
     *,
     grid_rows: int,
@@ -224,6 +380,53 @@ def create_wind_farm_layout_backend(
         ),
         direction_profile_name=direction_profile_name,
         direction_profile=direction_profile,
+    )
+
+
+def evaluate_unrestricted_layout(
+    coordinates_m: tuple[tuple[float, float], ...],
+    *,
+    direction_profile: ContinuousWindProfile,
+    rotor_diameter_m: float,
+    thrust_coefficient: float,
+    wake_expansion_coefficient: float,
+    wake_membership_alpha: float,
+) -> UnrestrictedWindFarmLayoutState:
+    """Evaluate one continuous wind-farm layout under the compact 2015 proxy."""
+    directional_penalties: list[float] = []
+    overlap_counts: list[int] = []
+    weighted_penalty = 0.0
+    for direction_deg, probability, wind_speed_mps in direction_profile:
+        worst_deficit = 0.0
+        overlap_count = 0
+        for index_i, point_i in enumerate(coordinates_m):
+            for index_j, point_j in enumerate(coordinates_m):
+                if index_i == index_j:
+                    continue
+                deficit = directed_wake_deficit_mps(
+                    point_i,
+                    point_j,
+                    direction_deg=direction_deg,
+                    wind_speed_mps=wind_speed_mps,
+                    rotor_diameter_m=rotor_diameter_m,
+                    thrust_coefficient=thrust_coefficient,
+                    wake_expansion_coefficient=wake_expansion_coefficient,
+                    wake_membership_alpha=wake_membership_alpha,
+                )
+                if deficit <= 0.0:
+                    continue
+                overlap_count += 1
+                worst_deficit = max(worst_deficit, deficit)
+        directional_penalties.append(worst_deficit)
+        overlap_counts.append(overlap_count)
+        weighted_penalty += probability * worst_deficit
+
+    return UnrestrictedWindFarmLayoutState(
+        coordinates_m=coordinates_m,
+        weighted_wake_deficit_mps=weighted_penalty,
+        directional_wake_deficits_mps=tuple(directional_penalties),
+        directional_overlap_counts=tuple(overlap_counts),
+        minimum_l1_spacing_m=minimum_l1_spacing(coordinates_m),
     )
 
 
@@ -325,19 +528,36 @@ def distance(point_i: tuple[float, float], point_j: tuple[float, float]) -> floa
     return math.hypot(point_j[0] - point_i[0], point_j[1] - point_i[1])
 
 
+def l1_distance(point_i: tuple[float, float], point_j: tuple[float, float]) -> float:
+    """Return Manhattan distance between two planar points."""
+    return abs(point_j[0] - point_i[0]) + abs(point_j[1] - point_i[1])
+
+
 __all__ = [
+    "DEFAULT_CONTINUOUS_WIND_PROFILES",
     "DEFAULT_WIND_DIRECTION_PROFILES",
+    "ContinuousWindProfile",
     "DirectionProfile",
+    "UnrestrictedWindFarmLayoutState",
     "WindFarmLayoutBackend",
     "WindFarmLayoutState",
     "build_conflicting_pairs",
     "build_grid_coordinates",
     "build_pairwise_loss_matrix",
+    "count_l1_spacing_violations",
     "count_spacing_violations",
     "create_wind_farm_layout_backend",
+    "decode_coordinate_vector",
+    "directed_wake_deficit_mps",
     "directed_wake_loss",
     "direction_vector",
     "distance",
     "evaluate_layout_selection",
+    "evaluate_unrestricted_layout",
+    "flatten_coordinates",
+    "get_continuous_wind_profile",
     "get_direction_profile",
+    "l1_distance",
+    "minimum_l1_spacing",
+    "wake_speed_deficit_mps",
 ]

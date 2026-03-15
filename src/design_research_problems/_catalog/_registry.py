@@ -82,6 +82,7 @@ type _OptimizationProblemId = Literal[
     "space_truss_span_mass_min",
     "treadle_pump_ide_material_min",
     "wind_farm_grid_qkp_power_max",
+    "wind_farm_unrestricted_deficit_min",
     "worker_hours_competing_projects_value_tracking_min",
 ]
 

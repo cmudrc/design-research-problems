@@ -30,6 +30,9 @@ _LAZY_EXPORTS = {
     "WindFarmLayoutOptimizationProblem": (
         "design_research_problems.problems.optimization._wind_farm_layout:WindFarmLayoutOptimizationProblem"
     ),
+    "UnrestrictedWindFarmLayoutOptimizationProblem": (
+        "design_research_problems.problems.optimization._wind_farm_unrestricted:UnrestrictedWindFarmLayoutOptimizationProblem"
+    ),
 }
 
 __all__ = list(_LAZY_EXPORTS)
@@ -68,4 +71,7 @@ if TYPE_CHECKING:
         SpaceTrussEngineeringOptimizationProblem as SpaceTrussEngineeringOptimizationProblem,
     )
     from ._wind_farm_layout import WindFarmLayoutOptimizationProblem as WindFarmLayoutOptimizationProblem
+    from ._wind_farm_unrestricted import (
+        UnrestrictedWindFarmLayoutOptimizationProblem as UnrestrictedWindFarmLayoutOptimizationProblem,
+    )
     from ._worker_hours_allocation import CompetingProjectsWorkerHoursProblem as CompetingProjectsWorkerHoursProblem
