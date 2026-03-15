@@ -334,10 +334,14 @@ def coerce_daily_hours(
     backend: CompetingProjectsAllocationBackend,
 ) -> NDArray[numpy.float64]:
     """Clip one flat plan into the static day-worker-task bounds used by the package."""
-    clipped = numpy.clip(
-        numpy.array(flat_variables, dtype=float, copy=True).reshape(backend.variable_shape),
-        0.0,
-        backend.upper_bounds,
+    clipped = numpy.array(
+        numpy.clip(
+            numpy.array(flat_variables, dtype=float, copy=True).reshape(backend.variable_shape),
+            0.0,
+            backend.upper_bounds,
+        ),
+        dtype=float,
+        copy=False,
     )
     for day_index in range(backend.horizon_days):
         for worker_index, worker in enumerate(backend.workers):

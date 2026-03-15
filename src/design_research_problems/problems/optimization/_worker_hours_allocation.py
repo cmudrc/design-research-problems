@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import cast
 
 import numpy
@@ -11,6 +12,7 @@ from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
 from design_research_problems.problems._domains.personnel_allocation import (
     CompetingProjectsAllocationState,
+    CompetingProjectsSimulation,
     build_manager_baseline_plan,
     build_value_tracking_plan,
     create_competing_projects_backend,
@@ -149,7 +151,7 @@ class CompetingProjectsWorkerHoursProblem(OptimizationProblem):
         simulation = self._simulate(variables)
         return simulation.summarize(tasks=self.backend.tasks, workers=self.backend.workers)
 
-    def _simulate(self, variables: NDArray[numpy.float64]):
+    def _simulate(self, variables: NDArray[numpy.float64]) -> CompetingProjectsSimulation:
         return simulate_competing_projects_plan(self._normalize_vector(variables), backend=self.backend)
 
     def _normalize_vector(self, variables: NDArray[numpy.float64]) -> NDArray[numpy.float64]:
@@ -160,7 +162,11 @@ class CompetingProjectsWorkerHoursProblem(OptimizationProblem):
             )
         return candidate
 
-    def _daily_worker_margin_factory(self, day_index: int, worker_index: int):
+    def _daily_worker_margin_factory(
+        self,
+        day_index: int,
+        worker_index: int,
+    ) -> Callable[[NDArray[numpy.float64]], float]:
         worker = self.backend.workers[worker_index]
 
         def evaluate(variables: NDArray[numpy.float64]) -> float:
