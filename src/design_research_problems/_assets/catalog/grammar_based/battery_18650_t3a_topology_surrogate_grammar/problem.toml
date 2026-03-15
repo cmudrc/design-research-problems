@@ -1,6 +1,6 @@
 problem_id = "battery_18650_t3a_topology_surrogate_grammar"
 title = "T3A 18650 topology surrogate grammar"
-summary = "Tier-3A topology-allocation battery grammar benchmark with switchable surrogate or projected explicit-circuit scoring."
+summary = "Tier-3A topology-allocation battery grammar benchmark with switchable surrogate, projected explicit-circuit, or promoted hybrid-thermal scoring."
 kind = "grammar"
 statement = '''
 # T3A 18650 topology surrogate grammar
@@ -41,7 +41,7 @@ deliberate_surrogates = [
 ]
 representation_mode = "topology_allocation"
 default_evaluation_mode = "analytic_surrogate"
-supported_evaluation_modes = ["analytic_surrogate", "explicit_circuit"]
+supported_evaluation_modes = ["analytic_surrogate", "explicit_circuit", "hybrid_thermal"]
 validation_scope = [
   "Topology-abstraction sanity checks",
   "Projected explicit-circuit consistency checks",

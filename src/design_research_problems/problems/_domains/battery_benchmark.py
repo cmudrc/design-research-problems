@@ -49,11 +49,42 @@ class BatteryEvaluationProvenance:
     resolved_backend_config: dict[str, object] | None
     honored_backend_fields: tuple[str, ...]
     ignored_backend_fields: tuple[str, ...]
+    electrical_path: str
+    thermal_path: str
     cell_model_source: str | None = None
     thermal_prior_source: str | None = None
-    projected_before_scoring: bool = False
-    projection_notes: str | None = None
+    assumed_defaults: dict[str, object] | None = None
+    adaptation_notes: tuple[str, ...] = ()
     imbalance_model: str | None = None
+
+
+_PACK_BATTERY_MODE_MATRIX: dict[BatteryRepresentationMode, tuple[BatteryEvaluationMode, ...]] = {
+    BatteryRepresentationMode.RECTANGULAR: (
+        BatteryEvaluationMode.ANALYTIC_SURROGATE,
+        BatteryEvaluationMode.EXPLICIT_CIRCUIT,
+        BatteryEvaluationMode.HYBRID_THERMAL,
+    ),
+    BatteryRepresentationMode.POSE_LAYOUT: (
+        BatteryEvaluationMode.ANALYTIC_SURROGATE,
+        BatteryEvaluationMode.EXPLICIT_CIRCUIT,
+        BatteryEvaluationMode.HYBRID_THERMAL,
+    ),
+    BatteryRepresentationMode.TOPOLOGY_ALLOCATION: (
+        BatteryEvaluationMode.ANALYTIC_SURROGATE,
+        BatteryEvaluationMode.EXPLICIT_CIRCUIT,
+        BatteryEvaluationMode.HYBRID_THERMAL,
+    ),
+    BatteryRepresentationMode.EXPLICIT_NETLIST: (
+        BatteryEvaluationMode.EXPLICIT_CIRCUIT,
+        BatteryEvaluationMode.HYBRID_THERMAL,
+    ),
+    BatteryRepresentationMode.THERMAL_TOPOLOGY: (
+        BatteryEvaluationMode.ANALYTIC_SURROGATE,
+        BatteryEvaluationMode.EXPLICIT_CIRCUIT,
+        BatteryEvaluationMode.HYBRID_THERMAL,
+    ),
+    BatteryRepresentationMode.FAST_CHARGE_CELL: (BatteryEvaluationMode.ELECTROCHEMICAL_ANCHOR,),
+}
 
 
 def coerce_battery_evaluation_mode(
@@ -96,10 +127,12 @@ def build_battery_evaluation_provenance(
     evaluator_implementation: str,
     requested_backend_config: BatteryBackendConfig | None,
     honored_backend_fields: tuple[str, ...],
+    electrical_path: str,
+    thermal_path: str,
     cell_model_source: str | None = None,
     thermal_prior_source: str | None = None,
-    projected_before_scoring: bool = False,
-    projection_notes: str | None = None,
+    assumed_defaults: dict[str, object] | None = None,
+    adaptation_notes: tuple[str, ...] = (),
     imbalance_model: BatteryImbalanceModel | None = None,
 ) -> BatteryEvaluationProvenance:
     """Build one consistent provenance payload for battery problems."""
@@ -115,12 +148,21 @@ def build_battery_evaluation_provenance(
         resolved_backend_config=resolved_payload,
         honored_backend_fields=tuple(sorted(set(honored_backend_fields))),
         ignored_backend_fields=ignored_fields,
+        electrical_path=electrical_path,
+        thermal_path=thermal_path,
         cell_model_source=cell_model_source,
         thermal_prior_source=thermal_prior_source,
-        projected_before_scoring=projected_before_scoring,
-        projection_notes=projection_notes,
+        assumed_defaults=assumed_defaults,
+        adaptation_notes=tuple(adaptation_notes),
         imbalance_model=None if imbalance_model is None else imbalance_model.value,
     )
+
+
+def supported_pack_evaluation_modes(
+    representation_mode: BatteryRepresentationMode,
+) -> tuple[BatteryEvaluationMode, ...]:
+    """Return the public supported evaluation modes for one battery representation."""
+    return _PACK_BATTERY_MODE_MATRIX[representation_mode]
 
 
 __all__ = [
@@ -131,4 +173,5 @@ __all__ = [
     "build_battery_evaluation_provenance",
     "coerce_battery_evaluation_mode",
     "coerce_battery_imbalance_model",
+    "supported_pack_evaluation_modes",
 ]

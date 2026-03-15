@@ -59,14 +59,17 @@ type _BatteryGrammarProblemId = Literal[
     "battery_18650_t1_rectangular_surrogate_grammar",
     "battery_18650_t2_pose_surrogate_grammar",
     "battery_18650_t3a_topology_surrogate_grammar",
+    "battery_18650_t3b_netlist_explicit_2rc_grammar",
     "battery_18650_t3b_netlist_explicit_grammar",
     "battery_18650_t4_thermal_hybrid_grammar",
 ]
 type _BatteryOptimizationProblemId = Literal[
     "battery_18650_t1_rectangular_surrogate_opt",
     "battery_18650_t2_pose_surrogate_opt",
+    "battery_18650_t3a_topology_explicit_2rc_opt",
     "battery_18650_t3a_topology_surrogate_opt",
     "battery_18650_t3b_netlist_explicit_opt",
+    "battery_18650_t4_thermal_hybrid_2rc_opt",
     "battery_18650_t4_thermal_hybrid_opt",
     "battery_fast_charge_dfn_anchor_opt",
 ]
@@ -294,6 +297,11 @@ class ProblemRegistry:
 
     @overload
     def get(
+        self, problem_id: Literal["battery_18650_t3b_netlist_explicit_2rc_grammar"]
+    ) -> Battery18650T3BNetlistExplicitGrammarProblem: ...
+
+    @overload
+    def get(
         self, problem_id: Literal["battery_18650_t4_thermal_hybrid_grammar"]
     ) -> Battery18650T4ThermalHybridGrammarProblem: ...
 
@@ -317,8 +325,18 @@ class ProblemRegistry:
 
     @overload
     def get(
+        self, problem_id: Literal["battery_18650_t3a_topology_explicit_2rc_opt"]
+    ) -> Battery18650T3ATopologySurrogateOptimizationProblem: ...
+
+    @overload
+    def get(
         self, problem_id: Literal["battery_18650_t3b_netlist_explicit_opt"]
     ) -> Battery18650T3BNetlistExplicitOptimizationProblem: ...
+
+    @overload
+    def get(
+        self, problem_id: Literal["battery_18650_t4_thermal_hybrid_2rc_opt"]
+    ) -> Battery18650T4ThermalHybridOptimizationProblem: ...
 
     @overload
     def get(
@@ -465,6 +483,12 @@ def get_problem(
 
 @overload
 def get_problem(
+    problem_id: Literal["battery_18650_t3b_netlist_explicit_2rc_grammar"],
+) -> Battery18650T3BNetlistExplicitGrammarProblem: ...
+
+
+@overload
+def get_problem(
     problem_id: Literal["battery_18650_t4_thermal_hybrid_grammar"],
 ) -> Battery18650T4ThermalHybridGrammarProblem: ...
 
@@ -493,8 +517,20 @@ def get_problem(
 
 @overload
 def get_problem(
+    problem_id: Literal["battery_18650_t3a_topology_explicit_2rc_opt"],
+) -> Battery18650T3ATopologySurrogateOptimizationProblem: ...
+
+
+@overload
+def get_problem(
     problem_id: Literal["battery_18650_t3b_netlist_explicit_opt"],
 ) -> Battery18650T3BNetlistExplicitOptimizationProblem: ...
+
+
+@overload
+def get_problem(
+    problem_id: Literal["battery_18650_t4_thermal_hybrid_2rc_opt"],
+) -> Battery18650T4ThermalHybridOptimizationProblem: ...
 
 
 @overload

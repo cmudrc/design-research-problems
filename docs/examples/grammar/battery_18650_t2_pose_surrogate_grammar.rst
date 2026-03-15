@@ -6,7 +6,7 @@ Source: ``examples/grammar/battery_18650_t2_pose_surrogate_grammar.py``
 Introduction
 ------------
 
-Inspect the T2 pose surrogate battery grammar benchmark.
+Build and evaluate a simple tier-2 battery grammar state.
 
 Technical Implementation
 ------------------------

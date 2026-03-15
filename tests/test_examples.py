@@ -23,6 +23,10 @@ def _run_example(relative_path: str, *args: str) -> subprocess.CompletedProcess[
     )
 
 
+def _battery_extra_missing(completed: subprocess.CompletedProcess[str]) -> bool:
+    return "Install it with: pip install design-research-problems[battery]" in completed.stdout
+
+
 @pytest.mark.examples_smoke
 def test_catalog_example_runs() -> None:
     completed = _run_example("examples/catalog/list_and_load.py")
@@ -150,41 +154,44 @@ def test_gmpb_optimization_example_runs() -> None:
 def test_t1_battery_grammar_example_runs() -> None:
     completed = _run_example("examples/grammar/battery_18650_t1_rectangular_surrogate_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t1_rectangular_surrogate_grammar" in completed.stdout
-    assert "metric-keys" in completed.stdout
+    assert "BatteryTierMetrics(" in completed.stdout
+    assert "cell_count=" in completed.stdout
 
 
 @pytest.mark.examples_smoke
 def test_t2_battery_grammar_example_runs() -> None:
     completed = _run_example("examples/grammar/battery_18650_t2_pose_surrogate_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t2_pose_surrogate_grammar" in completed.stdout
-    assert "metric-keys" in completed.stdout
+    assert "BatteryTierMetrics(" in completed.stdout
+    assert "design_volume_mm3=" in completed.stdout
 
 
 @pytest.mark.examples_smoke
 def test_t3a_battery_grammar_example_runs() -> None:
     completed = _run_example("examples/grammar/battery_18650_t3a_topology_surrogate_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t3a_topology_surrogate_grammar" in completed.stdout
-    assert "evaluation_mode='analytic_surrogate'" not in completed.stdout
-    assert "topology_allocation" in completed.stdout
+    assert "BatteryTierMetrics(" in completed.stdout
+    assert "connection_count=" in completed.stdout
 
 
 @pytest.mark.examples_smoke
 def test_t3b_battery_grammar_example_runs() -> None:
     completed = _run_example("examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t3b_netlist_explicit_grammar" in completed.stdout
-    assert "metric-keys" in completed.stdout
+    if _battery_extra_missing(completed):
+        pytest.skip("pybamm is not installed in this environment.")
+    assert "BatteryTierMetrics(" in completed.stdout
+    assert "voltage_v=" in completed.stdout
 
 
 @pytest.mark.examples_smoke
 def test_t4_battery_grammar_example_runs() -> None:
     completed = _run_example("examples/grammar/battery_18650_t4_thermal_hybrid_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_18650_t4_thermal_hybrid_grammar" in completed.stdout
-    assert "metric-keys" in completed.stdout
+    if _battery_extra_missing(completed):
+        pytest.skip("pybamm is not installed in this environment.")
+    assert "BatteryTierMetrics(" in completed.stdout
+    assert "max_temperature_c=" in completed.stdout
 
 
 @pytest.mark.examples_smoke
@@ -207,6 +214,8 @@ def test_t2_battery_optimization_example_runs() -> None:
 def test_t3a_battery_optimization_example_runs() -> None:
     completed = _run_example("examples/optimization/battery_18650_t3a_topology_surrogate_opt.py")
     assert completed.returncode == 0, completed.stderr
+    if _battery_extra_missing(completed):
+        pytest.skip("pybamm is not installed in this environment.")
     assert "battery_18650_t3a_topology_surrogate_opt" in completed.stdout
     assert "surrogate-mode analytic_surrogate" in completed.stdout
     assert "explicit-mode explicit_circuit" in completed.stdout
@@ -216,6 +225,8 @@ def test_t3a_battery_optimization_example_runs() -> None:
 def test_t3b_battery_optimization_example_runs() -> None:
     completed = _run_example("examples/optimization/battery_18650_t3b_netlist_explicit_opt.py")
     assert completed.returncode == 0, completed.stderr
+    if _battery_extra_missing(completed):
+        pytest.skip("pybamm is not installed in this environment.")
     assert "battery_18650_t3b_netlist_explicit_opt" in completed.stdout
     assert "metric-keys" in completed.stdout
 
@@ -224,6 +235,8 @@ def test_t3b_battery_optimization_example_runs() -> None:
 def test_t4_battery_optimization_example_runs() -> None:
     completed = _run_example("examples/optimization/battery_18650_t4_thermal_hybrid_opt.py")
     assert completed.returncode == 0, completed.stderr
+    if _battery_extra_missing(completed):
+        pytest.skip("pybamm is not installed in this environment.")
     assert "battery_18650_t4_thermal_hybrid_opt" in completed.stdout
     assert "hybrid-mode hybrid_thermal" in completed.stdout
 
@@ -232,7 +245,7 @@ def test_t4_battery_optimization_example_runs() -> None:
 def test_fast_charge_battery_optimization_example_runs() -> None:
     completed = _run_example("examples/optimization/battery_fast_charge_dfn_anchor_opt.py")
     assert completed.returncode == 0, completed.stderr
-    if "Install it with: pip install design-research-problems[battery]" in completed.stdout:
+    if _battery_extra_missing(completed):
         pytest.skip("pybamm is not installed in this environment.")
     assert "battery_fast_charge_dfn_anchor_opt" in completed.stdout
     assert "metric-keys" in completed.stdout

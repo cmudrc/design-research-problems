@@ -11,6 +11,27 @@ from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._battery_adapters import (
+    DEFAULT_AMBIENT_TEMPERATURE_C,
+    DEFAULT_COOLING_COEFFICIENT,
+    DEFAULT_PASSIVE_COOLING,
+    DEFAULT_THERMAL_AIRFLOW_AXIS,
+    DEFAULT_THERMAL_CONTACT_DECAY_MM,
+    DEFAULT_THERMAL_CONTACT_RESISTANCE_K_PER_W,
+    DEFAULT_THERMAL_FLOW_SHADOWING_FACTOR,
+    DEFAULT_THERMAL_MODEL,
+    DEFAULT_THERMAL_NEIGHBOR_CLEARANCE_MM,
+    DEFAULT_THERMAL_REFERENCE_SOC,
+    THERMAL_MODEL_LUMPED,
+    THERMAL_MODEL_MULTI_NODE,
+    BatteryEvaluationAdapterOutcome,
+    BatteryThermalPromotionConfig,
+    coerce_battery_thermal_airflow_axis,
+    coerce_battery_thermal_model,
+    evaluate_rectangular_battery_state,
+    resolved_backend_field_names,
+    solve_battery_thermal_network,
+)
 from design_research_problems.problems._domains.battery_benchmark import (
     BatteryEvaluationMode,
     BatteryImbalanceModel,
@@ -18,6 +39,7 @@ from design_research_problems.problems._domains.battery_benchmark import (
     build_battery_evaluation_provenance,
     coerce_battery_evaluation_mode,
     coerce_battery_imbalance_model,
+    supported_pack_evaluation_modes,
 )
 from design_research_problems.problems._domains.battery_cell_model import (
     BatteryBackendConfig,
@@ -26,7 +48,6 @@ from design_research_problems.problems._domains.battery_cell_model import (
     load_18650_cell_model,
     load_18650_thermal_priors,
     load_battery_thermal_priors,
-    resolve_battery_backend_config,
 )
 from design_research_problems.problems._domains.battery_circuit import (
     BatteryCellInstance,
@@ -35,6 +56,7 @@ from design_research_problems.problems._domains.battery_circuit import (
     BatteryConnection,
     evaluate_battery_circuit,
 )
+from design_research_problems.problems._domains.battery_core import BatteryMetricSummary, compute_metric_summary
 from design_research_problems.problems._domains.battery_geometry import (
     FiniteCylinder,
     axis_unit_vector_from_euler,
@@ -45,6 +67,9 @@ from design_research_problems.problems._domains.battery_layout import (
     DEFAULT_INTERCONNECT_RESISTANCE_OHM,
     MIN_SPACING_MM,
     BatteryRequirements,
+)
+from design_research_problems.problems._domains.battery_series_parallel import (
+    build_canonical_series_parallel_state,
 )
 from design_research_problems.problems._domains.battery_tier_metrics import (
     BatteryObjectiveWeights,
@@ -66,25 +91,19 @@ from design_research_problems.problems.optimization._battery_grid import Battery
 from design_research_problems.problems.optimization._battery_oriented_layout import BatteryOrientedLayoutProblem
 
 _INFEASIBILITY_PENALTY_SCALE = 1_000.0
-_DEFAULT_AMBIENT_TEMPERATURE_C = 25.0
+_DEFAULT_COOLING_COEFFICIENT = DEFAULT_COOLING_COEFFICIENT
+_DEFAULT_PASSIVE_COOLING = DEFAULT_PASSIVE_COOLING
+_DEFAULT_AMBIENT_TEMPERATURE_C = DEFAULT_AMBIENT_TEMPERATURE_C
 _DEFAULT_MAX_TEMPERATURE_C = 60.0
-_DEFAULT_COOLING_COEFFICIENT = 18.0
-_DEFAULT_PASSIVE_COOLING = 1.0
-_THERMAL_MODEL_LUMPED = "lumped"
-_THERMAL_MODEL_MULTI_NODE = "multi_node_2node"
-_DEFAULT_THERMAL_MODEL = _THERMAL_MODEL_MULTI_NODE
+_DEFAULT_THERMAL_MODEL = DEFAULT_THERMAL_MODEL
+_THERMAL_MODEL_LUMPED = THERMAL_MODEL_LUMPED
+_THERMAL_MODEL_MULTI_NODE = THERMAL_MODEL_MULTI_NODE
 
-_T1_SUPPORTED_EVALUATION_MODES = (BatteryEvaluationMode.ANALYTIC_SURROGATE,)
-_T2_SUPPORTED_EVALUATION_MODES = (BatteryEvaluationMode.ANALYTIC_SURROGATE,)
-_T3A_SUPPORTED_EVALUATION_MODES = (
-    BatteryEvaluationMode.ANALYTIC_SURROGATE,
-    BatteryEvaluationMode.EXPLICIT_CIRCUIT,
-)
-_T4_SUPPORTED_EVALUATION_MODES = (
-    BatteryEvaluationMode.ANALYTIC_SURROGATE,
-    BatteryEvaluationMode.EXPLICIT_CIRCUIT,
-    BatteryEvaluationMode.HYBRID_THERMAL,
-)
+_T1_SUPPORTED_EVALUATION_MODES = supported_pack_evaluation_modes(BatteryRepresentationMode.RECTANGULAR)
+_T2_SUPPORTED_EVALUATION_MODES = supported_pack_evaluation_modes(BatteryRepresentationMode.POSE_LAYOUT)
+_T3A_SUPPORTED_EVALUATION_MODES = supported_pack_evaluation_modes(BatteryRepresentationMode.TOPOLOGY_ALLOCATION)
+_T4_SUPPORTED_EVALUATION_MODES = supported_pack_evaluation_modes(BatteryRepresentationMode.THERMAL_TOPOLOGY)
+_CACHE_DECIMALS = 5
 
 
 @dataclass(frozen=True)
@@ -196,9 +215,37 @@ def _score_metrics(
     )
 
 
-def _resolved_backend_field_names(config: BatteryBackendConfig | None) -> tuple[str, ...]:
-    """Return normalized backend-config field names for provenance reporting."""
-    return tuple(sorted(resolve_battery_backend_config(config).as_dict()))
+def _vector_cache_key(variables: NDArray[numpy.float64]) -> tuple[float, ...]:
+    """Return a rounded immutable cache key for one design vector."""
+    return tuple(float(round(float(value), _CACHE_DECIMALS)) for value in variables)
+
+
+def _battery_thermal_config(
+    *,
+    cooling_coefficient_w_per_m2k: float,
+    passive_cooling_w_per_k: float,
+    ambient_temperature_c: float,
+    thermal_model: str,
+    thermal_neighbor_clearance_mm: float,
+    thermal_contact_decay_mm: float,
+    thermal_contact_resistance_k_per_w: float,
+    thermal_flow_shadowing_factor: float,
+    thermal_airflow_axis: str,
+    thermal_reference_soc: float,
+) -> BatteryThermalPromotionConfig:
+    """Return the shared thermal-promotion config for one pack problem."""
+    return BatteryThermalPromotionConfig(
+        cooling_coefficient_w_per_m2k=float(cooling_coefficient_w_per_m2k),
+        passive_cooling_w_per_k=float(passive_cooling_w_per_k),
+        ambient_temperature_c=float(ambient_temperature_c),
+        thermal_model=coerce_battery_thermal_model(thermal_model),
+        thermal_neighbor_clearance_mm=max(0.0, float(thermal_neighbor_clearance_mm)),
+        thermal_contact_decay_mm=max(1.0e-6, float(thermal_contact_decay_mm)),
+        thermal_contact_resistance_k_per_w=max(1.0e-6, float(thermal_contact_resistance_k_per_w)),
+        thermal_flow_shadowing_factor=float(numpy.clip(thermal_flow_shadowing_factor, 0.0, 1.0)),
+        thermal_airflow_axis=coerce_battery_thermal_airflow_axis(thermal_airflow_axis),
+        thermal_reference_soc=float(numpy.clip(thermal_reference_soc, 0.0, 1.0)),
+    )
 
 
 def _stage_parallel_equivalent(
@@ -1022,13 +1069,13 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
             maximum_temperature_c=maximum_temperature_c,
             load_current_a=load_current_a,
         )
-        self._thermal_priors: BatteryThermalPriors = load_18650_thermal_priors()
-        self.thermal_model = self._coerce_thermal_model(thermal_model)
+        self._thermal_priors_cache: BatteryThermalPriors | None = None
+        self.thermal_model = coerce_battery_thermal_model(thermal_model)
         self.thermal_neighbor_clearance_mm = max(0.0, float(thermal_neighbor_clearance_mm))
         self.thermal_contact_decay_mm = max(1.0e-6, float(thermal_contact_decay_mm))
         self.thermal_contact_resistance_k_per_w = max(1.0e-6, float(thermal_contact_resistance_k_per_w))
         self.thermal_flow_shadowing_factor = float(numpy.clip(thermal_flow_shadowing_factor, 0.0, 1.0))
-        self.thermal_airflow_axis = self._coerce_airflow_axis(thermal_airflow_axis)
+        self.thermal_airflow_axis = coerce_battery_thermal_airflow_axis(thermal_airflow_axis)
         self.thermal_reference_soc = float(numpy.clip(thermal_reference_soc, 0.0, 1.0))
         cell_radius_m = (CELL_SPEC_18650.diameter_mm / 2.0) * 1.0e-3
         cell_length_m = CELL_SPEC_18650.length_mm * 1.0e-3
@@ -1078,6 +1125,22 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
                 ]
             ),
         )
+
+    def _load_thermal_priors(self) -> BatteryThermalPriors:
+        """Return the thermal-prior bundle for this problem instance."""
+        return load_18650_thermal_priors()
+
+    @property
+    def _thermal_priors(self) -> BatteryThermalPriors:
+        """Return cached thermal priors, loading them only when needed."""
+        if self._thermal_priors_cache is None:
+            self._thermal_priors_cache = self._load_thermal_priors()
+        return self._thermal_priors_cache
+
+    @_thermal_priors.setter
+    def _thermal_priors(self, value: BatteryThermalPriors | None) -> None:
+        """Override the cached thermal priors, primarily for tests."""
+        self._thermal_priors_cache = value
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> Battery18650Tier4ThermalOptimizationProblem:
@@ -1199,21 +1262,6 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
         normalized = self._normalize_vector(variables)
         base = normalized if normalized.shape[0] == self.bounds.lb.shape[0] - 3 else normalized[:-3]
         return super()._decode(base)
-
-    def _coerce_thermal_model(self, thermal_model: str) -> str:
-        model = thermal_model.strip().lower()
-        if model not in {_THERMAL_MODEL_LUMPED, _THERMAL_MODEL_MULTI_NODE}:
-            raise ValueError(
-                "Tier-4 thermal_model must be one of "
-                f"{_THERMAL_MODEL_LUMPED!r} or {_THERMAL_MODEL_MULTI_NODE!r}, received {thermal_model!r}."
-            )
-        return model
-
-    def _coerce_airflow_axis(self, axis: str) -> str:
-        value = axis.strip().lower()
-        if value not in {"x", "y", "z"}:
-            raise ValueError(f"Tier-4 thermal_airflow_axis must be one of 'x', 'y', 'z', received {axis!r}.")
-        return value
 
     def _effective_parallel_and_resistance(self, decoded: Tier3DecodedCandidate) -> tuple[float, float]:
         min_stage_population = min(decoded.stage_counts, default=0)
@@ -1542,6 +1590,13 @@ class Battery18650T1RectangularSurrogateOptimizationProblem(Battery18650Tier1Ser
         ambient_temperature_c: float = _DEFAULT_AMBIENT_TEMPERATURE_C,
         maximum_temperature_c: float = _DEFAULT_MAX_TEMPERATURE_C,
         load_current_a: float | None = None,
+        thermal_model: str = DEFAULT_THERMAL_MODEL,
+        thermal_neighbor_clearance_mm: float = DEFAULT_THERMAL_NEIGHBOR_CLEARANCE_MM,
+        thermal_contact_decay_mm: float = DEFAULT_THERMAL_CONTACT_DECAY_MM,
+        thermal_contact_resistance_k_per_w: float = DEFAULT_THERMAL_CONTACT_RESISTANCE_K_PER_W,
+        thermal_flow_shadowing_factor: float = DEFAULT_THERMAL_FLOW_SHADOWING_FACTOR,
+        thermal_airflow_axis: str = DEFAULT_THERMAL_AIRFLOW_AXIS,
+        thermal_reference_soc: float = DEFAULT_THERMAL_REFERENCE_SOC,
         evaluation_mode: str | BatteryEvaluationMode = BatteryEvaluationMode.ANALYTIC_SURROGATE.value,
     ) -> None:
         super().__init__(
@@ -1562,6 +1617,24 @@ class Battery18650T1RectangularSurrogateOptimizationProblem(Battery18650Tier1Ser
             default=BatteryEvaluationMode.ANALYTIC_SURROGATE,
             supported=_T1_SUPPORTED_EVALUATION_MODES,
         )
+        self._outcome_cache: dict[tuple[int, int], BatteryEvaluationAdapterOutcome] = {}
+        self.thermal_model = coerce_battery_thermal_model(thermal_model)
+        self.thermal_neighbor_clearance_mm = max(0.0, float(thermal_neighbor_clearance_mm))
+        self.thermal_contact_decay_mm = max(1.0e-6, float(thermal_contact_decay_mm))
+        self.thermal_contact_resistance_k_per_w = max(1.0e-6, float(thermal_contact_resistance_k_per_w))
+        self.thermal_flow_shadowing_factor = float(numpy.clip(thermal_flow_shadowing_factor, 0.0, 1.0))
+        self.thermal_airflow_axis = coerce_battery_thermal_airflow_axis(thermal_airflow_axis)
+        self.thermal_reference_soc = float(numpy.clip(thermal_reference_soc, 0.0, 1.0))
+        self.constraints = [
+            ConstraintDefinition(kind="ineq", evaluate=self._width_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._depth_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._height_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._voltage_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._capacity_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._current_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._temperature_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._feasibility_margin),
+        ]
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T1RectangularSurrogateOptimizationProblem:
@@ -1591,21 +1664,113 @@ class Battery18650T1RectangularSurrogateOptimizationProblem(Battery18650Tier1Ser
                 cast(float, parameters.get("maximum_temperature_c", _DEFAULT_MAX_TEMPERATURE_C))
             ),
             load_current_a=cast(float | None, parameters.get("load_current_a")),
+            thermal_model=str(cast(str, parameters.get("thermal_model", DEFAULT_THERMAL_MODEL))),
+            thermal_neighbor_clearance_mm=float(
+                cast(float, parameters.get("thermal_neighbor_clearance_mm", DEFAULT_THERMAL_NEIGHBOR_CLEARANCE_MM))
+            ),
+            thermal_contact_decay_mm=float(
+                cast(float, parameters.get("thermal_contact_decay_mm", DEFAULT_THERMAL_CONTACT_DECAY_MM))
+            ),
+            thermal_contact_resistance_k_per_w=float(
+                cast(
+                    float,
+                    parameters.get(
+                        "thermal_contact_resistance_k_per_w",
+                        DEFAULT_THERMAL_CONTACT_RESISTANCE_K_PER_W,
+                    ),
+                )
+            ),
+            thermal_flow_shadowing_factor=float(
+                cast(float, parameters.get("thermal_flow_shadowing_factor", DEFAULT_THERMAL_FLOW_SHADOWING_FACTOR))
+            ),
+            thermal_airflow_axis=str(cast(str, parameters.get("thermal_airflow_axis", DEFAULT_THERMAL_AIRFLOW_AXIS))),
+            thermal_reference_soc=float(
+                cast(float, parameters.get("thermal_reference_soc", DEFAULT_THERMAL_REFERENCE_SOC))
+            ),
             evaluation_mode=cast(
                 str | BatteryEvaluationMode,
                 parameters.get("evaluation_mode", BatteryEvaluationMode.ANALYTIC_SURROGATE.value),
             ),
         )
 
+    def _thermal_config(self) -> BatteryThermalPromotionConfig:
+        return _battery_thermal_config(
+            cooling_coefficient_w_per_m2k=self.cooling_coefficient_w_per_m2k,
+            passive_cooling_w_per_k=self.passive_cooling_w_per_k,
+            ambient_temperature_c=self.ambient_temperature_c,
+            thermal_model=self.thermal_model,
+            thermal_neighbor_clearance_mm=self.thermal_neighbor_clearance_mm,
+            thermal_contact_decay_mm=self.thermal_contact_decay_mm,
+            thermal_contact_resistance_k_per_w=self.thermal_contact_resistance_k_per_w,
+            thermal_flow_shadowing_factor=self.thermal_flow_shadowing_factor,
+            thermal_airflow_axis=self.thermal_airflow_axis,
+            thermal_reference_soc=self.thermal_reference_soc,
+        )
+
+    def _outcome_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryEvaluationAdapterOutcome:
+        normalized = self._normalize_vector(variables)
+        series_count, parallel_count = self._normalized_counts(normalized)
+        key = (series_count, parallel_count)
+        cached = self._outcome_cache.get(key)
+        if cached is not None:
+            return cached
+        outcome = evaluate_rectangular_battery_state(
+            self.decode_candidate(normalized),
+            requirements=self.requirements,
+            backend_config=self.backend_config,
+            evaluation_mode=self.evaluation_mode,
+            load_current_a=self.load_current_a,
+            thermal_config=self._thermal_config(),
+        )
+        self._outcome_cache[key] = outcome
+        return outcome
+
+    def _summary_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryMetricSummary:
+        state = self.decode_candidate(self._normalize_vector(variables))
+        return compute_metric_summary(state, self.requirements)
+
+    def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
+        return self._outcome_from_variables(variables).metrics
+
+    def _width_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return self.requirements.max_width_mm - float(self._summary_from_variables(variables).design_width)
+
+    def _depth_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return self.requirements.max_depth_mm - float(self._summary_from_variables(variables).design_depth)
+
+    def _height_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return self.requirements.max_height_mm - float(self._summary_from_variables(variables).design_height)
+
+    def _voltage_margin(self, variables: NDArray[numpy.float64]) -> float:
+        metrics = self._metrics_from_variables(variables)
+        return self.requirements.voltage_tolerance_v - abs(metrics.voltage_v - self.requirements.target_voltage_v)
+
+    def _capacity_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return self._metrics_from_variables(variables).capacity_ah - self.requirements.minimum_capacity_ah
+
+    def _current_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return self._metrics_from_variables(variables).current_limit_a - self.requirements.minimum_current_a
+
+    def _temperature_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return self.maximum_temperature_c - self._metrics_from_variables(variables).max_temperature_c
+
+    def _feasibility_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return 1.0 if self._metrics_from_variables(variables).is_feasible else -1.0
+
     def evaluation_provenance(self, variables: NDArray[numpy.float64]) -> object:
-        evaluation = self._evaluation_from_variables(self._normalize_vector(variables))
+        outcome = self._outcome_from_variables(variables)
         return build_battery_evaluation_provenance(
             representation_mode=BatteryRepresentationMode.RECTANGULAR,
             evaluation_mode=self.evaluation_mode,
             evaluator_implementation=f"{type(self).__module__}:{type(self).__name__}",
             requested_backend_config=self.backend_config,
-            honored_backend_fields=_resolved_backend_field_names(self.backend_config),
-            cell_model_source=evaluation.cell_model_source,
+            honored_backend_fields=outcome.honored_backend_fields,
+            electrical_path=outcome.electrical_path,
+            thermal_path=outcome.thermal_path,
+            cell_model_source=outcome.cell_model_source,
+            thermal_prior_source=outcome.thermal_prior_source,
+            assumed_defaults=outcome.assumed_defaults,
+            adaptation_notes=outcome.adaptation_notes,
         )
 
 
@@ -1627,6 +1792,13 @@ class Battery18650T2PoseSurrogateOptimizationProblem(Battery18650Tier2LayoutOpti
         maximum_temperature_c: float = _DEFAULT_MAX_TEMPERATURE_C,
         load_current_a: float | None = None,
         backend_config: BatteryBackendConfig | None = None,
+        thermal_model: str = DEFAULT_THERMAL_MODEL,
+        thermal_neighbor_clearance_mm: float = DEFAULT_THERMAL_NEIGHBOR_CLEARANCE_MM,
+        thermal_contact_decay_mm: float = DEFAULT_THERMAL_CONTACT_DECAY_MM,
+        thermal_contact_resistance_k_per_w: float = DEFAULT_THERMAL_CONTACT_RESISTANCE_K_PER_W,
+        thermal_flow_shadowing_factor: float = DEFAULT_THERMAL_FLOW_SHADOWING_FACTOR,
+        thermal_airflow_axis: str = DEFAULT_THERMAL_AIRFLOW_AXIS,
+        thermal_reference_soc: float = DEFAULT_THERMAL_REFERENCE_SOC,
         evaluation_mode: str | BatteryEvaluationMode = BatteryEvaluationMode.ANALYTIC_SURROGATE.value,
     ) -> None:
         super().__init__(
@@ -1649,6 +1821,14 @@ class Battery18650T2PoseSurrogateOptimizationProblem(Battery18650Tier2LayoutOpti
             default=BatteryEvaluationMode.ANALYTIC_SURROGATE,
             supported=_T2_SUPPORTED_EVALUATION_MODES,
         )
+        self.thermal_model = coerce_battery_thermal_model(thermal_model)
+        self.thermal_neighbor_clearance_mm = max(0.0, float(thermal_neighbor_clearance_mm))
+        self.thermal_contact_decay_mm = max(1.0e-6, float(thermal_contact_decay_mm))
+        self.thermal_contact_resistance_k_per_w = max(1.0e-6, float(thermal_contact_resistance_k_per_w))
+        self.thermal_flow_shadowing_factor = float(numpy.clip(thermal_flow_shadowing_factor, 0.0, 1.0))
+        self.thermal_airflow_axis = coerce_battery_thermal_airflow_axis(thermal_airflow_axis)
+        self.thermal_reference_soc = float(numpy.clip(thermal_reference_soc, 0.0, 1.0))
+        self._outcome_cache: dict[tuple[float, ...], BatteryEvaluationAdapterOutcome] = {}
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T2PoseSurrogateOptimizationProblem:
@@ -1680,20 +1860,158 @@ class Battery18650T2PoseSurrogateOptimizationProblem(Battery18650Tier2LayoutOpti
             ),
             load_current_a=cast(float | None, parameters.get("load_current_a")),
             backend_config=parse_battery_backend_config(manifest),
+            thermal_model=str(cast(str, parameters.get("thermal_model", DEFAULT_THERMAL_MODEL))),
+            thermal_neighbor_clearance_mm=float(
+                cast(float, parameters.get("thermal_neighbor_clearance_mm", DEFAULT_THERMAL_NEIGHBOR_CLEARANCE_MM))
+            ),
+            thermal_contact_decay_mm=float(
+                cast(float, parameters.get("thermal_contact_decay_mm", DEFAULT_THERMAL_CONTACT_DECAY_MM))
+            ),
+            thermal_contact_resistance_k_per_w=float(
+                cast(
+                    float,
+                    parameters.get(
+                        "thermal_contact_resistance_k_per_w",
+                        DEFAULT_THERMAL_CONTACT_RESISTANCE_K_PER_W,
+                    ),
+                )
+            ),
+            thermal_flow_shadowing_factor=float(
+                cast(float, parameters.get("thermal_flow_shadowing_factor", DEFAULT_THERMAL_FLOW_SHADOWING_FACTOR))
+            ),
+            thermal_airflow_axis=str(cast(str, parameters.get("thermal_airflow_axis", DEFAULT_THERMAL_AIRFLOW_AXIS))),
+            thermal_reference_soc=float(
+                cast(float, parameters.get("thermal_reference_soc", DEFAULT_THERMAL_REFERENCE_SOC))
+            ),
             evaluation_mode=cast(
                 str | BatteryEvaluationMode,
                 parameters.get("evaluation_mode", BatteryEvaluationMode.ANALYTIC_SURROGATE.value),
             ),
         )
 
+    def _thermal_config(self) -> BatteryThermalPromotionConfig:
+        return _battery_thermal_config(
+            cooling_coefficient_w_per_m2k=self.cooling_coefficient_w_per_m2k,
+            passive_cooling_w_per_k=self.passive_cooling_w_per_k,
+            ambient_temperature_c=self.ambient_temperature_c,
+            thermal_model=self.thermal_model,
+            thermal_neighbor_clearance_mm=self.thermal_neighbor_clearance_mm,
+            thermal_contact_decay_mm=self.thermal_contact_decay_mm,
+            thermal_contact_resistance_k_per_w=self.thermal_contact_resistance_k_per_w,
+            thermal_flow_shadowing_factor=self.thermal_flow_shadowing_factor,
+            thermal_airflow_axis=self.thermal_airflow_axis,
+            thermal_reference_soc=self.thermal_reference_soc,
+        )
+
+    def _outcome_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryEvaluationAdapterOutcome:
+        normalized = self._normalize_vector(variables)
+        key = _vector_cache_key(normalized)
+        cached = self._outcome_cache.get(key)
+        if cached is not None:
+            return cached
+        if self.evaluation_mode is BatteryEvaluationMode.ANALYTIC_SURROGATE:
+            metrics = super()._metrics_from_variables(normalized)
+            outcome = BatteryEvaluationAdapterOutcome(
+                metrics=metrics,
+                electrical_path="native",
+                thermal_path="native",
+            )
+            self._outcome_cache[key] = outcome
+            return outcome
+
+        decoded = self.decode_candidate(normalized)
+        helper = self._pose_helper_evaluation(
+            active_cell_count=decoded.cell_count,
+            pose_variables=numpy.array(normalized[2:], dtype=float, copy=False),
+        )
+        thermal_config = self._thermal_config()
+        circuit_outcome = evaluate_rectangular_battery_state(
+            build_canonical_series_parallel_state(decoded.series_count, decoded.parallel_count),
+            requirements=self.requirements,
+            backend_config=self.backend_config,
+            evaluation_mode=BatteryEvaluationMode.EXPLICIT_CIRCUIT,
+            load_current_a=self.load_current_a,
+            thermal_config=thermal_config,
+        )
+        if self.evaluation_mode is BatteryEvaluationMode.HYBRID_THERMAL:
+            thermal_priors = load_battery_thermal_priors(self.backend_config)
+            thermal = solve_battery_thermal_network(
+                helper.cells,
+                cell_count=decoded.cell_count,
+                parallel_equivalent=float(max(decoded.parallel_count, 1)),
+                load_current_a=self.load_current_a,
+                thermal_priors=thermal_priors,
+                config=thermal_config,
+                total_surface_area_mm2=float(helper.surface_area_mm2),
+            )
+            max_temperature_c = thermal.max_core_temperature_c
+            thermal_prior_source = thermal_priors.source
+            thermal_path = "promoted"
+            assumed_defaults = thermal_config.as_dict()
+            adaptation_notes: tuple[str, ...] = (
+                "Electrical scoring promotes rectangular SxP counts to a canonical series-parallel circuit.",
+                "Hybrid thermal scoring reuses native pose geometry with deterministic promoted thermal controls.",
+            )
+        else:
+            max_temperature_c = _thermal_peak_temperature_c(
+                cell_count=decoded.cell_count,
+                parallel_equivalent=float(max(decoded.parallel_count, 1)),
+                surface_area_mm2=float(helper.surface_area_mm2),
+                load_current_a=self.load_current_a,
+                cooling_coefficient_w_per_m2k=self.cooling_coefficient_w_per_m2k,
+                passive_cooling_w_per_k=self.passive_cooling_w_per_k,
+                ambient_temperature_c=self.ambient_temperature_c,
+            )
+            thermal_prior_source = None
+            thermal_path = "native"
+            assumed_defaults = None
+            adaptation_notes = (
+                "Electrical scoring promotes rectangular SxP counts to a canonical series-parallel circuit.",
+            )
+        outcome = BatteryEvaluationAdapterOutcome(
+            metrics=BatteryTierMetrics(
+                cell_count=float(decoded.cell_count),
+                connection_count=float(circuit_outcome.metrics.connection_count),
+                cost_usd=float(decoded.cell_count) * CELL_SPEC_18650.unit_cost_usd,
+                design_volume_mm3=float(helper.design_volume_mm3),
+                max_temperature_c=float(max_temperature_c),
+                voltage_v=float(circuit_outcome.metrics.voltage_v),
+                capacity_ah=float(circuit_outcome.metrics.capacity_ah),
+                current_limit_a=float(decoded.parallel_count)
+                * CELL_SPEC_18650.nominal_capacity_ah
+                * CELL_SPEC_18650.max_discharge_rate_c,
+                min_clearance_mm=float(helper.minimum_surface_clearance_mm),
+                is_feasible=bool(circuit_outcome.metrics.is_feasible),
+                failure_reason=circuit_outcome.metrics.failure_reason,
+            ),
+            electrical_path="promoted",
+            thermal_path=thermal_path,
+            honored_backend_fields=circuit_outcome.honored_backend_fields,
+            cell_model_source=circuit_outcome.cell_model_source,
+            thermal_prior_source=thermal_prior_source,
+            assumed_defaults=assumed_defaults,
+            adaptation_notes=adaptation_notes,
+        )
+        self._outcome_cache[key] = outcome
+        return outcome
+
+    def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
+        return self._outcome_from_variables(variables).metrics
+
     def evaluation_provenance(self, variables: NDArray[numpy.float64]) -> object:
-        del variables
+        outcome = self._outcome_from_variables(variables)
         return build_battery_evaluation_provenance(
             representation_mode=BatteryRepresentationMode.POSE_LAYOUT,
             evaluation_mode=self.evaluation_mode,
             evaluator_implementation=f"{type(self).__module__}:{type(self).__name__}",
             requested_backend_config=self.backend_config,
-            honored_backend_fields=(),
+            honored_backend_fields=outcome.honored_backend_fields,
+            electrical_path=outcome.electrical_path,
+            thermal_path=outcome.thermal_path,
+            cell_model_source=outcome.cell_model_source,
+            thermal_prior_source=outcome.thermal_prior_source,
+            assumed_defaults=outcome.assumed_defaults,
+            adaptation_notes=outcome.adaptation_notes,
         )
 
 
@@ -1718,6 +2036,13 @@ class Battery18650T3ATopologySurrogateOptimizationProblem(
         maximum_temperature_c: float = _DEFAULT_MAX_TEMPERATURE_C,
         load_current_a: float | None = None,
         backend_config: BatteryBackendConfig | None = None,
+        thermal_model: str = DEFAULT_THERMAL_MODEL,
+        thermal_neighbor_clearance_mm: float = DEFAULT_THERMAL_NEIGHBOR_CLEARANCE_MM,
+        thermal_contact_decay_mm: float = DEFAULT_THERMAL_CONTACT_DECAY_MM,
+        thermal_contact_resistance_k_per_w: float = DEFAULT_THERMAL_CONTACT_RESISTANCE_K_PER_W,
+        thermal_flow_shadowing_factor: float = DEFAULT_THERMAL_FLOW_SHADOWING_FACTOR,
+        thermal_airflow_axis: str = DEFAULT_THERMAL_AIRFLOW_AXIS,
+        thermal_reference_soc: float = DEFAULT_THERMAL_REFERENCE_SOC,
         evaluation_mode: str | BatteryEvaluationMode = BatteryEvaluationMode.ANALYTIC_SURROGATE.value,
         imbalance_model: str | BatteryImbalanceModel = BatteryImbalanceModel.MIN_STAGE.value,
     ) -> None:
@@ -1743,6 +2068,14 @@ class Battery18650T3ATopologySurrogateOptimizationProblem(
         )
         self.imbalance_model = coerce_battery_imbalance_model(imbalance_model)
         self._explicit_projection_cache = {}
+        self.thermal_model = coerce_battery_thermal_model(thermal_model)
+        self.thermal_neighbor_clearance_mm = max(0.0, float(thermal_neighbor_clearance_mm))
+        self.thermal_contact_decay_mm = max(1.0e-6, float(thermal_contact_decay_mm))
+        self.thermal_contact_resistance_k_per_w = max(1.0e-6, float(thermal_contact_resistance_k_per_w))
+        self.thermal_flow_shadowing_factor = float(numpy.clip(thermal_flow_shadowing_factor, 0.0, 1.0))
+        self.thermal_airflow_axis = coerce_battery_thermal_airflow_axis(thermal_airflow_axis)
+        self.thermal_reference_soc = float(numpy.clip(thermal_reference_soc, 0.0, 1.0))
+        self._outcome_cache: dict[tuple[float, ...], BatteryEvaluationAdapterOutcome] = {}
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T3ATopologySurrogateOptimizationProblem:
@@ -1774,6 +2107,29 @@ class Battery18650T3ATopologySurrogateOptimizationProblem(
             ),
             load_current_a=cast(float | None, parameters.get("load_current_a")),
             backend_config=parse_battery_backend_config(manifest),
+            thermal_model=str(cast(str, parameters.get("thermal_model", DEFAULT_THERMAL_MODEL))),
+            thermal_neighbor_clearance_mm=float(
+                cast(float, parameters.get("thermal_neighbor_clearance_mm", DEFAULT_THERMAL_NEIGHBOR_CLEARANCE_MM))
+            ),
+            thermal_contact_decay_mm=float(
+                cast(float, parameters.get("thermal_contact_decay_mm", DEFAULT_THERMAL_CONTACT_DECAY_MM))
+            ),
+            thermal_contact_resistance_k_per_w=float(
+                cast(
+                    float,
+                    parameters.get(
+                        "thermal_contact_resistance_k_per_w",
+                        DEFAULT_THERMAL_CONTACT_RESISTANCE_K_PER_W,
+                    ),
+                )
+            ),
+            thermal_flow_shadowing_factor=float(
+                cast(float, parameters.get("thermal_flow_shadowing_factor", DEFAULT_THERMAL_FLOW_SHADOWING_FACTOR))
+            ),
+            thermal_airflow_axis=str(cast(str, parameters.get("thermal_airflow_axis", DEFAULT_THERMAL_AIRFLOW_AXIS))),
+            thermal_reference_soc=float(
+                cast(float, parameters.get("thermal_reference_soc", DEFAULT_THERMAL_REFERENCE_SOC))
+            ),
             evaluation_mode=cast(
                 str | BatteryEvaluationMode,
                 parameters.get("evaluation_mode", BatteryEvaluationMode.ANALYTIC_SURROGATE.value),
@@ -1786,6 +2142,20 @@ class Battery18650T3ATopologySurrogateOptimizationProblem(
 
     def _surrogate_parallel_equivalent(self, decoded: Tier3DecodedCandidate) -> float:
         return _stage_parallel_equivalent(decoded.stage_counts, self.imbalance_model)
+
+    def _thermal_config(self) -> BatteryThermalPromotionConfig:
+        return _battery_thermal_config(
+            cooling_coefficient_w_per_m2k=self.cooling_coefficient_w_per_m2k,
+            passive_cooling_w_per_k=self.passive_cooling_w_per_k,
+            ambient_temperature_c=self.ambient_temperature_c,
+            thermal_model=self.thermal_model,
+            thermal_neighbor_clearance_mm=self.thermal_neighbor_clearance_mm,
+            thermal_contact_decay_mm=self.thermal_contact_decay_mm,
+            thermal_contact_resistance_k_per_w=self.thermal_contact_resistance_k_per_w,
+            thermal_flow_shadowing_factor=self.thermal_flow_shadowing_factor,
+            thermal_airflow_axis=self.thermal_airflow_axis,
+            thermal_reference_soc=self.thermal_reference_soc,
+        )
 
     def _analytic_metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
         normalized = self._normalize_vector(variables)
@@ -1853,32 +2223,100 @@ class Battery18650T3ATopologySurrogateOptimizationProblem(
             failure_reason=evaluation.failure_reason,
         )
 
+    def _hybrid_metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
+        normalized = self._normalize_vector(variables)
+        decoded = self._decode(normalized)
+        active_count, pose_values = self._active_count_and_pose_variables(normalized)
+        helper = self._pose_helper_evaluation(active_cell_count=active_count, pose_variables=pose_values)
+        evaluation = self._projected_circuit_evaluation(decoded)
+        parallel_equivalent, _, _, current_limit_a = _tier3_surrogate_electrical_terms(
+            decoded,
+            imbalance_model=self.imbalance_model,
+        )
+        thermal_priors = load_battery_thermal_priors(self.backend_config)
+        thermal = solve_battery_thermal_network(
+            helper.cells,
+            cell_count=decoded.cell_count,
+            parallel_equivalent=float(max(parallel_equivalent, 1.0)),
+            load_current_a=self.load_current_a,
+            thermal_priors=thermal_priors,
+            config=self._thermal_config(),
+            total_surface_area_mm2=float(helper.surface_area_mm2),
+        )
+        return BatteryTierMetrics(
+            cell_count=float(decoded.cell_count),
+            connection_count=float(evaluation.connection_count),
+            cost_usd=float(decoded.cell_count) * CELL_SPEC_18650.unit_cost_usd,
+            design_volume_mm3=float(helper.design_volume_mm3),
+            max_temperature_c=float(thermal.max_core_temperature_c),
+            voltage_v=float(evaluation.pack_nominal_voltage),
+            capacity_ah=_safe_delivered_capacity_ah(evaluation),
+            current_limit_a=current_limit_a,
+            min_clearance_mm=float(helper.minimum_surface_clearance_mm),
+            is_feasible=bool(evaluation.is_feasible),
+            failure_reason=evaluation.failure_reason,
+        )
+
+    def _outcome_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryEvaluationAdapterOutcome:
+        normalized = self._normalize_vector(variables)
+        key = _vector_cache_key(normalized)
+        cached = self._outcome_cache.get(key)
+        if cached is not None:
+            return cached
+        if self.evaluation_mode is BatteryEvaluationMode.ANALYTIC_SURROGATE:
+            outcome = BatteryEvaluationAdapterOutcome(
+                metrics=self._analytic_metrics_from_variables(normalized),
+                electrical_path="native",
+                thermal_path="native",
+            )
+        elif self.evaluation_mode is BatteryEvaluationMode.EXPLICIT_CIRCUIT:
+            decoded = self._decode(normalized)
+            evaluation = self._projected_circuit_evaluation(decoded)
+            outcome = BatteryEvaluationAdapterOutcome(
+                metrics=self._explicit_metrics_from_variables(normalized),
+                electrical_path="projected",
+                thermal_path="native",
+                honored_backend_fields=resolved_backend_field_names(self.backend_config),
+                cell_model_source=evaluation.cell_model_source,
+                adaptation_notes=(self._projection_notes(),),
+            )
+        else:
+            decoded = self._decode(normalized)
+            evaluation = self._projected_circuit_evaluation(decoded)
+            thermal_priors = load_battery_thermal_priors(self.backend_config)
+            outcome = BatteryEvaluationAdapterOutcome(
+                metrics=self._hybrid_metrics_from_variables(normalized),
+                electrical_path="projected",
+                thermal_path="promoted",
+                honored_backend_fields=resolved_backend_field_names(self.backend_config),
+                cell_model_source=evaluation.cell_model_source,
+                thermal_prior_source=thermal_priors.source,
+                assumed_defaults=self._thermal_config().as_dict(),
+                adaptation_notes=(
+                    self._projection_notes(),
+                    "Hybrid thermal scoring reuses native pose geometry with deterministic promoted thermal controls.",
+                ),
+            )
+        self._outcome_cache[key] = outcome
+        return outcome
+
     def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
-        if self.evaluation_mode is BatteryEvaluationMode.EXPLICIT_CIRCUIT:
-            return self._explicit_metrics_from_variables(variables)
-        return self._analytic_metrics_from_variables(variables)
+        return self._outcome_from_variables(variables).metrics
 
     def evaluation_provenance(self, variables: NDArray[numpy.float64]) -> object:
-        cell_model_source: str | None = None
-        honored_backend_fields: tuple[str, ...] = ()
-        projected_before_scoring = False
-        projection_notes: str | None = None
-        if self.evaluation_mode is BatteryEvaluationMode.EXPLICIT_CIRCUIT:
-            decoded = self._decode(self._normalize_vector(variables))
-            evaluation = self._projected_circuit_evaluation(decoded)
-            cell_model_source = evaluation.cell_model_source
-            honored_backend_fields = _resolved_backend_field_names(self.backend_config)
-            projected_before_scoring = True
-            projection_notes = self._projection_notes()
+        outcome = self._outcome_from_variables(variables)
         return build_battery_evaluation_provenance(
             representation_mode=BatteryRepresentationMode.TOPOLOGY_ALLOCATION,
             evaluation_mode=self.evaluation_mode,
             evaluator_implementation=f"{type(self).__module__}:{type(self).__name__}",
             requested_backend_config=self.backend_config,
-            honored_backend_fields=honored_backend_fields,
-            cell_model_source=cell_model_source,
-            projected_before_scoring=projected_before_scoring,
-            projection_notes=projection_notes,
+            honored_backend_fields=outcome.honored_backend_fields,
+            electrical_path=outcome.electrical_path,
+            thermal_path=outcome.thermal_path,
+            cell_model_source=outcome.cell_model_source,
+            thermal_prior_source=outcome.thermal_prior_source,
+            assumed_defaults=outcome.assumed_defaults,
+            adaptation_notes=outcome.adaptation_notes,
             imbalance_model=self.imbalance_model,
         )
 
@@ -1943,7 +2381,19 @@ class Battery18650T4ThermalHybridOptimizationProblem(
         )
         self.imbalance_model = coerce_battery_imbalance_model(imbalance_model)
         self._explicit_projection_cache = {}
-        self._thermal_priors = load_battery_thermal_priors(self.backend_config)
+        self._outcome_cache: dict[tuple[float, ...], BatteryEvaluationAdapterOutcome] = {}
+
+    def _load_thermal_priors(self) -> BatteryThermalPriors:
+        """Return the backend-aware thermal-prior bundle for this problem instance."""
+        return load_battery_thermal_priors(self.backend_config)
+
+    def _analytic_thermal_defaults(self) -> tuple[float, float, float]:
+        """Return the canonical thermal proxy inputs for analytic surrogate scoring."""
+        return (
+            float(self.cooling_coefficient_w_per_m2k),
+            float(self.passive_cooling_w_per_k),
+            float(self.ambient_temperature_c),
+        )
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T4ThermalHybridOptimizationProblem:
@@ -2110,39 +2560,64 @@ class Battery18650T4ThermalHybridOptimizationProblem(
             failure_reason=evaluation.failure_reason,
         )
 
-    def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
+    def _outcome_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryEvaluationAdapterOutcome:
+        normalized = self._normalize_vector(variables)
+        key = _vector_cache_key(normalized)
+        cached = self._outcome_cache.get(key)
+        if cached is not None:
+            return cached
         if self.evaluation_mode is BatteryEvaluationMode.ANALYTIC_SURROGATE:
-            return self._analytic_metrics_from_variables(variables)
-        if self.evaluation_mode is BatteryEvaluationMode.EXPLICIT_CIRCUIT:
-            return self._explicit_or_hybrid_metrics_from_variables(variables, use_hybrid_thermal=False)
-        return self._explicit_or_hybrid_metrics_from_variables(variables, use_hybrid_thermal=True)
+            outcome = BatteryEvaluationAdapterOutcome(
+                metrics=self._analytic_metrics_from_variables(normalized),
+                electrical_path="native",
+                thermal_path="native",
+                adaptation_notes=("Analytic surrogate scoring ignores candidate-specific thermal control variables.",),
+            )
+        else:
+            decoded = super()._decode(normalized[:-3])
+            evaluation = self._projected_circuit_evaluation(decoded)
+            if self.evaluation_mode is BatteryEvaluationMode.EXPLICIT_CIRCUIT:
+                outcome = BatteryEvaluationAdapterOutcome(
+                    metrics=self._explicit_or_hybrid_metrics_from_variables(normalized, use_hybrid_thermal=False),
+                    electrical_path="projected",
+                    thermal_path="native",
+                    honored_backend_fields=resolved_backend_field_names(self.backend_config),
+                    cell_model_source=evaluation.cell_model_source,
+                    adaptation_notes=(self._projection_notes(),),
+                )
+            else:
+                outcome = BatteryEvaluationAdapterOutcome(
+                    metrics=self._explicit_or_hybrid_metrics_from_variables(normalized, use_hybrid_thermal=True),
+                    electrical_path="projected",
+                    thermal_path="native",
+                    honored_backend_fields=resolved_backend_field_names(self.backend_config),
+                    cell_model_source=evaluation.cell_model_source,
+                    thermal_prior_source=self._thermal_priors.source,
+                    adaptation_notes=(
+                        self._projection_notes(),
+                        "Thermal-topology candidates use their native thermal-network variables for hybrid scoring.",
+                    ),
+                )
+        self._outcome_cache[key] = outcome
+        return outcome
+
+    def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
+        return self._outcome_from_variables(variables).metrics
 
     def evaluation_provenance(self, variables: NDArray[numpy.float64]) -> object:
-        cell_model_source: str | None = None
-        thermal_prior_source: str | None = None
-        honored_backend_fields: tuple[str, ...] = ()
-        projected_before_scoring = False
-        projection_notes: str | None = None
-        if self.evaluation_mode in {BatteryEvaluationMode.EXPLICIT_CIRCUIT, BatteryEvaluationMode.HYBRID_THERMAL}:
-            decoded = super()._decode(self._normalize_vector(variables)[:-3])
-            evaluation = self._projected_circuit_evaluation(decoded)
-            cell_model_source = evaluation.cell_model_source
-            thermal_prior_source = (
-                self._thermal_priors.source if self.evaluation_mode is BatteryEvaluationMode.HYBRID_THERMAL else None
-            )
-            honored_backend_fields = _resolved_backend_field_names(self.backend_config)
-            projected_before_scoring = True
-            projection_notes = self._projection_notes()
+        outcome = self._outcome_from_variables(variables)
         return build_battery_evaluation_provenance(
             representation_mode=BatteryRepresentationMode.THERMAL_TOPOLOGY,
             evaluation_mode=self.evaluation_mode,
             evaluator_implementation=f"{type(self).__module__}:{type(self).__name__}",
             requested_backend_config=self.backend_config,
-            honored_backend_fields=honored_backend_fields,
-            cell_model_source=cell_model_source,
-            thermal_prior_source=thermal_prior_source,
-            projected_before_scoring=projected_before_scoring,
-            projection_notes=projection_notes,
+            honored_backend_fields=outcome.honored_backend_fields,
+            electrical_path=outcome.electrical_path,
+            thermal_path=outcome.thermal_path,
+            cell_model_source=outcome.cell_model_source,
+            thermal_prior_source=outcome.thermal_prior_source,
+            assumed_defaults=outcome.assumed_defaults,
+            adaptation_notes=outcome.adaptation_notes,
             imbalance_model=self.imbalance_model,
         )
 
@@ -2152,12 +2627,4 @@ __all__ = [
     "Battery18650T2PoseSurrogateOptimizationProblem",
     "Battery18650T3ATopologySurrogateOptimizationProblem",
     "Battery18650T4ThermalHybridOptimizationProblem",
-    "Battery18650Tier1SeriesParallelOptimizationProblem",
-    "Battery18650Tier2LayoutOptimizationProblem",
-    "Battery18650Tier3TopologyOptimizationProblem",
-    "Battery18650Tier4ThermalOptimizationProblem",
-    "Tier2DecodedCandidate",
-    "Tier3DecodedCandidate",
-    "Tier4DecodedCandidate",
-    "Tier4ThermalDiagnostics",
 ]

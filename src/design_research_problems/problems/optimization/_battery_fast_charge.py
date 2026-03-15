@@ -763,6 +763,8 @@ class BatteryFastChargeDFNAnchorOptimizationProblem(BatteryFastChargeOptimizatio
             evaluator_implementation=f"{type(self).__module__}:{type(self).__name__}",
             requested_backend_config=None,
             honored_backend_fields=(),
+            electrical_path="native",
+            thermal_path="native",
             cell_model_source="pybamm_dfn",
         )
 

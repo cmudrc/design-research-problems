@@ -6,7 +6,7 @@ Source: ``examples/grammar/battery_18650_t1_rectangular_surrogate_grammar.py``
 Introduction
 ------------
 
-Inspect the T1 rectangular surrogate battery grammar benchmark.
+Build and evaluate a simple tier-1 battery grammar state.
 
 Technical Implementation
 ------------------------

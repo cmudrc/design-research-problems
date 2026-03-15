@@ -6,7 +6,7 @@ Source: ``examples/grammar/battery_18650_t3a_topology_surrogate_grammar.py``
 Introduction
 ------------
 
-Inspect the T3A topology surrogate battery grammar benchmark.
+Build and evaluate a simple tier-3A battery grammar state.
 
 Technical Implementation
 ------------------------

@@ -102,7 +102,7 @@ docs-build: check-python
 
 docs-check: check-python
 	$(PYTHON) scripts/generate_example_docs.py --check
-	$(PYTHON) scripts/generate_problem_catalog_docs.py
+	$(PYTHON) scripts/generate_problem_catalog_docs.py --check
 	$(PYTHON) scripts/check_docs_consistency.py
 
 docs-linkcheck: check-python

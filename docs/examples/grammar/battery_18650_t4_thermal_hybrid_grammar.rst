@@ -6,7 +6,7 @@ Source: ``examples/grammar/battery_18650_t4_thermal_hybrid_grammar.py``
 Introduction
 ------------
 
-Inspect the T4 thermal hybrid battery grammar benchmark.
+Build and optionally evaluate a simple tier-4 battery grammar state.
 
 Technical Implementation
 ------------------------

@@ -6,7 +6,7 @@ Source: ``examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py``
 Introduction
 ------------
 
-Inspect the T3B explicit-netlist battery grammar benchmark.
+Build and optionally evaluate a simple tier-3B battery grammar state.
 
 Technical Implementation
 ------------------------

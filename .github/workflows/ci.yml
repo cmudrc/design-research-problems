@@ -20,7 +20,7 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install dependencies
-        run: make dev-battery
+        run: make dev
       - name: Run checks
         run: make ci
 
@@ -40,9 +40,9 @@ jobs:
       - name: Create virtual environment
         run: uv venv --python 3.12 .venv
       - name: Install lowest direct dependencies
-        run: uv pip install --python .venv/bin/python --resolution lowest-direct -e ".[dev,battery]"
+        run: uv pip install --python .venv/bin/python --resolution lowest-direct -e ".[dev]"
       - name: Run tests
-        run: .venv/bin/python -m pytest -q
+        run: make test
 
   locked:
     runs-on: ${{ matrix.os }}
@@ -52,10 +52,10 @@ jobs:
         include:
           - os: ubuntu-latest
             repro-python: "3.12.12"
-            repro-extras: "dev battery"
+            repro-extras: "dev"
           - os: macos-latest
             repro-python: "3.12"
-            repro-extras: "dev battery"
+            repro-extras: "dev"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -106,7 +106,7 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install dependencies
-        run: make dev-battery
+        run: make dev
       - name: Generate coverage artifacts
         run: make coverage
       - name: Generate coverage badge

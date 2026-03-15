@@ -7,7 +7,7 @@ import numpy
 import pytest
 
 from design_research_problems import MissingOptionalDependencyError
-from design_research_problems.problems.grammar._battery_cell_model import (
+from design_research_problems.problems._domains.battery_cell_model import (
     BatteryBackendConfig,
     BatteryCellModel,
     BatteryParameterization,
@@ -15,14 +15,14 @@ from design_research_problems.problems.grammar._battery_cell_model import (
     battery_backend_config_from_mapping,
     interpolate_cell_model,
 )
-from design_research_problems.problems.grammar._battery_circuit import (
+from design_research_problems.problems._domains.battery_circuit import (
     BatteryCellInstance,
     BatteryCircuitState,
     BatteryConnection,
     analyze_battery_topology,
     evaluate_battery_circuit,
 )
-from design_research_problems.problems.grammar._battery_layout import (
+from design_research_problems.problems._domains.battery_layout import (
     CELL_SPEC_18650,
     DEFAULT_INTERCONNECT_RESISTANCE_OHM,
     BatteryRequirements,
@@ -96,7 +96,7 @@ def _run_live_pybamm_spm_profile(
     temperature_c: float,
     profile_pairs: tuple[tuple[float, float], ...],
 ) -> tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     try:
         pybamm_module = battery_cell_model.import_pybamm()
@@ -656,7 +656,7 @@ def test_evaluation_records_cell_model_mode_and_parameter_set_metadata() -> None
 def test_evaluate_battery_circuit_uses_backend_config_loader_path(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     def _unexpected_load() -> BatteryCellModel:
         raise AssertionError("load_cell_model should not be used when backend_config is provided.")
@@ -675,15 +675,13 @@ def test_evaluate_battery_circuit_uses_backend_config_loader_path(
         )
 
 
-def test_battery_backend_config_parses_parameterization_and_options() -> None:
+def test_battery_backend_config_parses_parameterization_and_thermal_config() -> None:
     config = battery_backend_config_from_mapping(
         {
             "cell_model_mode": "pybamm_ecm",
             "parameterization": {"preset": "fast"},
             "thermal_mode": "isothermal",
-            "ambient_temp_C": 22.5,
-            "parasitics": {"R_bus": 0.001, "R_contact": 0.002},
-            "solver_policy": {"dt_s": 1.0, "rel_tol": 1e-6},
+            "ambient_temp_c": 22.5,
         }
     )
     assert config.cell_model_mode == "pybamm_ecm"
@@ -691,8 +689,6 @@ def test_battery_backend_config_parses_parameterization_and_options() -> None:
     assert config.parameterization.resolved_parameter_set() == "Chen2020"
     assert config.thermal_mode == "isothermal"
     assert config.ambient_temp_c == pytest.approx(22.5)
-    assert dict(config.parasitics) == {"R_bus": 0.001, "R_contact": 0.002}
-    assert dict(config.solver_policy) == {"dt_s": 1.0, "rel_tol": 1e-6}
 
 
 def test_battery_backend_config_defaults_to_isothermal_with_shared_ambient() -> None:
@@ -711,6 +707,14 @@ def test_battery_backend_config_rejects_removed_surrogate_mode() -> None:
         battery_backend_config_from_mapping({"cell_model_mode": "surrogate_rescaled"})
 
 
+def test_battery_backend_config_rejects_removed_compatibility_fields() -> None:
+    with pytest.raises(ValueError, match="Unsupported battery_backend field"):
+        battery_backend_config_from_mapping({"ambient_temp_C": 22.5})
+
+    with pytest.raises(ValueError, match="Unsupported battery_backend field"):
+        battery_backend_config_from_mapping({"parasitics": {"R_bus": 0.001}})
+
+
 def test_battery_backend_config_rejects_unknown_thermal_mode() -> None:
     with pytest.raises(ValueError, match="thermal_mode"):
         battery_backend_config_from_mapping({"thermal_mode": "multi_node"})
@@ -719,7 +723,7 @@ def test_battery_backend_config_rejects_unknown_thermal_mode() -> None:
 def test_load_battery_cell_model_auto_mode_requires_pybamm(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model._load_battery_cell_model_cached.cache_clear()
     monkeypatch.setattr(
@@ -735,7 +739,7 @@ def test_load_battery_cell_model_auto_mode_requires_pybamm(
 def test_load_battery_cell_model_spm_mode_uses_lithium_ion_spm_contract(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model._load_battery_cell_model_cached.cache_clear()
     fake_defaults = {
@@ -767,7 +771,7 @@ def test_load_battery_cell_model_spm_mode_uses_lithium_ion_spm_contract(
 def test_load_battery_cell_model_spm_mode_fails_fast_without_required_ecm_keys(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model._load_battery_cell_model_cached.cache_clear()
     fake_defaults = {
@@ -794,7 +798,7 @@ def test_load_battery_cell_model_spm_mode_fails_fast_without_required_ecm_keys(
 def test_load_battery_cell_model_dfn_mode_respects_parameter_set_override(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model._load_battery_cell_model_cached.cache_clear()
     parameter_set_calls: list[str] = []
@@ -836,7 +840,7 @@ def test_load_battery_cell_model_dfn_mode_respects_parameter_set_override(
 def test_isothermal_backend_propagates_ambient_temperature_to_cell_model(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model._load_battery_cell_model_cached.cache_clear()
     battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
@@ -879,7 +883,7 @@ def test_isothermal_backend_propagates_ambient_temperature_to_cell_model(
 def test_lumped_backend_produces_distinct_temperature_and_voltage_trajectory(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model._load_battery_cell_model_cached.cache_clear()
     battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
@@ -925,7 +929,7 @@ def test_lumped_backend_produces_distinct_temperature_and_voltage_trajectory(
 def test_load_18650_cell_model_requires_supported_thevenin_factory(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model.load_18650_cell_model.cache_clear()
     fake_module = SimpleNamespace(equivalent_circuit=SimpleNamespace(Thevenin=None))
@@ -940,7 +944,7 @@ def test_load_18650_cell_model_requires_supported_thevenin_factory(
 def test_load_18650_cell_model_raises_when_pybamm_extraction_fails(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model.load_18650_cell_model.cache_clear()
     fake_module = SimpleNamespace(
@@ -956,7 +960,7 @@ def test_load_18650_cell_model_raises_when_pybamm_extraction_fails(
 
 @pytest.mark.pybamm_real
 def test_load_18650_cell_model_uses_expected_pybamm_thevenin_contract() -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     try:
         pybamm_module = battery_cell_model.import_pybamm()
@@ -984,7 +988,7 @@ def test_load_18650_cell_model_uses_expected_pybamm_thevenin_contract() -> None:
 def test_load_18650_thermal_priors_requires_supported_thevenin_factory(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model.load_18650_thermal_priors.cache_clear()
     battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
@@ -1001,7 +1005,7 @@ def test_load_18650_thermal_priors_requires_supported_thevenin_factory(
 def test_load_18650_thermal_priors_extracts_and_normalizes_values(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model.load_18650_thermal_priors.cache_clear()
     battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
@@ -1042,7 +1046,7 @@ def test_load_18650_thermal_priors_extracts_and_normalizes_values(
 
 
 def test_load_18650_thermal_priors_is_cached(monkeypatch: pytest.MonkeyPatch) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model.load_18650_thermal_priors.cache_clear()
     battery_cell_model._load_battery_thermal_priors_cached.cache_clear()
@@ -1092,7 +1096,7 @@ def test_battery_backend_config_accepts_direct_mode() -> None:
 
 
 def test_load_battery_cell_model_direct_mode_reports_evaluator_only_usage() -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model._load_battery_cell_model_cached.cache_clear()
     with pytest.raises(ValueError, match="evaluator mode"):
@@ -1103,7 +1107,7 @@ def test_load_battery_cell_model_direct_mode_reports_evaluator_only_usage() -> N
 def test_load_battery_cell_model_two_rc_mode_uses_fitted_trace_bundle(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model._load_battery_cell_model_cached.cache_clear()
     fake_parameter_values = {
@@ -1159,7 +1163,7 @@ def test_load_battery_cell_model_two_rc_mode_uses_fitted_trace_bundle(
 
 
 def test_two_rc_trace_residuals_accept_tuple_voltage_trace() -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     trace = battery_cell_model._BatteryCurrentTrace(
         initial_soc=0.5,
@@ -1181,7 +1185,7 @@ def test_two_rc_trace_residuals_accept_tuple_voltage_trace() -> None:
 
 
 def test_evaluate_battery_circuit_uses_pybamm_direct_path(monkeypatch: pytest.MonkeyPatch) -> None:
-    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+    from design_research_problems.problems._domains import battery_circuit as battery_circuit
 
     calls: list[tuple[int, int]] = []
 
@@ -1245,7 +1249,7 @@ def test_pybamm_direct_rejects_nonideal_interconnect_topologies() -> None:
 
 
 def test_two_rc_profile_runner_exposes_fast_invariants() -> None:
-    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+    from design_research_problems.problems._domains import battery_circuit as battery_circuit
 
     model = _static_two_rc_cell_model()
     result = battery_circuit._simulate_battery_circuit_current_profile(
@@ -1285,7 +1289,7 @@ def test_two_rc_profile_runner_exposes_fast_invariants() -> None:
 
 
 def test_two_rc_long_rest_converges_toward_ocv() -> None:
-    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+    from design_research_problems.problems._domains import battery_circuit as battery_circuit
 
     model = _static_two_rc_cell_model()
     result = battery_circuit._simulate_battery_circuit_current_profile(
@@ -1310,7 +1314,7 @@ def test_two_rc_long_rest_converges_toward_ocv() -> None:
 
 
 def test_profile_runner_pack_sentinels_capture_symmetric_and_asymmetric_branch_split() -> None:
-    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+    from design_research_problems.problems._domains import battery_circuit as battery_circuit
 
     model = _static_two_rc_cell_model()
     symmetric = battery_circuit._simulate_battery_circuit_current_profile(
@@ -1337,7 +1341,7 @@ def test_profile_runner_pack_sentinels_capture_symmetric_and_asymmetric_branch_s
 
 @pytest.mark.pybamm_real
 def test_load_battery_cell_model_two_rc_mode_fits_live_pybamm_traces() -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     battery_cell_model._load_battery_cell_model_cached.cache_clear()
     model = battery_cell_model.load_battery_cell_model(
@@ -1354,7 +1358,7 @@ def test_load_battery_cell_model_two_rc_mode_fits_live_pybamm_traces() -> None:
 
 @pytest.mark.pybamm_real
 def test_two_rc_mode_beats_one_rc_on_live_pybamm_pulse_rest_trace() -> None:
-    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+    from design_research_problems.problems._domains import battery_circuit as battery_circuit
 
     profile_pairs = (
         (60.0, CELL_SPEC_18650.nominal_capacity_ah),
@@ -1367,7 +1371,7 @@ def test_two_rc_mode_beats_one_rc_on_live_pybamm_pulse_rest_trace() -> None:
         profile_pairs=profile_pairs,
     )
 
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     one_rc_model = battery_cell_model.load_battery_cell_model(BatteryBackendConfig(cell_model_mode="pybamm_ecm"))
     two_rc_model = battery_cell_model.load_battery_cell_model(
@@ -1413,7 +1417,7 @@ def test_two_rc_mode_beats_one_rc_on_live_pybamm_pulse_rest_trace() -> None:
 
 @pytest.mark.pybamm_real
 def test_two_rc_mode_tracks_short_live_pybamm_dynamic_profile() -> None:
-    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+    from design_research_problems.problems._domains import battery_circuit as battery_circuit
 
     profile_pairs = (
         (45.0, 1.25),
@@ -1430,7 +1434,7 @@ def test_two_rc_mode_tracks_short_live_pybamm_dynamic_profile() -> None:
         temperature_c=25.0,
         profile_pairs=profile_pairs,
     )
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
 
     one_rc_model = battery_cell_model.load_battery_cell_model(BatteryBackendConfig(cell_model_mode="pybamm_ecm"))
     two_rc_model = battery_cell_model.load_battery_cell_model(
@@ -1477,8 +1481,8 @@ def test_two_rc_mode_tracks_short_live_pybamm_dynamic_profile() -> None:
 
 @pytest.mark.pybamm_real
 def test_live_fitted_two_rc_model_preserves_pack_sentinels() -> None:
-    from design_research_problems.problems.grammar import _battery_cell_model as battery_cell_model
-    from design_research_problems.problems.grammar import _battery_circuit as battery_circuit
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
+    from design_research_problems.problems._domains import battery_circuit as battery_circuit
 
     one_rc_model = battery_cell_model.load_battery_cell_model(BatteryBackendConfig(cell_model_mode="pybamm_ecm"))
     two_rc_model = battery_cell_model.load_battery_cell_model(

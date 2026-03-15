@@ -1,6 +1,6 @@
 problem_id = "battery_18650_t3b_netlist_explicit_opt"
 title = "T3B 18650 netlist explicit optimization"
-summary = "Tier-3B explicit-netlist battery benchmark that reuses the open-ended transition-program search but scores with the shared battery tier metrics."
+summary = "Tier-3B explicit-netlist battery benchmark that reuses the open-ended transition-program search with native explicit-circuit or hybrid-thermal scoring."
 kind = "optimization"
 statement = '''
 # T3B 18650 netlist explicit optimization
@@ -35,7 +35,7 @@ deliberate_surrogates = [
 ]
 representation_mode = "explicit_netlist"
 default_evaluation_mode = "explicit_circuit"
-supported_evaluation_modes = ["explicit_circuit"]
+supported_evaluation_modes = ["explicit_circuit", "hybrid_thermal"]
 validation_scope = [
   "Explicit-circuit consistency checks",
 ]

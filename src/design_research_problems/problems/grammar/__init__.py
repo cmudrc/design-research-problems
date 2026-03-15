@@ -8,11 +8,11 @@ from typing import TYPE_CHECKING
 from .._grammar import GrammarTransition
 
 _LAZY_EXPORTS = {
-    "BatteryCellInstance": "design_research_problems.problems.grammar._battery_circuit:BatteryCellInstance",
-    "BatteryCellPlacement": "design_research_problems.problems.grammar._battery_core:BatteryCellPlacement",
-    "BatteryCircuitEvaluation": "design_research_problems.problems.grammar._battery_circuit:BatteryCircuitEvaluation",
-    "BatteryCircuitState": "design_research_problems.problems.grammar._battery_circuit:BatteryCircuitState",
-    "BatteryConnection": "design_research_problems.problems.grammar._battery_circuit:BatteryConnection",
+    "BatteryCellInstance": "design_research_problems.problems._domains.battery_circuit:BatteryCellInstance",
+    "BatteryCellPlacement": "design_research_problems.problems._domains.battery_layout:BatteryCellPlacement",
+    "BatteryCircuitEvaluation": "design_research_problems.problems._domains.battery_circuit:BatteryCircuitEvaluation",
+    "BatteryCircuitState": "design_research_problems.problems._domains.battery_circuit:BatteryCircuitState",
+    "BatteryConnection": "design_research_problems.problems._domains.battery_circuit:BatteryConnection",
     "Battery18650T1RectangularSurrogateGrammarProblem": (
         "design_research_problems.problems.grammar._battery_tiers:Battery18650T1RectangularSurrogateGrammarProblem"
     ),

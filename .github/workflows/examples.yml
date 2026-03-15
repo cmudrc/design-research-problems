@@ -18,6 +18,6 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install dependencies
-        run: make dev-battery
+        run: make dev
       - name: Run deterministic examples
         run: make examples-test

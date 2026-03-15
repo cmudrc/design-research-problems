@@ -17,19 +17,29 @@ bounded 3D space-truss state. The tiered battery grammar ladder includes
 `battery_18650_t1_rectangular_surrogate_grammar`,
 `battery_18650_t2_pose_surrogate_grammar`,
 `battery_18650_t3a_topology_surrogate_grammar`,
+`battery_18650_t3b_netlist_explicit_2rc_grammar`,
 `battery_18650_t3b_netlist_explicit_grammar`, and
 `battery_18650_t4_thermal_hybrid_grammar`. Together they expose a paired
 battery ladder with clear representation/fidelity labels:
 
+- The canonical pack compatibility matrix and the meaning of `native`,
+  `projected`, and `promoted` live in :doc:`battery_ladder`.
+
 - Tier 1: rectangular pack-sizing actions scored with an analytic surrogate.
-- Tier 2: pose-aware layout actions scored with analytic electrical/thermal
-  surrogates.
+- Tier 2: pose-aware layout actions scored with analytic, promoted explicit,
+  or promoted hybrid evaluators.
 - Tier 3A: topology-allocation actions that can be benchmarked as either an
-  analytic surrogate or a projected explicit-circuit evaluation.
+  analytic surrogate, a projected explicit-circuit evaluation, or a promoted
+  hybrid-thermal evaluation.
 - Tier 3B: explicit netlist-synthesis actions scored directly by the shared
-  explicit-circuit backend.
+  explicit-circuit backend or by promoted hybrid thermal scoring.
 - Tier 4: thermal-topology actions with analytic, explicit-circuit, or
   hybrid-thermal scoring.
+
+The catalog also includes `battery_18650_t3b_netlist_explicit_2rc_grammar`, a
+manifest-backed backend-config example that keeps the tier-3B explicit-netlist
+grammar contract while pinning `parameters.battery_backend` to the shared
+`pybamm_ecm_2rc` + `Marquis2019` + `isothermal` configuration.
 
 The catalog also includes six
 `planar_roof_truss_*` variants that approximate the planar roof truss
@@ -47,7 +57,7 @@ Optional evaluators:
 
 - It is not required for the base install.
 - `trussme` is available as the `grammar` extra.
-- `pybamm` is available as the `battery` extra and is required for tier-4
-  battery thermal evaluation.
-- Core CI installs `pybamm` for battery-tier verification.
+- `pybamm` is available as the `battery` extra and is required for explicit-circuit,
+  hybrid-thermal, and fast-charge battery evaluation paths.
+- Optional/full CI installs `pybamm` for battery-fidelity verification.
 - It is required for real planar and 3D truss grammar evaluation.

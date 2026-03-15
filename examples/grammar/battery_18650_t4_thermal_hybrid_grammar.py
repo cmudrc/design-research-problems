@@ -1,21 +1,31 @@
-"""Inspect the T4 thermal hybrid battery grammar benchmark."""
+"""Build and optionally evaluate a simple tier-4 battery grammar state."""
 
 from __future__ import annotations
+
+from _battery_transition_helpers import apply_first_transition
 
 import design_research_problems as derp
 
 
 def main() -> None:
+    """Apply topology, pose, and thermal edits, then evaluate when PyBaMM is installed."""
+
+    # Load the tier-4 thermal grammar and start from the deterministic seed.
     problem = derp.get_problem("battery_18650_t4_thermal_hybrid_grammar")
     state = problem.initial_state()
-    transitions = problem.enumerate_transitions(state)
-    next_state = transitions[0].next_state if transitions else state
-    evaluation = problem.evaluate(next_state)
-    print(problem.metadata.problem_id)
-    print("supported-evaluation-modes", ",".join(problem.metadata.benchmark_card.supported_evaluation_modes))
-    print("transitions", len(transitions))
-    print("feasible", evaluation.is_feasible)
-    print("metric-keys", ",".join(sorted(evaluation.as_dict())))
+
+    # Use one topology edit, one pose edit, and one thermal tuning edit so the
+    # example touches each part of the tier-4 representation.
+    state = apply_first_transition(problem, state, "adjust_cell_count")
+    state = apply_first_transition(problem, state, "move_cell_x")
+    state = apply_first_transition(problem, state, "tune_cooling_coefficient")
+
+    try:
+        evaluation = problem.evaluate(state)
+    except derp.MissingOptionalDependencyError as exc:
+        print(exc)
+        return
+    print(evaluation)
 
 
 if __name__ == "__main__":

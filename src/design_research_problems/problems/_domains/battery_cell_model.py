@@ -18,9 +18,6 @@ from design_research_problems.problems._domains.battery_defaults import (
 )
 from design_research_problems.problems._domains.battery_layout import CELL_SPEC_18650
 
-BatteryBackendScalar = bool | int | float | str
-BatteryBackendOptions = tuple[tuple[str, BatteryBackendScalar], ...]
-
 _SUPPORTED_CELL_MODEL_MODES = frozenset(
     {
         "auto",
@@ -112,10 +109,6 @@ class BatteryBackendConfig:
     """Thermal handling mode for backend discharge simulation."""
     ambient_temp_c: float | None = None
     """Ambient temperature used by the electrical and thermal models."""
-    parasitics: BatteryBackendOptions = ()
-    """Optional parasitics settings accepted for forward compatibility."""
-    solver_policy: BatteryBackendOptions = ()
-    """Optional solver settings accepted for forward compatibility."""
 
     def as_dict(self) -> dict[str, object]:
         """Return one manifest-compatible mapping."""
@@ -127,10 +120,6 @@ class BatteryBackendConfig:
             payload["thermal_mode"] = self.thermal_mode
         if self.ambient_temp_c is not None:
             payload["ambient_temp_c"] = self.ambient_temp_c
-        if self.parasitics:
-            payload["parasitics"] = dict(self.parasitics)
-        if self.solver_policy:
-            payload["solver_policy"] = dict(self.solver_policy)
         return payload
 
 
@@ -244,24 +233,24 @@ def battery_backend_config_from_mapping(value: object) -> BatteryBackendConfig:
     if not isinstance(value, Mapping):
         raise ValueError("battery_backend must be a mapping when provided.")
     mapping = dict(value)
+    supported_fields = frozenset({"ambient_temp_c", "cell_model_mode", "parameterization", "thermal_mode"})
+    unknown_fields = tuple(sorted(str(key) for key in mapping if str(key) not in supported_fields))
+    if unknown_fields:
+        raise ValueError("Unsupported battery_backend field(s): " + ", ".join(unknown_fields) + ".")
     cell_model_mode = _coerce_string(
         mapping.get("cell_model_mode", "auto"),
         field_name="battery_backend.cell_model_mode",
     )
     parameterization = _parse_parameterization(mapping)
     thermal_mode = _coerce_optional_string(mapping.get("thermal_mode"), field_name="battery_backend.thermal_mode")
-    ambient_raw = mapping.get("ambient_temp_c", mapping.get("ambient_temp_C"))
+    ambient_raw = mapping.get("ambient_temp_c")
     ambient_temp_c = None if ambient_raw is None else float(ambient_raw)
-    parasitics = _coerce_option_pairs(mapping.get("parasitics"), field_name="battery_backend.parasitics")
-    solver_policy = _coerce_option_pairs(mapping.get("solver_policy"), field_name="battery_backend.solver_policy")
     return resolve_battery_backend_config(
         BatteryBackendConfig(
             cell_model_mode=cell_model_mode,
             parameterization=parameterization,
             thermal_mode=thermal_mode,
             ambient_temp_c=ambient_temp_c,
-            parasitics=parasitics,
-            solver_policy=solver_policy,
         )
     )
 
@@ -309,8 +298,6 @@ def resolve_battery_backend_config(config: BatteryBackendConfig | None) -> Batte
         parameterization=normalized_parameterization,
         thermal_mode=normalized_thermal_mode,
         ambient_temp_c=ambient_temp_c,
-        parasitics=tuple(sorted(candidate.parasitics)),
-        solver_policy=tuple(sorted(candidate.solver_policy)),
     )
 
 
@@ -1702,33 +1689,6 @@ def _coerce_optional_string(value: object, *, field_name: str) -> str | None:
     if value is None:
         return None
     return _coerce_string(value, field_name=field_name)
-
-
-def _coerce_option_pairs(value: object, *, field_name: str) -> BatteryBackendOptions:
-    """Return one normalized sorted mapping payload as tuple pairs."""
-    if value is None:
-        return ()
-    if not isinstance(value, Mapping):
-        raise ValueError(f"{field_name} must be a mapping when provided.")
-    payload: list[tuple[str, BatteryBackendScalar]] = []
-    for key, entry in value.items():
-        if not isinstance(key, str):
-            raise ValueError(f"{field_name} keys must be strings.")
-        payload.append((key, _coerce_option_scalar(entry, field_name=field_name, key=key)))
-    return tuple(sorted(payload, key=lambda item: item[0]))
-
-
-def _coerce_option_scalar(value: object, *, field_name: str, key: str) -> BatteryBackendScalar:
-    """Return one backend option scalar."""
-    if isinstance(value, bool):
-        return value
-    if isinstance(value, int):
-        return value
-    if isinstance(value, float):
-        return value
-    if isinstance(value, str):
-        return value
-    raise ValueError(f"{field_name}[{key!r}] must be one of: bool, int, float, or str.")
 
 
 __all__ = [

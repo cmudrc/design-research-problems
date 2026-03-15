@@ -40,6 +40,59 @@ Evaluation modes describe how the design is scored:
 - ``electrochemical_anchor``: direct PyBaMM DFN evaluation for the fast-charge
   anchor.
 
+Pack Compatibility Matrix
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For the pack ladder, the public matrix is intentionally sparse but ordered.
+Each cell is written as ``electrical path / thermal path``. The legend is:
+
+- ``native``: the evaluator works directly on the representation.
+- ``projected``: the representation is deterministically projected before that
+  evaluator component runs.
+- ``promoted``: missing detail is filled in by documented deterministic
+  defaults.
+- ``unsupported``: the pairing is intentionally rejected.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Representation
+     - ``analytic_surrogate``
+     - ``explicit_circuit``
+     - ``hybrid_thermal``
+   * - ``rectangular``
+     - ``native / native``
+     - ``promoted / native``
+     - ``promoted / promoted``
+   * - ``pose_layout``
+     - ``native / native``
+     - ``promoted / native``
+     - ``promoted / promoted``
+   * - ``topology_allocation``
+     - ``native / native``
+     - ``projected / native``
+     - ``projected / promoted``
+   * - ``explicit_netlist``
+     - ``unsupported``
+     - ``native / native``
+     - ``native / promoted``
+   * - ``thermal_topology``
+     - ``native / native``
+     - ``projected / native``
+     - ``projected / native``
+
+The only intentional public pack-matrix gap is
+``explicit_netlist + analytic_surrogate``. The package rejects that pairing
+instead of silently reducing a general netlist to a surrogate topology model.
+
+Two row-specific notes matter:
+
+- ``thermal_topology + analytic_surrogate`` is supported, but analytic scoring
+  ignores candidate-specific thermal-control variables by contract.
+- ``thermal_topology + hybrid_thermal`` stays ``projected / native`` because
+  the candidate already contains native thermal-network variables; only the
+  electrical side is projected to the shared explicit-circuit backend.
+
 Shared Physical Scope
 ---------------------
 
@@ -186,12 +239,15 @@ benchmarks:
 - ``min_stage``: use the least-populated stage.
 - ``harmonic_mean_stage``: use the harmonic mean of non-empty stage counts.
 
-Projection rules are intentionally one-way in this release:
+Adaptation rules are intentionally one-way in this release:
 
 - topology-allocation candidates may be projected to a canonical explicit
   netlist for ``explicit_circuit`` scoring;
-- thermal-topology candidates may be scored as analytic surrogates, projected
-  explicit circuits, or hybrid thermal evaluations;
+- lower-detail rectangular and pose-layout candidates may be promoted to a
+  canonical series-parallel circuit for explicit scoring;
+- hybrid thermal scoring may promote lower-detail pack representations to one
+  deterministic thermal context rather than inventing representation-specific
+  heuristics at runtime;
 - arbitrary explicit netlists do **not** automatically reduce back to surrogate
   topology metrics unless a deterministic reduction is defined.
 
@@ -208,9 +264,12 @@ explicitly. Provenance records:
 - requested backend config,
 - resolved backend config,
 - honored vs ignored backend fields,
+- electrical path (`native`, `projected`, or `promoted`),
+- thermal path (`native`, `promoted`, or `none`),
 - cell-model source,
 - thermal-prior source,
-- whether a candidate was projected before scoring.
+- promoted-only assumed defaults when applicable,
+- adaptation notes that explain any projections or promotions.
 
 This is meant to make battery benchmark fidelity legible without pretending
 that every public problem uses the same evaluator.
@@ -244,6 +303,34 @@ The backend still does **not** claim to cover:
 - arbitrary asymmetric explicit-netlist current-split problems through the
   ``pybamm_direct`` path;
 - production BMS use, safety-critical prediction, or plating-risk claims.
+
+Backend-Config Example Variants
+-------------------------------
+
+Three packaged catalog variants now pin one non-default backend configuration
+directly in their manifests:
+
+- ``battery_18650_t3a_topology_explicit_2rc_opt``: projected explicit-circuit
+  scoring on the topology-allocation rung.
+- ``battery_18650_t3b_netlist_explicit_2rc_grammar``: native explicit-netlist
+  grammar evaluation with the same backend choice.
+- ``battery_18650_t4_thermal_hybrid_2rc_opt``: hybrid thermal scoring with the
+  same electrical backend selection.
+
+All three variants use the same manifest payload:
+
+.. code-block:: toml
+
+   [parameters.battery_backend]
+   cell_model_mode = "pybamm_ecm_2rc"
+   thermal_mode = "isothermal"
+
+   [parameters.battery_backend.parameterization]
+   parameter_set = "Marquis2019"
+
+The intent is to surface a concrete medium-fidelity backend choice in the
+public catalog without changing the underlying representation contracts of the
+base tiers.
 
 Validation Matrix
 -----------------
