@@ -59,3 +59,4 @@ def test_family_subpackage_exports_resolve() -> None:
     assert (
         optimization.SpaceTrussEngineeringOptimizationProblem is optimization.SpaceTrussEngineeringOptimizationProblem
     )
+    assert optimization.WindFarmLayoutOptimizationProblem is optimization.WindFarmLayoutOptimizationProblem

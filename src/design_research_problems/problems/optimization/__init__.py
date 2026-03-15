@@ -24,6 +24,9 @@ _LAZY_EXPORTS = {
     "SpaceTrussEngineeringOptimizationProblem": (
         "design_research_problems.problems.optimization._truss_topology:SpaceTrussEngineeringOptimizationProblem"
     ),
+    "WindFarmLayoutOptimizationProblem": (
+        "design_research_problems.problems.optimization._wind_farm_layout:WindFarmLayoutOptimizationProblem"
+    ),
 }
 
 __all__ = list(_LAZY_EXPORTS)
@@ -61,3 +64,4 @@ if TYPE_CHECKING:
     from ._truss_topology import (
         SpaceTrussEngineeringOptimizationProblem as SpaceTrussEngineeringOptimizationProblem,
     )
+    from ._wind_farm_layout import WindFarmLayoutOptimizationProblem as WindFarmLayoutOptimizationProblem
