@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import importlib
+
 import design_research_problems as drp
 from design_research_problems.problems import grammar, optimization
+from design_research_problems.problems._domains import battery_core
 
 EXPECTED_PUBLIC_API = [
     "__version__",
@@ -46,8 +49,12 @@ def test_top_level_exports_resolve() -> None:
 
 
 def test_family_subpackage_exports_resolve() -> None:
+    battery_core_alias = importlib.import_module("design_research_problems.problems.grammar._battery_core")
+
     assert grammar.IoTHomeCoolingGrammarProblem is grammar.IoTHomeCoolingGrammarProblem
     assert grammar.IoTHomeState is grammar.IoTHomeState
+    assert grammar.BatteryCellPlacement is battery_core.BatteryCellPlacement
+    assert battery_core_alias is battery_core
     assert grammar.SpaceTrussSpanProblem is grammar.SpaceTrussSpanProblem
     assert grammar.SpaceTrussState is grammar.SpaceTrussState
     assert grammar.TrussAPGrammarProblem is grammar.TrussAPGrammarProblem
