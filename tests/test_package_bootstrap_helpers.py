@@ -4,9 +4,9 @@ import importlib.metadata
 import runpy
 from pathlib import Path
 
-import design_research_problems
 import pytest
 
+import design_research_problems
 from design_research_problems._lazy_exports import module_dir, resolve_lazy_export
 
 

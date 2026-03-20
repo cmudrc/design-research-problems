@@ -9,6 +9,7 @@ import pytest
 
 from design_research_problems._exceptions import ProblemEvaluationError
 from design_research_problems.problems import ProblemKind, ProblemMetadata, ProblemTaxonomy
+from design_research_problems.problems import _mcp_problem as mcp_problem_module
 from design_research_problems.problems._mcp_problem import (
     MCPProblem,
     _annotation_from_schema,
@@ -18,7 +19,6 @@ from design_research_problems.problems._mcp_problem import (
     _upstream_error_message,
     parse_mcp_stdio_parameters,
 )
-from design_research_problems.problems import _mcp_problem as mcp_problem_module
 
 
 def _metadata(problem_id: str) -> ProblemMetadata:
@@ -101,8 +101,18 @@ def test_to_mcp_server_handles_duplicate_names_and_fallback_submit_final(
     problem = MCPProblem.from_stdio(metadata=_metadata("proxy"), command="python")
 
     duplicate_upstream = (
-        SimpleNamespace(name="echo", title="Echo", description=None, inputSchema={"type": "object", "properties": {}}),
-        SimpleNamespace(name="echo", title="Echo Again", description=None, inputSchema={"type": "object", "properties": {}}),
+        SimpleNamespace(
+            name="echo",
+            title="Echo",
+            description=None,
+            inputSchema={"type": "object", "properties": {}},
+        ),
+        SimpleNamespace(
+            name="echo",
+            title="Echo Again",
+            description=None,
+            inputSchema={"type": "object", "properties": {}},
+        ),
     )
     monkeypatch.setattr(problem, "_discover_upstream_tools", lambda: duplicate_upstream)
     with pytest.raises(ProblemEvaluationError, match="must be unique"):
@@ -284,8 +294,21 @@ def test_proxy_helpers_cover_error_conversion_and_schema_edges() -> None:
     assert _serialize_content_block(SimpleNamespace(model_dump=lambda mode: {"mode": mode})) == {"mode": "json"}
     assert _serialize_content_block({"raw": True}) == {"raw": True}
 
-    assert _upstream_error_message(SimpleNamespace(structuredContent={"detail": "boom"}, content=[])) == "boom"
-    assert _upstream_error_message(SimpleNamespace(structuredContent=None, content=[SimpleNamespace(text="fallback")])) == "fallback"
+    assert (
+        _upstream_error_message(
+            SimpleNamespace(structuredContent={"detail": "boom"}, content=[]),
+        )
+        == "boom"
+    )
+    assert (
+        _upstream_error_message(
+            SimpleNamespace(
+                structuredContent=None,
+                content=[SimpleNamespace(text="fallback")],
+            ),
+        )
+        == "fallback"
+    )
     assert (
         _upstream_error_message(SimpleNamespace(structuredContent=None, content=[SimpleNamespace(text="  ")]))
         == "upstream tool returned an error result without details."

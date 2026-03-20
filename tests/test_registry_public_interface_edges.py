@@ -149,7 +149,10 @@ def test_registry_get_dispatches_factories_and_type_checks(monkeypatch: pytest.M
     registry._manifests = implementation_manifests
 
     target_factory = SimpleNamespace(from_manifest=lambda manifest: ("factory", manifest.metadata.problem_id))
-    direct_factory = lambda manifest: ("callable", manifest.metadata.problem_id)
+
+    def direct_factory(manifest):
+        return ("callable", manifest.metadata.problem_id)
+
     non_callable = object()
 
     def fake_resolve(path: str) -> object:
@@ -175,8 +178,18 @@ def test_registry_get_dispatches_factories_and_type_checks(monkeypatch: pytest.M
         "optimization": missing_impl_manifest,
     }
 
-    monkeypatch.setattr(registry_module, "load_decision_problem", lambda manifest: ("decision", manifest.metadata.problem_id))
-    monkeypatch.setattr(registry_module, "MCPProblem", SimpleNamespace(from_manifest=lambda manifest: ("mcp", manifest.metadata.problem_id)))
+    monkeypatch.setattr(
+        registry_module,
+        "load_decision_problem",
+        lambda manifest: ("decision", manifest.metadata.problem_id),
+    )
+    monkeypatch.setattr(
+        registry_module,
+        "MCPProblem",
+        SimpleNamespace(
+            from_manifest=lambda manifest: ("mcp", manifest.metadata.problem_id),
+        ),
+    )
 
     assert registry.get("decision") == ("decision", "decision")
     assert registry.get("mcp") == ("mcp", "mcp")

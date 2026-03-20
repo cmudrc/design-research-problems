@@ -67,7 +67,7 @@ class _DummyOptimizationProblem(OptimizationProblem):
         return {"sum": float(numpy.sum(variables))}
 
     def decode_candidate(self, variables: NDArray[numpy.float64]) -> dict[str, object]:
-        return {"rounded": [int(round(float(value))) for value in variables]}
+        return {"rounded": [round(float(value)) for value in variables]}
 
 
 def test_bounded_pattern_search_covers_improvement_and_no_improvement_paths() -> None:

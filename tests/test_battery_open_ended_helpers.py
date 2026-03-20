@@ -7,9 +7,9 @@ import numpy
 import pytest
 
 from design_research_problems import MissingOptionalDependencyError, get_problem
+from design_research_problems.problems._optimization import OptimizationResult
 from design_research_problems.problems.optimization import BatteryOpenEndedCapacityMaxProblem
 from design_research_problems.problems.optimization import _battery_open_ended as battery_module
-from design_research_problems.problems._optimization import OptimizationResult
 
 
 def _full_vector(value: float) -> numpy.ndarray[Any, numpy.dtype[numpy.float64]]:

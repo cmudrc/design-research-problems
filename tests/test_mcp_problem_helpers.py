@@ -53,6 +53,14 @@ def _problem(problem_id: str = "mcp_helper") -> MCPProblem:
     )
 
 
+class _FakeServer:
+    def __init__(self) -> None:
+        self.tools: list[tuple[Any, dict[str, object]]] = []
+
+    def add_tool(self, func: Any, **kwargs: object) -> None:
+        self.tools.append((func, dict(kwargs)))
+
+
 @pytest.mark.parametrize(
     ("parameters", "message"),
     [
@@ -176,6 +184,17 @@ def test_mcp_helper_functions_cover_error_message_and_identifier_logic() -> None
 def test_mcp_problem_rejects_duplicate_upstream_and_exposed_tool_names(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.setattr(
+        mcp_problem_module,
+        "create_fastmcp_server",
+        lambda *args, **kwargs: _FakeServer(),
+    )
+    monkeypatch.setattr(
+        mcp_problem_module,
+        "register_design_brief_resource",
+        lambda *args, **kwargs: None,
+    )
+
     problem = _problem("mcp_duplicate_tools")
 
     duplicate_tool = SimpleNamespace(
@@ -209,6 +228,17 @@ def test_mcp_problem_rejects_duplicate_upstream_and_exposed_tool_names(
 def test_mcp_problem_close_helpers_and_discovery_guard_cover_event_loop_errors(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.setattr(
+        mcp_problem_module,
+        "create_fastmcp_server",
+        lambda *args, **kwargs: _FakeServer(),
+    )
+    monkeypatch.setattr(
+        mcp_problem_module,
+        "register_design_brief_resource",
+        lambda *args, **kwargs: None,
+    )
+
     problem = _problem("mcp_close_helpers")
     monkeypatch.setattr(problem, "_discover_upstream_tools", lambda: ())
     server = problem.to_mcp_server()

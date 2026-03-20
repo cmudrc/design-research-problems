@@ -96,7 +96,9 @@ def test_iot_home_operations_cover_transition_and_validation_edges() -> None:
         )
 
     state_with_second_processor = problem.add_processor(state, x=20.0, y=5.0, name="d1")
-    transition_names = {transition.rule_name for transition in problem.enumerate_transitions(state_with_second_processor)}
+    transition_names = {
+        transition.rule_name for transition in problem.enumerate_transitions(state_with_second_processor)
+    }
     assert {"add_link", "delete_link", "delete_product", "move_product", "tune_cooler"} <= transition_names
 
     linked_state = problem.add_link(state_with_second_processor, init_name="d0", term_name="d1", link_name="l2")

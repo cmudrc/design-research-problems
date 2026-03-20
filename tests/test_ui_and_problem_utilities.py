@@ -5,33 +5,38 @@ import sys
 import warnings
 from dataclasses import dataclass
 from types import MappingProxyType, ModuleType, SimpleNamespace
-from typing import Any
 
 import numpy
 import pytest
 
 import design_research_problems.gui as gui_module
 from design_research_problems import gui
-from design_research_problems._optional import import_optional_module, optional_install_hint
 from design_research_problems._catalog import _loader as loader_module
+from design_research_problems._optional import import_optional_module, optional_install_hint
 from design_research_problems.gui import _tk_shared as tk_shared_module
 from design_research_problems.problems import _assets as assets_module
 from design_research_problems.problems import _mcp as mcp_module
 from design_research_problems.problems import _problem as problem_module
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._metadata import Citation, ProblemAsset, ProblemKind, ProblemMetadata, ProblemTaxonomy
+from design_research_problems.problems._metadata import (
+    Citation,
+    ProblemAsset,
+    ProblemKind,
+    ProblemMetadata,
+    ProblemTaxonomy,
+)
 from design_research_problems.problems._problem import Problem
 
 
 @dataclass
 class _FakeTraversable:
     name: str
-    children: dict[str, "_FakeTraversable"] | None = None
+    children: dict[str, _FakeTraversable] | None = None
     text: str | None = None
     data: bytes | None = None
     directory: bool = True
 
-    def joinpath(self, *parts: str) -> "_FakeTraversable":
+    def joinpath(self, *parts: str) -> _FakeTraversable:
         node: _FakeTraversable = self
         for part in parts:
             if node.children is None:
@@ -54,7 +59,7 @@ class _FakeTraversable:
     def is_file(self) -> bool:
         return not self.directory
 
-    def iterdir(self) -> tuple["_FakeTraversable", ...]:
+    def iterdir(self) -> tuple[_FakeTraversable, ...]:
         return tuple(self.children.values() if self.children else ())
 
 
@@ -109,7 +114,13 @@ def test_loader_helpers_cover_resource_and_duplicate_paths(monkeypatch: pytest.M
                                 children={
                                     "problem_a": _FakeTraversable(
                                         "problem_a",
-                                        children={"problem.toml": _FakeTraversable("problem.toml", directory=False, text="")},
+                                        children={
+                                            "problem.toml": _FakeTraversable(
+                                                "problem.toml",
+                                                directory=False,
+                                                text="",
+                                            ),
+                                        },
                                     ),
                                 },
                             ),
@@ -155,7 +166,11 @@ def test_loader_helpers_cover_resource_and_duplicate_paths(monkeypatch: pytest.M
         (fake_root.joinpath("_assets", "catalog", "nested", "problem_a"), "_assets/catalog/nested/problem_a"),
     )
 
-    monkeypatch.setattr(loader_module, "_iter_manifest_directories", lambda root: ((object(), "one"), (object(), "two")))
+    monkeypatch.setattr(
+        loader_module,
+        "_iter_manifest_directories",
+        lambda root: ((object(), "one"), (object(), "two")),
+    )
     monkeypatch.setattr(
         loader_module,
         "_load_single_manifest",
@@ -200,7 +215,9 @@ def test_problem_helpers_mcp_json_optional_and_assets_cover_edge_paths(
             ),
         )
     )
-    bundle = SimpleNamespace(read_bytes=lambda resource_path: b"diagram-bytes" if resource_path == "diagram.png" else b"")
+    bundle = SimpleNamespace(
+        read_bytes=lambda resource_path: b"diagram-bytes" if resource_path == "diagram.png" else b""
+    )
     asset_problem = Problem(metadata=asset_metadata, resource_bundle=bundle)
     assert asset_problem.read_asset("diagram") == b"diagram-bytes"
     with pytest.raises(KeyError, match="Unknown asset name"):
@@ -232,7 +249,10 @@ def test_problem_helpers_mcp_json_optional_and_assets_cover_edge_paths(
     assert mcp_module.normalized_optional_text(None) is None
 
     assert optional_install_hint() == "pip install design-research-problems"
-    monkeypatch.setattr("design_research_problems._optional.import_module", lambda name: (_ for _ in ()).throw(ImportError("missing")))
+    monkeypatch.setattr(
+        "design_research_problems._optional.import_module",
+        lambda name: (_ for _ in ()).throw(ImportError("missing")),
+    )
     with pytest.raises(Exception, match="make gui"):
         import_optional_module(
             "missing.module",

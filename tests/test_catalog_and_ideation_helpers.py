@@ -77,7 +77,7 @@ def test_registry_helper_error_paths_and_custom_implementations(
             problem_id="custom_direct",
         ),
     )
-    monkeypatch.setattr(registry_module, "_resolve_object", lambda _: (lambda manifest: {"manifest": manifest}))
+    monkeypatch.setattr(registry_module, "_resolve_object", lambda _: lambda manifest: {"manifest": manifest})
     monkeypatch.setattr(registry, "_catalog", lambda: {"custom_direct": direct_manifest})
     assert registry.get("custom_direct") == {"manifest": direct_manifest}
 

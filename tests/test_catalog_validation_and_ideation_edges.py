@@ -5,6 +5,8 @@ from typing import Any
 
 import pytest
 
+from design_research_problems import ideation as ideation_module
+from design_research_problems._catalog import _validation as validation_module
 from design_research_problems.ideation import (
     EvidenceTier,
     IdeationCatalog,
@@ -14,8 +16,6 @@ from design_research_problems.ideation import (
     IdeationStudy,
 )
 from design_research_problems.problems import Citation, ProblemKind, ProblemMetadata, ProblemTaxonomy
-from design_research_problems._catalog import _validation as validation_module
-from design_research_problems import ideation as ideation_module
 
 
 def _taxonomy(
@@ -67,19 +67,31 @@ def _metadata(
     )
 
 
-def _manifest(metadata: ProblemMetadata, *, parameters: dict[str, object] | None = None) -> SimpleNamespace:
+def _manifest(
+    metadata: ProblemMetadata,
+    *,
+    parameters: dict[str, object] | None = None,
+) -> SimpleNamespace:
     return SimpleNamespace(metadata=metadata, parameters=parameters or {}, statement_markdown=f"# {metadata.title}")
 
 
 def test_validate_catalog_reports_loader_failures(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(validation_module, "load_problem_manifests", lambda: (_ for _ in ()).throw(RuntimeError("boom")))
+    monkeypatch.setattr(
+        validation_module,
+        "load_problem_manifests",
+        lambda: (_ for _ in ()).throw(RuntimeError("boom")),
+    )
     report = validation_module.validate_catalog()
     assert report.errors == ("Problem manifest load failed: boom",)
     assert report.warnings == ()
     assert report.is_valid is False
 
     monkeypatch.setattr(validation_module, "load_problem_manifests", lambda: {})
-    monkeypatch.setattr(validation_module, "load_ideation_catalog", lambda: (_ for _ in ()).throw(RuntimeError("bad ideation")))
+    monkeypatch.setattr(
+        validation_module,
+        "load_ideation_catalog",
+        lambda: (_ for _ in ()).throw(RuntimeError("bad ideation")),
+    )
     report = validation_module.validate_catalog()
     assert report.errors == ("Ideation catalog load failed: bad ideation",)
 
@@ -93,7 +105,17 @@ def test_validate_catalog_collects_problem_and_ideation_edge_errors(monkeypatch:
             taxonomy=_taxonomy(formulation=None, tags=(), deliverable_type=None, participants=None),
             capabilities=("unknown-capability",),
             study_suitability=("unknown-study",),
-            citations=(Citation(key="", title="", kind="inline", authors=(), year=None, raw_text="", provisional=True),),
+            citations=(
+                Citation(
+                    key="",
+                    title="",
+                    kind="inline",
+                    authors=(),
+                    year=None,
+                    raw_text="",
+                    provisional=True,
+                ),
+            ),
         )
     )
     bad_statement = _manifest(_metadata("bad_statement", title="Expected Heading"))
