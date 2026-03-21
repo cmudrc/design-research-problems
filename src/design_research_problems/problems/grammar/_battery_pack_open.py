@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._battery_problem_config import (
+    _coerce_int,
+    parse_battery_backend_config,
+    parse_battery_requirements,
+)
 from design_research_problems.problems._domains.battery_cell_model import BatteryBackendConfig
 from design_research_problems.problems._domains.battery_circuit import (
     BatteryCellInstance,
@@ -25,12 +30,7 @@ from design_research_problems.problems._domains.battery_layout import (
 )
 from design_research_problems.problems._grammar import GrammarTransition
 from design_research_problems.problems._metadata import ProblemMetadata
-from design_research_problems.problems.grammar._battery_problem_base import (
-    BatteryCircuitProblemBase,
-    _coerce_int,
-    parse_battery_backend_config,
-    parse_battery_requirements,
-)
+from design_research_problems.problems.grammar._battery_problem_base import BatteryCircuitProblemBase
 
 
 def _coerce_state(state: object) -> BatteryCircuitState:

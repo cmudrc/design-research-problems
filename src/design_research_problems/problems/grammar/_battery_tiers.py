@@ -28,6 +28,18 @@ from design_research_problems.problems._battery_adapters import (
     evaluate_explicit_netlist_state,
     evaluate_rectangular_battery_state,
 )
+from design_research_problems.problems._battery_problem_config import (
+    parse_battery_backend_config,
+    parse_battery_requirements,
+)
+from design_research_problems.problems._battery_tier_problems import (
+    Battery18650T2PoseSurrogateOptimizationProblem,
+    Battery18650T3ATopologySurrogateOptimizationProblem,
+    Battery18650T4ThermalHybridOptimizationProblem,
+    Battery18650Tier2LayoutOptimizationProblem,
+    Battery18650Tier4ThermalOptimizationProblem,
+)
+from design_research_problems.problems._battery_tier_shared import _battery_thermal_config
 from design_research_problems.problems._domains.battery_benchmark import (
     BatteryEvaluationMode,
     BatteryRepresentationMode,
@@ -52,17 +64,6 @@ from design_research_problems.problems._grammar import GrammarProblem, GrammarTr
 from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems.grammar._battery_pack_open import BatteryPack18650OpenEndedProblem
 from design_research_problems.problems.grammar._battery_pack_sp import BatteryPack18650SeriesParallelProblem
-from design_research_problems.problems.grammar._battery_problem_base import (
-    parse_battery_backend_config,
-    parse_battery_requirements,
-)
-from design_research_problems.problems.optimization._battery_tiers import (
-    Battery18650T2PoseSurrogateOptimizationProblem,
-    Battery18650T3ATopologySurrogateOptimizationProblem,
-    Battery18650T4ThermalHybridOptimizationProblem,
-    Battery18650Tier2LayoutOptimizationProblem,
-    Battery18650Tier4ThermalOptimizationProblem,
-)
 
 _POSE_MOVE_STEP_MM = 10.0
 _POSE_ROTATE_STEP_DEG = 15.0
@@ -513,17 +514,17 @@ class Battery18650T1RectangularSurrogateGrammarProblem(Battery18650Tier1SeriesPa
         )
 
     def _thermal_config(self) -> BatteryThermalPromotionConfig:
-        return BatteryThermalPromotionConfig(
-            cooling_coefficient_w_per_m2k=float(self.cooling_coefficient_w_per_m2k),
-            passive_cooling_w_per_k=float(self.passive_cooling_w_per_k),
-            ambient_temperature_c=float(self.ambient_temperature_c),
+        return _battery_thermal_config(
+            cooling_coefficient_w_per_m2k=self.cooling_coefficient_w_per_m2k,
+            passive_cooling_w_per_k=self.passive_cooling_w_per_k,
+            ambient_temperature_c=self.ambient_temperature_c,
             thermal_model=self.thermal_model,
-            thermal_neighbor_clearance_mm=float(self.thermal_neighbor_clearance_mm),
-            thermal_contact_decay_mm=float(self.thermal_contact_decay_mm),
-            thermal_contact_resistance_k_per_w=float(self.thermal_contact_resistance_k_per_w),
-            thermal_flow_shadowing_factor=float(self.thermal_flow_shadowing_factor),
+            thermal_neighbor_clearance_mm=self.thermal_neighbor_clearance_mm,
+            thermal_contact_decay_mm=self.thermal_contact_decay_mm,
+            thermal_contact_resistance_k_per_w=self.thermal_contact_resistance_k_per_w,
+            thermal_flow_shadowing_factor=self.thermal_flow_shadowing_factor,
             thermal_airflow_axis=self.thermal_airflow_axis,
-            thermal_reference_soc=float(self.thermal_reference_soc),
+            thermal_reference_soc=self.thermal_reference_soc,
         )
 
     def _outcome(self, state: object) -> BatteryEvaluationAdapterOutcome:
@@ -789,17 +790,17 @@ class Battery18650T3BNetlistExplicitGrammarProblem(Battery18650Tier3TopologyGram
         )
 
     def _thermal_config(self) -> BatteryThermalPromotionConfig:
-        return BatteryThermalPromotionConfig(
-            cooling_coefficient_w_per_m2k=float(self.cooling_coefficient_w_per_m2k),
-            passive_cooling_w_per_k=float(self.passive_cooling_w_per_k),
-            ambient_temperature_c=float(self.ambient_temperature_c),
+        return _battery_thermal_config(
+            cooling_coefficient_w_per_m2k=self.cooling_coefficient_w_per_m2k,
+            passive_cooling_w_per_k=self.passive_cooling_w_per_k,
+            ambient_temperature_c=self.ambient_temperature_c,
             thermal_model=self.thermal_model,
-            thermal_neighbor_clearance_mm=float(self.thermal_neighbor_clearance_mm),
-            thermal_contact_decay_mm=float(self.thermal_contact_decay_mm),
-            thermal_contact_resistance_k_per_w=float(self.thermal_contact_resistance_k_per_w),
-            thermal_flow_shadowing_factor=float(self.thermal_flow_shadowing_factor),
+            thermal_neighbor_clearance_mm=self.thermal_neighbor_clearance_mm,
+            thermal_contact_decay_mm=self.thermal_contact_decay_mm,
+            thermal_contact_resistance_k_per_w=self.thermal_contact_resistance_k_per_w,
+            thermal_flow_shadowing_factor=self.thermal_flow_shadowing_factor,
             thermal_airflow_axis=self.thermal_airflow_axis,
-            thermal_reference_soc=float(self.thermal_reference_soc),
+            thermal_reference_soc=self.thermal_reference_soc,
         )
 
     def _outcome(self, state: object) -> BatteryEvaluationAdapterOutcome:

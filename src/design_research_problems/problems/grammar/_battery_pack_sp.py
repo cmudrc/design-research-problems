@@ -5,6 +5,10 @@ from __future__ import annotations
 from itertools import combinations
 
 from design_research_problems._catalog._manifest import ProblemManifest
+from design_research_problems.problems._battery_problem_config import (
+    parse_battery_backend_config,
+    parse_battery_requirements,
+)
 from design_research_problems.problems._domains.battery_core import (
     BatteryCellPlacement,
     candidate_frontier_coordinates,
@@ -19,11 +23,7 @@ from design_research_problems.problems._domains.battery_series_parallel import (
     evaluate_series_parallel_state,
 )
 from design_research_problems.problems._grammar import GrammarTransition
-from design_research_problems.problems.grammar._battery_problem_base import (
-    BatteryCircuitProblemBase,
-    parse_battery_backend_config,
-    parse_battery_requirements,
-)
+from design_research_problems.problems.grammar._battery_problem_base import BatteryCircuitProblemBase
 
 
 def _sort_coordinate_key(coordinate: tuple[int, int, int]) -> tuple[int, int, int]:

@@ -28,6 +28,16 @@ from design_research_problems.problems._battery_adapters import (
     coerce_battery_thermal_model,
     evaluate_explicit_netlist_state,
 )
+from design_research_problems.problems._battery_problem_config import (
+    parse_battery_backend_config,
+    parse_battery_requirements,
+    resolve_battery_requirements,
+)
+from design_research_problems.problems._battery_tier_shared import (
+    _DEFAULT_AMBIENT_TEMPERATURE_C,
+    _DEFAULT_MAX_TEMPERATURE_C,
+    _score_metrics,
+)
 from design_research_problems.problems._domains.battery_benchmark import (
     BatteryEvaluationMode,
     BatteryRepresentationMode,
@@ -56,15 +66,6 @@ from design_research_problems.problems._optimization import (
     OptimizationResult,
 )
 from design_research_problems.problems.grammar._battery_pack_open import BatteryPack18650OpenEndedProblem
-from design_research_problems.problems.grammar._battery_problem_base import (
-    parse_battery_backend_config,
-    parse_battery_requirements,
-)
-from design_research_problems.problems.optimization._battery_tiers import (
-    _DEFAULT_AMBIENT_TEMPERATURE_C,
-    _DEFAULT_MAX_TEMPERATURE_C,
-    _score_metrics,
-)
 
 _TRANSITION_PROGRAM_LENGTH = 32
 _MAX_TRANSITION_TOKEN = 8_192
@@ -104,15 +105,7 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             statement_markdown=statement_markdown,
             resource_bundle=resource_bundle,
         )
-        self.requirements = requirements or BatteryRequirements(
-            target_voltage_v=14.8,
-            minimum_capacity_ah=10.0,
-            minimum_current_a=60.0,
-            max_width_mm=500.0,
-            max_depth_mm=500.0,
-            max_height_mm=250.0,
-            voltage_tolerance_v=0.1,
-        )
+        self.requirements = resolve_battery_requirements(requirements)
         self.max_cell_count = max_cell_count
         self.backend_config = backend_config
         self.bounds = Bounds(

@@ -11,6 +11,10 @@ from numpy.typing import NDArray
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._battery_problem_config import (
+    parse_battery_requirements,
+    resolve_battery_requirements,
+)
 from design_research_problems.problems._domains.battery_geometry import (
     FiniteCylinder,
     axis_unit_vector_from_euler,
@@ -29,7 +33,6 @@ from design_research_problems.problems._optimization import (
     OptimizationResult,
     bounded_pattern_search,
 )
-from design_research_problems.problems.grammar._battery_problem_base import parse_battery_requirements
 
 _INFEASIBILITY_PENALTY_SCALE = 1_000.0
 _CACHE_DECIMALS = 5
@@ -146,15 +149,7 @@ class BatteryOrientedLayoutProblem(OptimizationProblem):
             statement_markdown=statement_markdown,
             resource_bundle=resource_bundle,
         )
-        self.requirements = requirements or BatteryRequirements(
-            target_voltage_v=14.8,
-            minimum_capacity_ah=10.0,
-            minimum_current_a=60.0,
-            max_width_mm=500.0,
-            max_depth_mm=500.0,
-            max_height_mm=250.0,
-            voltage_tolerance_v=0.1,
-        )
+        self.requirements = resolve_battery_requirements(requirements)
         self.max_cell_count = max(1, int(max_cell_count))
         self.minimum_spacing_mm = max(0.0, float(minimum_spacing_mm))
         self.cooling_coefficient_w_per_m2k = max(0.0, float(cooling_coefficient_w_per_m2k))

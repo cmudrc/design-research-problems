@@ -55,19 +55,23 @@ def _static_cell_model() -> BatteryCellModel:
 
 
 def _patch_battery_loaders(monkeypatch: pytest.MonkeyPatch) -> None:
-    from design_research_problems.problems import _battery_adapters
+    from design_research_problems.problems import _battery_adapters, _battery_tier_problems
     from design_research_problems.problems._domains import battery_circuit
-    from design_research_problems.problems.optimization import _battery_grid, _battery_open_ended, _battery_tiers
+    from design_research_problems.problems.optimization import _battery_grid, _battery_open_ended
 
     monkeypatch.setattr(_battery_grid, "load_18650_cell_model", _static_cell_model)
     monkeypatch.setattr(_battery_open_ended, "load_18650_cell_model", _static_cell_model)
-    monkeypatch.setattr(_battery_tiers, "load_18650_cell_model", lambda *args, **kwargs: _static_cell_model())
+    monkeypatch.setattr(_battery_tier_problems, "load_18650_cell_model", lambda *args, **kwargs: _static_cell_model())
     monkeypatch.setattr(_battery_adapters, "load_18650_cell_model", lambda config=None: _static_cell_model())
     monkeypatch.setattr(_battery_adapters, "load_battery_thermal_priors", lambda config=None: _static_thermal_priors())
     monkeypatch.setattr(battery_circuit, "load_battery_cell_model", lambda config=None: _static_cell_model())
     monkeypatch.setattr(battery_circuit, "load_battery_thermal_priors", lambda config=None: _static_thermal_priors())
-    monkeypatch.setattr(_battery_tiers, "load_battery_thermal_priors", lambda config=None: _static_thermal_priors())
-    monkeypatch.setattr(_battery_tiers, "load_18650_thermal_priors", _static_thermal_priors)
+    monkeypatch.setattr(
+        _battery_tier_problems,
+        "load_battery_thermal_priors",
+        lambda config=None: _static_thermal_priors(),
+    )
+    monkeypatch.setattr(_battery_tier_problems, "load_18650_thermal_priors", _static_thermal_priors)
 
 
 def _static_thermal_priors() -> BatteryThermalPriors:
@@ -213,15 +217,15 @@ def test_manifest_backed_2rc_optimizer_variants_report_backend_provenance(
 
 
 def test_t4_problem_loading_is_lazy_about_thermal_priors(monkeypatch: pytest.MonkeyPatch) -> None:
-    from design_research_problems.problems.optimization import _battery_tiers
+    from design_research_problems.problems import _battery_tier_problems
 
     monkeypatch.setattr(
-        _battery_tiers,
+        _battery_tier_problems,
         "load_18650_thermal_priors",
         lambda: (_ for _ in ()).throw(AssertionError("default thermal priors loaded eagerly")),
     )
     monkeypatch.setattr(
-        _battery_tiers,
+        _battery_tier_problems,
         "load_battery_thermal_priors",
         lambda config=None: (_ for _ in ()).throw(AssertionError("backend thermal priors loaded eagerly")),
     )
@@ -376,14 +380,14 @@ def test_t4_lumped_and_multi_node_modes_share_contract_and_are_deterministic(
 
 
 def test_t4_requires_pybamm_for_thermal_priors(monkeypatch: pytest.MonkeyPatch) -> None:
-    from design_research_problems.problems.optimization import _battery_tiers
+    from design_research_problems.problems import _battery_tier_problems
 
     def _missing_thermal_priors(config: object | None = None) -> BatteryThermalPriors:
         del config
         raise MissingOptionalDependencyError("pybamm is required")
 
-    monkeypatch.setattr(_battery_tiers, "load_18650_thermal_priors", _missing_thermal_priors)
-    monkeypatch.setattr(_battery_tiers, "load_battery_thermal_priors", _missing_thermal_priors)
+    monkeypatch.setattr(_battery_tier_problems, "load_18650_thermal_priors", _missing_thermal_priors)
+    monkeypatch.setattr(_battery_tier_problems, "load_battery_thermal_priors", _missing_thermal_priors)
     t3 = get_problem("battery_18650_t3a_topology_surrogate_opt")
     assert isinstance(t3, Battery18650T3ATopologySurrogateOptimizationProblem)
     problem = Battery18650T4ThermalHybridOptimizationProblem(

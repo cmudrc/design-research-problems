@@ -61,19 +61,22 @@ def _static_thermal_priors() -> BatteryThermalPriors:
 
 @pytest.fixture(autouse=True)
 def _patch_battery_loaders(monkeypatch: pytest.MonkeyPatch) -> None:
-    from design_research_problems.problems import _battery_adapters
+    from design_research_problems.problems import _battery_adapters, _battery_tier_problems
     from design_research_problems.problems._domains import battery_circuit
     from design_research_problems.problems.grammar import _battery_problem_base
-    from design_research_problems.problems.optimization import _battery_tiers
 
     monkeypatch.setattr(_battery_problem_base, "load_18650_cell_model", _static_cell_model)
-    monkeypatch.setattr(_battery_tiers, "load_18650_cell_model", lambda *args, **kwargs: _static_cell_model())
+    monkeypatch.setattr(_battery_tier_problems, "load_18650_cell_model", lambda *args, **kwargs: _static_cell_model())
     monkeypatch.setattr(_battery_adapters, "load_18650_cell_model", lambda config=None: _static_cell_model())
     monkeypatch.setattr(_battery_adapters, "load_battery_thermal_priors", lambda config=None: _static_thermal_priors())
     monkeypatch.setattr(battery_circuit, "load_battery_cell_model", lambda config=None: _static_cell_model())
     monkeypatch.setattr(battery_circuit, "load_battery_thermal_priors", lambda config=None: _static_thermal_priors())
-    monkeypatch.setattr(_battery_tiers, "load_battery_thermal_priors", lambda config=None: _static_thermal_priors())
-    monkeypatch.setattr(_battery_tiers, "load_18650_thermal_priors", _static_thermal_priors)
+    monkeypatch.setattr(
+        _battery_tier_problems,
+        "load_battery_thermal_priors",
+        lambda config=None: _static_thermal_priors(),
+    )
+    monkeypatch.setattr(_battery_tier_problems, "load_18650_thermal_priors", _static_thermal_priors)
 
 
 def test_tiered_battery_grammars_are_registered_and_share_metric_contract() -> None:
