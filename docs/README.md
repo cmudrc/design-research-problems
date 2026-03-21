@@ -17,8 +17,9 @@ Run `make docstrings-check` before merge.
 
 ## Page-Writing Conventions
 
-- Keep homepages in this order: title, tagline, what it does, highlights, typical workflow, ecosystem integration, start here.
-- Use concise research-oriented prose.
+- Keep the homepage short: title, tagline, concise framing, quickstart callout, section-oriented links, and only the minimum ecosystem/contribution notes needed for orientation.
+- Keep the root hidden home-page toctree section-first so the PyData header and sidebar stay stable.
+- Emphasize stable problem-family APIs, benchmark metadata, and reproducible evaluation contracts.
 - Prefer stable problem-family language over ad-hoc naming.
 
 ## Table vs Prose Rule

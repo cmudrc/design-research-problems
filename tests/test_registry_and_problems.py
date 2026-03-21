@@ -97,7 +97,7 @@ def test_registry_entries_filter_by_kind() -> None:
     )
     optimization_kinds = registry.by_kind(ProblemKind.OPTIMIZATION)
     optimization_ids = [entry.problem_id for entry in optimization_kinds]
-    assert len(optimization_ids) == 16
+    assert len(optimization_ids) == 18
     assert "battery_18650_t1_rectangular_surrogate_opt" in optimization_ids
     assert "battery_18650_t2_pose_surrogate_opt" in optimization_ids
     assert "battery_18650_t3a_topology_explicit_2rc_opt" in optimization_ids
@@ -106,6 +106,8 @@ def test_registry_entries_filter_by_kind() -> None:
     assert "battery_18650_t4_thermal_hybrid_2rc_opt" in optimization_ids
     assert "battery_18650_t4_thermal_hybrid_opt" in optimization_ids
     assert "battery_fast_charge_dfn_anchor_opt" in optimization_ids
+    assert "battery_pack_18650_open_ended_capacity_max" in optimization_ids
+    assert "battery_pack_18650_series_parallel_cost_min" in optimization_ids
     assert "gmpb_default_dynamic_min" in optimization_ids
     assert "planar_truss_span_mass_min" in optimization_ids
     assert "planar_truss_span_deflection_min" in optimization_ids
@@ -115,29 +117,23 @@ def test_registry_entries_filter_by_kind() -> None:
     assert "planar_truss_span_total_length_min" not in optimization_ids
     grammar_kinds = registry.by_kind(ProblemKind.GRAMMAR)
     grammar_ids = [entry.problem_id for entry in grammar_kinds]
-    assert len(grammar_ids) == 16
+    assert len(grammar_ids) == 18
     assert "battery_18650_t1_rectangular_surrogate_grammar" in grammar_ids
     assert "battery_18650_t2_pose_surrogate_grammar" in grammar_ids
     assert "battery_18650_t3a_topology_surrogate_grammar" in grammar_ids
     assert "battery_18650_t3b_netlist_explicit_2rc_grammar" in grammar_ids
     assert "battery_18650_t3b_netlist_explicit_grammar" in grammar_ids
     assert "battery_18650_t4_thermal_hybrid_grammar" in grammar_ids
+    assert "battery_pack_18650_open_ended" in grammar_ids
+    assert "battery_pack_18650_series_parallel" in grammar_ids
     mcp_kinds = registry.by_kind(ProblemKind.MCP)
     mcp_ids = [entry.problem_id for entry in mcp_kinds]
     assert mcp_ids == ["mcp_build123d_parametric_mounting_bracket"]
 
 
-def test_removed_battery_ids_fail_lookup() -> None:
-    removed_ids = (
-        "battery_pack_18650_series_parallel",
-        "battery_pack_18650_series_parallel_cost_min",
-        "battery_pack_18650_open_ended",
-        "battery_pack_18650_open_ended_capacity_max",
-        "battery_pack_18650_oriented_layout_min",
-    )
-    for removed_id in removed_ids:
-        with pytest.raises(KeyError):
-            get_problem(removed_id)
+def test_removed_oriented_battery_id_fails_lookup() -> None:
+    with pytest.raises(KeyError):
+        get_problem("battery_pack_18650_oriented_layout_min")
 
 
 def test_catalog_directory_names_match_problem_ids() -> None:
@@ -422,6 +418,8 @@ def test_registry_search_filters_by_feature_flags() -> None:
         "battery_18650_t4_thermal_hybrid_2rc_opt",
         "battery_18650_t4_thermal_hybrid_opt",
         "battery_fast_charge_dfn_anchor_opt",
+        "battery_pack_18650_open_ended_capacity_max",
+        "battery_pack_18650_series_parallel_cost_min",
         "gmpb_default_dynamic_min",
         "moneymaker_hip_pump_cost_min",
         "pill_capsule_min_area",

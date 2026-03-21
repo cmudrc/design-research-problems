@@ -3,7 +3,7 @@
 Grammar Problem Catalog
 =======================
 
-This page lists all packaged grammar problems and their initial transition structure. There are currently 16 packaged grammar problems.
+This page lists all packaged grammar problems and their initial transition structure. There are currently 18 packaged grammar problems.
 
 For the conceptual overview, see :doc:`../problems/grammar`.
 
@@ -16,6 +16,8 @@ For the conceptual overview, see :doc:`../problems/grammar`.
    grammar/battery_18650_t3b_netlist_explicit_2rc_grammar
    grammar/battery_18650_t3b_netlist_explicit_grammar
    grammar/battery_18650_t4_thermal_hybrid_grammar
+   grammar/battery_pack_18650_open_ended
+   grammar/battery_pack_18650_series_parallel
    grammar/iot_home_cooling_system_design
    grammar/planar_roof_truss_seven_point_asymmetric
    grammar/planar_roof_truss_seven_point_symmetric

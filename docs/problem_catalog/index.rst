@@ -13,10 +13,10 @@ Current counts:
 
 - Text: 40
 - Decision: 17
-- Optimization: 16
-- Grammar: 16
+- Optimization: 18
+- Grammar: 18
 - MCP: 1
-- Total: 90
+- Total: 94
 
 .. toctree::
    :maxdepth: 1

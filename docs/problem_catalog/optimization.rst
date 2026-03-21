@@ -3,7 +3,7 @@
 Optimization Problem Catalog
 ============================
 
-This page lists all packaged optimization benchmarks and their variable counts. There are currently 16 packaged optimization problems.
+This page lists all packaged optimization benchmarks and their variable counts. There are currently 18 packaged optimization problems.
 
 For the conceptual overview, see :doc:`../problems/optimization`.
 
@@ -18,6 +18,8 @@ For the conceptual overview, see :doc:`../problems/optimization`.
    optimization/battery_18650_t4_thermal_hybrid_2rc_opt
    optimization/battery_18650_t4_thermal_hybrid_opt
    optimization/battery_fast_charge_dfn_anchor_opt
+   optimization/battery_pack_18650_open_ended_capacity_max
+   optimization/battery_pack_18650_series_parallel_cost_min
    optimization/gmpb_default_dynamic_min
    optimization/moneymaker_hip_pump_cost_min
    optimization/pill_capsule_min_area
