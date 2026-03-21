@@ -195,16 +195,19 @@ def test_battery_core_helpers_cover_validation_and_series_parallel_simulation(mo
     assert validate_rectangular_topology(SimpleNamespace(series_count=2, parallel_count=2, cells=_placements())) == (
         "Cell count does not match the required SxP rectangle."
     )
-    assert validate_rectangular_topology(
-        SimpleNamespace(
-            series_count=1,
-            parallel_count=2,
-            cells=(
-                BatteryCellPlacement(cell_id=0, stage_index=0, branch_index=0, x=0, y=0, z=0),
-                BatteryCellPlacement(cell_id=1, stage_index=0, branch_index=0, x=1, y=0, z=0),
-            ),
+    assert (
+        validate_rectangular_topology(
+            SimpleNamespace(
+                series_count=1,
+                parallel_count=2,
+                cells=(
+                    BatteryCellPlacement(cell_id=0, stage_index=0, branch_index=0, x=0, y=0, z=0),
+                    BatteryCellPlacement(cell_id=1, stage_index=0, branch_index=0, x=1, y=0, z=0),
+                ),
+            )
         )
-    ) == "Cells do not fill the complete SxP slot rectangle."
+        == "Cells do not fill the complete SxP slot rectangle."
+    )
 
     valid_state = SimpleNamespace(
         series_count=2,
@@ -260,7 +263,9 @@ def test_battery_adapter_helpers_cover_thermal_and_failure_paths(monkeypatch: py
     config = battery_adapters.BatteryThermalPromotionConfig(thermal_model=battery_adapters.THERMAL_MODEL_LUMPED)
     payload = config.as_dict()
     assert payload["thermal_model"] == battery_adapters.THERMAL_MODEL_LUMPED
-    assert battery_adapters.coerce_battery_thermal_model(" Multi_Node_2Node ") == battery_adapters.THERMAL_MODEL_MULTI_NODE
+    assert (
+        battery_adapters.coerce_battery_thermal_model(" Multi_Node_2Node ") == battery_adapters.THERMAL_MODEL_MULTI_NODE
+    )
     assert battery_adapters.coerce_battery_thermal_airflow_axis(" Z ") == "z"
     with pytest.raises(ValueError, match="battery thermal_model"):
         battery_adapters.coerce_battery_thermal_model("bad")
@@ -274,9 +279,17 @@ def test_battery_adapter_helpers_cover_thermal_and_failure_paths(monkeypatch: py
 
     promoted = battery_adapters.promoted_hybrid_defaults_payload(config, cell_pose_model="upright")
     assert promoted["cell_pose_model"] == "upright"
-    assert battery_adapters.infer_parallel_equivalent_from_cell_current(load_current_a=10.0, max_cell_current_a=None) == 1.0
-    assert battery_adapters.infer_parallel_equivalent_from_cell_current(load_current_a=10.0, max_cell_current_a=50.0) == 1.0
-    assert battery_adapters.infer_parallel_equivalent_from_cell_current(load_current_a=10.0, max_cell_current_a=2.0) == 5.0
+    assert (
+        battery_adapters.infer_parallel_equivalent_from_cell_current(load_current_a=10.0, max_cell_current_a=None)
+        == 1.0
+    )
+    assert (
+        battery_adapters.infer_parallel_equivalent_from_cell_current(load_current_a=10.0, max_cell_current_a=50.0)
+        == 1.0
+    )
+    assert (
+        battery_adapters.infer_parallel_equivalent_from_cell_current(load_current_a=10.0, max_cell_current_a=2.0) == 5.0
+    )
 
     poses = battery_adapters.build_upright_thermal_poses_from_grid_cells(_placements())
     assert poses[0].x_mm == pytest.approx(14.0)
@@ -319,14 +332,19 @@ def test_battery_adapter_helpers_cover_thermal_and_failure_paths(monkeypatch: py
         total_surface_area_mm2=1000.0,
     )
     assert multi_result.max_core_temperature_c >= multi_result.max_surface_temperature_c
-    assert battery_adapters._airflow_shadow_factors((), thermal_airflow_axis="x", thermal_flow_shadowing_factor=0.5) == []
-    assert len(
-        battery_adapters._airflow_shadow_factors(
-            poses,
-            thermal_airflow_axis="z",
-            thermal_flow_shadowing_factor=0.5,
+    assert (
+        battery_adapters._airflow_shadow_factors((), thermal_airflow_axis="x", thermal_flow_shadowing_factor=0.5) == []
+    )
+    assert (
+        len(
+            battery_adapters._airflow_shadow_factors(
+                poses,
+                thermal_airflow_axis="z",
+                thermal_flow_shadowing_factor=0.5,
+            )
         )
-    ) == 2
+        == 2
+    )
     adjacent_poses = (
         battery_adapters.BatteryThermalPose(0.0, 0.0, 0.0),
         battery_adapters.BatteryThermalPose(0.0, 0.0, 66.0),
@@ -432,7 +450,10 @@ def test_battery_adapter_helpers_cover_thermal_and_failure_paths(monkeypatch: py
 
     baseline_summary = _summary()
     valid_rectangular = SeriesParallelBatteryState(series_count=2, parallel_count=1, cells=rectangular_cells)
-    assert battery_adapters._analytic_rectangular_failure_reason(valid_rectangular, _requirements(), baseline_summary) is None
+    assert (
+        battery_adapters._analytic_rectangular_failure_reason(valid_rectangular, _requirements(), baseline_summary)
+        is None
+    )
     assert (
         battery_adapters._analytic_rectangular_failure_reason(
             valid_rectangular,
@@ -540,7 +561,9 @@ def test_battery_grid_helpers_cover_manifest_caching_and_search_edges(monkeypatc
     )
     monkeypatch.setattr(problem, "_evaluation_from_variables", lambda variables: evaluation)
     assert problem.objective_components(numpy.array([2.0, 2.0], dtype=float))["cost_usd"] == pytest.approx(12.5)
-    assert problem._width_margin(numpy.array([2.0, 2.0], dtype=float)) == pytest.approx(problem.requirements.max_width_mm - 18.0)
+    assert problem._width_margin(numpy.array([2.0, 2.0], dtype=float)) == pytest.approx(
+        problem.requirements.max_width_mm - 18.0
+    )
     assert problem._backend_feasibility_margin(numpy.array([2.0, 2.0], dtype=float)) == pytest.approx(1.0)
 
     calls: list[tuple[int, int]] = []
@@ -607,17 +630,21 @@ def test_fast_charge_helper_functions_and_mocked_simulation_paths(monkeypatch: p
         "also_present": SimpleNamespace(entries=numpy.array([2.0, 4.0], dtype=float)),
     }
     assert battery_fast_charge._safe_solution_max(solution, ("missing", "present"), default=0.0) == pytest.approx(3.0)
-    assert battery_fast_charge._safe_solution_min(solution, ("missing", "also_present"), default=0.0) == pytest.approx(2.0)
-    assert battery_fast_charge._safe_solution_max(solution, ("missing",), default=7.0) == pytest.approx(7.0)
-    assert battery_fast_charge._safe_parameter_value({"Cell volume [m3]": 2.0e-5}, "Cell volume [m3]", 0.0) == pytest.approx(
-        2.0e-5
+    assert battery_fast_charge._safe_solution_min(solution, ("missing", "also_present"), default=0.0) == pytest.approx(
+        2.0
     )
+    assert battery_fast_charge._safe_solution_max(solution, ("missing",), default=7.0) == pytest.approx(7.0)
+    assert battery_fast_charge._safe_parameter_value(
+        {"Cell volume [m3]": 2.0e-5}, "Cell volume [m3]", 0.0
+    ) == pytest.approx(2.0e-5)
 
     class _ExplodingParameters(dict):
         def __getitem__(self, key: str) -> float:
             raise RuntimeError("missing")
 
-    assert battery_fast_charge._safe_parameter_value(_ExplodingParameters(), "Cell volume [m3]", 1.0) == pytest.approx(1.0)
+    assert battery_fast_charge._safe_parameter_value(_ExplodingParameters(), "Cell volume [m3]", 1.0) == pytest.approx(
+        1.0
+    )
 
     class FakeParameters(dict[str, float]):
         def __init__(self, parameter_set: str) -> None:
@@ -632,7 +659,9 @@ def test_fast_charge_helper_functions_and_mocked_simulation_paths(monkeypatch: p
             self["initial_soc"] = value
 
     class FakeSimulation:
-        def __init__(self, model: object, parameter_values: object, experiment: object, var_pts: dict[str, int]) -> None:
+        def __init__(
+            self, model: object, parameter_values: object, experiment: object, var_pts: dict[str, int]
+        ) -> None:
             self.model = model
             self.parameter_values = parameter_values
             self.experiment = experiment
@@ -947,7 +976,9 @@ def test_t2_pose_surrogate_promoted_paths_cover_explicit_and_hybrid_modes(
         honored_backend_fields=("ambient_temp_c", "cell_model_mode"),
         cell_model_source="test_stub",
     )
-    monkeypatch.setattr(battery_tier_problems, "evaluate_rectangular_battery_state", lambda *args, **kwargs: circuit_outcome)
+    monkeypatch.setattr(
+        battery_tier_problems, "evaluate_rectangular_battery_state", lambda *args, **kwargs: circuit_outcome
+    )
     monkeypatch.setattr(
         battery_tier_problems,
         "load_battery_thermal_priors",
@@ -969,7 +1000,9 @@ def test_t2_pose_surrogate_promoted_paths_cover_explicit_and_hybrid_modes(
     monkeypatch.setattr(explicit_problem, "_pose_helper_evaluation", lambda **kwargs: helper)
     candidate = explicit_problem.generate_initial_solution(seed=4)
     explicit_outcome = explicit_problem._outcome_from_variables(candidate)
-    assert explicit_problem._thermal_config().ambient_temperature_c == pytest.approx(explicit_problem.ambient_temperature_c)
+    assert explicit_problem._thermal_config().ambient_temperature_c == pytest.approx(
+        explicit_problem.ambient_temperature_c
+    )
     assert explicit_outcome.electrical_path == "promoted"
     assert explicit_outcome.thermal_path == "native"
     assert explicit_outcome.metrics.connection_count == pytest.approx(5.0)
