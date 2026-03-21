@@ -948,6 +948,58 @@ def test_open_ended_solver_helpers_cover_successful_dispatch_and_public_wrapper(
     assert "explicit-netlist battery benchmark" in wrapped.message
 
 
+def test_open_ended_local_search_and_cache_paths_cover_remaining_branches(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        battery_open_ended.BatteryOpenEndedCapacityMaxProblem,
+        "_build_canonical_seed_program",
+        lambda self: tuple([0] * 32),
+    )
+    problem = battery_open_ended.BatteryOpenEndedCapacityMaxProblem(
+        metadata=_metadata(),
+        requirements=_requirements(),
+    )
+    initial = numpy.full(32, 5.0, dtype=float)
+
+    monkeypatch.setattr(problem, "objective", lambda variables: float(numpy.sum(variables)))
+    monkeypatch.setattr(problem, "_build_result", lambda **kwargs: kwargs)
+    local_search = problem._solve_with_local_search(initial_solution=initial, maxiter=1)
+    assert local_search["nit"] == 1
+    assert local_search["nfev"] > 1
+    assert numpy.sum(local_search["x"]) < numpy.sum(initial)
+
+    evaluation = SimpleNamespace(
+        delivered_capacity_ah=6.0,
+        pack_terminal_voltage_end=7.3,
+        pack_nominal_voltage=7.4,
+        cell_count=5,
+        connection_count=6,
+        design_volume=1800.0,
+        is_feasible=True,
+    )
+    calls: list[object] = []
+    monkeypatch.setattr(problem, "_state_from_genes", lambda genes: "decoded-state")
+    monkeypatch.setattr(problem, "_evaluate_state", lambda state: calls.append(state) or evaluation)
+    first = problem._evaluation_from_variables(initial)
+    second = problem._evaluation_from_variables(initial)
+    assert first is second
+    assert calls == ["decoded-state"]
+
+    monkeypatch.setattr(problem, "_evaluation_from_variables", lambda variables: evaluation)
+    assert problem._voltage_margin(initial) == pytest.approx(problem.requirements.voltage_tolerance_v)
+    assert problem._capacity_margin(initial) == pytest.approx(1.0)
+    assert problem._backend_feasibility_margin(initial) == pytest.approx(1.0)
+
+    direct_problem = battery_open_ended.BatteryOpenEndedCapacityMaxProblem(
+        metadata=_metadata(),
+        requirements=_requirements(),
+    )
+    sentinel = object()
+    monkeypatch.setattr(battery_open_ended, "evaluate_battery_circuit", lambda **kwargs: sentinel)
+    assert direct_problem._evaluate_state(SimpleNamespace()) is sentinel
+
+
 def test_t2_pose_surrogate_promoted_paths_cover_explicit_and_hybrid_modes(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
