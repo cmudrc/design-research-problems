@@ -1,9 +1,9 @@
 problem_id = "battery_pack_18650_series_parallel_cost_min"
-title = "18650 series-parallel battery-pack sizing (cost minimization)"
+title = "T1 18650 series-parallel battery-pack sizing (cost minimization)"
 summary = "A fixed-topology optimization variant that chooses the rectangular series and parallel counts of an 18650 pack to minimize cost under the packaged battery requirements."
 kind = "optimization"
 statement = '''
-# 18650 series-parallel battery-pack sizing (cost minimization)
+# T1 18650 series-parallel battery-pack sizing (cost minimization)
 
 Choose the rectangular electrical size of an 18650 battery pack by selecting
 the number of series stages `S` and parallel branches `P`. The physical layout
