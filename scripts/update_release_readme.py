@@ -28,7 +28,6 @@ class Milestone:
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments for README callout updates."""
-
     parser = argparse.ArgumentParser(description="Refresh the monthly release callout in README.md.")
     parser.add_argument(
         "--readme",

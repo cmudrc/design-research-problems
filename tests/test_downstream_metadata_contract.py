@@ -18,9 +18,7 @@ def test_registry_metadata_matches_the_downstream_contract() -> None:
         assert isinstance(metadata.capabilities, tuple)
         assert isinstance(metadata.study_suitability, tuple)
         assert isinstance(metadata.feature_flags, tuple)
-        assert metadata.feature_flags == tuple(
-            sorted({*metadata.capabilities, *metadata.study_suitability})
-        )
+        assert metadata.feature_flags == tuple(sorted({*metadata.capabilities, *metadata.study_suitability}))
         assert set(metadata.capabilities).issubset(KNOWN_PROBLEM_CAPABILITIES)
         assert set(metadata.study_suitability).issubset(KNOWN_STUDY_SUITABILITY)
         if metadata.implementation is not None:
