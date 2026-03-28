@@ -1,0 +1,35 @@
+problem_id = "ideation_expo_shanghai_pavilion"
+title = "Expo-Shanghai Pavilion"
+summary = "An open-ended exhibition-design brief about representing a country through a pavilion concept."
+kind = "text"
+statement = '''
+# Expo-Shanghai Pavilion
+
+Design a pavilion at Expo-Shanghai, 2010, presenting an image of
+your country from your own perception.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "design-exploration"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "design", "architecture", "pavilion", "exhibition"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "el_khouly_penn_2012"
+kind = "inline"
+authors = ["T. El-Khouly", "A. Penn"]
+title = "An Empirical Case Study on Architectural Design Process"
+year = 2012
+venue = "Design Computing and Cognition DCC'12"
+formatted_text = "El-Khouly and Penn (2012). An Empirical Case Study on Architectural Design Process. Design Computing and Cognition DCC'12."
+raw_text = "El-Khouly, T., and A. Penn (2012). An Empirical Case Study on Architectural Design Process. Design Computing and Cognition DCC'12."
+provisional = true

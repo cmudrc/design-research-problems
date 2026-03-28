@@ -1,0 +1,56 @@
+problem_id = "ideation_sustainable_washing_machine"
+title = "Sustainable Washing Machine"
+summary = "A primary-source sustainable-appliance ideation brief for designing the next generation of a washing machine with lower resource use and stronger user appeal."
+kind = "text"
+statement = '''
+# Sustainable Washing Machine
+
+Imagine that you are working on a product design team at Smithfield
+Appliances, and you have been asked to design the next generation of
+sustainable washing machine. Product ideas may be related to reducing water
+and energy usage, improving manufacturing, and increasing the product's appeal
+to users. Generate ideas that address this design challenge. You may use
+scratch paper if necessary but please type all individual ideas in the boxes
+below. You do not have to fill in all of the boxes. You will have 8 min to
+complete this task.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "appliance", "sustainability", "consumer"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 8
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "liao_macdonald_2021"
+kind = "inline"
+authors = ["Ting Liao", "Erin F. MacDonald"]
+title = "Priming on Sustainable Design Idea Creation and Evaluation"
+year = 2021
+venue = "Sustainability, 13(9), 5227"
+doi = "10.3390/su13095227"
+url = "https://doi.org/10.3390/su13095227"
+formatted_text = "Liao and MacDonald (2021). Priming on Sustainable Design Idea Creation and Evaluation. Sustainability, 13(9), 5227."
+raw_text = "Liao, Ting, and Erin F. MacDonald (2021). Priming on Sustainable Design Idea Creation and Evaluation. Sustainability, 13(9), 5227. DOI: 10.3390/su13095227."
+provisional = false
+
+[[citations]]
+key = "renji_liao_2025"
+kind = "inline"
+authors = ["Naveen Mathews Renji", "Ting Liao"]
+title = "Designing Trust: How System-Level Design Attributes Shape AI-Assisted Design Ideation"
+year = 2025
+venue = "ASME IDETC/CIE 2025, DETC2025-168783"
+doi = "10.1115/DETC2025-168783"
+url = "https://doi.org/10.1115/DETC2025-168783"
+formatted_text = "Renji and Liao (2025). Designing Trust: How System-Level Design Attributes Shape AI-Assisted Design Ideation. ASME IDETC/CIE 2025, DETC2025-168783."
+raw_text = "Renji, Naveen Mathews, and Ting Liao (2025). Designing Trust: How System-Level Design Attributes Shape AI-Assisted Design Ideation. ASME IDETC/CIE 2025, DETC2025-168783."
+provisional = false

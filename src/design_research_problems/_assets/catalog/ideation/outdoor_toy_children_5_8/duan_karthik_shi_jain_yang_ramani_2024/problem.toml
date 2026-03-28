@@ -1,0 +1,44 @@
+problem_id = "ideation_outdoor_toy_children_5_8"
+title = "Outdoor Toy for Ages 5-8"
+summary = "A consumer-product ideation brief for a mechanically interactive outdoor toy aimed at children ages 5-8."
+kind = "text"
+statement = '''
+# Outdoor Toy for Ages 5-8
+
+You are an employee of a toy company designing a new outdoor toy for
+children. According to the market report, the design needs to consider the
+following requirements:
+
+1. An outdoor toy for children aged 5-8 that is mechanically interactive.
+2. The price and quality of the toys are important to the customer; it
+   should offer good value.
+3. It must be safe.
+4. It should keep the child occupied and interested.
+5. It must last about 2-3 years of use.
+6. It should be priced between $20-40.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "toys", "children", "consumer"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "duan_karthik_shi_jain_yang_ramani_2024"
+kind = "inline"
+authors = ["Runlin Duan", "Nachiketh Karthik", "Jingyu Shi", "Rahul Jain", "Maria C. Yang", "Karthik Ramani"]
+title = "ConceptVis: Generating and Exploring Design Concepts for Early-Stage Ideation Using Large Language Model"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-146409"
+formatted_text = "Duan, Karthik, Shi, Jain, Yang, and Ramani (2024). ConceptVis: Generating and Exploring Design Concepts for Early-Stage Ideation Using Large Language Model. ASME IDETC/CIE 2024, DETC2024-146409."
+raw_text = "Duan, Karthik, Shi, Jain, Yang, and Ramani (2024). ConceptVis: Generating and Exploring Design Concepts for Early-Stage Ideation Using Large Language Model. ASME IDETC/CIE 2024, DETC2024-146409."
+provisional = true

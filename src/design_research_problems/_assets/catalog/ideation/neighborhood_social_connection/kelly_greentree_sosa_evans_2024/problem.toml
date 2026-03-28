@@ -1,0 +1,45 @@
+problem_id = "ideation_neighborhood_social_connection"
+title = "Neighborhood Social Connection"
+summary = "A community-design brief about helping Zoe create more opportunities for interaction on her suburban street."
+kind = "text"
+statement = '''
+# Neighborhood Social Connection
+
+Zoe has moved from an inner-city shared house into a quiet suburban
+street, near a small park. She has tried to befriend her neighbours
+but has noticed a general feeling of social isolation in her street.
+She believes that this is because people in the neighbourhood have no
+opportunities for interacting-even if/when they want to.
+
+She wants to change this situation and has plenty of time but limited
+financial resources to put into this as a "project". The trouble is
+that she is not sure where to begin. She has approached you because
+you are a designer, to see if you can come up with ideas for ways
+that she might approach this problem. She is open to anything that
+might work.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "design-exploration"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "community", "social", "service"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "kelly_greentree_sosa_evans_2024"
+kind = "inline"
+authors = ["Nick Kelly", "Jess Greentree", "Ricardo Sosa", "Richard Evans"]
+title = "Automating Useful Representations of the Design Process from Design Protocols"
+year = 2024
+venue = "Design Computing and Cognition DCC'24"
+formatted_text = "Kelly, Greentree, Sosa, and Evans (2024). Automating Useful Representations of the Design Process from Design Protocols. Design Computing and Cognition DCC'24."
+raw_text = "Kelly, Nick, Jess Greentree, Ricardo Sosa, and Richard Evans (2024). Automating Useful Representations of the Design Process from Design Protocols. Design Computing and Cognition DCC'24."
+provisional = true

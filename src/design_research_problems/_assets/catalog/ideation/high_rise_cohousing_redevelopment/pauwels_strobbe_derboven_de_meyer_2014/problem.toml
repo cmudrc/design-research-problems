@@ -1,0 +1,41 @@
+problem_id = "ideation_high_rise_cohousing_redevelopment"
+title = "High-Rise Cohousing Redevelopment"
+summary = "An architectural redevelopment brief about rethinking three outdated Antwerp towers through a cohousing lens."
+kind = "text"
+statement = '''
+# High-Rise Cohousing Redevelopment
+
+Design an alternative concept for three outdated high-rise
+apartment buildings in Antwerp, Belgium, and investigate how
+cohousing can be accommodated in this building type.
+
+The site must incorporate about 300 living units, facilities for
+cohousing, and sufficient parking, while addressing sunlight,
+safety and comfort, fire safety and accessibility, privacy, wind
+turbulence, and structural constraints.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "design-exploration"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "architecture", "housing", "cohousing"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 60
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "pauwels_strobbe_derboven_de_meyer_2014"
+kind = "inline"
+authors = ["Pieter Pauwels", "Tiemen Strobbe", "Jeroen Derboven", "Ronald De Meyer"]
+title = "Conversation and Critique Within the Architectural Design Process: A Linkograph Analysis"
+year = 2014
+venue = "Design Computing and Cognition DCC'14"
+formatted_text = "Pauwels, Strobbe, Derboven, and De Meyer (2014). Conversation and Critique Within the Architectural Design Process: A Linkograph Analysis. Design Computing and Cognition DCC'14."
+raw_text = "Pauwels, Pieter, Tiemen Strobbe, Jeroen Derboven, and Ronald De Meyer (2014). Conversation and Critique Within the Architectural Design Process: A Linkograph Analysis. Design Computing and Cognition DCC'14."
+provisional = true

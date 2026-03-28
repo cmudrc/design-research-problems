@@ -1,0 +1,35 @@
+problem_id = "ideation_campus_self_sufficient_eating_area"
+title = "Campus Self-Sufficient Eating Area"
+summary = "A short co-design brief about proposing a self-sufficient eating area for a campus building."
+kind = "text"
+statement = '''
+# Campus Self-Sufficient Eating Area
+
+Propose a new concept for a self-sufficient eating area of a
+campus building.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "design-exploration"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "design", "campus", "eating", "self-sufficient"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "dorta_beaudry_marchand_pierini_2018"
+kind = "inline"
+authors = ["Tomas Dorta", "Emmanuel Beaudry Marchand", "Davide Pierini"]
+title = "Externalizing Co-Design Cognition through Immersive Retrospection"
+year = 2018
+venue = "Design Computing and Cognition DCC'18"
+formatted_text = "Dorta, Beaudry Marchand, and Pierini (2018). Externalizing Co-Design Cognition through Immersive Retrospection. Design Computing and Cognition DCC'18."
+raw_text = "Dorta, Tomas, Emmanuel Beaudry Marchand, and Davide Pierini (2018). Externalizing Co-Design Cognition through Immersive Retrospection. Design Computing and Cognition DCC'18."
+provisional = true

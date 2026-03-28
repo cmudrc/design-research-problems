@@ -1,0 +1,37 @@
+problem_id = "ideation_single_use_plastic_reduction_omaha"
+title = "Single-Use Plastic Reduction in Omaha"
+summary = "A city-focused ideation brief about reducing the environmental impact of single-use plastic in Omaha, Nebraska."
+kind = "text"
+statement = '''
+# Single-Use Plastic Reduction in Omaha
+
+Develop concepts for a new, innovative product or system that
+will reduce the environmental impact of single-use plastic in
+Omaha, Nebraska.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "plastic", "sustainability", "urban"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 25
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "yi_damen_toh_2020"
+kind = "inline"
+authors = ["Sue Yi", "Nicole B. Damen", "Christine A. Toh"]
+title = "Back and Forth: Using Conversation Analysis to Explore Dialogues of Sharedness of Mental Models"
+year = 2020
+venue = "ASME IDETC/CIE 2020, DETC2020-22515"
+formatted_text = "Yi, Damen, and Toh (2020). Back and Forth: Using Conversation Analysis to Explore Dialogues of Sharedness of Mental Models. ASME IDETC/CIE 2020, DETC2020-22515."
+raw_text = "Yi, Sue, Nicole B. Damen, and Christine A. Toh (2020). Back and Forth: Using Conversation Analysis to Explore Dialogues of Sharedness of Mental Models. ASME IDETC/CIE 2020, DETC2020-22515."
+provisional = true
+

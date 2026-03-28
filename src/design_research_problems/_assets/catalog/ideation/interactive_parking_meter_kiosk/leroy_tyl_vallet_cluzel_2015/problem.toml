@@ -1,0 +1,43 @@
+problem_id = "ideation_interactive_parking_meter_kiosk"
+title = "Interactive Parking Meter Kiosk"
+summary = "A public-service brief about transforming a parking meter into an interactive kiosk."
+kind = "text"
+statement = '''
+# Interactive Parking Meter Kiosk
+
+If you transform a pay and display parking meter into an
+interactive kiosk, what application or service useful in your
+everyday life should be available?
+
+The proposal should:
+
+- not affect the appearance of the housing
+- be relevant to a larger community
+- use one or more of the terminal's functionalities
+- be useful now or in the very near future
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "design-exploration"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "parking", "kiosk", "urban-services"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 60
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "leroy_tyl_vallet_cluzel_2015"
+kind = "inline"
+authors = ["Yann Leroy", "Benjamin Tyl", "Flore Vallet", "Francois Cluzel"]
+title = "Environmental Evaluation of Ideas in Early Phases: A Challenging Issue for Design Teams"
+year = 2015
+venue = "Proceedings of the 20th International Conference on Engineering Design (ICED15)"
+formatted_text = "Leroy, Tyl, Vallet, and Cluzel (2015). Environmental Evaluation of Ideas in Early Phases: A Challenging Issue for Design Teams. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+raw_text = "Leroy, Yann, Benjamin Tyl, Flore Vallet, and Francois Cluzel (2015). Environmental Evaluation of Ideas in Early Phases: A Challenging Issue for Design Teams. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+provisional = true

@@ -1,0 +1,38 @@
+problem_id = "ideation_goofy_gopher_golf_ball_collection"
+title = "Goofy Gopher Golf-Ball Collection"
+summary = "A competitive course-design brief about collecting and siloing more golf balls than an opposing device."
+kind = "text"
+statement = '''
+# Goofy Gopher Golf-Ball Collection
+
+Design a device that collects more golf balls than an
+opponent's device and stores them in the respective silos.
+Balls of different color have different points. Stealing balls
+from the opponents and interfering with the operation of their
+devices is allowed.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "competition", "golf", "collection"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "dinar_park_shah_2015"
+kind = "inline"
+authors = ["Mahmoud Dinar", "Yong-Seok Park", "Jami J. Shah"]
+title = "Evaluating the Effectiveness of Problem Formulation and Ideation Skills Learned Throughout an Engineering Design Course"
+year = 2015
+venue = "ASME IDETC/CIE 2015, DETC2015-46542"
+formatted_text = "Dinar, Park, and Shah (2015). Evaluating the Effectiveness of Problem Formulation and Ideation Skills Learned Throughout an Engineering Design Course. ASME IDETC/CIE 2015, DETC2015-46542."
+raw_text = "Dinar, Mahmoud, Yong-Seok Park, and Jami J. Shah (2015). Evaluating the Effectiveness of Problem Formulation and Ideation Skills Learned Throughout an Engineering Design Course. ASME IDETC/CIE 2015, DETC2015-46542."
+provisional = true

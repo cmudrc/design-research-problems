@@ -1,0 +1,44 @@
+problem_id = "ideation_dexterous_aerial_manipulation"
+title = "Dexterous Aerial Manipulation"
+summary = "A figure-based aerial-robot design brief for tree-health inspection using a resistograph."
+kind = "text"
+statement = '''
+# Dexterous Aerial Manipulation
+
+Resistograph for Structural Health Monitoring:
+
+- measure wood resistance via drilling
+- assessing wood density, quality and health condition
+
+Design Specifications:
+
+- withstand the reaction force from drilling
+- stay as still as possible
+  - to prevent the drill from snapping
+  - minimize introducing interference to sensitive resistograph measurement
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "aerial-robotics", "structural-health", "inspection"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 45
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "tan_foong_holtta_otto_2022"
+kind = "inline"
+authors = ["Chee How Tan", "Shaohui Foong", "Katja Holtta-Otto"]
+title = "Aerial Robot Design Principles in Creative Idea Generation and Evolution"
+year = 2022
+venue = "ASME IDETC/CIE 2022, DETC2022-90024"
+formatted_text = "Tan, Foong, and Holtta-Otto (2022). Aerial Robot Design Principles in Creative Idea Generation and Evolution. ASME IDETC/CIE 2022, DETC2022-90024."
+raw_text = "Tan, Chee How, Shaohui Foong, and Katja Holtta-Otto (2022). Aerial Robot Design Principles in Creative Idea Generation and Evolution. ASME IDETC/CIE 2022, DETC2022-90024."
+provisional = true

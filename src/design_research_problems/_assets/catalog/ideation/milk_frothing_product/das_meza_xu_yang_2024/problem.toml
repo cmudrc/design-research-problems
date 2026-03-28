@@ -1,0 +1,47 @@
+problem_id = "ideation_milk_frothing_device"
+title = "Milk Frothing Device"
+summary = "A full milk-frothing ideation brief reproduced in a 2024 tablet-versus-paper study."
+kind = "text"
+statement = '''
+# Milk Frothing Device
+
+Frothed milk is a pourable, virtually liquid foam that tastes rich and
+sweet. It is an ingredient in many coffee beverages, especially
+espresso-based coffee drinks (Lattes, Cappuccinos, Mochas). Frothed milk is
+made by incorporating very small air bubbles throughout the entire body of
+the milk through some form of vigorous motion.
+
+The goal of this project is to design and build a new innovative product
+that froths milk in a short amount of time.
+
+Customer needs:
+
+- Froths milk in a short amount of time.
+- Minimal instruction needed to use.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "consumer", "kitchen"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "das_meza_xu_yang_2024"
+kind = "inline"
+authors = ["Madhurima Das", "Jessica Meza", "Christine Xu", "Maria C. Yang"]
+title = "Concept Chaining Patterns During Ideation Using Digital Tablets"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-142785"
+formatted_text = "Das, Meza, Xu, and Yang (2024). Concept Chaining Patterns During Ideation Using Digital Tablets. ASME IDETC/CIE 2024, DETC2024-142785."
+raw_text = "Das, Meza, Xu, and Yang (2024). Concept Chaining Patterns During Ideation Using Digital Tablets. ASME IDETC/CIE 2024, DETC2024-142785."
+provisional = true
+

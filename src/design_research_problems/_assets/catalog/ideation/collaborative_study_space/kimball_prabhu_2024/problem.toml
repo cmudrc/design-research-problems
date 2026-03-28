@@ -1,0 +1,42 @@
+problem_id = "ideation_collaborative_study_space"
+title = "Collaborative Study Space"
+summary = "A campus-space ideation prompt about preserving collaboration while reducing distraction in study environments."
+kind = "text"
+statement = '''
+# Collaborative Study Space
+
+The College prides itself on fostering a collaborative academic
+environment. This environment is possible largely due to the design
+of the student spaces. There is a trade-off, however; with some of
+these design choices (e.g., glass walls), comes distraction.
+
+You are tasked with generating new solutions that enable collaboration
+in your desired study spaces while limiting distractions as much as
+possible. There are no wrong answers - solutions of all kinds are
+welcome!
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "education", "space-planning", "collaboration"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 10
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "kimball_prabhu_2024"
+kind = "inline"
+authors = ["Rachel Kimball", "Rohan Prabhu"]
+title = "Thinking Divergently: Exploring the Effects of ADHD on Design Creativity and Cognitive Load"
+year = 2024
+venue = "Design Computing and Cognition DCC'24"
+formatted_text = "Kimball and Prabhu (2024). Thinking Divergently: Exploring the Effects of ADHD on Design Creativity and Cognitive Load. Design Computing and Cognition DCC'24."
+raw_text = "Kimball, Rachel, and Rohan Prabhu (2024). Thinking Divergently: Exploring the Effects of ADHD on Design Creativity and Cognitive Load. Design Computing and Cognition DCC'24."
+provisional = true

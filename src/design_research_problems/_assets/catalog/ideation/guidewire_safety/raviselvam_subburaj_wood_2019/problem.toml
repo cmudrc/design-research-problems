@@ -1,0 +1,34 @@
+problem_id = "ideation_guidewire_safety"
+title = "Guidewire Safety"
+summary = "A medical-device course brief about making guidewire systems safer and less error-prone."
+kind = "text"
+statement = '''
+# Guidewire Safety
+
+To design a guidewire that's safe and prevents human errors.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "medical", "guidewire", "safety"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 60
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "raviselvam_subburaj_wood_2019"
+kind = "inline"
+authors = ["Sujithra Raviselvam", "Karupppasamy Subburaj", "Kristin L. Wood"]
+title = "An Extreme User Approach to Identify Latent Needs: Adaptation and Application in Medical Device Design"
+year = 2019
+venue = "ASME IDETC/CIE 2019, DETC2019-98266"
+formatted_text = "Raviselvam, Subburaj, and Wood (2019). An Extreme User Approach to Identify Latent Needs: Adaptation and Application in Medical Device Design. ASME IDETC/CIE 2019, DETC2019-98266."
+raw_text = "Raviselvam, Sujithra, Karupppasamy Subburaj, and Kristin L. Wood (2019). An Extreme User Approach to Identify Latent Needs: Adaptation and Application in Medical Device Design. ASME IDETC/CIE 2019, DETC2019-98266."
+provisional = true

@@ -1,0 +1,38 @@
+problem_id = "ideation_parallel_tube_wall_mount"
+title = "Parallel Tube Wall Mount"
+summary = "An additive-manufacturing ideation challenge about mounting three parallel hollow tubes offset from a wall."
+kind = "text"
+statement = '''
+# Parallel Tube Wall Mount
+
+You are tasked with designing a solution to hold three hollow tubes
+securely in place and parallel to each other. All tubes must be held
+2 inches away from a fixed wall (measuring from the wall to the closest
+edge of the tubes). The tubes are 1 inch in diameter and 3 inches long.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "fixture", "mounting", "manufacturing"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "pearl_meisel_2024"
+kind = "inline"
+authors = ["Seth Pearl", "Nicholas Meisel"]
+title = "Evaluating the Effectiveness of Heuristic Cards With Varying Example Specificity in Design for Additive Manufacturing Education"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-143225"
+formatted_text = "Pearl and Meisel (2024). Evaluating the Effectiveness of Heuristic Cards With Varying Example Specificity in Design for Additive Manufacturing Education. ASME IDETC/CIE 2024, DETC2024-143225."
+raw_text = "Pearl and Meisel (2024). Evaluating the Effectiveness of Heuristic Cards With Varying Example Specificity in Design for Additive Manufacturing Education. ASME IDETC/CIE 2024, DETC2024-143225."
+provisional = true
+

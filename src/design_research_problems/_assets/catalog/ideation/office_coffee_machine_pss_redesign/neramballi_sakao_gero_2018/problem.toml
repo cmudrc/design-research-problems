@@ -1,0 +1,39 @@
+problem_id = "ideation_office_coffee_machine_pss_redesign"
+title = "Office Coffee Machine PSS Redesign"
+summary = "A resource-efficiency redesign brief for an office coffee-machine product/service offering."
+kind = "text"
+statement = '''
+# Office Coffee Machine PSS Redesign
+
+Redesign an office coffee-machine product/service offering to
+improve resource efficiency.
+
+The offering is provided by a hypothetical Swedish company to
+university staff and guests, and may be improved through changes
+to the product, the related services, or the payment model.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly", "requirements-study-ready"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "coffee", "pss", "resource-efficiency"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 60
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "neramballi_sakao_gero_2018"
+kind = "inline"
+authors = ["Abhijna Neramballi", "Tomohiko Sakao", "John S. Gero"]
+title = "What do experienced practitioners discuss when designing Product/Service Systems?"
+year = 2018
+venue = "Design Computing and Cognition DCC'18"
+formatted_text = "Neramballi, Sakao, and Gero (2018). What do experienced practitioners discuss when designing Product/Service Systems? Design Computing and Cognition DCC'18."
+raw_text = "Neramballi, Abhijna, Tomohiko Sakao, and John S. Gero (2018). What do experienced practitioners discuss when designing Product/Service Systems? Design Computing and Cognition DCC'18."
+provisional = true

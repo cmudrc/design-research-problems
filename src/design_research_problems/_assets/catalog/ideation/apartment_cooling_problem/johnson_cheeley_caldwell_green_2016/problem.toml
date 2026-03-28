@@ -1,0 +1,38 @@
+problem_id = "ideation_apartment_cooling_problem"
+title = "Apartment Cooling Problem"
+summary = "An everyday problem-solving prompt asking participants to generate ways to keep Judy cool in a hot, humid apartment."
+kind = "text"
+statement = '''
+# Apartment Cooling Problem
+
+Judy complains that her apartment is too hot and humid in the
+summer and her fan isn't enough to keep her cool. She asks you
+to use your engineering design skills to think of some solutions
+to her problem. List as many ideas as you can for ways to keep
+Judy cool in her apartment.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "consumer", "cooling", "problem-solving"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 15
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "johnson_cheeley_caldwell_green_2016"
+kind = "inline"
+authors = ["Tyler A. Johnson", "Avery Cheeley", "Benjamin W. Caldwell", "Matthew G. Green"]
+title = "Comparison and Extensions of Novelty Metrics for Problem-Solving Tasks"
+year = 2016
+venue = "ASME IDETC/CIE 2016, DETC2016-60319"
+formatted_text = "Johnson, Cheeley, Caldwell, and Green (2016). Comparison and Extensions of Novelty Metrics for Problem-Solving Tasks. ASME IDETC/CIE 2016, DETC2016-60319."
+raw_text = "Johnson, Tyler A., Avery Cheeley, Benjamin W. Caldwell, and Matthew G. Green (2016). Comparison and Extensions of Novelty Metrics for Problem-Solving Tasks. ASME IDETC/CIE 2016, DETC2016-60319."
+provisional = true
