@@ -3,7 +3,7 @@
 Optimization Problem Catalog
 ============================
 
-This page lists all packaged optimization benchmarks and their variable counts. There are currently 18 packaged optimization problems.
+This page lists all packaged optimization benchmarks and their variable counts. There are currently 21 packaged optimization problems.
 
 For the conceptual overview, see :doc:`../problems/optimization`.
 
@@ -28,3 +28,6 @@ For the conceptual overview, see :doc:`../problems/optimization`.
    optimization/planar_truss_span_mass_min
    optimization/space_truss_span_mass_min
    optimization/treadle_pump_ide_material_min
+   optimization/wind_farm_grid_qkp_power_max
+   optimization/wind_farm_unrestricted_deficit_min
+   optimization/worker_hours_competing_projects_value_tracking_min

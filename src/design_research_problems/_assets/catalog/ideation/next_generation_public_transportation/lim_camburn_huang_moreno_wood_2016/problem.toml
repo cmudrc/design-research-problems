@@ -1,0 +1,40 @@
+problem_id = "ideation_next_generation_public_transportation"
+title = "Next-Generation Public Transportation"
+summary = "A large-group ideation brief asking participants to design the next generation of public transportation."
+kind = "text"
+statement = '''
+# Next-Generation Public Transportation
+
+Design the next generation of public transportation.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "transport", "public"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "lim_camburn_huang_moreno_wood_2016"
+kind = "inline"
+authors = [
+  "Shi Ying Candice Lim",
+  "Bradley Adam Camburn",
+  "Zack Huang",
+  "Diana Moreno",
+  "Kristin L. Wood",
+]
+title = "Design Concept Structures in Massive Group Ideation"
+year = 2016
+venue = "ASME IDETC/CIE 2016, DETC2016-59805"
+formatted_text = "Lim, Camburn, Huang, Moreno, and Wood (2016). Design Concept Structures in Massive Group Ideation. ASME IDETC/CIE 2016, DETC2016-59805."
+raw_text = "Lim, Shi Ying Candice, Bradley Adam Camburn, Zack Huang, Diana Moreno, and Kristin L. Wood (2016). Design Concept Structures in Massive Group Ideation. ASME IDETC/CIE 2016, DETC2016-59805."
+provisional = true

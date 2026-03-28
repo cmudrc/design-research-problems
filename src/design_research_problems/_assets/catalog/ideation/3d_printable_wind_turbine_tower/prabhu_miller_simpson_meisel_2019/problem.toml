@@ -1,0 +1,51 @@
+problem_id = "ideation_3d_printable_wind_turbine_tower"
+title = "3D-Printable Wind Turbine Tower"
+summary = "An additive-manufacturing design brief for a free-standing wind-turbine tower with explicit footprint and build-volume constraints."
+kind = "text"
+statement = '''
+# 3D-Printable Wind Turbine Tower
+
+Design a fully 3D printable free-standing tower for a
+down-scaled wind turbine. The tower must support a
+motor-blade assembly and must attach to the assembly through
+a T-slot of given dimensions. The assembly must be able to
+slide into the slot and stay in place. The motor-blade assembly
+will include the male side of the T-slot.
+
+Objective:
+
+- Minimize print material and print time.
+
+Constraints:
+
+- Tower height at least 18 inches from the ground to the motor
+- Support a 150 gram motor assembled with 150 gram blades
+- Maximum base footprint of 3.5 inches x 3.5 inches
+- All necessary components completed in one build within an
+  11.6 inches x 7.6 inches x 6.5 inches build volume
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "tower", "energy", "manufacturing"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "prabhu_miller_simpson_meisel_2019"
+kind = "inline"
+authors = ["Rohan Prabhu", "Scarlett R. Miller", "Timothy W. Simpson", "Nicholas A. Meisel"]
+title = "Complex Solutions for Complex Problems?: Exploring the Effects of Task Complexity on Student Use of Design for Additive Manufacturing and Creativity"
+year = 2019
+venue = "ASME IDETC/CIE 2019, DETC2019-97474"
+formatted_text = "Prabhu, Miller, Simpson, and Meisel (2019). Complex Solutions for Complex Problems?: Exploring the Effects of Task Complexity on Student Use of Design for Additive Manufacturing and Creativity. ASME IDETC/CIE 2019, DETC2019-97474."
+raw_text = "Prabhu, Rohan, Scarlett R. Miller, Timothy W. Simpson, and Nicholas A. Meisel (2019). Complex Solutions for Complex Problems?: Exploring the Effects of Task Complexity on Student Use of Design for Additive Manufacturing and Creativity. ASME IDETC/CIE 2019, DETC2019-97474."
+provisional = true

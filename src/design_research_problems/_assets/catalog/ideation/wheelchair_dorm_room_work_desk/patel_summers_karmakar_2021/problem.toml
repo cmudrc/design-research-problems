@@ -1,0 +1,51 @@
+problem_id = "ideation_wheelchair_dorm_room_work_desk"
+title = "Wheelchair Dorm Room Work Desk"
+summary = "A participant-facing assistive-design brief for a manually operated dorm-room desk that alternates between desk and stowed states."
+kind = "text"
+statement = '''
+# Wheelchair Dorm Room Work Desk
+
+Emily is a freshman at Clemson University. She suffered an accident
+at age 10 which left her in a wheelchair. According to Clemson
+University, undergraduate students are required to stay on campus
+their freshman year. Because of the rule, Emily will be staying in a
+dorm room on campus for the first year of her university career.
+Due to her disability and limited space in a dorm room, she has asked
+Clemson University to design a desk that will be able to alternate
+position and save space in the room. Having an ability to manipulate
+the desk to provide more surface area in the room will help Emily be
+safe and will be easy for her to navigate the room.
+
+She would like the desk to:
+
+- have 2 states, desk state and non-desk state
+- be manually operated
+- take less than 10 seconds to go from state A to state B
+- include a storage system for commonly used office supplies
+- cost less than 100 dollars
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly", "requirements-study-ready"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "assistive-design"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "accessibility", "furniture", "space-saving", "asme"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "requirement-coverage"
+
+[[citations]]
+key = "patel_summers_karmakar_2021"
+kind = "inline"
+authors = ["Akash Patel", "Joshua D. Summers", "Sourabh Karmakar"]
+title = "Influence of Different Representation of Requirements on Idea Generation: An Experimental Study"
+year = 2021
+venue = "ASME IDETC/CIE 2021, DETC2021-70805"
+formatted_text = "Patel, Summers, and Karmakar (2021). Influence of Different Representation of Requirements on Idea Generation: An Experimental Study. ASME IDETC/CIE 2021, DETC2021-70805."
+raw_text = "Patel, Akash, Joshua D. Summers, and Sourabh Karmakar (2021). Influence of Different Representation of Requirements on Idea Generation: An Experimental Study. ASME IDETC/CIE 2021, DETC2021-70805."
+provisional = true

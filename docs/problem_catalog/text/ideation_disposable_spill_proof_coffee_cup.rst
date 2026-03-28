@@ -3,7 +3,7 @@
 Disposable Spill-Proof Coffee Cup
 =================================
 
-A reconstructed version of the spill-proof coffee-cup problem used in Experiment 3 of Jansson and Smith (1991).
+A verbatim adapted version of the spill-proof coffee-cup problem printed in Brundage et al. (2024) and attributed there to Jansson and Smith (1991).
 
 See :doc:`../text` for the text family index.
 
@@ -56,13 +56,16 @@ Evaluation Mode
 Statement
 ---------
 
-Design an inexpensive, disposable, spill-proof coffee cup.
+The aim of this design challenge is to design an inexpensive, disposable, spill-proof coffee cup.
 
-The design should:
+The cup should meet the following requirements:
 
-- be operable with one hand
-- be durable
-- not include straws or mouthpieces as part of the design
+- disposable
+- spill-proof
+- operable with one hand
+- durable
+- does not require a straw
+- does not require a mouthpiece
 
 Prompt Profile
 --------------
@@ -91,11 +94,17 @@ Sources
 
    * - Key
      - Summary
+   * - ``brundage_soria_zurita_starkey_menold_jablokow_2024``
+     - Brundage, Soria Zurita, Starkey, Menold, and Jablokow (2024). The Effects of Incubation, Fixation Stimuli, and Working Memory Capacity on Design Fixation. ASME IDETC/CIE 2024, DETC2024-143871.
    * - ``jansson_smith_1991``
      - Jansson and Smith (1991). Design fixation. Design Studies, 12(1), 3-11.
 
 Raw Citation Records
 --------------------
+
+.. code-block:: text
+
+   Brundage, Soria Zurita, Starkey, Menold, and Jablokow (2024). The Effects of Incubation, Fixation Stimuli, and Working Memory Capacity on Design Fixation. ASME IDETC/CIE 2024, DETC2024-143871.
 
 .. code-block:: bibtex
 

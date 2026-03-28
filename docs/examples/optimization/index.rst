@@ -17,3 +17,6 @@ Generated from top-of-file example docstrings in ``examples/optimization``.
    moneymaker_hip_pump
    pill_problem
    space_truss_span_mass_min
+   wind_farm_layout
+   wind_farm_unrestricted
+   worker_hours_allocation

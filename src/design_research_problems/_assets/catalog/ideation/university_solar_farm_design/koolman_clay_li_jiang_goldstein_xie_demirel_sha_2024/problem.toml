@@ -1,0 +1,44 @@
+problem_id = "ideation_university_solar_farm_design"
+title = "University Solar Farm Design"
+summary = "A CAD-supported engineering task about designing a profitable and efficient solar farm for university-owned land."
+kind = "text"
+statement = '''
+# University Solar Farm Design
+
+Design a solar farm using Aladdin on a university-owned space while
+maximizing profit and efficiency.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "solar", "energy", "campus"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "koolman_clay_li_jiang_goldstein_xie_demirel_sha_2024"
+kind = "inline"
+authors = [
+  "Elisa Koolman",
+  "John Z. Clay",
+  "Xingang Li",
+  "Rundong Jiang",
+  "Molly H. Goldstein",
+  "Charles Xie",
+  "H. Onan Demirel",
+  "Zhenghui Sha",
+]
+title = "A Multi-case Study of Traditional, Parametric, and Generative Design Thinking of Engineering Students"
+year = 2024
+venue = "Design Computing and Cognition DCC'24"
+formatted_text = "Koolman, Clay, Li, Jiang, Goldstein, Xie, Demirel, and Sha (2024). A Multi-case Study of Traditional, Parametric, and Generative Design Thinking of Engineering Students. Design Computing and Cognition DCC'24."
+raw_text = "Koolman, Elisa, John Z. Clay, Xingang Li, Rundong Jiang, Molly H. Goldstein, Charles Xie, H. Onan Demirel, and Zhenghui Sha (2024). A Multi-case Study of Traditional, Parametric, and Generative Design Thinking of Engineering Students. Design Computing and Cognition DCC'24."
+provisional = true

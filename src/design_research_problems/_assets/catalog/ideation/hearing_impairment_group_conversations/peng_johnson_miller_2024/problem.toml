@@ -1,0 +1,36 @@
+problem_id = "ideation_hearing_impairment_group_conversations"
+title = "Hearing Impairment Group Conversations"
+summary = "An accessibility-focused ideation prompt about helping people with hearing impairments participate in group conversations."
+kind = "text"
+statement = '''
+# Hearing Impairment Group Conversations
+
+Develop as many design ideas as you can to help people with hearing
+impairments participate in group conversations.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "accessibility", "communication", "assistive"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "peng_johnson_miller_2024"
+kind = "inline"
+authors = ["Aoran Peng", "Dan Johnson", "Scarlett R. Miller"]
+title = "Crack the Code: Impact of Engineering Design Prompt Objective and Linguistic Characteristics on Understanding and Creativity Perceptions of Students"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-146351"
+formatted_text = "Peng, Johnson, and Miller (2024). Crack the Code: Impact of Engineering Design Prompt Objective and Linguistic Characteristics on Understanding and Creativity Perceptions of Students. ASME IDETC/CIE 2024, DETC2024-146351."
+raw_text = "Peng, Johnson, and Miller (2024). Crack the Code: Impact of Engineering Design Prompt Objective and Linguistic Characteristics on Understanding and Creativity Perceptions of Students. ASME IDETC/CIE 2024, DETC2024-146351."
+provisional = true
+

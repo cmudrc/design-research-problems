@@ -11,12 +11,12 @@ study intent. If you are still selecting a family, start with
 
 Current counts:
 
-- Text: 40
+- Text: 126
 - Decision: 17
-- Optimization: 18
+- Optimization: 21
 - Grammar: 18
 - MCP: 1
-- Total: 94
+- Total: 183
 
 .. toctree::
    :maxdepth: 1

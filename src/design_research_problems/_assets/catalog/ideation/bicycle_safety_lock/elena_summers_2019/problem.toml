@@ -1,0 +1,39 @@
+problem_id = "ideation_bicycle_safety_lock"
+title = "Bicycle Safety Lock"
+summary = "A bicycle-lock design brief about a permanently attached lock that stays light, adjustable, and unobtrusive."
+kind = "text"
+statement = '''
+# Bicycle Safety Lock
+
+Design a safety lock for a bicycle that is to be permanently
+fastened to it (not to be removed when being used). The lock
+is to be a lasting accessory, yet can still be removed or
+adjusted if necessary. It should be small enough to be
+non-obtrusive to the bicyclist while riding and should be light
+weight and relatively inexpensive.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "bicycle", "security", "transport"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 10
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "elena_summers_2019"
+kind = "inline"
+authors = ["Maria Vittoria Elena", "Joshua D. Summers"]
+title = "Requirement Generation: Lecture Intervention Impact on Variety and Novelty"
+year = 2019
+venue = "ASME IDETC/CIE 2019, DETC2019-97528"
+formatted_text = "Elena and Summers (2019). Requirement Generation: Lecture Intervention Impact on Variety and Novelty. ASME IDETC/CIE 2019, DETC2019-97528."
+raw_text = "Elena, Maria Vittoria, and Joshua D. Summers (2019). Requirement Generation: Lecture Intervention Impact on Variety and Novelty. ASME IDETC/CIE 2019, DETC2019-97528."
+provisional = true

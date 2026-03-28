@@ -38,7 +38,7 @@ def test_catalog_example_runs() -> None:
 def test_ideation_catalog_example_runs() -> None:
     completed = _run_example("examples/catalog/ideation_catalog.py")
     assert completed.returncode == 0, completed.stderr
-    assert "prompts 40" in completed.stdout
+    assert "prompts 126" in completed.stdout
 
 
 @pytest.mark.examples_smoke
@@ -148,6 +148,25 @@ def test_gmpb_optimization_example_runs() -> None:
     assert "gmpb_default_dynamic_min" in completed.stdout
     assert "before env=0 evals=0" in completed.stdout
     assert "after env=0 evals=1" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_worker_hours_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/worker_hours_allocation.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "Competing-projects worker-hours benchmark" in completed.stdout
+    assert "task_count 8" in completed.stdout
+    assert "worker_count 5" in completed.stdout
+    assert "solved_tracking_error" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_unrestricted_wind_farm_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/wind_farm_unrestricted.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "Unrestricted wind-farm layout benchmark" in completed.stdout
+    assert "turbine_count 7" in completed.stdout
+    assert "solved_directional_overlap_counts (0, 0, 0)" in completed.stdout
 
 
 @pytest.mark.examples_smoke

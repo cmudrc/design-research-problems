@@ -1,0 +1,55 @@
+problem_id = "ideation_flexible_fire_station_deployment"
+title = "Flexible Fire Station Deployment"
+summary = "A reconstructed emergency-services problem-solving brief about deploying fire stations under uncertainty."
+kind = "text"
+statement = '''
+# Flexible Fire Station Deployment
+
+Develop a fire-station deployment and operations strategy for a
+hypothetical city in Asia.
+
+Use a provided five-sector city map, travel-time estimates,
+current fire rates, and basic, enhanced, and privatized station
+options to propose a strategy that:
+
+- responds quickly to fire-related emergency calls
+- balances average response time against lifecycle cost
+- accounts for uncertain future fire rates
+- handles the possibility that a new factory may be built in one
+  of the city's sectors
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = [
+  "human-subjects-ready",
+  "ideation-friendly",
+  "requirements-study-ready",
+]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "safety-design"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "emergency-services", "fire-stations", "infrastructure"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 25
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "cardin_yue_jiang_deng_santhanakrishnan_2013"
+kind = "inline"
+authors = [
+  "Michel-Alexandre Cardin",
+  "Howard Ka-Ho Yue",
+  "Yixin Jiang",
+  "Yinghan Deng",
+  "Deepak Santhanakrishnan",
+]
+title = "Empirical Evaluation of Flexible Design Concept Generation Procedures: A Study in Emergency Services"
+year = 2013
+venue = "Proceedings of the 19th International Conference on Engineering Design (ICED13)"
+formatted_text = "Cardin, Yue, Jiang, Deng, and Santhanakrishnan (2013). Empirical Evaluation of Flexible Design Concept Generation Procedures: A Study in Emergency Services. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+raw_text = "Cardin, Michel-Alexandre, Howard Ka-Ho Yue, Yixin Jiang, Yinghan Deng, and Deepak Santhanakrishnan (2013). Empirical Evaluation of Flexible Design Concept Generation Procedures: A Study in Emergency Services. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+provisional = true

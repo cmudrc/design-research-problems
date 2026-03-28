@@ -11,5 +11,8 @@ Exceptions
 Metadata
 --------
 
+For the downstream compatibility-guaranteed subset used by study-generation
+tooling, see :doc:`../downstream_metadata_contract`.
+
 .. automodule:: design_research_problems.problems._metadata
    :members:

@@ -25,6 +25,8 @@ if TYPE_CHECKING:
         Battery18650T3ATopologySurrogateGrammarProblem,
         Battery18650T3BNetlistExplicitGrammarProblem,
         Battery18650T4ThermalHybridGrammarProblem,
+        BatteryPack18650OpenEndedProblem,
+        BatteryPack18650SeriesParallelProblem,
         IoTHomeCoolingGrammarProblem,
         PlanarTrussSpanProblem,
         SpaceTrussSpanProblem,
@@ -37,9 +39,14 @@ if TYPE_CHECKING:
         Battery18650T3BNetlistExplicitOptimizationProblem,
         Battery18650T4ThermalHybridOptimizationProblem,
         BatteryFastChargeDFNAnchorOptimizationProblem,
+        BatteryGridSizingProblem,
+        BatteryOpenEndedCapacityMaxProblem,
+        CompetingProjectsWorkerHoursProblem,
         GMPBOptimizationProblem,
         PlanarTrussEngineeringOptimizationProblem,
         SpaceTrussEngineeringOptimizationProblem,
+        UnrestrictedWindFarmLayoutOptimizationProblem,
+        WindFarmLayoutOptimizationProblem,
     )
 
 type _PlanarTrussProblemId = Literal[
@@ -98,6 +105,8 @@ type _DecisionProblemId = Literal["decision_laptop_design_profit_maximization"] 
 type _OptimizationProblemId = (
     _BatteryOptimizationProblemId
     | Literal[
+        "battery_pack_18650_series_parallel_cost_min",
+        "battery_pack_18650_open_ended_capacity_max",
         "gmpb_default_dynamic_min",
         "pill_capsule_min_area",
         "moneymaker_hip_pump_cost_min",
@@ -106,6 +115,9 @@ type _OptimizationProblemId = (
         "planar_truss_span_fos_max",
         "space_truss_span_mass_min",
         "treadle_pump_ide_material_min",
+        "wind_farm_grid_qkp_power_max",
+        "wind_farm_unrestricted_deficit_min",
+        "worker_hours_competing_projects_value_tracking_min",
     ]
 )
 
@@ -306,6 +318,14 @@ class ProblemRegistry:
     ) -> Battery18650T4ThermalHybridGrammarProblem: ...
 
     @overload
+    def get(
+        self, problem_id: Literal["battery_pack_18650_series_parallel"]
+    ) -> BatteryPack18650SeriesParallelProblem: ...
+
+    @overload
+    def get(self, problem_id: Literal["battery_pack_18650_open_ended"]) -> BatteryPack18650OpenEndedProblem: ...
+
+    @overload
     def get(self, problem_id: _PlanarTrussProblemId) -> PlanarTrussSpanProblem: ...
 
     @overload
@@ -349,6 +369,14 @@ class ProblemRegistry:
     ) -> BatteryFastChargeDFNAnchorOptimizationProblem: ...
 
     @overload
+    def get(self, problem_id: Literal["battery_pack_18650_series_parallel_cost_min"]) -> BatteryGridSizingProblem: ...
+
+    @overload
+    def get(
+        self, problem_id: Literal["battery_pack_18650_open_ended_capacity_max"]
+    ) -> BatteryOpenEndedCapacityMaxProblem: ...
+
+    @overload
     def get(self, problem_id: Literal["gmpb_default_dynamic_min"]) -> GMPBOptimizationProblem: ...
 
     @overload
@@ -372,6 +400,19 @@ class ProblemRegistry:
 
     @overload
     def get(self, problem_id: Literal["space_truss_span_mass_min"]) -> SpaceTrussEngineeringOptimizationProblem: ...
+
+    @overload
+    def get(self, problem_id: Literal["wind_farm_grid_qkp_power_max"]) -> WindFarmLayoutOptimizationProblem: ...
+
+    @overload
+    def get(
+        self, problem_id: Literal["wind_farm_unrestricted_deficit_min"]
+    ) -> UnrestrictedWindFarmLayoutOptimizationProblem: ...
+
+    @overload
+    def get(
+        self, problem_id: Literal["worker_hours_competing_projects_value_tracking_min"]
+    ) -> CompetingProjectsWorkerHoursProblem: ...
 
     @overload
     def get(self, problem_id: _OptimizationProblemId) -> OptimizationProblem: ...
@@ -494,6 +535,14 @@ def get_problem(
 
 
 @overload
+def get_problem(problem_id: Literal["battery_pack_18650_series_parallel"]) -> BatteryPack18650SeriesParallelProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["battery_pack_18650_open_ended"]) -> BatteryPack18650OpenEndedProblem: ...
+
+
+@overload
 def get_problem(problem_id: _PlanarTrussProblemId) -> PlanarTrussSpanProblem: ...
 
 
@@ -546,6 +595,16 @@ def get_problem(
 
 
 @overload
+def get_problem(problem_id: Literal["battery_pack_18650_series_parallel_cost_min"]) -> BatteryGridSizingProblem: ...
+
+
+@overload
+def get_problem(
+    problem_id: Literal["battery_pack_18650_open_ended_capacity_max"],
+) -> BatteryOpenEndedCapacityMaxProblem: ...
+
+
+@overload
 def get_problem(problem_id: Literal["gmpb_default_dynamic_min"]) -> GMPBOptimizationProblem: ...
 
 
@@ -573,6 +632,22 @@ def get_problem(
 
 @overload
 def get_problem(problem_id: Literal["space_truss_span_mass_min"]) -> SpaceTrussEngineeringOptimizationProblem: ...
+
+
+@overload
+def get_problem(problem_id: Literal["wind_farm_grid_qkp_power_max"]) -> WindFarmLayoutOptimizationProblem: ...
+
+
+@overload
+def get_problem(
+    problem_id: Literal["wind_farm_unrestricted_deficit_min"],
+) -> UnrestrictedWindFarmLayoutOptimizationProblem: ...
+
+
+@overload
+def get_problem(
+    problem_id: Literal["worker_hours_competing_projects_value_tracking_min"],
+) -> CompetingProjectsWorkerHoursProblem: ...
 
 
 @overload

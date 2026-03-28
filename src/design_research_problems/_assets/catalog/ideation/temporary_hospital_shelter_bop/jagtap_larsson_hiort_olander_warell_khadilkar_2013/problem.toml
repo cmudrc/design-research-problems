@@ -1,0 +1,59 @@
+problem_id = "ideation_temporary_hospital_shelter_bop"
+title = "Temporary Hospital Shelter for BOP Communities"
+summary = "An emergency-design brief about rapidly deployable temporary hospital shelters for a disease outbreak in BOP communities."
+kind = "text"
+statement = '''
+# Temporary Hospital Shelter for BOP Communities
+
+A highly contagious and deadly disease called "anthrax-d5" is
+spreading across a cluster of BOP communities in a developing
+country. This disease is transmitted only through contaminated food
+and water. A person infected with this disease needs to be
+hospitalized in order to save his/her life.
+
+The spread of this disease is such that the existing healthcare
+infrastructure (i.e. available number of hospitals) is inadequate to
+hospitalize and treat the large number of infected people. There is an
+urgent need to erect a number of temporary shelters that can be used
+as hospitals.
+
+For the cluster of BOP communities, where the "anthrax-d5" is
+spreading at an enormous rate, design such a temporary shelter that
+can be used to hospitalize 5 infected people (per shelter). Each
+shelter also needs to accommodate basic healthcare facilities and
+healthcare staff consisting of 1 nurse. The time to install this
+shelter must be less than 2 hours. The shelter also needs to
+withstand different types of weather conditions.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly", "requirements-study-ready"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "emergency", "healthcare", "shelter"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 60
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "jagtap_larsson_hiort_olander_warell_khadilkar_2013"
+kind = "inline"
+authors = [
+  "Santosh Jagtap",
+  "Andreas Larsson",
+  "Viktor Hiort",
+  "Elin Olander",
+  "Anders Warell",
+  "Pramod Khadilkar",
+]
+title = "Fighting Poverty Through Design: Comparing Design Processes for the Base and the Top of the World Income Pyramid"
+year = 2013
+venue = "Proceedings of the 19th International Conference on Engineering Design (ICED13)"
+formatted_text = "Jagtap, Larsson, Hiort, Olander, Warell, and Khadilkar (2013). Fighting Poverty Through Design: Comparing Design Processes for the Base and the Top of the World Income Pyramid. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+raw_text = "Jagtap, Santosh, Andreas Larsson, Viktor Hiort, Elin Olander, Anders Warell, and Pramod Khadilkar (2013). Fighting Poverty Through Design: Comparing Design Processes for the Base and the Top of the World Income Pyramid. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+provisional = true

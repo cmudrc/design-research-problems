@@ -1,0 +1,40 @@
+problem_id = "ideation_household_moving"
+title = "Household Moving Support"
+summary = "A primary-source ideation brief about reducing the burdens of moving households through difficult spaces, weather, and logistics."
+kind = "text"
+statement = '''
+# Household Moving Support
+
+Moving is considered one of the top stressors in life. When people move, they
+experience multiple challenges. For example: lifting heavy furniture,
+navigating through small spaces (door frames, corners, narrow hallways,
+stairs), keeping belongings organized, finding other people to help them move,
+continuing living (and even working) while belongings are in transit, and
+moving in extreme weather (snow, heat, rain). Design a way to help people move
+households.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "household", "moving", "logistics"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 10
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "wojciechowski_olagoke_ng_wacnik_kramer_2025"
+kind = "inline"
+authors = ["Lauren Wojciechowski", "Uthman Olagoke", "Rowena Ng", "Peter Wacnik", "Julia Kramer"]
+title = "Musical Playlists to Improve the Ideation Environment: An Exploratory Study"
+year = 2025
+venue = "ASME IDETC/CIE 2025, DETC2025-164691"
+formatted_text = "Wojciechowski, Olagoke, Ng, Wacnik, and Kramer (2025). Musical Playlists to Improve the Ideation Environment: An Exploratory Study. ASME IDETC/CIE 2025, DETC2025-164691."
+raw_text = "Wojciechowski, Olagoke, Ng, Wacnik, and Kramer (2025). Musical Playlists to Improve the Ideation Environment: An Exploratory Study. ASME IDETC/CIE 2025, DETC2025-164691."
+provisional = true

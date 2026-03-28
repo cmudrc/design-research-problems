@@ -3,7 +3,7 @@
 Wheelchair Peach Picking
 ========================
 
-A study-specific ASME ideation brief about manually picking peaches while staying in a wheelchair.
+A participant-facing ASME ideation brief about helping a wheelchair user pick peaches with family while avoiding fruit damage.
 
 See :doc:`../text` for the text family index.
 
@@ -47,7 +47,7 @@ Tags
 Deliverable Type
    concepts
 Timebox Hint (Minutes)
-   20
+   30
 Participants
    individual
 Evaluation Mode
@@ -56,7 +56,17 @@ Evaluation Mode
 Statement
 ---------
 
-People in wheel chair have a very limited range of reach especially for heights. With this limitation, they cannot experience pleasures such as that of picking peaches in summer. Design a device that will allow users in wheel chair to experience the joy of picking peaches from the tree and collect it in a basket while still in the wheel chair. The device must be manually operated and prevent damage to the fruit while picking it. The fruit should not fall on the ground while picking.
+Emma is a 19-year-old mechanical engineering student at Clemson. She suffered a car accident couple of years back which left her in a wheelchair. Before the accident Emma loved the outdoors and picking fruits with her family. During the next summer break, she and her family have decided to go picking peaches. Since she is in a wheelchair, she has a limited range of reach, especially for height. Due to this limitation, she cannot experience the pleasure of picking peaches with her family. For her 20th birthday her family has decided to surprise her with a device that will help her pick peaches while in a wheelchair.
+
+The family has asked Clemson University to help design a device that will allow Emma, who is in a wheelchair, to experience the joy of picking peaches from the tree with her whole family.
+
+The family would like the device to:
+
+- be manually operated
+- be attached to the wheelchair
+- not damage the fruit
+- keep the fruit from falling on the ground while picking
+- cost no more than 100 dollars
 
 Prompt Profile
 --------------
@@ -70,7 +80,7 @@ Prompt Profile
    * - Deliverable Type
      - concepts
    * - Timebox Hint (Minutes)
-     - 20
+     - 30
    * - Participants
      - individual
    * - Evaluation Mode
@@ -87,6 +97,8 @@ Sources
      - Summary
    * - ``joshi_summers_2014``
      - Joshi and Summers (2014). Impact of Requirements Elicitation Activity on Idea Generation: A Designer Study.
+   * - ``patel_summers_karmakar_2021``
+     - Patel, Summers, and Karmakar (2021). Influence of Different Representation of Requirements on Idea Generation: An Experimental Study. ASME IDETC/CIE 2021, DETC2021-70805.
 
 Raw Citation Records
 --------------------
@@ -94,3 +106,7 @@ Raw Citation Records
 .. code-block:: text
 
    Joshi and Summers (2014). Impact of Requirements Elicitation Activity on Idea Generation: A Designer Study. ASME IDETC/CIE. DOI: 10.1115/DETC2014-35022.
+
+.. code-block:: text
+
+   Patel, Akash, Joshua D. Summers, and Sourabh Karmakar (2021). Influence of Different Representation of Requirements on Idea Generation: An Experimental Study. ASME IDETC/CIE 2021, DETC2021-70805.

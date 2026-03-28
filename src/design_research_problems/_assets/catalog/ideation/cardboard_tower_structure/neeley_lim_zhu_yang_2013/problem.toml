@@ -1,0 +1,37 @@
+problem_id = "ideation_cardboard_tower_structure"
+title = "Free-Standing Cardboard Tower"
+summary = "A rapid-prototyping challenge to build the tallest possible free-standing tower from a single A4 sheet of corrugated cardboard."
+kind = "text"
+statement = '''
+# Free-Standing Cardboard Tower
+
+Build a cardboard structure that is as tall as possible using
+only one A4-sized sheet of corrugated cardboard. The tower
+must be free-standing and cannot lean against another object or
+latch onto the table.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "structure", "cardboard", "challenge"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "neeley_lim_zhu_yang_2013"
+kind = "inline"
+authors = ["W. Lawrence Neeley, Jr.", "Kirsten Lim", "April Zhu", "Maria C. Yang"]
+title = "Building Fast to Think Faster: Exploiting Rapid Prototyping to Accelerate Ideation During Early Stage Design"
+year = 2013
+venue = "ASME IDETC/CIE 2013, DETC2013-12635"
+formatted_text = "Neeley, Lim, Zhu, and Yang (2013). Building Fast to Think Faster: Exploiting Rapid Prototyping to Accelerate Ideation During Early Stage Design. ASME IDETC/CIE 2013, DETC2013-12635."
+raw_text = "Neeley, W. Lawrence, Jr., Kirsten Lim, April Zhu, and Maria C. Yang (2013). Building Fast to Think Faster: Exploiting Rapid Prototyping to Accelerate Ideation During Early Stage Design. ASME IDETC/CIE 2013, DETC2013-12635."
+provisional = true

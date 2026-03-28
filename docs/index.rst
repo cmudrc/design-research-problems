@@ -48,6 +48,7 @@ a stable problem-research pipeline.
 - :doc:`installation`
 - :doc:`concepts`
 - :doc:`typical_workflow`
+- :doc:`downstream_metadata_contract`
 - :doc:`problems/index`
 - :doc:`problem_catalog/index`
 
@@ -95,6 +96,7 @@ Start Here
 - :doc:`installation`
 - :doc:`concepts`
 - :doc:`typical_workflow`
+- :doc:`downstream_metadata_contract`
 - :doc:`examples/index`
 - :doc:`problem_catalog/index`
 - :doc:`api`
@@ -109,6 +111,7 @@ Start Here
    installation
    concepts
    typical_workflow
+   downstream_metadata_contract
    problems/index
    problem_catalog/index
 

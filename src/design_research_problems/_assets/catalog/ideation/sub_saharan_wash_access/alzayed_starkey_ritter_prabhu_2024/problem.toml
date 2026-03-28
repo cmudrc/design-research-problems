@@ -1,0 +1,52 @@
+problem_id = "ideation_sub_saharan_wash_access_eli"
+title = "Sub-Saharan WASH Access for Eli"
+summary = "A contextualized clean-water-and-sanitation ideation brief for Eli and other residents of a remote village in Sub-Saharan Africa."
+kind = "text"
+statement = '''
+# Sub-Saharan WASH Access for Eli
+
+In Sub-Saharan Africa, nearly 46 people die per 100,000 people due to
+diseases caused by the lack of safe water, sanitation, and hygiene (WASH)
+services. This is nearly four times the global average of 12 deaths per
+100,000 people due to poor access to WASH services.
+
+Eli is a 40-year-old man who lives in the Sub-Saharan African region. He
+lives with his wife and two teenage children. He is a farmer by profession,
+a low-income profession, and has received some middle-school level
+education. Eli lives in a small remote village with some access to
+electricity but no access to other technological resources such as internet
+and cellular service. The electricity is primarily used to operate water
+pumps that source water from either a nearby polluted river or contaminated
+and ill-maintained wells in and around the village. Since these are the only
+two sources of water for Eli and his family, they are highly prone to
+water-borne diseases.
+
+You are tasked with designing a solution to help improve access to clean
+water and sanitation for Eli and others in his village.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "water", "sanitation", "rural"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "alzayed_starkey_ritter_prabhu_2024"
+kind = "inline"
+authors = ["Mohammad Alsager Alzayed", "Elizabeth M. Starkey", "Sarah C. Ritter", "Rohan Prabhu"]
+title = "Sustaining Creatively? Investigating the Effects of Creativity and Sustainability-Focused Evaluation Criteria in Design Tasks"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-142619"
+formatted_text = "Alzayed, Starkey, Ritter, and Prabhu (2024). Sustaining Creatively? Investigating the Effects of Creativity and Sustainability-Focused Evaluation Criteria in Design Tasks. ASME IDETC/CIE 2024, DETC2024-142619."
+raw_text = "Alzayed, Starkey, Ritter, and Prabhu (2024). Sustaining Creatively? Investigating the Effects of Creativity and Sustainability-Focused Evaluation Criteria in Design Tasks. ASME IDETC/CIE 2024, DETC2024-142619."
+provisional = true
+

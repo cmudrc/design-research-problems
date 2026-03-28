@@ -1,0 +1,47 @@
+problem_id = "ideation_handle_it_handheld_object"
+title = "Handle-It Handheld Object"
+summary = "A classroom design brief about creating a handheld object for a specific kitchen, bathroom, or garden task."
+kind = "text"
+statement = '''
+# Handle-It Handheld Object
+
+Design a handheld object that performs a specific task in the kitchen,
+bathroom or garden. It could be a tool of some sort that cuts, picks,
+and holds or any other defined operation.
+
+The object should:
+
+- be mobile and able to be picked up by one person easily
+- be with or without mechanics
+- show its function clearly to the consumer
+- have a handle that lies fully in the user's hand
+
+Think about a wide range of possible users and associated task to
+define an interesting object. The function can be very simple and you
+can concentrate on the aesthetic, ergonomic and material.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "consumer", "handheld", "tool"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "petersen_joo_takahashi_2015"
+kind = "inline"
+authors = ["Soren Ingomar Petersen", "Jaewoo Joo", "Shelley Takahashi"]
+title = "Inspirational Design Briefing Performance"
+year = 2015
+venue = "Proceedings of the 20th International Conference on Engineering Design (ICED15)"
+formatted_text = "Petersen, Joo, and Takahashi (2015). Inspirational Design Briefing Performance. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+raw_text = "Petersen, Soren Ingomar, Jaewoo Joo, and Shelley Takahashi (2015). Inspirational Design Briefing Performance. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+provisional = true

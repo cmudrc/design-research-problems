@@ -1,0 +1,40 @@
+problem_id = "ideation_office_sit_stand_table"
+title = "Office Sit-Stand Table"
+summary = "A workplace-furniture brief about a larger-surface office table that supports alternating between sitting and standing."
+kind = "text"
+statement = '''
+# Office Sit-Stand Table
+
+It is asked to design a new table for offices that allows
+alternate sitting and stand up work. There are a lot of people
+who must work on sitting position the full day. The possibility
+to alternate positions during working time could drive to an
+improvement in health and productivity. The current tables
+that allow combining positions in work have limited surface,
+not enough for design, architecture and engineering needs.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "office", "furniture", "ergonomics"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "kumar_mocko_2016"
+kind = "inline"
+authors = ["Varun Kumar", "Gregory Mocko"]
+title = "Similarity of Engineering Design Problems to Enable Reuse in Design Research Experiments"
+year = 2016
+venue = "ASME IDETC/CIE 2016, DETC2016-60474"
+formatted_text = "Kumar and Mocko (2016). Similarity of Engineering Design Problems to Enable Reuse in Design Research Experiments. ASME IDETC/CIE 2016, DETC2016-60474."
+raw_text = "Kumar, Varun, and Gregory Mocko (2016). Similarity of Engineering Design Problems to Enable Reuse in Design Research Experiments. ASME IDETC/CIE 2016, DETC2016-60474."
+provisional = true

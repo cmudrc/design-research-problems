@@ -75,8 +75,10 @@ def test_registry_entries_filter_by_kind() -> None:
     assert set(MSEVAL_IDS).issubset(decision_ids)
     kinds = registry.by_kind(ProblemKind.TEXT)
     text_ids = [entry.problem_id for entry in kinds]
-    assert len(text_ids) == 40
+    assert len(text_ids) == 126
     assert "ideation_accessible_drinking_fountain" in text_ids
+    assert "ideation_dark_hour_safety" in text_ids
+    assert "ideation_forest_fire_detection" in text_ids
     assert "ideation_public_belongings_security" in text_ids
     assert "ideation_wheelchair_peach_picking" in text_ids
     assert registry.feature_flags("ideation_peanut_shelling_fu_cagan_kotovsky_2010") == (
@@ -97,7 +99,7 @@ def test_registry_entries_filter_by_kind() -> None:
     )
     optimization_kinds = registry.by_kind(ProblemKind.OPTIMIZATION)
     optimization_ids = [entry.problem_id for entry in optimization_kinds]
-    assert len(optimization_ids) == 18
+    assert len(optimization_ids) == 21
     assert "battery_18650_t1_rectangular_surrogate_opt" in optimization_ids
     assert "battery_18650_t2_pose_surrogate_opt" in optimization_ids
     assert "battery_18650_t3a_topology_explicit_2rc_opt" in optimization_ids
@@ -113,6 +115,9 @@ def test_registry_entries_filter_by_kind() -> None:
     assert "planar_truss_span_deflection_min" in optimization_ids
     assert "planar_truss_span_fos_max" in optimization_ids
     assert "space_truss_span_mass_min" in optimization_ids
+    assert "wind_farm_grid_qkp_power_max" in optimization_ids
+    assert "wind_farm_unrestricted_deficit_min" in optimization_ids
+    assert "worker_hours_competing_projects_value_tracking_min" in optimization_ids
     assert "planar_truss_span_member_count_min" not in optimization_ids
     assert "planar_truss_span_total_length_min" not in optimization_ids
     grammar_kinds = registry.by_kind(ProblemKind.GRAMMAR)
@@ -231,6 +236,15 @@ def test_text_problem_can_render_summary_and_raw_citations() -> None:
     assert "## Sources" in packet
     assert "## BibTeX" in packet
     assert "@article{fu2010design," in packet
+
+
+def test_new_2025_ideation_problem_renders_statement_and_citation() -> None:
+    problem = get_problem("ideation_dark_hour_safety")
+    assert isinstance(problem, Problem)
+    packet = problem.render_brief()
+    assert packet.count("# Dark-Hour Safety") == 1
+    assert "Design a way to support safety in the dark morning" in packet
+    assert "Wojciechowski, Olagoke, Ng, Wacnik, and Kramer (2025)." in packet
 
 
 def test_decision_problem_exposes_structured_brief() -> None:
@@ -428,6 +442,9 @@ def test_registry_search_filters_by_feature_flags() -> None:
         "planar_truss_span_mass_min",
         "space_truss_span_mass_min",
         "treadle_pump_ide_material_min",
+        "wind_farm_grid_qkp_power_max",
+        "wind_farm_unrestricted_deficit_min",
+        "worker_hours_competing_projects_value_tracking_min",
     ]
     text_matches = registry.search(
         kind=ProblemKind.TEXT,

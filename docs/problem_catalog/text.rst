@@ -3,50 +3,136 @@
 Text Problem Catalog
 ====================
 
-This page lists all packaged text problems and ideation prompts. There are currently 40 packaged text problems.
+This page lists all packaged text problems and ideation prompts. There are currently 126 packaged text problems.
 
 For the conceptual overview, see :doc:`../problems/text`.
 
 .. toctree::
    :maxdepth: 1
 
+   text/ideation_3d_printable_wind_turbine_tower
    text/ideation_accessible_drinking_fountain
    text/ideation_accessible_drinking_fountain_derivative
+   text/ideation_antarctica_immersive_museum
+   text/ideation_apartment_cooling_problem
+   text/ideation_architects_office_layout
+   text/ideation_autonomous_surveillance_vehicle
+   text/ideation_balloon_powered_car_customization
+   text/ideation_bicycle_safety_lock
+   text/ideation_biopsy_needle_stabilizer
+   text/ideation_burrito_making_device
+   text/ideation_campus_self_sufficient_eating_area
    text/ideation_car_mounted_bicycle_rack
+   text/ideation_cardboard_tower_structure
    text/ideation_chocolate_packaging
+   text/ideation_coconut_harvesting_assist
+   text/ideation_collaborative_study_space
+   text/ideation_control_it_interface_controller
+   text/ideation_dark_hour_safety
+   text/ideation_delivery_truck_route_efficiency
+   text/ideation_dexterous_aerial_manipulation
    text/ideation_disposable_spill_proof_coffee_cup
+   text/ideation_electric_toothbrush_portability_redesign
+   text/ideation_emergency_blackout_household_power
+   text/ideation_entryway_track_removal
+   text/ideation_expo_shanghai_pavilion
+   text/ideation_flexible_fire_station_deployment
+   text/ideation_forest_fire_detection
+   text/ideation_goofy_gopher_golf_ball_collection
+   text/ideation_guidewire_safety
+   text/ideation_guidewire_threading_assist
+   text/ideation_handle_it_handheld_object
+   text/ideation_hands_free_smartphone_viewing
+   text/ideation_hearing_impaired_alarm_clock
+   text/ideation_hearing_impairment_group_conversations
+   text/ideation_high_rise_cohousing_redevelopment
+   text/ideation_hoist_chain_spill_prevention
    text/ideation_home_energy_conservation
+   text/ideation_hospital_blood_pressure_measurement
+   text/ideation_household_moving
+   text/ideation_household_waste_disposal_unit
    text/ideation_human_motion_energy_harvesting
    text/ideation_human_motion_energy_harvesting_rural_communities
    text/ideation_injured_athlete_campus_mobility
+   text/ideation_interactive_parking_meter_kiosk
    text/ideation_joint_immobilization_device
    text/ideation_joint_immobilization_mountain_trek
+   text/ideation_lego_block_scrapyard_collection
+   text/ideation_lifting_water_challenge
+   text/ideation_line_following_teddy_bear_vehicle
+   text/ideation_long_range_dtss_inspection
+   text/ideation_marshmallow_support_tower
+   text/ideation_mass_production_corn_shucker
    text/ideation_measure_passage_of_time
    text/ideation_measure_passage_of_time_room_clock
    text/ideation_measuring_cup_for_blind_users
    text/ideation_measuring_cup_for_blind_users_jansson_smith_1991
+   text/ideation_medication_syringe_redesign
+   text/ideation_milk_frothing_device
    text/ideation_milk_frothing_product
    text/ideation_milk_frothing_product_toh_miller_2014
+   text/ideation_motorized_can_crusher
+   text/ideation_neighborhood_social_connection
+   text/ideation_neonatal_health_monitor
+   text/ideation_next_generation_garbage_picker
+   text/ideation_next_generation_public_transportation
+   text/ideation_object_deposition_quarter_target
+   text/ideation_office_coffee_machine_pss_redesign
+   text/ideation_office_sit_stand_table
    text/ideation_one_handed_lidded_container_opening
    text/ideation_one_handed_lidded_container_opening_framework
+   text/ideation_orange_juice_extraction_device
+   text/ideation_orange_juice_extraction_device_quantified
    text/ideation_out_of_reach_book_retrieval
    text/ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011
+   text/ideation_outdoor_toy_children_5_8
+   text/ideation_parallel_tube_wall_mount
    text/ideation_peanut_shelling
+   text/ideation_peanut_shelling_50kg_per_hour
    text/ideation_peanut_shelling_fu_cagan_kotovsky_2010
+   text/ideation_peanut_shelling_haiti_west_africa
    text/ideation_peanut_shelling_linsey_green_murphy_wood_markman_2005
+   text/ideation_personal_alarm_clock
+   text/ideation_personal_entertainment_system
+   text/ideation_pittsadelphia_freight_shipping_system
+   text/ideation_portable_barbecue_design
    text/ideation_powdered_surface_coating
    text/ideation_powdered_surface_coating_domain_specific
    text/ideation_powdered_surface_coating_general
    text/ideation_public_belongings_security
    text/ideation_public_place_belongings_securer
+   text/ideation_reduce_construction_ecosystem_impact
    text/ideation_remote_village_rainwater_access
    text/ideation_remote_village_rainwater_access_framework
+   text/ideation_school_cafe_design
+   text/ideation_shot_buddy_basketball_return
+   text/ideation_shoulder_dislocation_reduction_aid
+   text/ideation_single_use_plastic_reduction_omaha
    text/ideation_small_towel_folding
    text/ideation_small_towel_folding_linsey_wood_markman_2008
    text/ideation_snow_transport_for_novices
    text/ideation_snow_transport_for_novices_framework
+   text/ideation_soil_moisture_measurement
+   text/ideation_solar_powered_cooking_device
+   text/ideation_solar_thermal_collector_heat_regulation
+   text/ideation_solarized_energy_plus_home_texas
+   text/ideation_stroke_patient_door_opening
+   text/ideation_stroke_patient_door_opening_portable
+   text/ideation_sub_saharan_wash_access_eli
+   text/ideation_sustainable_daily_helpers
+   text/ideation_sustainable_diapering
+   text/ideation_sustainable_fdm_printing
+   text/ideation_sustainable_public_transit_system
+   text/ideation_sustainable_washing_machine
+   text/ideation_temporary_hospital_shelter_bop
+   text/ideation_temporary_hospital_shelter_top
    text/ideation_travel_exercise_device
    text/ideation_travel_exercise_device_linsey_viswanathan_2014
+   text/ideation_university_solar_farm_design
    text/ideation_walking_texting_accident_reduction
    text/ideation_walking_texting_accident_reduction_miller_bailey_kirlik_2014
+   text/ideation_wheelchair_dorm_room_work_desk
    text/ideation_wheelchair_peach_picking
+   text/ideation_wind_turbine_blade_repurposing
+   text/ideation_window_opening_device
+   text/ideation_workshop_plate_holder

@@ -1,0 +1,65 @@
+problem_id = "worker_hours_competing_projects_value_tracking_min"
+title = "Competing design projects worker-hours allocation (value-tracking minimization)"
+summary = "A citation-backed daily worker-allocation benchmark that packages the explicit 2015 competing-projects case as a compact value-tracking optimization problem."
+kind = "optimization"
+statement = '''
+# Competing design projects worker-hours allocation (value-tracking minimization)
+
+This packaged optimization problem is a compact, citation-backed seed derived
+from Freiheit's 2015 competing-projects personnel-allocation study. The paper
+frames the allocation as a predictive-control problem. This in-package
+benchmark keeps the published 60-day horizon, project tables, worker
+availability matrix, worker capability discounts, and cycloidal value-growth
+model, then packages them as a fully specified daily hour-allocation problem.
+
+Each continuous design variable gives the hours assigned from one worker to one
+project or project phase on one day. The packaged objective minimizes the
+squared deviation between achieved and target value growth over the planning
+horizon, with lightweight penalties for abrupt assignment changes and hours
+spent on inactive or already-complete work. The built-in baseline solver uses a
+deterministic greedy planner that chases the published value-growth targets.
+'''
+implementation = "design_research_problems.problems.optimization._worker_hours_allocation:CompetingProjectsWorkerHoursProblem"
+capabilities = [
+  "statement-markdown",
+  "citation-backed",
+  "bounded-variables",
+  "baseline-solver",
+]
+study_suitability = []
+
+[[citations]]
+key = "freiheit2015workerhours"
+kind = "inline"
+authors = [
+  "Theodor Freiheit",
+]
+title = "Optimal Allocation of Worker Hours to Competing Design Projects to Meet Value Growth Targets"
+year = 2015
+venue = "Proceedings of the ASME 2015 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference"
+formatted_text = "Freiheit (2015)."
+raw_text = "Freiheit, T. (2015). Optimal Allocation of Worker Hours to Competing Design Projects to Meet Value Growth Targets. Proceedings of the ASME 2015 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference, DETC2015-47818."
+
+[parameters]
+horizon_days = 60
+change_penalty_weight = 0.015
+inactive_hours_penalty = 0.25
+
+[taxonomy]
+formulation = "nonlinear_program"
+convexity = "not_guaranteed"
+design_variable_type = "continuous"
+is_dynamic = true
+orientation = "engineering-practical"
+feasibility_ratio_hint = 0.4
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "one bounded nonnegative daily hour-allocation variable for each day, worker, and project task in the compact 60-day seed"
+tags = [
+  "optimization",
+  "continuous",
+  "resource-allocation",
+  "scheduling",
+  "predictive-control",
+  "citation-backed",
+]

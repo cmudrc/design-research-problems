@@ -1,0 +1,44 @@
+problem_id = "ideation_marshmallow_support_tower"
+title = "Marshmallow Support Tower"
+summary = "An additive-manufacturing challenge about printing the tallest free-standing structure that can support a marshmallow."
+kind = "text"
+statement = '''
+# Marshmallow Support Tower
+
+Design the tallest free-standing structure that can support a
+marshmallow using additive manufacturing.
+
+Constraints:
+
+- Build within a MakerBot Replicator Desktop build volume of
+  251 mm x 198 mm x 149 mm
+- All support material must be removed during assembly
+- Final printed structure must weigh no more than 100 g
+- Structure may use one or more parts, but all parts must be
+  aggregated and printed in one build job
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "structure", "manufacturing", "challenge"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 10
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "barclift_simpson_nusiner_miller_2017"
+kind = "inline"
+authors = ["Michael Barclift", "Timothy W. Simpson", "Maria Alessandra Nusiner", "Scarlett Miller"]
+title = "An Investigation Into the Driving Factors of Creativity in Design for Additive Manufacturing"
+year = 2017
+venue = "ASME IDETC/CIE 2017, DETC2017-68395"
+formatted_text = "Barclift, Simpson, Nusiner, and Miller (2017). An Investigation Into the Driving Factors of Creativity in Design for Additive Manufacturing. ASME IDETC/CIE 2017, DETC2017-68395."
+raw_text = "Barclift, Michael, Timothy W. Simpson, Maria Alessandra Nusiner, and Scarlett Miller (2017). An Investigation Into the Driving Factors of Creativity in Design for Additive Manufacturing. ASME IDETC/CIE 2017, DETC2017-68395."
+provisional = true
