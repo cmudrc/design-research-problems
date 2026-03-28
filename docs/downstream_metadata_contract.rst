@@ -9,13 +9,13 @@ Stable Fields
 -------------
 
 The initial downstream compatibility contract is intentionally narrow. These
-fields on :class:`design_research_problems.ProblemMetadata` are the ones
+fields on :class:`design_research_problems.problems.ProblemMetadata` are the ones
 downstream study-generation code may rely on:
 
 - ``problem_id``: Stable catalog identifier.
 - ``title``: User-facing display title.
 - ``summary``: Short one-paragraph problem description.
-- ``kind``: High-level family label from :class:`design_research_problems.ProblemKind`.
+- ``kind``: High-level family label from :class:`design_research_problems.problems.ProblemKind`.
 - ``capabilities``: Controlled-vocabulary implementation and packaging flags.
 - ``study_suitability``: Controlled-vocabulary study-use flags.
 - ``feature_flags``: Sorted union of ``capabilities`` and ``study_suitability``.
