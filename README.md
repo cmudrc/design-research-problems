@@ -27,7 +27,7 @@ discrete grammar-style problems behind a small, typed Python API.
 ## Quickstart
 
 Requires Python 3.12+.
-Reproducible local installs are pinned to Python `3.12.12` in `.python-version`.
+Local workflows target Python `3.12` in `.python-version`.
 
 Create and activate a virtual environment:
 
