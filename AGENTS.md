@@ -99,7 +99,6 @@ merging.
 | November 1, 2026 | Kakapo Knot | Kakapo |
 | December 1, 2026 | Vaquita Vault | Vaquita |
 | January 1, 2027 | Pangolin Puzzle | Pangolin |
-
 ## Keep This File Up To Date
 
 Update this file whenever contributor workflow changes, especially when setup

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 import re
 import sys
 from pathlib import Path
@@ -21,13 +20,12 @@ author = "design-research-problems contributors"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
     "sphinxcontrib.mermaid",
 ]
-if os.environ.get("DRP_DOCS_ENABLE_INTERSPHINX") == "1":
-    extensions.append("sphinx.ext.intersphinx")
 
 napoleon_google_docstring = True
 napoleon_numpy_docstring = False
@@ -37,34 +35,55 @@ autodoc_typehints = "none"
 autosummary_generate = True
 autosummary_imported_members = True
 nitpicky = True
-intersphinx_mapping = (
-    {
-        "python": ("https://docs.python.org/3", None),
-    }
-    if "sphinx.ext.intersphinx" in extensions
-    else {}
-)
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+}
 nitpick_ignore_regex = [("py:class", r"numpy\..+"), ("py:class", r"collections\.abc\..+")]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-if os.environ.get("READTHEDOCS") == "True":
-    html_theme = "sphinx_rtd_theme"
+try:
+    import pydata_sphinx_theme  # noqa: F401
+except ImportError:
+    html_theme = "alabaster"
+    html_theme_options: dict[str, object] = {}
 else:
-    try:
-        import sphinx_rtd_theme  # noqa: F401
-
-        html_theme = "sphinx_rtd_theme"
-    except ImportError:
-        html_theme = "alabaster"
+    html_theme = "pydata_sphinx_theme"
+    html_theme_options = {
+        "logo": {
+            "text": project,
+            "image_light": "_static/drc-light.png",
+            "image_dark": "_static/drc-dark.png",
+        },
+        "icon_links": [
+            {
+                "name": "GitHub",
+                "url": "https://github.com/cmudrc/design-research-problems",
+                "icon": "fa-brands fa-github",
+            },
+        ],
+        "navbar_align": "content",
+        "header_links_before_dropdown": 4,
+        "show_nav_level": 2,
+        "navigation_with_keys": True,
+        "show_prev_next": False,
+        "secondary_sidebar_items": ["page-toc"],
+    }
 
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
-html_logo = "drc.png"
+html_logo = "_static/drc-light.png"
 html_favicon = "_static/favicon.ico"
 html_title = project
-html_theme_options = {"logo_only": False}
+html_sidebars = (
+    {
+        "index": [],
+        "examples/index": [],
+    }
+    if html_theme == "pydata_sphinx_theme"
+    else {}
+)
 
 linkcheck_retries = 2
 linkcheck_timeout = 10
@@ -81,6 +100,7 @@ def _dedupe_viewport_meta(
     context: dict[str, object],
     doctree: object,
 ) -> None:
+    """Keep one viewport tag by removing extra entries from Sphinx metatags."""
     del app, pagename, templatename, doctree
     metatags = context.get("metatags")
     if isinstance(metatags, str):

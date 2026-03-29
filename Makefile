@@ -10,7 +10,8 @@ UV ?= $(if $(wildcard .venv/bin/uv),.venv/bin/uv,uv)
 REPRO_PYTHON ?= $(shell cat .python-version 2>/dev/null || echo 3.12)
 REPRO_EXTRAS ?= dev
 TRUSSME_SPEC ?= trussme>=0.1.0
-COVERAGE_MINIMUM ?= 80
+COVERAGE_MIN ?= 90
+COVERAGE_MINIMUM ?= $(COVERAGE_MIN)
 FULL_EXTRAS ?= dev,battery,grammar,mcp,cad,pandas,solvers
 
 .PHONY: help check-python check-uv dev install-dev repro lock \
@@ -77,7 +78,7 @@ docstrings-check: check-python
 
 coverage: check-python
 	mkdir -p artifacts/coverage
-	PYTHONPATH=src $(PYTEST) -m "not trussme_real and not pybamm_real" --cov=src/design_research_problems --cov-report=term --cov-report=json:artifacts/coverage/coverage.json -q
+	PYTHONPATH=src $(PYTEST) -m "not trussme_real and not pybamm_real" --cov=src/design_research_problems --cov-fail-under=$(COVERAGE_MINIMUM) --cov-report=term --cov-report=json:artifacts/coverage/coverage.json -q
 	$(PYTHON) scripts/check_coverage_thresholds.py --coverage-json artifacts/coverage/coverage.json --minimum $(COVERAGE_MINIMUM)
 
 release-check: check-python
@@ -102,7 +103,7 @@ docs-build: check-python
 
 docs-check: check-python
 	$(PYTHON) scripts/generate_example_docs.py --check
-	$(PYTHON) scripts/generate_problem_catalog_docs.py
+	$(PYTHON) scripts/generate_problem_catalog_docs.py --check
 	$(PYTHON) scripts/check_docs_consistency.py
 
 docs-linkcheck: check-python

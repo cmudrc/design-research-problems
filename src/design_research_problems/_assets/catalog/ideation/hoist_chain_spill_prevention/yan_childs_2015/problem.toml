@@ -1,0 +1,40 @@
+problem_id = "ideation_hoist_chain_spill_prevention"
+title = "Hoist Chain Spill Prevention"
+summary = "A reconstructed safety-design brief about preventing slack chain from spilling out of hoist collection bags."
+kind = "text"
+statement = '''
+# Hoist Chain Spill Prevention
+
+At the Royal Albert Hall, lengths of slack chain from electric
+chain hoists can occasionally spill from collection bags,
+posing possible risks to people below.
+
+Generate new ideas to prevent or better manage this chain spill
+problem. The solution should improve or modify the existing
+system without defaulting to impractical rigid industrial bags.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "safety-design"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "design", "safety", "chain", "hoist"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 40
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "yan_childs_2015"
+kind = "inline"
+authors = ["Yanliuxing Yan", "Peter R. N. Childs"]
+title = "Creativity Tool Selection for Design Engineers in Idea Generation"
+year = 2015
+venue = "Proceedings of the 20th International Conference on Engineering Design (ICED15)"
+formatted_text = "Yan and Childs (2015). Creativity Tool Selection for Design Engineers in Idea Generation. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+raw_text = "Yan, Yanliuxing, and Peter R. N. Childs (2015). Creativity Tool Selection for Design Engineers in Idea Generation. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+provisional = true

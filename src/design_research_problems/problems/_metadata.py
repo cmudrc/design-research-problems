@@ -108,6 +108,28 @@ class ProblemTaxonomy:
 
 
 @dataclass(frozen=True)
+class ProblemBenchmarkCard:
+    """Optional benchmark contract metadata for one packaged problem."""
+
+    benchmark_question: str | None = None
+    """Research question the benchmark is intended to probe."""
+    physically_modeled: tuple[str, ...] = ()
+    """Short claims about what is physically modeled."""
+    deliberate_surrogates: tuple[str, ...] = ()
+    """Short claims about intentionally simplified benchmark abstractions."""
+    representation_mode: str | None = None
+    """Primary design representation exposed to the user."""
+    default_evaluation_mode: str | None = None
+    """Default evaluator or fidelity mode used by the implementation."""
+    supported_evaluation_modes: tuple[str, ...] = ()
+    """Allowed evaluator or fidelity modes for the problem."""
+    validation_scope: tuple[str, ...] = ()
+    """Validation envelope or sanity-check claims for the benchmark."""
+    solver_role: str | None = None
+    """How bundled solve routines should be interpreted."""
+
+
+@dataclass(frozen=True)
 class ProblemMetadata:
     """Packaged metadata for one problem entry."""
 
@@ -129,6 +151,8 @@ class ProblemMetadata:
     """Machine-readable implementation and packaging capabilities."""
     study_suitability: tuple[str, ...]
     """Machine-readable study-use labels for the entry."""
+    benchmark_card: ProblemBenchmarkCard | None = None
+    """Optional benchmark contract metadata."""
     implementation: str | None = None
     """Optional ``module:attribute`` import path for executable problem types."""
 

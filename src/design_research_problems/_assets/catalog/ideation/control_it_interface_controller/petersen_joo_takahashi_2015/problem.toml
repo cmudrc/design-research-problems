@@ -1,0 +1,46 @@
+problem_id = "ideation_control_it_interface_controller"
+title = "Control-It Interface Controller"
+summary = "A classroom brief about designing a controller with a screen and physical controls for a chosen market segment."
+kind = "text"
+statement = '''
+# Control-It Interface Controller
+
+Find your market segment and specify the controller, explore
+customer profile, user experience and expectations, form language,
+material and colour.
+
+Assemble and present the findings together with your concept
+conclusion (hypothesis). Two must haves are that the product includes
+a screen and some dials or buttons interacting with each other and
+controlling some object or process.
+
+Develop your design through intense sketch work and create an
+interface design and orthographic views before starting your 3D
+model. You are not allowed to start a 3D model before the design
+development has been completed.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "consumer-product"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "interface", "controller", "consumer"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "petersen_joo_takahashi_2015"
+kind = "inline"
+authors = ["Soren Ingomar Petersen", "Jaewoo Joo", "Shelley Takahashi"]
+title = "Inspirational Design Briefing Performance"
+year = 2015
+venue = "Proceedings of the 20th International Conference on Engineering Design (ICED15)"
+formatted_text = "Petersen, Joo, and Takahashi (2015). Inspirational Design Briefing Performance. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+raw_text = "Petersen, Soren Ingomar, Jaewoo Joo, and Shelley Takahashi (2015). Inspirational Design Briefing Performance. Proceedings of the 20th International Conference on Engineering Design (ICED15)."
+provisional = true

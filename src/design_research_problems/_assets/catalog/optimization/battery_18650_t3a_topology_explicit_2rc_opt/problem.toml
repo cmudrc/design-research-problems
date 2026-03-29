@@ -1,0 +1,102 @@
+problem_id = "battery_18650_t3a_topology_explicit_2rc_opt"
+title = "T3A 18650 topology explicit 2-RC optimization"
+summary = "Tier-3A topology-allocation benchmark variant that defaults to projected explicit-circuit scoring with a manifest-selected PyBaMM 2-RC backend."
+kind = "optimization"
+statement = '''
+# T3A 18650 topology explicit 2-RC optimization
+
+Optimize battery layouts with typed topology variables (cell count, stage
+assignment) and full pose variables. This packaged variant keeps the tier-3A
+topology-allocation representation while defaulting to projected
+explicit-circuit scoring through the shared 2-RC backend example config.
+
+Typed topology schema:
+- active cell count N_cells
+- series stage count S
+- per-cell stage-slot assignment
+
+Unlike tier-1 and tier-2, effective parallel support depends on stage balance.
+If n_i is the population of stage i, the bottleneck stage controls usable
+parallel support:
+- P_eq = min_i(n_i)
+- C_pack ~= P_eq * C_cell
+- I_limit ~= P_eq * C_cell * C_rate_max
+
+Connectivity proxy for topology complexity:
+- N_conn = sum_i max(n_i - 1, 0) + max(S - 1, 0)
+
+Thermal proxy:
+- I_cell = I_load / P_eq
+- Q_dot = N_cells * I_cell^2 * R_int
+- T_max = T_ambient + Q_dot / (G_passive + hA)
+'''
+implementation = "design_research_problems.problems.optimization._battery_tiers:Battery18650T3ATopologySurrogateOptimizationProblem"
+capabilities = ["statement-markdown", "bounded-variables", "baseline-solver"]
+study_suitability = []
+
+[benchmark]
+benchmark_question = "How well do methods handle topology allocation and stage imbalance when candidate structure becomes asymmetric?"
+physically_modeled = [
+  "Per-cell pose geometry with oriented-cylinder clearance checks",
+  "Variable active cell count and explicit stage-slot allocation",
+  "Projected explicit-circuit evaluation through a packaged 2-RC backend configuration",
+]
+deliberate_surrogates = [
+  "Stage imbalance is represented by a configurable benchmark abstraction",
+  "Explicit-circuit evaluation uses a canonical projection rather than the native pose representation",
+  "Thermal behavior remains a steady-state Joule-heating proxy",
+]
+representation_mode = "topology_allocation"
+default_evaluation_mode = "explicit_circuit"
+supported_evaluation_modes = ["analytic_surrogate", "explicit_circuit", "hybrid_thermal"]
+validation_scope = [
+  "Topology-abstraction sanity checks",
+  "Projected explicit-circuit consistency checks",
+]
+solver_role = "deterministic baseline search"
+
+[parameters]
+evaluation_mode = "explicit_circuit"
+imbalance_model = "min_stage"
+target_voltage_v = 14.8
+minimum_capacity_ah = 10.0
+minimum_current_a = 60.0
+max_width_mm = 500.0
+max_depth_mm = 500.0
+max_height_mm = 250.0
+voltage_tolerance_v = 0.1
+max_cell_count = 24
+minimum_spacing_mm = 2.0
+cooling_coefficient_w_per_m2k = 18.0
+passive_cooling_w_per_k = 1.0
+ambient_temperature_c = 25.0
+maximum_temperature_c = 60.0
+load_current_a = 60.0
+objective_weights = { volume = 0.40, cost = 0.30, temperature = 0.30 }
+
+[parameters.battery_backend]
+cell_model_mode = "pybamm_ecm_2rc"
+thermal_mode = "isothermal"
+
+[parameters.battery_backend.parameterization]
+parameter_set = "Marquis2019"
+
+[taxonomy]
+formulation = "mixed_discrete_optimization"
+convexity = "nonconvex"
+design_variable_type = "mixed"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.03
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "cell-count and stage-assignment topology schema plus per-cell poses"
+tags = [
+  "optimization",
+  "battery",
+  "tiered",
+  "tier-3a",
+  "topology-allocation",
+  "backend-config-example",
+  "pybamm-ecm-2rc",
+]

@@ -1,0 +1,35 @@
+problem_id = "ideation_hospital_blood_pressure_measurement"
+title = "Hospital Blood Pressure Measurement"
+summary = "A medical-device course brief about non-intrusive blood-pressure measurement for hospitalized patients."
+kind = "text"
+statement = '''
+# Hospital Blood Pressure Measurement
+
+To design a non-intrusive way to measure blood pressure among
+hospitalized patients.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "medical", "blood-pressure", "monitoring"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 60
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "raviselvam_subburaj_wood_2019"
+kind = "inline"
+authors = ["Sujithra Raviselvam", "Karupppasamy Subburaj", "Kristin L. Wood"]
+title = "An Extreme User Approach to Identify Latent Needs: Adaptation and Application in Medical Device Design"
+year = 2019
+venue = "ASME IDETC/CIE 2019, DETC2019-98266"
+formatted_text = "Raviselvam, Subburaj, and Wood (2019). An Extreme User Approach to Identify Latent Needs: Adaptation and Application in Medical Device Design. ASME IDETC/CIE 2019, DETC2019-98266."
+raw_text = "Raviselvam, Sujithra, Karupppasamy Subburaj, and Kristin L. Wood (2019). An Extreme User Approach to Identify Latent Needs: Adaptation and Application in Medical Device Design. ASME IDETC/CIE 2019, DETC2019-98266."
+provisional = true

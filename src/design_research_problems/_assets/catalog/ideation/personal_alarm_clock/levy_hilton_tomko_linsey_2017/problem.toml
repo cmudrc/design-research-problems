@@ -1,0 +1,48 @@
+problem_id = "ideation_personal_alarm_clock"
+title = "Personal Alarm Clock"
+summary = "A portable low-disturbance alarm-clock brief for shared spaces where conventional alarms would bother others."
+kind = "text"
+statement = '''
+# Personal Alarm Clock
+
+Alarm clocks are widely used to help individuals wake from
+slumber. However, when used in shared spaces like dorm rooms,
+they will often disturb those around them. The goal of this
+problem is to design a low-cost alarm clock for individual use
+that will not disturb others. The clock should be portable for
+use in a variety of situations such as on the bus, in the library,
+or in a classroom.
+
+Customer Needs:
+
+- Must wake up individual with no disturbance to others
+- Must be portable and lightweight
+- Must be safe for user
+- Electrical outlets are not available as a constant power source
+- Low cost
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "alarm", "consumer", "portable"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 48
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "levy_hilton_tomko_linsey_2017"
+kind = "inline"
+authors = ["Bryan Levy", "Ethan Hilton", "Megan Tomko", "Julie Linsey"]
+title = "Investigating Problem Similarity Through Study of Between-Subject and Within-Subject Experiments"
+year = 2017
+venue = "ASME IDETC/CIE 2017, DETC2017-68428"
+formatted_text = "Levy, Hilton, Tomko, and Linsey (2017). Investigating Problem Similarity Through Study of Between-Subject and Within-Subject Experiments. ASME IDETC/CIE 2017, DETC2017-68428."
+raw_text = "Levy, Bryan, Ethan Hilton, Megan Tomko, and Julie Linsey (2017). Investigating Problem Similarity Through Study of Between-Subject and Within-Subject Experiments. ASME IDETC/CIE 2017, DETC2017-68428."
+provisional = true

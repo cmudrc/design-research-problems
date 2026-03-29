@@ -74,9 +74,6 @@ instance/
 # Sphinx documentation
 docs/_build/
 
-# Generated docs pages
-docs/problem_catalog/
-
 # PyBuilder
 .pybuilder/
 target/
@@ -213,3 +210,4 @@ marimo/_lsp/
 __marimo__/
 
 .DS_Store
+/conferences/

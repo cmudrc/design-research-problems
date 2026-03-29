@@ -1,0 +1,40 @@
+problem_id = "ideation_workshop_plate_holder"
+title = "Workshop Plate Holder"
+summary = "A workshop-fixture brief about holding two wood plates together for gluing and drilling."
+kind = "text"
+statement = '''
+# Workshop Plate Holder
+
+A homeowner, in the workshop, needs to hold two plates of wood
+together for different activities.
+
+As a first example, the plates of wood need to be held in place as
+they are glued together and the glue cures. As a second example, the
+plates are held in place while a hole is drilled through them at the
+same time.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly", "requirements-study-ready"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "workshop", "fixture", "wood"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "requirement-coverage"
+
+[[citations]]
+key = "prudhomme_pourroy_summers_boujut_2013"
+kind = "inline"
+authors = ["Guy Prudhomme", "Franck Pourroy", "Joshua David Summers", "Jean-Francois Boujut"]
+title = "Enriching Requirement-Activities in Design Through French-US Instruction Comparison"
+year = 2013
+venue = "Proceedings of the 19th International Conference on Engineering Design (ICED13)"
+formatted_text = "Prudhomme, Pourroy, Summers, and Boujut (2013). Enriching Requirement-Activities in Design Through French-US Instruction Comparison. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+raw_text = "Prudhomme, Guy, Franck Pourroy, Joshua David Summers, and Jean-Francois Boujut (2013). Enriching Requirement-Activities in Design Through French-US Instruction Comparison. Proceedings of the 19th International Conference on Engineering Design (ICED13)."
+provisional = true

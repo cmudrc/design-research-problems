@@ -1,0 +1,73 @@
+problem_id = "wind_farm_grid_qkp_power_max"
+title = "Grid-based wind-farm layout optimization (compact QKP seed)"
+summary = "A citation-backed binary wind-farm layout benchmark that packages the Quan and Kim grid-based quadratic-knapsack formulation as a compact fixed-count seed instance."
+kind = "optimization"
+statement = '''
+# Grid-based wind-farm layout optimization (compact QKP seed)
+
+This packaged optimization problem is a compact, citation-backed seed derived
+from the grid-based wind-farm layout formulation reported by Quan and Kim
+(2016). The original paper studies large mixed-integer and quadratic-knapsack
+instances. This in-package benchmark keeps the same binary layout structure and
+greedy baseline spirit, but fixes a much smaller `4 x 4` square grid so the
+problem is fully specified and reproducible in a lightweight Python package.
+
+Each binary design variable decides whether one turbine is placed on one grid
+node. The packaged instance uses a deterministic directional wake-loss proxy to
+convert the paper's pairwise interaction idea into a compact expected-power
+objective. Exactly four turbines must be placed, and any pair of turbines that
+violates the minimum spacing threshold is infeasible.
+'''
+implementation = "design_research_problems.problems.optimization._wind_farm_layout:WindFarmLayoutOptimizationProblem"
+capabilities = [
+  "statement-markdown",
+  "citation-backed",
+  "bounded-variables",
+  "equality-constraint",
+  "baseline-solver",
+]
+study_suitability = []
+
+[[citations]]
+key = "quan2016windfarm"
+kind = "inline"
+authors = [
+  "Ning Quan",
+  "Harrison Kim",
+]
+title = "A Tight Upper Bound for Grid-Based Wind Farm Layout Optimization"
+year = 2016
+venue = "Proceedings of the ASME 2016 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference"
+formatted_text = "Quan and Kim (2016)."
+raw_text = "Quan, N., and Kim, H. (2016). A Tight Upper Bound for Grid-Based Wind Farm Layout Optimization. Proceedings of the ASME 2016 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference, DETC2016-59712."
+
+[parameters]
+grid_rows = 4
+grid_cols = 4
+edge_length_m = 960.0
+turbine_count = 4
+base_power_mw = 1.5
+minimum_spacing_m = 450.0
+rotor_diameter_m = 80.0
+wake_expansion_coefficient = 0.075
+pairwise_loss_scale_mw = 0.42
+direction_profile_name = "east_skewed_seed"
+
+[taxonomy]
+formulation = "binary_optimization"
+convexity = "not_guaranteed"
+design_variable_type = "discrete"
+is_dynamic = false
+orientation = "engineering-practical"
+feasibility_ratio_hint = 0.1
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "one binary variable per grid node on a compact 4 x 4 fixed-count wind-farm layout seed"
+tags = [
+  "optimization",
+  "binary",
+  "layout",
+  "wind-farm",
+  "quadratic-knapsack",
+  "citation-backed",
+]

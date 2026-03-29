@@ -1,0 +1,41 @@
+problem_id = "ideation_burrito_making_device"
+title = "Burrito Making Device"
+summary = "A food-service design brief about automating burrito production for a large tailgate party."
+kind = "text"
+statement = '''
+# Burrito Making Device
+
+The Mechanical Engineering Department is hosting a tailgate
+party and has invited alumni. The department wishes to feed
+burritos to a party of 100 during the half time. The task for
+manually making the burritos for these many people is
+laborious. Thus the goal is to design a burrito making device
+for the department.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "food", "automation", "service"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 15
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "joshi_summers_2014"
+kind = "inline"
+authors = ["Emily Worinkeng", "Joshua D. Summers"]
+title = "Analyzing Requirement Type Influence on Concept Quality and Quantity During Ideation: An Experimental Study"
+year = 2014
+venue = "ASME IDETC/CIE, DETC2014-35022"
+doi = "10.1115/DETC2014-35022"
+url = "https://doi.org/10.1115/DETC2014-35022"
+formatted_text = "Joshi and Summers (2014). Impact of Requirements Elicitation Activity on Idea Generation: A Designer Study."
+raw_text = "Joshi and Summers (2014). Impact of Requirements Elicitation Activity on Idea Generation: A Designer Study."
+provisional = false

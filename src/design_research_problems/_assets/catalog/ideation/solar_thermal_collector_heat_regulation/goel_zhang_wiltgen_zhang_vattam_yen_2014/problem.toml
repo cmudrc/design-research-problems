@@ -1,0 +1,39 @@
+problem_id = "ideation_solar_thermal_collector_heat_regulation"
+title = "Solar Thermal Collector Heat Regulation"
+summary = "A bio-inspired engineering brief about regulating overheating in solar thermal collectors."
+kind = "text"
+statement = '''
+# Solar Thermal Collector Heat Regulation
+
+Fix the overheating problem in solar thermal collectors.
+
+Develop a bio-inspired heat regulation system that can fit onto an
+existing absorber to constantly maintain suitable temperature, and
+a bio-inspired feedback control system that regulates the
+temperature of glycol by operating the heat regulation system.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "solar", "bio-inspired", "heat-regulation"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "goel_zhang_wiltgen_zhang_vattam_yen_2014"
+kind = "inline"
+authors = ["Ashok Goel", "Gongbo Zhang", "Bryan Wiltgen", "Yuqi Zhang", "Swaroop Vattam", "Jeannette Yen"]
+title = "The Design Study Library: Compiling, Analyzing and Using Biologically Inspired Design Case Studies"
+year = 2014
+venue = "Design Computing and Cognition DCC'14"
+formatted_text = "Goel, Zhang, Wiltgen, Zhang, Vattam, and Yen (2014). The Design Study Library: Compiling, Analyzing and Using Biologically Inspired Design Case Studies. Design Computing and Cognition DCC'14."
+raw_text = "Goel, Ashok, Gongbo Zhang, Bryan Wiltgen, Yuqi Zhang, Swaroop Vattam, and Jeannette Yen (2014). The Design Study Library: Compiling, Analyzing and Using Biologically Inspired Design Case Studies. Design Computing and Cognition DCC'14."
+provisional = true

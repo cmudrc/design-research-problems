@@ -23,6 +23,10 @@ def _run_example(relative_path: str, *args: str) -> subprocess.CompletedProcess[
     )
 
 
+def _battery_extra_missing(completed: subprocess.CompletedProcess[str]) -> bool:
+    return "Install it with: pip install design-research-problems[battery]" in completed.stdout
+
+
 @pytest.mark.examples_smoke
 def test_catalog_example_runs() -> None:
     completed = _run_example("examples/catalog/list_and_load.py")
@@ -34,7 +38,7 @@ def test_catalog_example_runs() -> None:
 def test_ideation_catalog_example_runs() -> None:
     completed = _run_example("examples/catalog/ideation_catalog.py")
     assert completed.returncode == 0, completed.stderr
-    assert "prompts 40" in completed.stdout
+    assert "prompts 126" in completed.stdout
 
 
 @pytest.mark.examples_smoke
@@ -147,47 +151,124 @@ def test_gmpb_optimization_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
-def test_open_ended_battery_grammar_example_runs() -> None:
-    completed = _run_example("examples/grammar/battery_pack_18650_open_ended.py")
+def test_worker_hours_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/worker_hours_allocation.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_pack_18650_open_ended" in completed.stdout
-    if "pybamm is required for battery grammar evaluation" in completed.stdout:
-        return
-    assert completed.stdout.splitlines()[-1].split()[1] == "True"
+    assert "Competing-projects worker-hours benchmark" in completed.stdout
+    assert "task_count 8" in completed.stdout
+    assert "worker_count 5" in completed.stdout
+    assert "solved_tracking_error" in completed.stdout
 
 
 @pytest.mark.examples_smoke
-def test_battery_grammar_example_runs() -> None:
-    completed = _run_example("examples/grammar/battery_pack_18650_series_parallel.py")
+def test_unrestricted_wind_farm_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/wind_farm_unrestricted.py")
     assert completed.returncode == 0, completed.stderr
-    assert "battery_pack_18650_series_parallel" in completed.stdout
-    if "pybamm is required for battery grammar evaluation" in completed.stdout:
-        return
-    assert completed.stdout.splitlines()[-1].split()[0] == "True"
+    assert "Unrestricted wind-farm layout benchmark" in completed.stdout
+    assert "turbine_count 7" in completed.stdout
+    assert "solved_directional_overlap_counts (0, 0, 0)" in completed.stdout
 
 
 @pytest.mark.examples_smoke
-def test_battery_grammar_to_optimizer_example_runs() -> None:
-    completed = _run_example("examples/optimization/battery_grammar_to_optimizer.py")
+def test_t1_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_18650_t1_rectangular_surrogate_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "Rectangular battery packaged benchmark" in completed.stdout
-    if "pybamm is required for battery grammar evaluation" in completed.stdout:
-        return
-    assert "initial config=" in completed.stdout
-    assert "\nsolve " in completed.stdout
-    assert "solved config=" in completed.stdout
+    assert "BatteryTierMetrics(" in completed.stdout
+    assert "cell_count=" in completed.stdout
 
 
 @pytest.mark.examples_smoke
-def test_open_ended_battery_optimization_example_runs() -> None:
-    completed = _run_example("examples/optimization/battery_open_ended_capacity_max.py")
+def test_t2_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_18650_t2_pose_surrogate_grammar.py")
     assert completed.returncode == 0, completed.stderr
-    assert "Open-ended battery packaged benchmark" in completed.stdout
-    if "pybamm is required for battery grammar evaluation" in completed.stdout:
-        return
-    assert "initial cell_count=" in completed.stdout
-    assert "\nsolve " in completed.stdout
-    assert "solved cell_count=" in completed.stdout
+    assert "BatteryTierMetrics(" in completed.stdout
+    assert "design_volume_mm3=" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t3a_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_18650_t3a_topology_surrogate_grammar.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "BatteryTierMetrics(" in completed.stdout
+    assert "connection_count=" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t3b_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py")
+    assert completed.returncode == 0, completed.stderr
+    if _battery_extra_missing(completed):
+        pytest.skip("pybamm is not installed in this environment.")
+    assert "BatteryTierMetrics(" in completed.stdout
+    assert "voltage_v=" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t4_battery_grammar_example_runs() -> None:
+    completed = _run_example("examples/grammar/battery_18650_t4_thermal_hybrid_grammar.py")
+    assert completed.returncode == 0, completed.stderr
+    if _battery_extra_missing(completed):
+        pytest.skip("pybamm is not installed in this environment.")
+    assert "BatteryTierMetrics(" in completed.stdout
+    assert "max_temperature_c=" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t1_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_18650_t1_rectangular_surrogate_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "battery_18650_t1_rectangular_surrogate_opt" in completed.stdout
+    assert "metric-keys" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t2_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_18650_t2_pose_surrogate_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "battery_18650_t2_pose_surrogate_opt" in completed.stdout
+    assert "metric-keys" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t3a_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_18650_t3a_topology_surrogate_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    if _battery_extra_missing(completed):
+        pytest.skip("pybamm is not installed in this environment.")
+    assert "battery_18650_t3a_topology_surrogate_opt" in completed.stdout
+    assert "surrogate-mode analytic_surrogate" in completed.stdout
+    assert "explicit-mode explicit_circuit" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t3b_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_18650_t3b_netlist_explicit_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    if _battery_extra_missing(completed):
+        pytest.skip("pybamm is not installed in this environment.")
+    assert "battery_18650_t3b_netlist_explicit_opt" in completed.stdout
+    assert "metric-keys" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_t4_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_18650_t4_thermal_hybrid_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    if _battery_extra_missing(completed):
+        pytest.skip("pybamm is not installed in this environment.")
+    assert "battery_18650_t4_thermal_hybrid_opt" in completed.stdout
+    assert "hybrid-mode hybrid_thermal" in completed.stdout
+
+
+@pytest.mark.examples_smoke
+def test_fast_charge_battery_optimization_example_runs() -> None:
+    completed = _run_example("examples/optimization/battery_fast_charge_dfn_anchor_opt.py")
+    assert completed.returncode == 0, completed.stderr
+    if _battery_extra_missing(completed):
+        pytest.skip("pybamm is not installed in this environment.")
+    assert "battery_fast_charge_dfn_anchor_opt" in completed.stdout
+    assert "metric-keys" in completed.stdout
+    assert "baseline/reference search" in completed.stdout
 
 
 @pytest.mark.trussme_real

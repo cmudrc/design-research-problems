@@ -1,0 +1,46 @@
+problem_id = "ideation_school_cafe_design"
+title = "School Cafe Design"
+summary = "A school-space design brief about converting an unused room into a cafe that better serves the school community."
+kind = "text"
+statement = '''
+# School Cafe Design
+
+Your school has an unused room and your principal would like to
+convert it into a cafe for all students, parents, teachers and
+staff of your school.
+
+Each class is required to submit ideas of how the new cafe could
+be designed to better serve the members of the school as a design
+challenge. Based on your team's interpretation of common needs
+of the school population, illustrate an ideal design for the cafe.
+
+You may use diagrams, annotations, and sketches to support the
+explanation. Describe your design proposal and explain the
+rationale behind the design feature incorporated.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "design-exploration"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "education", "service", "space-planning"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "khan_maheshwary_arlitt_blessing_2020"
+kind = "inline"
+authors = ["Sumbul Khan", "Khushbu Maheshwary", "Ryan Arlitt", "Lucienne Blessing"]
+title = "Assessment of Conceptual Design Problems Comprising Design Rationale and Sketches"
+year = 2020
+venue = "ASME IDETC/CIE 2020, DETC2020-22376"
+formatted_text = "Khan, Maheshwary, Arlitt, and Blessing (2020). Assessment of Conceptual Design Problems Comprising Design Rationale and Sketches. ASME IDETC/CIE 2020, DETC2020-22376."
+raw_text = "Khan, Sumbul, Khushbu Maheshwary, Ryan Arlitt, and Lucienne Blessing (2020). Assessment of Conceptual Design Problems Comprising Design Rationale and Sketches. ASME IDETC/CIE 2020, DETC2020-22376."
+provisional = true
+

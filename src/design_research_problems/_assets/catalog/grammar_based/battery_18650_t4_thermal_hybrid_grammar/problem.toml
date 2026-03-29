@@ -1,0 +1,100 @@
+problem_id = "battery_18650_t4_thermal_hybrid_grammar"
+title = "T4 18650 thermal hybrid grammar"
+summary = "Tier-4 thermo-topological battery grammar benchmark with analytic, explicit-circuit, and hybrid-thermal evaluator modes."
+kind = "grammar"
+statement = '''
+# T4 18650 thermal hybrid grammar
+
+Tier 4 unlocks thermal-system design variables in addition to Tier-3 topology
+and geometry decisions. The grammar supports topology edits, pose edits, and
+cooling-condition tuning actions with a **PyBaMM-backed** thermal evaluator.
+
+This is the highest-freedom battery rung in the tiered ladder.
+
+Tier-4 extends tier-3 actions with thermal-parameter tuning. In addition to
+topology and geometry edits, actions can adjust:
+- h (convective cooling coefficient)
+- G_passive (passive thermal conductance)
+- T_ambient (ambient condition)
+- thermal model selector (lumped or multi_node_2node)
+
+Thermal heating term (from PyBaMM-derived resistance prior):
+- I_cell = I_load / P_eq
+- q_i = I_cell^2 * R_eff(SOC_ref)
+
+Multi-node mode (default) solves steady-state balances over nodes
+[core_i, surface_i, coolant], with inter-cell conductance edges G_ij derived
+from geometric proximity, local cooling terms G_sc,i, and coolant-to-ambient
+conductance.
+
+Reported T_max is max_i(T_core_i), not an averaged pack temperature.
+
+BattMo/PyBattMo integration is intentionally deferred in this release to keep
+the core benchmark path Python-only and CI-stable.
+'''
+implementation = "design_research_problems.problems.grammar._battery_tiers:Battery18650T4ThermalHybridGrammarProblem"
+capabilities = [
+  "statement-markdown",
+  "serializable-state",
+  "discrete-actions",
+  "external-adapter",
+]
+study_suitability = []
+
+[benchmark]
+benchmark_question = "How well do grammar methods co-design topology, geometry, and thermal controls when evaluator fidelity can be stepped up without changing representation?"
+physically_modeled = [
+  "Tier-3 topology allocation and pose geometry",
+  "Thermal control variables for convection, passive cooling, and ambient conditions",
+  "PyBaMM-derived thermal priors and steady-state thermal-network evaluation in hybrid mode",
+]
+deliberate_surrogates = [
+  "Electrical scoring can remain surrogate or projected explicit depending on evaluation_mode",
+  "Hybrid thermal scoring still projects topology-allocation states to a canonical explicit netlist",
+]
+representation_mode = "thermal_topology"
+default_evaluation_mode = "hybrid_thermal"
+supported_evaluation_modes = ["analytic_surrogate", "explicit_circuit", "hybrid_thermal"]
+validation_scope = [
+  "Qualitative thermal trend validation",
+  "Mode-consistency checks across analytic, explicit, and hybrid evaluators",
+]
+solver_role = "grammar benchmark; no packaged optimizer"
+
+[parameters]
+evaluation_mode = "hybrid_thermal"
+imbalance_model = "min_stage"
+target_voltage_v = 14.8
+minimum_capacity_ah = 10.0
+minimum_current_a = 60.0
+max_width_mm = 500.0
+max_depth_mm = 500.0
+max_height_mm = 250.0
+voltage_tolerance_v = 0.1
+max_cell_count = 24
+minimum_spacing_mm = 2.0
+maximum_temperature_c = 60.0
+load_current_a = 60.0
+objective_weights = { volume = 0.35, cost = 0.25, temperature = 0.40 }
+cooling_coefficient_bounds = { lower = 5.0, upper = 50.0 }
+passive_cooling_bounds = { lower = 0.1, upper = 10.0 }
+ambient_temperature_bounds = { lower = 5.0, upper = 45.0 }
+thermal_model = "multi_node_2node"
+thermal_neighbor_clearance_mm = 8.0
+thermal_contact_decay_mm = 2.0
+thermal_contact_resistance_k_per_w = 2.5
+thermal_flow_shadowing_factor = 0.25
+thermal_airflow_axis = "x"
+thermal_reference_soc = 0.5
+
+[taxonomy]
+formulation = "discrete_grammar"
+convexity = "not_applicable"
+design_variable_type = "mixed"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.02
+objective_mode = "multi"
+constraint_nature = "hard"
+bounds_summary = "tier-3 topology/pose controls plus thermal-parameter tuning actions"
+tags = ["grammar", "battery", "tiered", "tier-4", "thermal-topology", "hybrid"]

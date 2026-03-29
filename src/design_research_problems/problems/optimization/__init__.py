@@ -6,8 +6,32 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 _LAZY_EXPORTS = {
+    "BatteryFastChargeDFNAnchorOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_fast_charge:BatteryFastChargeDFNAnchorOptimizationProblem"
+    ),
+    "Battery18650T1RectangularSurrogateOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_tiers:"
+        "Battery18650T1RectangularSurrogateOptimizationProblem"
+    ),
+    "Battery18650T2PoseSurrogateOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_tiers:Battery18650T2PoseSurrogateOptimizationProblem"
+    ),
+    "Battery18650T3ATopologySurrogateOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_tiers:"
+        "Battery18650T3ATopologySurrogateOptimizationProblem"
+    ),
+    "Battery18650T3BNetlistExplicitOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_open_ended:"
+        "Battery18650T3BNetlistExplicitOptimizationProblem"
+    ),
+    "Battery18650T4ThermalHybridOptimizationProblem": (
+        "design_research_problems.problems.optimization._battery_tiers:Battery18650T4ThermalHybridOptimizationProblem"
+    ),
     "BatteryGridSizingProblem": (
         "design_research_problems.problems.optimization._battery_grid:BatteryGridSizingProblem"
+    ),
+    "BatteryOrientedLayoutProblem": (
+        "design_research_problems.problems.optimization._battery_oriented_layout:BatteryOrientedLayoutProblem"
     ),
     "BatteryOpenEndedCapacityMaxProblem": (
         "design_research_problems.problems.optimization._battery_open_ended:BatteryOpenEndedCapacityMaxProblem"
@@ -23,6 +47,15 @@ _LAZY_EXPORTS = {
     ),
     "SpaceTrussEngineeringOptimizationProblem": (
         "design_research_problems.problems.optimization._truss_topology:SpaceTrussEngineeringOptimizationProblem"
+    ),
+    "CompetingProjectsWorkerHoursProblem": (
+        "design_research_problems.problems.optimization._worker_hours_allocation:CompetingProjectsWorkerHoursProblem"
+    ),
+    "WindFarmLayoutOptimizationProblem": (
+        "design_research_problems.problems.optimization._wind_farm_layout:WindFarmLayoutOptimizationProblem"
+    ),
+    "UnrestrictedWindFarmLayoutOptimizationProblem": (
+        "design_research_problems.problems.optimization._wind_farm_unrestricted:UnrestrictedWindFarmLayoutOptimizationProblem"
     ),
 }
 
@@ -49,8 +82,27 @@ def __getattr__(name: str) -> object:
 
 
 if TYPE_CHECKING:
+    from ._battery_fast_charge import (
+        BatteryFastChargeDFNAnchorOptimizationProblem as BatteryFastChargeDFNAnchorOptimizationProblem,
+    )
     from ._battery_grid import BatteryGridSizingProblem as BatteryGridSizingProblem
+    from ._battery_open_ended import (
+        Battery18650T3BNetlistExplicitOptimizationProblem as Battery18650T3BNetlistExplicitOptimizationProblem,
+    )
     from ._battery_open_ended import BatteryOpenEndedCapacityMaxProblem as BatteryOpenEndedCapacityMaxProblem
+    from ._battery_oriented_layout import BatteryOrientedLayoutProblem as BatteryOrientedLayoutProblem
+    from ._battery_tiers import (
+        Battery18650T1RectangularSurrogateOptimizationProblem as Battery18650T1RectangularSurrogateOptimizationProblem,
+    )
+    from ._battery_tiers import (
+        Battery18650T2PoseSurrogateOptimizationProblem as Battery18650T2PoseSurrogateOptimizationProblem,
+    )
+    from ._battery_tiers import (
+        Battery18650T3ATopologySurrogateOptimizationProblem as Battery18650T3ATopologySurrogateOptimizationProblem,
+    )
+    from ._battery_tiers import (
+        Battery18650T4ThermalHybridOptimizationProblem as Battery18650T4ThermalHybridOptimizationProblem,
+    )
     from ._gmpb import GMPBOptimizationProblem as GMPBOptimizationProblem
     from ._ide_treadle import IDETreadlePumpMaterialMin as IDETreadlePumpMaterialMin
     from ._moneymaker import MoneyMakerHipPumpProblem as MoneyMakerHipPumpProblem
@@ -61,3 +113,8 @@ if TYPE_CHECKING:
     from ._truss_topology import (
         SpaceTrussEngineeringOptimizationProblem as SpaceTrussEngineeringOptimizationProblem,
     )
+    from ._wind_farm_layout import WindFarmLayoutOptimizationProblem as WindFarmLayoutOptimizationProblem
+    from ._wind_farm_unrestricted import (
+        UnrestrictedWindFarmLayoutOptimizationProblem as UnrestrictedWindFarmLayoutOptimizationProblem,
+    )
+    from ._worker_hours_allocation import CompetingProjectsWorkerHoursProblem as CompetingProjectsWorkerHoursProblem

@@ -1,0 +1,40 @@
+problem_id = "ideation_lego_block_scrapyard_collection"
+title = "Lego-Block Scrapyard Collection"
+summary = "A competitive course-design brief about collecting Lego blocks from a scrapyard and dumping them into a bin."
+kind = "text"
+statement = '''
+# Lego-Block Scrapyard Collection
+
+Design a device that collects Lego blocks from a scrapyard
+and dumps them into a bin either through a ramp or a trap
+door. The device should fit in an 18 x 18 x 18 envelope prior
+to the starting position. Human contact with the device is not
+allowed once it begins operation. Two minutes are given to set
+up the device at the start line and 3 minutes to do the job. The
+number of objects one can put in the bin determines the score.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "competition", "lego", "collection"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "dinar_shah_2014"
+kind = "inline"
+authors = ["Mahmoud Dinar", "Jami J. Shah"]
+title = "Enhancing Design Problem Formulation Skills for Engineering Design Students"
+year = 2014
+venue = "ASME IDETC/CIE 2014, DETC2014-35508"
+formatted_text = "Dinar and Shah (2014). Enhancing Design Problem Formulation Skills for Engineering Design Students. ASME IDETC/CIE 2014, DETC2014-35508."
+raw_text = "Dinar, Mahmoud, and Jami J. Shah (2014). Enhancing Design Problem Formulation Skills for Engineering Design Students. ASME IDETC/CIE 2014, DETC2014-35508."
+provisional = true

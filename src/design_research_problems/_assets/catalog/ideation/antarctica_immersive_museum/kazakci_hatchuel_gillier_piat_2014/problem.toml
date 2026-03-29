@@ -1,0 +1,43 @@
+problem_id = "ideation_antarctica_immersive_museum"
+title = "Antarctica Immersive Museum"
+summary = "A museum-design brief about creating a mobile, eco-friendly concept that immerses visitors in an Antarctica-like world."
+kind = "text"
+statement = '''
+# Antarctica Immersive Museum
+
+Elaborate a breakthrough museum concept that gives the visitor an
+immersive experience in an Antarctica-like world.
+
+The museum should:
+
+- make people sensitive to the imperative of protecting Antarctica
+- be mobile and deployable worldwide
+- be practical to install and transport
+- be as eco-friendly as possible
+- have a size of approximately 3,600 m2
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "design-exploration"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "design", "museum", "architecture", "immersive"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 90
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "kazakci_hatchuel_gillier_piat_2014"
+kind = "inline"
+authors = ["Akin O. Kazakci", "Thomas Gillier", "Gerald Piat", "Armand Hatchuel"]
+title = "Brainstorming vs. Creative Design Reasoning: A Theory-Driven Experimental Investigation of Novelty, Feasibility and Value of Ideas"
+year = 2014
+venue = "Design Computing and Cognition DCC'14"
+formatted_text = "Kazakci, Gillier, Piat, and Hatchuel (2014). Brainstorming vs. Creative Design Reasoning: A Theory-Driven Experimental Investigation of Novelty, Feasibility and Value of Ideas. Design Computing and Cognition DCC'14."
+raw_text = "Kazakci, Akin O., Thomas Gillier, Gerald Piat, and Armand Hatchuel (2014). Brainstorming vs. Creative Design Reasoning: A Theory-Driven Experimental Investigation of Novelty, Feasibility and Value of Ideas. Design Computing and Cognition DCC'14."
+provisional = true

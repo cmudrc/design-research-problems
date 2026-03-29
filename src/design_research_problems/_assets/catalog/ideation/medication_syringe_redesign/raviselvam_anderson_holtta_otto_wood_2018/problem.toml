@@ -1,0 +1,37 @@
+problem_id = "ideation_medication_syringe_redesign"
+title = "Medication Syringe Redesign"
+summary = "An empathic-design task about identifying needs and redesign opportunities for a medication syringe."
+kind = "text"
+statement = '''
+# Medication Syringe Redesign
+
+List the specific design needs and design opportunities with
+respect to size, shape, weight, material, safety, ergonomics,
+and other specific features associated with a medication
+syringe.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "open"
+tags = ["text", "human-subjects", "ideation", "medical", "syringe", "requirements"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 15
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "raviselvam_anderson_holtta_otto_wood_2018"
+kind = "inline"
+authors = ["Sujithra Raviselvam", "David Anderson", "Katja Holtta-Otto", "Kristin L. Wood"]
+title = "Systematic Framework to Apply Extraordinary User Perspective to Capture Latent Needs Among Ordinary Users"
+year = 2018
+venue = "ASME IDETC/CIE 2018, DETC2018-86263"
+formatted_text = "Raviselvam, Anderson, Holtta-Otto, and Wood (2018). Systematic Framework to Apply Extraordinary User Perspective to Capture Latent Needs Among Ordinary Users. ASME IDETC/CIE 2018, DETC2018-86263."
+raw_text = "Raviselvam, Sujithra, David Anderson, Katja Holtta-Otto, and Kristin L. Wood (2018). Systematic Framework to Apply Extraordinary User Perspective to Capture Latent Needs Among Ordinary Users. ASME IDETC/CIE 2018, DETC2018-86263."
+provisional = true

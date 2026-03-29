@@ -1,0 +1,43 @@
+problem_id = "ideation_orange_juice_extraction_device_quantified"
+title = "Orange Juice Extraction Device With Quantitative Requirements"
+summary = "A constrained orange-juicer brief with cost, manufacturing, washability, footprint, and mechanism limits."
+kind = "text"
+statement = '''
+# Orange Juice Extraction Device With Quantitative Requirements
+
+Design a device to extract orange juice from fresh oranges at
+home.
+
+Requirements:
+
+- Target cost: $20
+- Easy to manufacture: do not use more than 2 manufacturing processes
+- Machine washable: no significant damage after 100 washes
+- Small footprint: fit within a volume of 15 x 15 x 15 cm3
+- Do not use blenders or blender-type machines as a base for designs
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "kitchen", "citrus", "consumer"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 15
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "kang_kai_siang_chia_koronis_silva_2018"
+kind = "inline"
+authors = ["Jacob Kang Kai Siang", "Pei Zhi Chia", "Georgios Koronis", "Arlindo Silva"]
+title = "Exploring the Use of a Full Factorial Design of Experiment to Study Design Briefs for Creative Ideation"
+year = 2018
+venue = "ASME IDETC/CIE 2018, DETC2018-85794"
+formatted_text = "Kang Kai Siang, Chia, Koronis, and Silva (2018). Exploring the Use of a Full Factorial Design of Experiment to Study Design Briefs for Creative Ideation. ASME IDETC/CIE 2018, DETC2018-85794."
+raw_text = "Kang Kai Siang, Jacob, Pei Zhi Chia, Georgios Koronis, and Arlindo Silva (2018). Exploring the Use of a Full Factorial Design of Experiment to Study Design Briefs for Creative Ideation. ASME IDETC/CIE 2018, DETC2018-85794."
+provisional = true

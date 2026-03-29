@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "design-research-problems"
-version = "0.2.0"
+version = "0.2.1"
 description = "A compendium of canonical design research problems"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -48,6 +48,7 @@ dev = [
   "build>=1.2,<2",
   "mcp>=1,<2",
   "mypy>=1.10,<2",
+  "pydata-sphinx-theme>=0.16,<1",
   "pre-commit>=3.7,<5",
   "pytest>=8.2,<9",
   "pytest-cov>=7.0,<8",
@@ -55,7 +56,6 @@ dev = [
   "setuptools>=77",
   "sphinx>=7.4,<9",
   "sphinx-copybutton>=0.5,<1",
-  "sphinx-rtd-theme>=2.0,<4",
   "sphinxcontrib-mermaid>=1.0,<2",
   "twine>=5.1,<7",
   "wheel>=0.45",

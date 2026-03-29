@@ -42,6 +42,7 @@ Family Pages
    decision
    optimization
    grammar
+   battery_ladder
    mcp
 
 For the complete generated problem-by-problem inventory, see

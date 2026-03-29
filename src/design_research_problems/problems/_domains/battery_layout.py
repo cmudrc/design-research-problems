@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from math import floor, sqrt
 from typing import Protocol
 
+from design_research_problems.problems._domains.battery_defaults import BATTERY_BACKEND_DEFAULTS
+
 
 @dataclass(frozen=True)
 class BatteryCellSpec:
@@ -172,7 +174,7 @@ CELL_SPACING_V_MM = CELL_SPEC_18650.length_mm + MIN_SPACING_MM
 HEX_X_SPACING_MM = CELL_SPACING_H_MM
 HEX_Y_SPACING_MM = CELL_SPACING_H_MM * (sqrt(3.0) / 2.0)
 HEX_OFFSET_X_MM = CELL_SPACING_H_MM / 2.0
-DEFAULT_INTERCONNECT_RESISTANCE_OHM = 1.0e-4
+DEFAULT_INTERCONNECT_RESISTANCE_OHM = BATTERY_BACKEND_DEFAULTS.electrical.ideal_series_threshold_ohm
 
 
 def coordinate_key(cell: BatteryCoordinateLike) -> tuple[int, int, int]:

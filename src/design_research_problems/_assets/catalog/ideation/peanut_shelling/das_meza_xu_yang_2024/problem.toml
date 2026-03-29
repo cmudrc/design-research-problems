@@ -1,0 +1,44 @@
+problem_id = "ideation_peanut_shelling_haiti_west_africa"
+title = "Peanut Shelling Machine for Haiti and West Africa"
+summary = "A regionalized peanut-shelling ideation brief used in a 2024 tablet-versus-paper study."
+kind = "text"
+statement = '''
+# Peanut Shelling Machine for Haiti and West Africa
+
+In places like Haiti and certain West African countries, peanuts are a
+significant crop. Most peanut farmers shell their peanuts by hand, an
+inefficient and labor-intensive process. The goal of this project is to
+design and build a low-cost, easy to manufacture peanut shelling machine
+that will increase the productivity of the African peanut farmers.
+
+Customer needs:
+
+- Remove the shell with minimal damage to the peanuts.
+- Electrical outlets are not available as a power source.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "agriculture", "mechanical-design"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "das_meza_xu_yang_2024"
+kind = "inline"
+authors = ["Madhurima Das", "Jessica Meza", "Christine Xu", "Maria C. Yang"]
+title = "Concept Chaining Patterns During Ideation Using Digital Tablets"
+year = 2024
+venue = "ASME IDETC/CIE 2024, DETC2024-142785"
+formatted_text = "Das, Meza, Xu, and Yang (2024). Concept Chaining Patterns During Ideation Using Digital Tablets. ASME IDETC/CIE 2024, DETC2024-142785."
+raw_text = "Das, Meza, Xu, and Yang (2024). Concept Chaining Patterns During Ideation Using Digital Tablets. ASME IDETC/CIE 2024, DETC2024-142785."
+provisional = true
+

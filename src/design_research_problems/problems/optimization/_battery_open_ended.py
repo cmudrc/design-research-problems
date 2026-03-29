@@ -12,13 +12,52 @@ from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import MissingOptionalDependencyError
 from design_research_problems._optional import import_optional_module
 from design_research_problems.problems._assets import PackageResourceBundle
-from design_research_problems.problems._domains.battery_cell_model import load_18650_cell_model
+from design_research_problems.problems._battery_adapters import (
+    DEFAULT_COOLING_COEFFICIENT,
+    DEFAULT_PASSIVE_COOLING,
+    DEFAULT_THERMAL_AIRFLOW_AXIS,
+    DEFAULT_THERMAL_CONTACT_DECAY_MM,
+    DEFAULT_THERMAL_CONTACT_RESISTANCE_K_PER_W,
+    DEFAULT_THERMAL_FLOW_SHADOWING_FACTOR,
+    DEFAULT_THERMAL_MODEL,
+    DEFAULT_THERMAL_NEIGHBOR_CLEARANCE_MM,
+    DEFAULT_THERMAL_REFERENCE_SOC,
+    BatteryEvaluationAdapterOutcome,
+    BatteryThermalPromotionConfig,
+    coerce_battery_thermal_airflow_axis,
+    coerce_battery_thermal_model,
+    evaluate_explicit_netlist_state,
+)
+from design_research_problems.problems._battery_problem_config import (
+    parse_battery_backend_config,
+    parse_battery_requirements,
+    resolve_battery_requirements,
+)
+from design_research_problems.problems._battery_tier_shared import (
+    _DEFAULT_AMBIENT_TEMPERATURE_C,
+    _DEFAULT_MAX_TEMPERATURE_C,
+    _score_metrics,
+)
+from design_research_problems.problems._domains.battery_benchmark import (
+    BatteryEvaluationMode,
+    BatteryRepresentationMode,
+    build_battery_evaluation_provenance,
+    coerce_battery_evaluation_mode,
+    supported_pack_evaluation_modes,
+)
+from design_research_problems.problems._domains.battery_cell_model import (
+    BatteryBackendConfig,
+    load_18650_cell_model,
+)
 from design_research_problems.problems._domains.battery_circuit import (
     BatteryCircuitEvaluation,
     BatteryCircuitState,
     evaluate_battery_circuit,
 )
-from design_research_problems.problems._domains.battery_layout import BatteryRequirements
+from design_research_problems.problems._domains.battery_layout import (
+    BatteryRequirements,
+)
+from design_research_problems.problems._domains.battery_tier_metrics import BatteryObjectiveWeights, BatteryTierMetrics
 from design_research_problems.problems._metadata import ProblemMetadata
 from design_research_problems.problems._optimization import (
     Bounds,
@@ -27,7 +66,6 @@ from design_research_problems.problems._optimization import (
     OptimizationResult,
 )
 from design_research_problems.problems.grammar._battery_pack_open import BatteryPack18650OpenEndedProblem
-from design_research_problems.problems.grammar._battery_problem_base import parse_battery_requirements
 
 _TRANSITION_PROGRAM_LENGTH = 32
 _MAX_TRANSITION_TOKEN = 8_192
@@ -37,6 +75,7 @@ _CONNECTION_TIE_BREAK_SCALE = 1.0e-4
 _VOLUME_TIE_BREAK_SCALE = 1.0e-8
 _SEARCH_DELTAS = (-64, -16, -4, -1, 1, 4, 16, 64)
 _AUTO_SOLVER_ORDER = ("pymoo", "nevergrad", "local")
+_T3B_SUPPORTED_EVALUATION_MODES = supported_pack_evaluation_modes(BatteryRepresentationMode.EXPLICIT_NETLIST)
 
 
 class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
@@ -49,6 +88,7 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         resource_bundle: PackageResourceBundle | None = None,
         requirements: BatteryRequirements | None = None,
         max_cell_count: int = 24,
+        backend_config: BatteryBackendConfig | None = None,
     ) -> None:
         """Initialize the packaged open-ended capacity-maximization benchmark.
 
@@ -58,22 +98,16 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             resource_bundle: Optional package-resource loader.
             requirements: Optional battery-pack requirements override.
             max_cell_count: Maximum allowed cell count in generated states.
+            backend_config: Optional backend fidelity configuration.
         """
         super().__init__(
             metadata=metadata,
             statement_markdown=statement_markdown,
             resource_bundle=resource_bundle,
         )
-        self.requirements = requirements or BatteryRequirements(
-            target_voltage_v=14.8,
-            minimum_capacity_ah=10.0,
-            minimum_current_a=60.0,
-            max_width_mm=500.0,
-            max_depth_mm=500.0,
-            max_height_mm=250.0,
-            voltage_tolerance_v=0.1,
-        )
+        self.requirements = resolve_battery_requirements(requirements)
         self.max_cell_count = max_cell_count
+        self.backend_config = backend_config
         self.bounds = Bounds(
             lb=numpy.zeros(_TRANSITION_PROGRAM_LENGTH, dtype=float),
             ub=numpy.full(_TRANSITION_PROGRAM_LENGTH, float(_MAX_TRANSITION_TOKEN), dtype=float),
@@ -87,6 +121,7 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             metadata=metadata,
             requirements=self.requirements,
             max_cell_count=self.max_cell_count,
+            backend_config=self.backend_config,
         )
         self._state_cache: dict[tuple[int, ...], BatteryCircuitState] = {}
         self._evaluation_cache: dict[tuple[int, ...], BatteryCircuitEvaluation] = {}
@@ -109,6 +144,7 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             resource_bundle=cls.resource_bundle_from_manifest(manifest),
             requirements=parse_battery_requirements(manifest),
             max_cell_count=int(cast(int, manifest.parameters.get("max_cell_count", 24))),
+            backend_config=parse_battery_backend_config(manifest),
         )
 
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
@@ -734,6 +770,7 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
             requirements=self.requirements,
             load_cell_model=load_18650_cell_model,
             simulate_to_failure=True,
+            backend_config=self.backend_config,
         )
 
     def _evaluation_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryCircuitEvaluation:
@@ -927,4 +964,236 @@ class BatteryOpenEndedCapacityMaxProblem(OptimizationProblem):
         return 1.0 if self._evaluation_from_variables(variables).is_feasible else -1.0
 
 
-__all__ = ["BatteryOpenEndedCapacityMaxProblem"]
+class Battery18650T3BNetlistExplicitOptimizationProblem(BatteryOpenEndedCapacityMaxProblem):
+    """Public tier-3B explicit-netlist battery benchmark."""
+
+    def __init__(
+        self,
+        metadata: ProblemMetadata,
+        statement_markdown: str = "",
+        resource_bundle: PackageResourceBundle | None = None,
+        requirements: BatteryRequirements | None = None,
+        max_cell_count: int = 24,
+        backend_config: BatteryBackendConfig | None = None,
+        objective_weights: BatteryObjectiveWeights | None = None,
+        cooling_coefficient_w_per_m2k: float = DEFAULT_COOLING_COEFFICIENT,
+        passive_cooling_w_per_k: float = DEFAULT_PASSIVE_COOLING,
+        ambient_temperature_c: float = _DEFAULT_AMBIENT_TEMPERATURE_C,
+        maximum_temperature_c: float = _DEFAULT_MAX_TEMPERATURE_C,
+        load_current_a: float | None = None,
+        thermal_model: str = DEFAULT_THERMAL_MODEL,
+        thermal_neighbor_clearance_mm: float = DEFAULT_THERMAL_NEIGHBOR_CLEARANCE_MM,
+        thermal_contact_decay_mm: float = DEFAULT_THERMAL_CONTACT_DECAY_MM,
+        thermal_contact_resistance_k_per_w: float = DEFAULT_THERMAL_CONTACT_RESISTANCE_K_PER_W,
+        thermal_flow_shadowing_factor: float = DEFAULT_THERMAL_FLOW_SHADOWING_FACTOR,
+        thermal_airflow_axis: str = DEFAULT_THERMAL_AIRFLOW_AXIS,
+        thermal_reference_soc: float = DEFAULT_THERMAL_REFERENCE_SOC,
+        evaluation_mode: str | BatteryEvaluationMode = BatteryEvaluationMode.EXPLICIT_CIRCUIT.value,
+    ) -> None:
+        super().__init__(
+            metadata=metadata,
+            statement_markdown=statement_markdown,
+            resource_bundle=resource_bundle,
+            requirements=requirements,
+            max_cell_count=max_cell_count,
+            backend_config=backend_config,
+        )
+        self.objective_weights = objective_weights or BatteryObjectiveWeights(volume=0.40, cost=0.30, temperature=0.30)
+        self.cooling_coefficient_w_per_m2k = float(cooling_coefficient_w_per_m2k)
+        self.passive_cooling_w_per_k = max(1.0e-9, float(passive_cooling_w_per_k))
+        self.ambient_temperature_c = float(ambient_temperature_c)
+        self.maximum_temperature_c = max(float(maximum_temperature_c), self.ambient_temperature_c + 1.0)
+        self.load_current_a = (
+            float(self.requirements.minimum_current_a) if load_current_a is None else float(load_current_a)
+        )
+        self.thermal_model = coerce_battery_thermal_model(thermal_model)
+        self.thermal_neighbor_clearance_mm = max(0.0, float(thermal_neighbor_clearance_mm))
+        self.thermal_contact_decay_mm = max(1.0e-6, float(thermal_contact_decay_mm))
+        self.thermal_contact_resistance_k_per_w = max(1.0e-6, float(thermal_contact_resistance_k_per_w))
+        self.thermal_flow_shadowing_factor = float(numpy.clip(thermal_flow_shadowing_factor, 0.0, 1.0))
+        self.thermal_airflow_axis = coerce_battery_thermal_airflow_axis(thermal_airflow_axis)
+        self.thermal_reference_soc = float(numpy.clip(thermal_reference_soc, 0.0, 1.0))
+        self.evaluation_mode = coerce_battery_evaluation_mode(
+            evaluation_mode,
+            default=BatteryEvaluationMode.EXPLICIT_CIRCUIT,
+            supported=_T3B_SUPPORTED_EVALUATION_MODES,
+        )
+        self._outcome_cache: dict[tuple[int, ...], BatteryEvaluationAdapterOutcome] = {}
+        self.constraints = [
+            ConstraintDefinition(kind="ineq", evaluate=self._voltage_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._capacity_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._backend_feasibility_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._current_margin),
+            ConstraintDefinition(kind="ineq", evaluate=self._temperature_margin),
+        ]
+
+    @classmethod
+    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T3BNetlistExplicitOptimizationProblem:
+        parameters = manifest.parameters
+        return cls(
+            metadata=manifest.metadata,
+            statement_markdown=manifest.statement_markdown,
+            resource_bundle=cls.resource_bundle_from_manifest(manifest),
+            requirements=parse_battery_requirements(manifest),
+            max_cell_count=int(cast(int, parameters.get("max_cell_count", 24))),
+            backend_config=parse_battery_backend_config(manifest),
+            objective_weights=BatteryObjectiveWeights.from_mapping(
+                parameters.get("objective_weights"),
+                default_volume=0.40,
+                default_cost=0.30,
+                default_temperature=0.30,
+            ),
+            cooling_coefficient_w_per_m2k=float(
+                cast(float, parameters.get("cooling_coefficient_w_per_m2k", DEFAULT_COOLING_COEFFICIENT))
+            ),
+            passive_cooling_w_per_k=float(
+                cast(float, parameters.get("passive_cooling_w_per_k", DEFAULT_PASSIVE_COOLING))
+            ),
+            ambient_temperature_c=float(
+                cast(float, parameters.get("ambient_temperature_c", _DEFAULT_AMBIENT_TEMPERATURE_C))
+            ),
+            maximum_temperature_c=float(
+                cast(float, parameters.get("maximum_temperature_c", _DEFAULT_MAX_TEMPERATURE_C))
+            ),
+            load_current_a=cast(float | None, parameters.get("load_current_a")),
+            thermal_model=str(cast(str, parameters.get("thermal_model", DEFAULT_THERMAL_MODEL))),
+            thermal_neighbor_clearance_mm=float(
+                cast(float, parameters.get("thermal_neighbor_clearance_mm", DEFAULT_THERMAL_NEIGHBOR_CLEARANCE_MM))
+            ),
+            thermal_contact_decay_mm=float(
+                cast(float, parameters.get("thermal_contact_decay_mm", DEFAULT_THERMAL_CONTACT_DECAY_MM))
+            ),
+            thermal_contact_resistance_k_per_w=float(
+                cast(
+                    float,
+                    parameters.get(
+                        "thermal_contact_resistance_k_per_w",
+                        DEFAULT_THERMAL_CONTACT_RESISTANCE_K_PER_W,
+                    ),
+                )
+            ),
+            thermal_flow_shadowing_factor=float(
+                cast(float, parameters.get("thermal_flow_shadowing_factor", DEFAULT_THERMAL_FLOW_SHADOWING_FACTOR))
+            ),
+            thermal_airflow_axis=str(cast(str, parameters.get("thermal_airflow_axis", DEFAULT_THERMAL_AIRFLOW_AXIS))),
+            thermal_reference_soc=float(
+                cast(float, parameters.get("thermal_reference_soc", DEFAULT_THERMAL_REFERENCE_SOC))
+            ),
+            evaluation_mode=cast(
+                str | BatteryEvaluationMode,
+                parameters.get("evaluation_mode", BatteryEvaluationMode.EXPLICIT_CIRCUIT.value),
+            ),
+        )
+
+    def _thermal_config(self) -> BatteryThermalPromotionConfig:
+        return BatteryThermalPromotionConfig(
+            cooling_coefficient_w_per_m2k=float(self.cooling_coefficient_w_per_m2k),
+            passive_cooling_w_per_k=float(self.passive_cooling_w_per_k),
+            ambient_temperature_c=float(self.ambient_temperature_c),
+            thermal_model=self.thermal_model,
+            thermal_neighbor_clearance_mm=float(self.thermal_neighbor_clearance_mm),
+            thermal_contact_decay_mm=float(self.thermal_contact_decay_mm),
+            thermal_contact_resistance_k_per_w=float(self.thermal_contact_resistance_k_per_w),
+            thermal_flow_shadowing_factor=float(self.thermal_flow_shadowing_factor),
+            thermal_airflow_axis=self.thermal_airflow_axis,
+            thermal_reference_soc=float(self.thermal_reference_soc),
+        )
+
+    def _outcome_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryEvaluationAdapterOutcome:
+        genes = self._normalized_genes(variables)
+        cached = self._outcome_cache.get(genes)
+        if cached is not None:
+            return cached
+        outcome = evaluate_explicit_netlist_state(
+            self._state_from_genes(genes),
+            requirements=self.requirements,
+            backend_config=self.backend_config,
+            evaluation_mode=self.evaluation_mode,
+            load_current_a=self.load_current_a,
+            thermal_config=self._thermal_config(),
+        )
+        self._outcome_cache[genes] = outcome
+        return outcome
+
+    def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
+        return self._outcome_from_variables(variables).metrics
+
+    def objective_components(self, variables: NDArray[numpy.float64]) -> dict[str, float]:
+        return self._metrics_from_variables(variables).as_dict()
+
+    def objective(self, variables: NDArray[numpy.float64]) -> float:
+        normalized = self._normalize_vector(variables)
+        metrics = self._metrics_from_variables(normalized)
+        return _score_metrics(
+            metrics=metrics,
+            requirements=self.requirements,
+            max_cell_count=self.max_cell_count,
+            max_temperature_c=self.maximum_temperature_c,
+            ambient_temperature_c=self.ambient_temperature_c,
+            weights=self.objective_weights,
+            total_violation=self.constraint_violation(normalized),
+        )
+
+    def _current_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return self._metrics_from_variables(variables).current_limit_a - self.requirements.minimum_current_a
+
+    def _temperature_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return self.maximum_temperature_c - self._metrics_from_variables(variables).max_temperature_c
+
+    def _voltage_margin(self, variables: NDArray[numpy.float64]) -> float:
+        metrics = self._metrics_from_variables(variables)
+        return self.requirements.voltage_tolerance_v - abs(metrics.voltage_v - self.requirements.target_voltage_v)
+
+    def _capacity_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return self._metrics_from_variables(variables).capacity_ah - self.requirements.minimum_capacity_ah
+
+    def _backend_feasibility_margin(self, variables: NDArray[numpy.float64]) -> float:
+        return 1.0 if self._metrics_from_variables(variables).is_feasible else -1.0
+
+    def evaluation_provenance(self, variables: NDArray[numpy.float64]) -> object:
+        outcome = self._outcome_from_variables(self._normalize_vector(variables))
+        return build_battery_evaluation_provenance(
+            representation_mode=BatteryRepresentationMode.EXPLICIT_NETLIST,
+            evaluation_mode=self.evaluation_mode,
+            evaluator_implementation=f"{type(self).__module__}:{type(self).__name__}",
+            requested_backend_config=self.backend_config,
+            honored_backend_fields=outcome.honored_backend_fields,
+            electrical_path=outcome.electrical_path,
+            thermal_path=outcome.thermal_path,
+            cell_model_source=outcome.cell_model_source,
+            thermal_prior_source=outcome.thermal_prior_source,
+            assumed_defaults=outcome.assumed_defaults,
+            adaptation_notes=outcome.adaptation_notes,
+        )
+
+    def solve(
+        self,
+        initial_solution: NDArray[numpy.float64] | None = None,
+        seed: int | None = None,
+        maxiter: int = 200,
+        solver_backend: str = "auto",
+    ) -> OptimizationResult:
+        result = super().solve(
+            initial_solution=initial_solution,
+            seed=seed,
+            maxiter=maxiter,
+            solver_backend=solver_backend,
+        )
+        return OptimizationResult(
+            x=result.x,
+            fun=result.fun,
+            success=result.success,
+            message=(
+                "Evaluated explicit-netlist battery benchmark and found a feasible design."
+                if result.success
+                else "Evaluated explicit-netlist battery benchmark and returned a best-effort design."
+            ),
+            nit=result.nit,
+            nfev=result.nfev,
+        )
+
+
+__all__ = [
+    "Battery18650T3BNetlistExplicitOptimizationProblem",
+    "BatteryOpenEndedCapacityMaxProblem",
+]

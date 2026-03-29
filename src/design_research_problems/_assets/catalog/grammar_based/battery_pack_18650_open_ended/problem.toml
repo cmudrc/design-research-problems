@@ -1,9 +1,9 @@
 problem_id = "battery_pack_18650_open_ended"
-title = "18650 open-ended battery-pack graph grammar"
+title = "T3B 18650 open-ended battery-pack graph grammar"
 summary = "An explicit-circuit grammar for adding 18650 cells one at a time, wiring arbitrary valid interconnects, and evaluating the resulting pack with a shared circuit backend."
 kind = "grammar"
 statement = '''
-# 18650 open-ended battery-pack graph grammar
+# T3B 18650 open-ended battery-pack graph grammar
 
 Design a battery pack using 18650 cells under an explicit electrical graph
 model. The grammar starts with a single cell and lets designers add one cell at

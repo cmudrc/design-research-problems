@@ -1,0 +1,45 @@
+problem_id = "ideation_shot_buddy_basketball_return"
+title = "Shot Buddy Basketball Return"
+summary = "A basketball training-device brief focused on returning made or missed shots to the shooter from different positions."
+kind = "text"
+statement = '''
+# Shot Buddy Basketball Return
+
+Design the shot buddy, a device which could return shot
+basketballs to the shooter, whether the basket was made or
+missed. The device must be able to automatically adjust the
+return angle based on the position of the shooter when the ball
+is shot. The shooter may be initially located anywhere within a
+25' semicircle with respect to the basket. It must also
+accurately and quickly return balls to the shooter and not block
+the shooter's access to the basket. Ideally, the return speed
+would be adjustable to accommodate different skill levels. The
+device should be user friendly for kids ages 10-18, easy to
+setup and applicable to a wide variety of basket types. The
+device should be affordable for the average family.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "basketball", "sports", "training"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 30
+participants = "individual"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "dinar_park_shah_2015"
+kind = "inline"
+authors = ["Mahmoud Dinar", "Yong-Seok Park", "Jami J. Shah"]
+title = "Evaluating the Effectiveness of Problem Formulation and Ideation Skills Learned Throughout an Engineering Design Course"
+year = 2015
+venue = "ASME IDETC/CIE 2015, DETC2015-46542"
+formatted_text = "Dinar, Park, and Shah (2015). Evaluating the Effectiveness of Problem Formulation and Ideation Skills Learned Throughout an Engineering Design Course. ASME IDETC/CIE 2015, DETC2015-46542."
+raw_text = "Dinar, Mahmoud, Yong-Seok Park, and Jami J. Shah (2015). Evaluating the Effectiveness of Problem Formulation and Ideation Skills Learned Throughout an Engineering Design Course. ASME IDETC/CIE 2015, DETC2015-46542."
+provisional = true

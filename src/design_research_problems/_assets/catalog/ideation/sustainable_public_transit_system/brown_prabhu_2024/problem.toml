@@ -1,0 +1,42 @@
+problem_id = "ideation_sustainable_public_transit_system"
+title = "Sustainable Public Transit System"
+summary = "A system-design brief about creating a cost-effective, low-carbon public transit system for a medium-sized city."
+kind = "text"
+statement = '''
+# Sustainable Public Transit System
+
+Design a sustainable public transit system for a medium-sized city
+with a population of 500,000.
+
+The system should:
+
+- significantly reduce the carbon footprint of transportation in the city
+- improve air quality
+- be cost-effective
+- be easy to use for commuters
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly", "requirements-study-ready"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "transport", "sustainability", "infrastructure"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 25
+participants = "individual"
+evaluation_mode = "requirement-coverage"
+
+[[citations]]
+key = "brown_prabhu_2024"
+kind = "inline"
+authors = ["Evan Brown", "Rohan Prabhu"]
+title = "Looking Within: Exploring the Effects of Social Identity-Based Reflection on Designers' Problem Framing Behavior"
+year = 2024
+venue = "Design Computing and Cognition DCC'24"
+formatted_text = "Brown and Prabhu (2024). Looking Within: Exploring the Effects of Social Identity-Based Reflection on Designers' Problem Framing Behavior. Design Computing and Cognition DCC'24."
+raw_text = "Brown, Evan, and Rohan Prabhu (2024). Looking Within: Exploring the Effects of Social Identity-Based Reflection on Designers' Problem Framing Behavior. Design Computing and Cognition DCC'24."
+provisional = true

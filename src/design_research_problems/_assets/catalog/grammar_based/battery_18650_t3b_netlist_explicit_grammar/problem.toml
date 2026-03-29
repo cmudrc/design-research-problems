@@ -1,0 +1,75 @@
+problem_id = "battery_18650_t3b_netlist_explicit_grammar"
+title = "T3B 18650 netlist explicit grammar"
+summary = "Tier-3B explicit-netlist battery grammar benchmark with variable cell count and direct interconnect editing."
+kind = "grammar"
+statement = '''
+# T3B 18650 netlist explicit grammar
+
+Tier 3 adds explicit topology/wiring freedom and variable active-cell count to
+the pose-aware layout space. Designers can add/remove/move cells and edit
+interconnects directly in the explicit battery graph.
+
+This rung introduces meaningful electrical-topology variability beyond fixed
+rectangular assumptions.
+
+The grammar operates directly on explicit cells and interconnects. Topology
+quality is not only about cell count; stage balance matters. If n_i is stage
+population:
+- P_eq = min_i(n_i)
+- C_pack ~= P_eq * C_cell
+- I_limit ~= P_eq * C_cell * C_rate_max
+
+This creates constructive pressure for balanced stage populations while still
+allowing open-ended wiring edits.
+'''
+implementation = "design_research_problems.problems.grammar._battery_tiers:Battery18650T3BNetlistExplicitGrammarProblem"
+capabilities = [
+  "statement-markdown",
+  "serializable-state",
+  "discrete-actions",
+  "optional-evaluator",
+  "external-adapter",
+]
+study_suitability = []
+
+[benchmark]
+benchmark_question = "How well do grammar methods synthesize explicit battery netlists when structure and wiring are first-class design decisions?"
+physically_modeled = [
+  "Explicit cells, terminals, and interconnects",
+  "Shared explicit-circuit validation and discharge simulation",
+  "Grid-based pack layout summary and a steady-state thermal proxy",
+]
+deliberate_surrogates = [
+  "The grammar representation is explicit-netlist rather than pose-native",
+  "Thermal behavior remains a low-order proxy layered on top of the explicit circuit backend",
+]
+representation_mode = "explicit_netlist"
+default_evaluation_mode = "explicit_circuit"
+supported_evaluation_modes = ["explicit_circuit", "hybrid_thermal"]
+validation_scope = [
+  "Explicit-circuit consistency checks",
+]
+solver_role = "grammar benchmark; no packaged optimizer"
+
+[parameters]
+evaluation_mode = "explicit_circuit"
+target_voltage_v = 14.8
+minimum_capacity_ah = 10.0
+minimum_current_a = 60.0
+max_width_mm = 500.0
+max_depth_mm = 500.0
+max_height_mm = 250.0
+voltage_tolerance_v = 0.1
+max_cell_count = 24
+
+[taxonomy]
+formulation = "discrete_grammar"
+convexity = "not_applicable"
+design_variable_type = "mixed"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.03
+objective_mode = "multi"
+constraint_nature = "hard"
+bounds_summary = "explicit graph-netlist topology with variable active-cell count"
+tags = ["grammar", "battery", "tiered", "tier-3b", "explicit-netlist", "graph-netlist"]

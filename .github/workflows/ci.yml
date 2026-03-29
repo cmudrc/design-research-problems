@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -42,7 +43,7 @@ jobs:
       - name: Install lowest direct dependencies
         run: uv pip install --python .venv/bin/python --resolution lowest-direct -e ".[dev]"
       - name: Run tests
-        run: .venv/bin/python -m pytest -q
+        run: make test
 
   locked:
     runs-on: ${{ matrix.os }}

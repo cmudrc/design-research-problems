@@ -1,0 +1,41 @@
+problem_id = "ideation_pittsadelphia_freight_shipping_system"
+title = "Pittsadelphia Freight Shipping System"
+summary = "A first-year engineering design brief about lowering freight-related smog for a fictional port city while preserving shipping capacity."
+kind = "text"
+statement = '''
+# Pittsadelphia Freight Shipping System
+
+Pittsadelphia is looking for the design of a cost-effective
+freight shipping system that reduces smog and meets EPA
+requirements, while maintaining or increasing freight capacity
+into and out of this important port city.
+
+Suggestions provided with the prompt included upgrading the
+locomotive fleet to meet more recent EPA emissions guidelines
+and adopting alternate freight shipping methods.
+'''
+capabilities = ["statement-markdown", "citation-backed", "prompt-packet"]
+study_suitability = ["human-subjects-ready", "ideation-friendly"]
+
+[taxonomy]
+formulation = "textual_prompt"
+is_dynamic = false
+orientation = "engineering_practical"
+objective_mode = "qualitative"
+constraint_nature = "embedded-constraints"
+tags = ["text", "human-subjects", "ideation", "freight", "shipping", "transport"]
+deliverable_type = "concepts"
+timebox_hint_minutes = 20
+participants = "team"
+evaluation_mode = "idea_generation"
+
+[[citations]]
+key = "zheng_miller_2016"
+kind = "inline"
+authors = ["Xuan Zheng", "Scarlett R. Miller"]
+title = "How Do I Choose? The Influence of Concept Selection Methods on Student Team Decision-Making"
+year = 2016
+venue = "ASME IDETC/CIE 2016, DETC2016-60333"
+formatted_text = "Zheng and Miller (2016). How Do I Choose? The Influence of Concept Selection Methods on Student Team Decision-Making. ASME IDETC/CIE 2016, DETC2016-60333."
+raw_text = "Zheng, Xuan, and Scarlett R. Miller (2016). How Do I Choose? The Influence of Concept Selection Methods on Student Team Decision-Making. ASME IDETC/CIE 2016, DETC2016-60333."
+provisional = true
