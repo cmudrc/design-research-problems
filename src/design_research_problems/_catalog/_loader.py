@@ -13,6 +13,7 @@ from design_research_problems.problems._metadata import (
     KNOWN_STUDY_SUITABILITY,
     Citation,
     ProblemAsset,
+    ProblemBenchmarkCard,
     ProblemKind,
     ProblemMetadata,
     ProblemTaxonomy,
@@ -178,6 +179,51 @@ def _parse_taxonomy(raw_taxonomy: dict[str, Any]) -> ProblemTaxonomy:
     )
 
 
+def _parse_benchmark_card(raw_benchmark: dict[str, Any]) -> ProblemBenchmarkCard | None:
+    """Build one optional benchmark-card object from raw manifest data.
+
+    Args:
+        raw_benchmark: Raw benchmark mapping from the manifest.
+
+    Returns:
+        Parsed benchmark card when any field is populated, otherwise ``None``.
+    """
+    if not raw_benchmark:
+        return None
+
+    def _normalize_text_tuple(key: str) -> tuple[str, ...]:
+        value = raw_benchmark.get(key, [])
+        if value is None:
+            return ()
+        if isinstance(value, str):
+            normalized = value.strip()
+            return (normalized,) if normalized else ()
+        return tuple(str(item).strip() for item in cast(list[object], value) if str(item).strip())
+
+    card = ProblemBenchmarkCard(
+        benchmark_question=cast(str | None, raw_benchmark.get("benchmark_question")),
+        physically_modeled=_normalize_text_tuple("physically_modeled"),
+        deliberate_surrogates=_normalize_text_tuple("deliberate_surrogates"),
+        representation_mode=cast(str | None, raw_benchmark.get("representation_mode")),
+        default_evaluation_mode=cast(str | None, raw_benchmark.get("default_evaluation_mode")),
+        supported_evaluation_modes=_normalize_text_tuple("supported_evaluation_modes"),
+        validation_scope=_normalize_text_tuple("validation_scope"),
+        solver_role=cast(str | None, raw_benchmark.get("solver_role")),
+    )
+    if (
+        card.benchmark_question is None
+        and not card.physically_modeled
+        and not card.deliberate_surrogates
+        and card.representation_mode is None
+        and card.default_evaluation_mode is None
+        and not card.supported_evaluation_modes
+        and not card.validation_scope
+        and card.solver_role is None
+    ):
+        return None
+    return card
+
+
 def _load_single_manifest(entry: Traversable, resource_dir: str) -> ProblemManifest:
     """Load one problem manifest directory.
 
@@ -207,6 +253,7 @@ def _load_single_manifest(entry: Traversable, resource_dir: str) -> ProblemManif
             cast(list[object], raw_data.get("study_suitability", [])),
             KNOWN_STUDY_SUITABILITY,
         ),
+        benchmark_card=_parse_benchmark_card(cast(dict[str, Any], raw_data.get("benchmark", {}))),
         implementation=cast(str | None, raw_data.get("implementation")),
     )
     parameters = cast(dict[str, object], raw_data.get("parameters", {}))

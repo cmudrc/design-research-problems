@@ -1,19 +1,19 @@
-Battery Pack 18650 Open Ended
-=============================
+Battery 18650 T3a Topology Surrogate Grammar
+============================================
 
-Source: ``examples/grammar/battery_pack_18650_open_ended.py``
+Source: ``examples/grammar/battery_18650_t3a_topology_surrogate_grammar.py``
 
 Introduction
 ------------
 
-Build and evaluate a feasible open-ended 4S4P-equivalent battery graph.
+Build and evaluate a simple tier-3A battery grammar state.
 
 Technical Implementation
 ------------------------
 
 This page is generated from the top-of-file module docstring and the example source code. The full script is included below for direct inspection.
 
-.. literalinclude:: ../../../examples/grammar/battery_pack_18650_open_ended.py
+.. literalinclude:: ../../../examples/grammar/battery_18650_t3a_topology_surrogate_grammar.py
    :language: python
    :lines: 3-
    :linenos:
@@ -25,6 +25,6 @@ Expected Results
 
 .. code-block:: bash
 
-   PYTHONPATH=src python3 examples/grammar/battery_pack_18650_open_ended.py
+   PYTHONPATH=src python3 examples/grammar/battery_18650_t3a_topology_surrogate_grammar.py
 
 Run the command shown below from repository root. Output should summarize the problem setup, a baseline solution, or diagnostic values relevant to this example.

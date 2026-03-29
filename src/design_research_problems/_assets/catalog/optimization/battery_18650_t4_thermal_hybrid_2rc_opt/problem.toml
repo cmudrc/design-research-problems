@@ -1,0 +1,110 @@
+problem_id = "battery_18650_t4_thermal_hybrid_2rc_opt"
+title = "T4 18650 thermal hybrid 2-RC optimization"
+summary = "Tier-4 thermo-topological battery benchmark variant that keeps hybrid thermal scoring while selecting a manifest-backed PyBaMM 2-RC backend configuration."
+kind = "optimization"
+statement = '''
+# T4 18650 thermal hybrid 2-RC optimization
+
+Optimize battery topology and layout jointly with thermal-system variables for
+the highest-freedom battery design rung. This packaged variant keeps the
+hybrid thermal tier-4 evaluator contract while selecting a non-default shared
+2-RC backend configuration directly from the manifest.
+
+Tier-4 retains tier-3 topology and geometry decisions and adds:
+- convective cooling coefficient h
+- passive cooling conductance G_passive
+- ambient temperature T_ambient
+- thermal model selector: lumped vs multi_node_2node
+
+Thermal heating term (from PyBaMM-derived resistance prior):
+- I_cell = I_load / P_eq
+- q_i = I_cell^2 * R_eff(SOC_ref)
+
+Lumped mode (ablation):
+- T_max = T_ambient + (N_cells * q_i) / G_eff
+
+Multi-node mode (default):
+- Nodes are [core_i, surface_i, coolant].
+- Core balance: G_cs * (T_core_i - T_surface_i) = q_i
+- Surface balance: G_cs(T_surface_i - T_core_i) + sum_j G_ij(T_surface_i - T_surface_j)
+  + G_sc,i(T_surface_i - T_cool) = 0
+- Coolant balance: sum_i G_sc,i(T_cool - T_surface_i) + G_cool_amb(T_cool - T_ambient) = 0
+- Reported T_max is max_i(T_core_i) (conservative hotspot metric).
+'''
+implementation = "design_research_problems.problems.optimization._battery_tiers:Battery18650T4ThermalHybridOptimizationProblem"
+capabilities = ["statement-markdown", "bounded-variables", "baseline-solver"]
+study_suitability = []
+
+[benchmark]
+benchmark_question = "How well do methods co-design topology, geometry, and thermal controls when evaluator fidelity can be stepped up without changing representation?"
+physically_modeled = [
+  "Tier-3 topology allocation and pose geometry",
+  "Thermal control variables for convection, passive cooling, and ambient conditions",
+  "PyBaMM-derived thermal priors and steady-state thermal-network evaluation in hybrid mode",
+]
+deliberate_surrogates = [
+  "Electrical scoring still projects topology-allocation candidates to a canonical explicit netlist",
+  "The hybrid thermal network remains steady-state rather than a full transient pack simulation",
+  "This packaged variant demonstrates backend selection through manifest configuration rather than a new representation",
+]
+representation_mode = "thermal_topology"
+default_evaluation_mode = "hybrid_thermal"
+supported_evaluation_modes = ["analytic_surrogate", "explicit_circuit", "hybrid_thermal"]
+validation_scope = [
+  "Qualitative thermal trend validation",
+  "Mode-consistency checks across analytic, explicit, and hybrid evaluators",
+]
+solver_role = "deterministic baseline search"
+
+[parameters]
+evaluation_mode = "hybrid_thermal"
+imbalance_model = "min_stage"
+target_voltage_v = 14.8
+minimum_capacity_ah = 10.0
+minimum_current_a = 60.0
+max_width_mm = 500.0
+max_depth_mm = 500.0
+max_height_mm = 250.0
+voltage_tolerance_v = 0.1
+max_cell_count = 24
+minimum_spacing_mm = 2.0
+maximum_temperature_c = 60.0
+load_current_a = 60.0
+objective_weights = { volume = 0.35, cost = 0.25, temperature = 0.40 }
+cooling_coefficient_bounds = { lower = 5.0, upper = 50.0 }
+passive_cooling_bounds = { lower = 0.1, upper = 10.0 }
+ambient_temperature_bounds = { lower = 5.0, upper = 45.0 }
+thermal_model = "multi_node_2node"
+thermal_neighbor_clearance_mm = 8.0
+thermal_contact_decay_mm = 2.0
+thermal_contact_resistance_k_per_w = 2.5
+thermal_flow_shadowing_factor = 0.25
+thermal_airflow_axis = "x"
+thermal_reference_soc = 0.5
+
+[parameters.battery_backend]
+cell_model_mode = "pybamm_ecm_2rc"
+thermal_mode = "isothermal"
+
+[parameters.battery_backend.parameterization]
+parameter_set = "Marquis2019"
+
+[taxonomy]
+formulation = "mixed_discrete_optimization"
+convexity = "nonconvex"
+design_variable_type = "mixed"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.02
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "tier-3 topology schema plus thermal-system variables"
+tags = [
+  "optimization",
+  "battery",
+  "tiered",
+  "tier-4",
+  "thermal-topology",
+  "backend-config-example",
+  "pybamm-ecm-2rc",
+]

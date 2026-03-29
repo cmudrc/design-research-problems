@@ -1,9 +1,9 @@
 problem_id = "battery_pack_18650_series_parallel"
-title = "18650 series-parallel battery-pack co-design grammar"
+title = "T1 18650 series-parallel battery-pack co-design grammar"
 summary = "A constrained grammar for repositioning 18650 cells and editing whole series stages or parallel branches in a rectangular SxP battery pack."
 kind = "grammar"
 statement = '''
-# 18650 series-parallel battery-pack co-design grammar
+# T1 18650 series-parallel battery-pack co-design grammar
 
 Design a battery pack using 18650 cells under a constrained series-parallel
 topology. The pack always forms a complete rectangular grid of logical

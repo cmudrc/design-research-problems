@@ -3,13 +3,21 @@
 Optimization Problem Catalog
 ============================
 
-This page lists all packaged optimization benchmarks and their variable counts. There are currently 13 packaged optimization problems.
+This page lists all packaged optimization benchmarks and their variable counts. There are currently 21 packaged optimization problems.
 
 For the conceptual overview, see :doc:`../problems/optimization`.
 
 .. toctree::
    :maxdepth: 1
 
+   optimization/battery_18650_t1_rectangular_surrogate_opt
+   optimization/battery_18650_t2_pose_surrogate_opt
+   optimization/battery_18650_t3a_topology_explicit_2rc_opt
+   optimization/battery_18650_t3a_topology_surrogate_opt
+   optimization/battery_18650_t3b_netlist_explicit_opt
+   optimization/battery_18650_t4_thermal_hybrid_2rc_opt
+   optimization/battery_18650_t4_thermal_hybrid_opt
+   optimization/battery_fast_charge_dfn_anchor_opt
    optimization/battery_pack_18650_open_ended_capacity_max
    optimization/battery_pack_18650_series_parallel_cost_min
    optimization/gmpb_default_dynamic_min

@@ -4,6 +4,12 @@ from __future__ import annotations
 
 from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems.problems._assets import PackageResourceBundle
+from design_research_problems.problems._battery_problem_config import (
+    _coerce_int,
+    parse_battery_backend_config,
+    parse_battery_requirements,
+)
+from design_research_problems.problems._domains.battery_cell_model import BatteryBackendConfig
 from design_research_problems.problems._domains.battery_circuit import (
     BatteryCellInstance,
     BatteryCircuitEvaluation,
@@ -24,11 +30,7 @@ from design_research_problems.problems._domains.battery_layout import (
 )
 from design_research_problems.problems._grammar import GrammarTransition
 from design_research_problems.problems._metadata import ProblemMetadata
-from design_research_problems.problems.grammar._battery_problem_base import (
-    BatteryCircuitProblemBase,
-    _coerce_int,
-    parse_battery_requirements,
-)
+from design_research_problems.problems.grammar._battery_problem_base import BatteryCircuitProblemBase
 
 
 def _coerce_state(state: object) -> BatteryCircuitState:
@@ -89,6 +91,7 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
         resource_bundle: PackageResourceBundle | None = None,
         requirements: BatteryRequirements | None = None,
         max_cell_count: int = 16,
+        backend_config: BatteryBackendConfig | None = None,
     ) -> None:
         """Store the shared requirements and open-ended cell-count bound.
 
@@ -98,12 +101,14 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
             resource_bundle: Value for ``resource_bundle``.
             requirements: Value for ``requirements``.
             max_cell_count: Value for ``max_cell_count``.
+            backend_config: Value for ``backend_config``.
         """
         super().__init__(
             metadata=metadata,
             statement_markdown=statement_markdown,
             resource_bundle=resource_bundle,
             requirements=requirements,
+            backend_config=backend_config,
         )
         self.max_cell_count = max_cell_count
 
@@ -123,6 +128,7 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
             resource_bundle=cls.resource_bundle_from_manifest(manifest),
             requirements=parse_battery_requirements(manifest),
             max_cell_count=_coerce_int(manifest.parameters.get("max_cell_count"), 16),
+            backend_config=parse_battery_backend_config(manifest),
         )
 
     def initial_state(self) -> BatteryCircuitState:
@@ -405,6 +411,7 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
                     from_terminal_id=negative_pair[0],
                     to_terminal_id=negative_pair[1],
                     resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                    ideal=True,
                 )
             )
         if connect_positive is not None:
@@ -415,6 +422,7 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
                     from_terminal_id=positive_pair[0],
                     to_terminal_id=positive_pair[1],
                     resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                    ideal=True,
                 )
             )
         return BatteryCircuitState(
@@ -573,6 +581,7 @@ class BatteryPack18650OpenEndedProblem(BatteryCircuitProblemBase[BatteryCircuitS
                 from_terminal_id=pair_key[0],
                 to_terminal_id=pair_key[1],
                 resistance_ohm=DEFAULT_INTERCONNECT_RESISTANCE_OHM,
+                ideal=True,
             )
         )
         return BatteryCircuitState(

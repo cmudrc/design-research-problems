@@ -1,0 +1,69 @@
+problem_id = "battery_18650_t3b_netlist_explicit_opt"
+title = "T3B 18650 netlist explicit optimization"
+summary = "Tier-3B explicit-netlist battery benchmark that reuses the open-ended transition-program search with native explicit-circuit or hybrid-thermal scoring."
+kind = "optimization"
+statement = '''
+# T3B 18650 netlist explicit optimization
+
+Tier 3B exposes the explicit battery netlist as the native design
+representation. The candidate vector is a transition program over the
+open-ended battery grammar; each decoded design contains explicit cells,
+terminals, interconnects, and pack terminals.
+
+Unlike the topology-allocation surrogate rung, this benchmark does not assume a
+typed stage schema as its primary representation. The explicit-circuit backend
+is the evaluator by contract.
+
+The bundled solver remains a deterministic baseline over the transition-program
+space. Its role is to provide a reproducible reference behavior rather than a
+state-of-the-art combinatorial optimizer.
+'''
+implementation = "design_research_problems.problems.optimization._battery_open_ended:Battery18650T3BNetlistExplicitOptimizationProblem"
+capabilities = ["statement-markdown", "bounded-variables", "baseline-solver"]
+study_suitability = []
+
+[benchmark]
+benchmark_question = "How well do methods handle explicit battery-netlist synthesis when wiring is a first-class design decision?"
+physically_modeled = [
+  "Explicit cells, terminals, and interconnects",
+  "Shared explicit-circuit validation and discharge simulation",
+  "Grid-based layout summary and a steady-state thermal proxy",
+]
+deliberate_surrogates = [
+  "The solver is a deterministic transition-program baseline rather than a strong optimizer",
+  "Thermal behavior remains a low-order proxy layered on top of the explicit circuit backend",
+]
+representation_mode = "explicit_netlist"
+default_evaluation_mode = "explicit_circuit"
+supported_evaluation_modes = ["explicit_circuit", "hybrid_thermal"]
+validation_scope = [
+  "Explicit-circuit consistency checks",
+]
+solver_role = "deterministic baseline search"
+
+[parameters]
+evaluation_mode = "explicit_circuit"
+target_voltage_v = 14.8
+minimum_capacity_ah = 10.0
+minimum_current_a = 60.0
+max_width_mm = 500.0
+max_depth_mm = 500.0
+max_height_mm = 250.0
+voltage_tolerance_v = 0.1
+max_cell_count = 24
+ambient_temperature_c = 25.0
+maximum_temperature_c = 60.0
+load_current_a = 60.0
+objective_weights = { volume = 0.40, cost = 0.30, temperature = 0.30 }
+
+[taxonomy]
+formulation = "mixed_discrete_optimization"
+convexity = "nonconvex"
+design_variable_type = "mixed"
+is_dynamic = false
+orientation = "engineering_practical"
+feasibility_ratio_hint = 0.02
+objective_mode = "single"
+constraint_nature = "hard"
+bounds_summary = "fixed-length transition program over the open-ended explicit battery grammar"
+tags = ["optimization", "battery", "tiered", "tier-3b", "explicit-netlist", "graph-netlist"]

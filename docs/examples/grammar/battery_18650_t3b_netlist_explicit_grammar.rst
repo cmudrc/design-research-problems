@@ -1,19 +1,19 @@
-Battery Open Ended Capacity Max
-===============================
+Battery 18650 T3b Netlist Explicit Grammar
+==========================================
 
-Source: ``examples/optimization/battery_open_ended_capacity_max.py``
+Source: ``examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py``
 
 Introduction
 ------------
 
-Inspect the packaged open-ended battery capacity benchmark.
+Build and optionally evaluate a simple tier-3B battery grammar state.
 
 Technical Implementation
 ------------------------
 
 This page is generated from the top-of-file module docstring and the example source code. The full script is included below for direct inspection.
 
-.. literalinclude:: ../../../examples/optimization/battery_open_ended_capacity_max.py
+.. literalinclude:: ../../../examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py
    :language: python
    :lines: 3-
    :linenos:
@@ -25,6 +25,6 @@ Expected Results
 
 .. code-block:: bash
 
-   PYTHONPATH=src python3 examples/optimization/battery_open_ended_capacity_max.py
+   PYTHONPATH=src python3 examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py
 
 Run the command shown below from repository root. Output should summarize the problem setup, a baseline solution, or diagnostic values relevant to this example.

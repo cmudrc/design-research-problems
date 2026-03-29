@@ -243,6 +243,7 @@ def simulate_series_parallel_pack(
                     connection_id=next_connection,
                     from_terminal_id=anchor,
                     to_terminal_id=member,
+                    ideal=True,
                 )
             )
             next_connection += 1

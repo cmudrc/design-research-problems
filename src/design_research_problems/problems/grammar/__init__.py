@@ -8,11 +8,26 @@ from typing import TYPE_CHECKING
 from .._grammar import GrammarTransition
 
 _LAZY_EXPORTS = {
-    "BatteryCellInstance": "design_research_problems.problems.grammar._battery_circuit:BatteryCellInstance",
-    "BatteryCellPlacement": "design_research_problems.problems.grammar._battery_core:BatteryCellPlacement",
-    "BatteryCircuitEvaluation": "design_research_problems.problems.grammar._battery_circuit:BatteryCircuitEvaluation",
-    "BatteryCircuitState": "design_research_problems.problems.grammar._battery_circuit:BatteryCircuitState",
-    "BatteryConnection": "design_research_problems.problems.grammar._battery_circuit:BatteryConnection",
+    "BatteryCellInstance": "design_research_problems.problems._domains.battery_circuit:BatteryCellInstance",
+    "BatteryCellPlacement": "design_research_problems.problems._domains.battery_layout:BatteryCellPlacement",
+    "BatteryCircuitEvaluation": "design_research_problems.problems._domains.battery_circuit:BatteryCircuitEvaluation",
+    "BatteryCircuitState": "design_research_problems.problems._domains.battery_circuit:BatteryCircuitState",
+    "BatteryConnection": "design_research_problems.problems._domains.battery_circuit:BatteryConnection",
+    "Battery18650T1RectangularSurrogateGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650T1RectangularSurrogateGrammarProblem"
+    ),
+    "Battery18650T2PoseSurrogateGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650T2PoseSurrogateGrammarProblem"
+    ),
+    "Battery18650T3ATopologySurrogateGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650T3ATopologySurrogateGrammarProblem"
+    ),
+    "Battery18650T3BNetlistExplicitGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650T3BNetlistExplicitGrammarProblem"
+    ),
+    "Battery18650T4ThermalHybridGrammarProblem": (
+        "design_research_problems.problems.grammar._battery_tiers:Battery18650T4ThermalHybridGrammarProblem"
+    ),
     "BatteryPack18650OpenEndedProblem": (
         "design_research_problems.problems.grammar._battery_pack_open:BatteryPack18650OpenEndedProblem"
     ),
@@ -84,6 +99,17 @@ if TYPE_CHECKING:
     )
     from ._battery_pack_sp import SeriesParallelBatteryEvaluation as SeriesParallelBatteryEvaluation
     from ._battery_pack_sp import SeriesParallelBatteryState as SeriesParallelBatteryState
+    from ._battery_tiers import (
+        Battery18650T1RectangularSurrogateGrammarProblem as Battery18650T1RectangularSurrogateGrammarProblem,
+    )
+    from ._battery_tiers import Battery18650T2PoseSurrogateGrammarProblem as Battery18650T2PoseSurrogateGrammarProblem
+    from ._battery_tiers import (
+        Battery18650T3ATopologySurrogateGrammarProblem as Battery18650T3ATopologySurrogateGrammarProblem,
+    )
+    from ._battery_tiers import (
+        Battery18650T3BNetlistExplicitGrammarProblem as Battery18650T3BNetlistExplicitGrammarProblem,
+    )
+    from ._battery_tiers import Battery18650T4ThermalHybridGrammarProblem as Battery18650T4ThermalHybridGrammarProblem
     from ._iot_home import IoTHomeCoolingGrammarProblem as IoTHomeCoolingGrammarProblem
     from ._iot_home import IoTHomeEvaluation as IoTHomeEvaluation
     from ._iot_home import IoTHomeLink as IoTHomeLink

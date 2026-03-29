@@ -1,9 +1,9 @@
 problem_id = "battery_pack_18650_open_ended_capacity_max"
-title = "18650 open-ended battery-pack co-design (capacity maximization)"
+title = "T3B 18650 open-ended battery-pack co-design (capacity maximization)"
 summary = "A transition-program optimization variant that searches explicit 18650 cell placement and wiring decisions to maximize delivered capacity under the shared battery backend."
 kind = "optimization"
 statement = '''
-# 18650 open-ended battery-pack co-design (capacity maximization)
+# T3B 18650 open-ended battery-pack co-design (capacity maximization)
 
 Search an explicit 18650 battery-pack design by choosing a fixed-length
 transition program over the library's open-ended cell-and-wire grammar. Each
