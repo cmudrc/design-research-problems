@@ -7,9 +7,9 @@
 
 <!-- release-callout:start -->
 > [!IMPORTANT]
-> Current monthly release: [Axolotl Array - April 2026](https://github.com/cmudrc/design-research-problems/milestone/1)  
-> Due: April 1, 2026  
-> Tracks: March 2026 work
+> Current monthly release: [Monarch Maze - May 2026](https://github.com/cmudrc/design-research-problems/milestone/2)  
+> Due: May 1, 2026  
+> Tracks: April 2026 work
 <!-- release-callout:end -->
 
 `design-research-problems` is a compact library and compendium of design research
