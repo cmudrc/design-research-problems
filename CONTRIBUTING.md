@@ -8,13 +8,6 @@ source .venv/bin/activate
 make dev
 ```
 
-For a reproducible install based on `uv.lock`:
-
-```bash
-make lock
-make repro REPRO_EXTRAS="dev"
-```
-
 Optional integration setup for problem families that require external backends:
 
 ```bash

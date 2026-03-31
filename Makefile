@@ -6,15 +6,12 @@ MYPY ?= $(PYTHON) -m mypy
 SPHINX ?= $(PYTHON) -m sphinx
 BUILD ?= $(PYTHON) -m build
 TWINE ?= $(PYTHON) -m twine
-UV ?= $(if $(wildcard .venv/bin/uv),.venv/bin/uv,uv)
-REPRO_PYTHON ?= $(shell cat .python-version 2>/dev/null || echo 3.12)
-REPRO_EXTRAS ?= dev
 TRUSSME_SPEC ?= trussme>=0.1.0
 COVERAGE_MIN ?= 90
 COVERAGE_MINIMUM ?= $(COVERAGE_MIN)
 FULL_EXTRAS ?= dev,battery,grammar,mcp,cad,pandas,solvers
 
-.PHONY: help check-python check-uv dev install-dev repro lock \
+.PHONY: help check-python dev install-dev \
 	lint fmt fmt-check type test qa coverage release-check \
 	docstrings-check \
 	examples-smoke examples-test examples-metrics \
@@ -41,20 +38,11 @@ help:
 check-python:
 	@$(PYTHON) -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 12) else 1)" || (echo "Python >= 3.12 is required by pyproject.toml"; exit 1)
 
-check-uv:
-	@$(UV) --version >/dev/null 2>&1 || (echo "uv is required for lock/repro targets."; exit 1)
-
 dev:
 	$(PIP) install --upgrade pip setuptools wheel
 	$(PIP) install -e ".[dev]"
 
 install-dev: dev
-
-repro: check-uv
-	$(UV) sync --frozen --python $(REPRO_PYTHON) $(foreach extra,$(REPRO_EXTRAS),--extra $(extra))
-
-lock: check-uv
-	$(UV) lock --python $(REPRO_PYTHON)
 
 lint: check-python
 	$(RUFF) check .

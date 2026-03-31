@@ -45,34 +45,6 @@ jobs:
       - name: Run tests
         run: make test
 
-  locked:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-latest
-            repro-python: "3.12"
-            repro-extras: "dev"
-          - os: macos-latest
-            repro-python: "3.12"
-            repro-extras: "dev"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.repro-python }}
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-      - name: Reproducible frozen install
-        run: make repro REPRO_PYTHON="${{ matrix.repro-python }}" REPRO_EXTRAS="${{ matrix.repro-extras }}"
-      - name: Run tests
-        run: make test
-
   full-optional:
     runs-on: ubuntu-latest
     steps:
@@ -90,7 +62,7 @@ jobs:
 
   coverage-badge:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [latest, lowest, locked, full-optional]
+    needs: [latest, lowest, full-optional]
     runs-on: ubuntu-latest
     concurrency:
       group: coverage-badge-${{ github.ref }}

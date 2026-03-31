@@ -61,5 +61,4 @@ Recommended install profiles:
 - external-tool workflows: ``pip install -e ".[mcp,cad]"``
 - full local validation environment: ``make dev-full``
 
-Reproducible and release flows are exposed via ``make repro``, ``make lock``,
-and ``make release-check``.
+Release validation is exposed via ``make release-check``.
