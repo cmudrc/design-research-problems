@@ -42,6 +42,20 @@ def test_ideation_catalog_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
+@pytest.mark.examples_full
+def test_public_api_tour_example_runs() -> None:
+    completed = _run_example("examples/catalog/public_api_tour.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "problem-count" in completed.stdout
+    assert "kind-count 5" in completed.stdout
+    assert "computable-count 3" in completed.stdout
+    assert "DecisionEvaluation" in completed.stdout
+    assert "OptimizationEvaluation" in completed.stdout
+    assert "GrammarTransition" in completed.stdout
+    assert "handled-errors MissingOptionalDependencyError TypeError" in completed.stdout
+
+
+@pytest.mark.examples_smoke
 def test_ideation_export_example_runs() -> None:
     completed = _run_example("examples/catalog/ideation_exports.py")
     assert completed.returncode == 0, completed.stderr
