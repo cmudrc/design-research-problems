@@ -70,34 +70,36 @@ merging.
 ## Release Naming
 
 - Theme: endangered species.
-- Monthly release names are shared across milestone titles, release PR titles,
-  and release branches.
-  - Milestone title / PR title: `{base name} - {Month YYYY}`
+- Monthly work-cycle names are shared across milestone titles, release PR
+  titles, and release branches.
+- Name the cycle for the month the work is done, not the later drop month.
+  - Milestone title / PR title: `{base name} - {Work month YYYY}`
   - Release branch: slugified full title, for example
-    `monarch-maze-may-2026`
+    `monarch-maze-april-2026`
+- Milestone due dates should land in the first week of the following month.
 - Milestone descriptions must use:
-  - `Tracks {previous month YYYY} work.`
+  - `Work month: {Month YYYY}.`
   - `Theme source: <url>`
 - Release PR bodies must repeat the same `Theme source:` link used on the
-  milestone.
-- Never reuse an exact base name or the same primary subject across any month
-  or any of the four design-research module repos unless all four `AGENTS.md`
-  files are intentionally updated together.
+  milestone and refer to the same work month named in the title.
+- Never reuse an exact base name or the same primary subject across any work
+  month or any of the four design-research module repos unless all four
+  `AGENTS.md` files are intentionally updated together.
 - Before adding a new release name, check the `Release Naming` tables in all
   four repos to avoid repeats.
 
-| Due date | Base name | Source subject |
-| --- | --- | --- |
-| April 1, 2026 | Axolotl Array | Axolotl |
-| May 1, 2026 | Monarch Maze | Monarch butterfly |
-| June 1, 2026 | Jaguar Junction | Jaguar |
-| July 1, 2026 | Saola Sandbox | Saola |
-| August 1, 2026 | Orangutan Obstacle | Orangutan |
-| September 1, 2026 | Numbat Nexus | Numbat |
-| October 1, 2026 | Dhole Dilemma | Dhole |
-| November 1, 2026 | Kakapo Knot | Kakapo |
-| December 1, 2026 | Vaquita Vault | Vaquita |
-| January 1, 2027 | Pangolin Puzzle | Pangolin |
+| Work month | Target drop | Base name | Source subject |
+| --- | --- | --- | --- |
+| March 2026 | April 1, 2026 | Axolotl Array | Axolotl |
+| April 2026 | May 1, 2026 | Monarch Maze | Monarch butterfly |
+| May 2026 | June 1, 2026 | Jaguar Junction | Jaguar |
+| June 2026 | July 1, 2026 | Saola Sandbox | Saola |
+| July 2026 | August 1, 2026 | Orangutan Obstacle | Orangutan |
+| August 2026 | September 1, 2026 | Numbat Nexus | Numbat |
+| September 2026 | October 1, 2026 | Dhole Dilemma | Dhole |
+| October 2026 | November 1, 2026 | Kakapo Knot | Kakapo |
+| November 2026 | December 1, 2026 | Vaquita Vault | Vaquita |
+| December 2026 | January 1, 2027 | Pangolin Puzzle | Pangolin |
 ## Keep This File Up To Date
 
 Update this file whenever contributor workflow changes, especially when setup
