@@ -59,9 +59,9 @@ Typical Workflow
 
    .. note::
 
-      **Start with** :doc:`quickstart` to load a first problem, inspect the public
-      family APIs, and get the package into a reproducible local loop before
-      diving into the broader catalog and reference material.
+      **Start with** :doc:`catalog_guide` if you are browsing the problem space,
+      or :doc:`quickstart` if you already know you want to load one packaged
+      problem and enter the API quickly.
 
 Guides
 ------
@@ -72,6 +72,7 @@ a stable problem-research pipeline.
 - :doc:`quickstart`
 - :doc:`installation`
 - :doc:`concepts`
+- :doc:`catalog_guide`
 - :doc:`typical_workflow`
 - :doc:`downstream_metadata_contract`
 - :doc:`problems/index`
@@ -94,6 +95,7 @@ dependency guidance for the packaged benchmark families.
 - :doc:`api`
 - :doc:`reference/index`
 - :doc:`dependencies_and_extras`
+- :doc:`automation_baseline`
 
 Integration With The Ecosystem
 ------------------------------
@@ -122,6 +124,7 @@ Start Here
 
 - :doc:`quickstart`
 - :doc:`installation`
+- :doc:`catalog_guide`
 - :doc:`concepts`
 - :doc:`typical_workflow`
 - :doc:`downstream_metadata_contract`
@@ -138,6 +141,7 @@ Start Here
    quickstart
    installation
    concepts
+   catalog_guide
    typical_workflow
    downstream_metadata_contract
    problems/index
@@ -158,6 +162,7 @@ Start Here
    api
    reference/index
    dependencies_and_extras
+   automation_baseline
 
 .. toctree::
    :maxdepth: 1
