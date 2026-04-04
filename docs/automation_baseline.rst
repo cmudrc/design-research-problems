@@ -39,10 +39,6 @@ Shared Module Baseline
      - ``scripts/generate_examples_metrics.py`` and ``scripts/generate_examples_badges.py``
      - ``examples.yml``
      - Example pass/fail and public-API coverage badges use the shared family format.
-   * - Release callout upkeep
-     - ``scripts/update_release_readme.py``
-     - ``update-release-readme.yml``
-     - README release callouts stay aligned with the active monthly milestone.
 
 Workflow Responsibilities
 -------------------------
@@ -50,7 +46,6 @@ Workflow Responsibilities
 - ``ci.yml`` owns lint, type, test, docs-consistency, docstring, and coverage-oriented checks.
 - ``examples.yml`` owns example execution, generated example docs, and example-derived badge metrics.
 - ``docs-pages.yml`` owns the published docs build.
-- ``update-release-readme.yml`` owns README release-callout refresh.
 - ``workflow.yml`` remains the aggregate maintainer workflow entry point.
 
 Problem-Catalog-Specific Automation
@@ -67,7 +62,7 @@ no other repo exposes a comparable public inventory of benchmark entries.
 
 The shared baseline vs repo-specific split is therefore:
 
-- Shared baseline: docs checks, badges, examples, release callouts, and docs publishing.
+- Shared baseline: docs checks, badges, examples, and docs publishing.
 - Problems-specific utility: generated catalog pages and the curation layer that explains how to browse them.
 
 When To Update This Page

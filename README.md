@@ -5,13 +5,6 @@
 [![Public API In Examples](https://raw.githubusercontent.com/cmudrc/design-research-problems/HEAD/.github/badges/examples-api-coverage.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/examples.yml)
 [![Docs](https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml/badge.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml)
 
-<!-- release-callout:start -->
-> [!IMPORTANT]
-> Current monthly release: [Monarch Maze - May 2026](https://github.com/cmudrc/design-research-problems/milestone/2)  
-> Due: May 1, 2026  
-> Tracks: April 2026 work
-<!-- release-callout:end -->
-
 `design-research-problems` is a compact library and compendium of design research
 problems. It packages canonical research prompts, optimization benchmarks, and
 discrete grammar-style problems behind a small, typed Python API.
