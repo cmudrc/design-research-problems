@@ -7,7 +7,7 @@
 
 <!-- release-callout:start -->
 > [!IMPORTANT]
-> Current monthly release: [Monarch Maze - May 2026](https://github.com/cmudrc/design-research-problems/milestone/2)  
+> Current monthly release: [Monarch Maze - April 2026](https://github.com/cmudrc/design-research-problems/milestone/2)  
 > Due: May 1, 2026  
 > Tracks: April 2026 work
 <!-- release-callout:end -->
