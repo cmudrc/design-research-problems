@@ -42,6 +42,7 @@ Highlights
 
 - Packaged benchmark families for ideation, decision, optimization, grammar, and MCP-backed workflows
 - Stable problem metadata and reusable family-specific APIs
+- A study-facing integration seam in ``design_research_problems.integration`` for orchestration layers
 - Explicit downstream metadata and evaluation contracts for experiments and analysis
 - Catalog entry points for browsing and loading packaged problems
 - Runnable examples spanning the major benchmark families
@@ -51,7 +52,9 @@ Typical Workflow
 
 1. Start from a family API or a catalog entry point.
 2. Load a packaged problem and inspect its metadata, statement, and structured inputs.
-3. Hand the problem to agents or experiments while preserving benchmark metadata.
+3. Hand the problem to agents or experiments through
+   ``design_research_problems.integration.resolve_problem_binding(...)`` while
+   preserving benchmark metadata.
 4. Capture outputs against the downstream metadata contract for comparison.
 5. Rejoin benchmark context in downstream analysis and reporting.
 

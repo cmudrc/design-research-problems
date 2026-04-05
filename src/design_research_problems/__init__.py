@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Final
 
 from design_research_problems._lazy_exports import module_dir, resolve_lazy_export
 
+from . import integration
+
 _EXPORTS: Final[dict[str, str]] = {
     "Problem": "design_research_problems.problems:Problem",
     "ComputableProblem": "design_research_problems.problems:ComputableProblem",
@@ -39,6 +41,7 @@ _EXPORTS: Final[dict[str, str]] = {
 }
 
 __all__ = ["__version__", *_EXPORTS.keys()]
+__all__.append("integration")
 
 try:
     __version__ = version("design-research-problems")
@@ -86,6 +89,8 @@ if TYPE_CHECKING:
     from .ideation import IdeationPromptVariant as IdeationPromptVariant
     from .ideation import IdeationStudy as IdeationStudy
     from .ideation import get_ideation_catalog as get_ideation_catalog
+    from .integration import evaluate_problem_output as evaluate_problem_output
+    from .integration import resolve_problem_binding as resolve_problem_binding
     from .problems import Citation as Citation
     from .problems import ComputableProblem as ComputableProblem
     from .problems import DecisionEvaluation as DecisionEvaluation
