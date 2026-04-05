@@ -50,7 +50,12 @@ pip install "design-research-problems[grammar]"
 pip install "design-research-problems[battery]"
 pip install "design-research-problems[mcp,cad]"
 pip install "design-research-problems[solvers,pandas]"
+pip install "design-research-problems[all]"
 ```
+
+Base installs already include the SciPy-backed optimization primitives, so
+there is no separate `opt` extra. Add `solvers` for external optimization
+backends or `all` for the broadest packaged toolkit.
 
 Then inspect the catalog directly from the installed package:
 
