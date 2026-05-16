@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from importlib import import_module
 from importlib.metadata import PackageNotFoundError, version
 from typing import TYPE_CHECKING, Final
 
@@ -39,6 +40,7 @@ _EXPORTS: Final[dict[str, str]] = {
 }
 
 __all__ = ["__version__", *_EXPORTS.keys()]
+__all__.append("integration")
 
 try:
     __version__ = version("design-research-problems")
@@ -55,6 +57,11 @@ def __getattr__(name: str) -> object:
     Returns:
         Resolved export object.
     """
+    if name == "integration":
+        module = import_module("design_research_problems.integration")
+        globals()[name] = module
+        return module
+
     return resolve_lazy_export(
         module_name=__name__,
         exports=_EXPORTS,
@@ -86,6 +93,8 @@ if TYPE_CHECKING:
     from .ideation import IdeationPromptVariant as IdeationPromptVariant
     from .ideation import IdeationStudy as IdeationStudy
     from .ideation import get_ideation_catalog as get_ideation_catalog
+    from .integration import evaluate_problem_output as evaluate_problem_output
+    from .integration import resolve_problem_binding as resolve_problem_binding
     from .problems import Citation as Citation
     from .problems import ComputableProblem as ComputableProblem
     from .problems import DecisionEvaluation as DecisionEvaluation

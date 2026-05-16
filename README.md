@@ -24,6 +24,7 @@ discrete grammar-style problems behind a small, typed Python API.
 - Five problem families: text, decision, optimization, grammar, and MCP, plus a linked ideation metadata catalog.
 - Shared model contracts built around `Problem` and `ComputableProblem`, with family-specific subclasses on top.
 - A seed catalog that includes 126 ideation prompt records plus packaged decision, optimization, grammar, and MCP benchmarks.
+- A study-facing integration seam in `design_research_problems.integration` for experiment runners.
 - Optional integrations for `trussme`, `pybamm`, `mcp`, Build123d, and external solver backends.
 - Typed metadata, a curated public API, runnable examples, and Sphinx docs.
 
@@ -115,6 +116,7 @@ Top-level exports include:
 - Shared contracts and family bases: `Problem`, `ComputableProblem`, `ProblemKind`, `ProblemMetadata`, `ProblemTaxonomy`, `Citation`, `ProblemAsset`, `TextProblem`, `DecisionProblem`, `OptimizationProblem`, `GrammarProblem`, and `MCPProblem`.
 - Family-specific evaluation contracts: `DecisionEvaluation`, `OptimizationEvaluation`, and `GrammarTransition`.
 - Catalog access: `ProblemRegistry`, `get_problem`, `get_problem_as`, and `list_problems`.
+- Study-facing integration helpers: `integration`, `resolve_problem_binding`, and `evaluate_problem_output`.
 - Ideation metadata API: `IdeationCatalog`, `IdeationPromptRecord`, `IdeationPromptVariant`, `IdeationPromptFamily`, `IdeationStudy`, `EvidenceTier`, and `get_ideation_catalog`.
 - Public exceptions: `MissingOptionalDependencyError` and `ProblemEvaluationError`.
 
