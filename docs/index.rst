@@ -35,6 +35,12 @@ and downstream analyses.
         <a class="drc-badge-link" href="https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml">
           <img alt="Docs" src="https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml/badge.svg">
         </a>
+        <a class="drc-badge-link" href="https://pypi.org/project/design-research-problems/">
+          <img alt="PyPI Version" src="https://img.shields.io/pypi/v/design-research-problems.svg">
+        </a>
+        <a class="drc-badge-link" href="https://pypi.org/project/design-research-problems/">
+          <img alt="Python Versions" src="https://img.shields.io/pypi/pyversions/design-research-problems.svg">
+        </a>
       </div>
 
 Highlights
