@@ -36,6 +36,7 @@ EXPECTED_PUBLIC_API = [
     "get_problem_as",
     "list_problems",
     "get_ideation_catalog",
+    "integration",
 ]
 
 
