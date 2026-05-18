@@ -39,7 +39,12 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def create_problem_server(problem_id: str, *, server_name: str | None = None, include_citation: bool = True) -> Any:
+def create_problem_server(
+    problem_id: str,
+    *,
+    server_name: str | None = None,
+    include_citation: bool = True,
+) -> Any:
     """Create a FastMCP server for one packaged problem.
 
     Args:
