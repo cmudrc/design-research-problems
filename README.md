@@ -9,9 +9,9 @@
 
 <!-- release-callout:start -->
 > [!IMPORTANT]
-> Current monthly release: [Jaguar Junction - May 2026](https://github.com/cmudrc/design-research-problems/milestone/3)  
-> Due: June 1, 2026  
-> Tracks: May 2026 work
+> Current monthly release: [Saola Sandbox - June 2026](https://github.com/cmudrc/design-research-problems/milestone/4)  
+> Due: July 1, 2026  
+> Tracks: June 2026 work
 <!-- release-callout:end -->
 
 `design-research-problems` is a compact library and compendium of design research
