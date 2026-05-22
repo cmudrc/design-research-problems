@@ -38,5 +38,10 @@ Install only the problem-family integrations needed for your study.
    pip install -e ".[battery]"
    pip install -e ".[mcp,cad]"
    pip install -e ".[solvers,pandas]"
+   pip install -e ".[all]"
+
+Optimization primitives are already available in the base install via SciPy, so
+there is no separate ``opt`` extra. Use ``solvers`` for external optimization
+backends or ``all`` for the broadest packaged add-on set.
 
 Use :doc:`dependencies_and_extras` for a compact matrix and practical profile guidance.

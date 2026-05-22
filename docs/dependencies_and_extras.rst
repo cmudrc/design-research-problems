@@ -42,9 +42,11 @@ Extras Matrix
    * - ``cad``
      - Build123d-backed CAD workflows
    * - ``solvers``
-     - External optimization backends
+     - External optimization backends beyond the base SciPy install
    * - ``pandas``
      - DataFrame exports for catalog/ideation data
+   * - ``all``
+     - Convenience bundle for the currently useful optional integrations
    * - ``dev``
      - Contributor tooling
 
@@ -53,12 +55,17 @@ battery families are more infrastructure-sensitive because they depend on
 domain-specific toolchains. MCP and CAD tasks are best when your study must
 interact with an external execution environment.
 
+Optimization primitives ship in the base install through SciPy, so there is no
+separate ``opt`` extra. Use ``solvers`` for external search backends and
+``all`` when you want the broadest packaged problem toolkit.
+
 Recommended install profiles:
 
 - lightweight catalog and text studies: base install only
 - structural grammar studies: ``pip install -e ".[grammar]"``
 - battery studies: ``pip install -e ".[battery]"``
 - external-tool workflows: ``pip install -e ".[mcp,cad]"``
+- broad optional-toolkit install: ``pip install -e ".[all]"``
 - full local validation environment: ``make dev-full``
 
 Release validation is exposed via ``make release-check``.

@@ -43,3 +43,5 @@ When public exports change, update:
 - `docs/api.rst`
 - family/concepts references
 - quickstart/examples snippets
+- `docs/automation_baseline.rst` if workflow ownership changes
+- `docs/catalog_guide.rst` if the curated family entrypoint changes

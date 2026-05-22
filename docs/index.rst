@@ -35,6 +35,12 @@ and downstream analyses.
         <a class="drc-badge-link" href="https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml">
           <img alt="Docs" src="https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml/badge.svg">
         </a>
+        <a class="drc-badge-link" href="https://pypi.org/project/design-research-problems/">
+          <img alt="PyPI Version" src="https://img.shields.io/pypi/v/design-research-problems.svg">
+        </a>
+        <a class="drc-badge-link" href="https://pypi.org/project/design-research-problems/">
+          <img alt="Python Versions" src="https://img.shields.io/pypi/pyversions/design-research-problems.svg">
+        </a>
       </div>
 
 Highlights
@@ -42,6 +48,7 @@ Highlights
 
 - Packaged benchmark families for ideation, decision, optimization, grammar, and MCP-backed workflows
 - Stable problem metadata and reusable family-specific APIs
+- A study-facing integration seam in ``design_research_problems.integration`` for orchestration layers
 - Explicit downstream metadata and evaluation contracts for experiments and analysis
 - Catalog entry points for browsing and loading packaged problems
 - Runnable examples spanning the major benchmark families
@@ -51,7 +58,9 @@ Typical Workflow
 
 1. Start from a family API or a catalog entry point.
 2. Load a packaged problem and inspect its metadata, statement, and structured inputs.
-3. Hand the problem to agents or experiments while preserving benchmark metadata.
+3. Hand the problem to agents or experiments through
+   ``design_research_problems.integration.resolve_problem_binding(...)`` while
+   preserving benchmark metadata.
 4. Capture outputs against the downstream metadata contract for comparison.
 5. Rejoin benchmark context in downstream analysis and reporting.
 
@@ -59,9 +68,9 @@ Typical Workflow
 
    .. note::
 
-      **Start with** :doc:`quickstart` to load a first problem, inspect the public
-      family APIs, and get the package into a reproducible local loop before
-      diving into the broader catalog and reference material.
+      **Start with** :doc:`catalog_guide` if you are browsing the problem space,
+      or :doc:`quickstart` if you already know you want to load one packaged
+      problem and enter the API quickly.
 
 Guides
 ------
@@ -72,6 +81,7 @@ a stable problem-research pipeline.
 - :doc:`quickstart`
 - :doc:`installation`
 - :doc:`concepts`
+- :doc:`catalog_guide`
 - :doc:`typical_workflow`
 - :doc:`downstream_metadata_contract`
 - :doc:`problems/index`
@@ -94,6 +104,7 @@ dependency guidance for the packaged benchmark families.
 - :doc:`api`
 - :doc:`reference/index`
 - :doc:`dependencies_and_extras`
+- :doc:`automation_baseline`
 
 Integration With The Ecosystem
 ------------------------------
@@ -122,6 +133,7 @@ Start Here
 
 - :doc:`quickstart`
 - :doc:`installation`
+- :doc:`catalog_guide`
 - :doc:`concepts`
 - :doc:`typical_workflow`
 - :doc:`downstream_metadata_contract`
@@ -138,6 +150,7 @@ Start Here
    quickstart
    installation
    concepts
+   catalog_guide
    typical_workflow
    downstream_metadata_contract
    problems/index
@@ -158,6 +171,7 @@ Start Here
    api
    reference/index
    dependencies_and_extras
+   automation_baseline
 
 .. toctree::
    :maxdepth: 1

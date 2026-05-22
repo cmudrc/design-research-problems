@@ -4,6 +4,8 @@
 [![Examples Passing](https://raw.githubusercontent.com/cmudrc/design-research-problems/HEAD/.github/badges/examples-passing.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/examples.yml)
 [![Public API In Examples](https://raw.githubusercontent.com/cmudrc/design-research-problems/HEAD/.github/badges/examples-api-coverage.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/examples.yml)
 [![Docs](https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml/badge.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml)
+[![PyPI Version](https://img.shields.io/pypi/v/design-research-problems.svg)](https://pypi.org/project/design-research-problems/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/design-research-problems.svg)](https://pypi.org/project/design-research-problems/)
 
 <!-- release-callout:start -->
 > [!IMPORTANT]
@@ -21,6 +23,7 @@ discrete grammar-style problems behind a small, typed Python API.
 - Five problem families: text, decision, optimization, grammar, and MCP, plus a linked ideation metadata catalog.
 - Shared model contracts built around `Problem` and `ComputableProblem`, with family-specific subclasses on top.
 - A seed catalog that includes 126 ideation prompt records plus packaged decision, optimization, grammar, and MCP benchmarks.
+- A study-facing integration seam in `design_research_problems.integration` for experiment runners.
 - Optional integrations for `trussme`, `pybamm`, `mcp`, Build123d, and external solver backends.
 - Typed metadata, a curated public API, runnable examples, and Sphinx docs.
 
@@ -57,7 +60,12 @@ pip install "design-research-problems[grammar]"
 pip install "design-research-problems[battery]"
 pip install "design-research-problems[mcp,cad]"
 pip install "design-research-problems[solvers,pandas]"
+pip install "design-research-problems[all]"
 ```
+
+Base installs already include the SciPy-backed optimization primitives, so
+there is no separate `opt` extra. Add `solvers` for external optimization
+backends or `all` for the broadest packaged toolkit.
 
 Then inspect the catalog directly from the installed package:
 
@@ -112,6 +120,7 @@ Top-level exports include:
 - Shared contracts and family bases: `Problem`, `ComputableProblem`, `ProblemKind`, `ProblemMetadata`, `ProblemTaxonomy`, `Citation`, `ProblemAsset`, `TextProblem`, `DecisionProblem`, `OptimizationProblem`, `GrammarProblem`, and `MCPProblem`.
 - Family-specific evaluation contracts: `DecisionEvaluation`, `OptimizationEvaluation`, and `GrammarTransition`.
 - Catalog access: `ProblemRegistry`, `get_problem`, `get_problem_as`, and `list_problems`.
+- Study-facing integration helpers: `integration`, `resolve_problem_binding`, and `evaluate_problem_output`.
 - Ideation metadata API: `IdeationCatalog`, `IdeationPromptRecord`, `IdeationPromptVariant`, `IdeationPromptFamily`, `IdeationStudy`, `EvidenceTier`, and `get_ideation_catalog`.
 - Public exceptions: `MissingOptionalDependencyError` and `ProblemEvaluationError`.
 
