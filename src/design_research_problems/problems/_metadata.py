@@ -178,6 +178,83 @@ class ProblemMetadata:
         return normalized in self.feature_flags
 
 
+@dataclass(frozen=True)
+class ProblemCatalogSummary:
+    """Compact problem metadata for search results and agent context windows."""
+
+    problem_id: str
+    """Stable catalog identifier."""
+    title: str
+    """Display title shown to users."""
+    kind: ProblemKind
+    """High-level problem family."""
+    summary: str
+    """Short one-paragraph problem description."""
+    tags: tuple[str, ...]
+    """Searchable descriptive tags."""
+    formulation: str | None
+    """High-level mathematical or representational formulation."""
+    design_variable_type: str | None
+    """Variable domain such as continuous, discrete, or mixed."""
+    objective_mode: str | None
+    """Objective structure such as single, multi, or qualitative."""
+    constraint_nature: str | None
+    """Constraint strictness label such as hard, soft, or informal."""
+    bounds_summary: str | None
+    """Human-readable summary of bounds or design-space limits."""
+    capabilities: tuple[str, ...]
+    """Machine-readable implementation and packaging capabilities."""
+    study_suitability: tuple[str, ...]
+    """Machine-readable study-use labels for the entry."""
+
+    @classmethod
+    def from_metadata(cls, metadata: ProblemMetadata) -> ProblemCatalogSummary:
+        """Build a compact summary from one full metadata record.
+
+        Args:
+            metadata: Full problem metadata.
+
+        Returns:
+            Compact catalog summary suitable for search results.
+        """
+        taxonomy = metadata.taxonomy
+        return cls(
+            problem_id=metadata.problem_id,
+            title=metadata.title,
+            kind=metadata.kind,
+            summary=metadata.summary,
+            tags=taxonomy.tags,
+            formulation=taxonomy.formulation,
+            design_variable_type=taxonomy.design_variable_type,
+            objective_mode=taxonomy.objective_mode,
+            constraint_nature=taxonomy.constraint_nature,
+            bounds_summary=taxonomy.bounds_summary,
+            capabilities=metadata.capabilities,
+            study_suitability=metadata.study_suitability,
+        )
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-compatible summary dictionary.
+
+        Returns:
+            Dictionary form with enum values normalized to strings.
+        """
+        return {
+            "problem_id": self.problem_id,
+            "title": self.title,
+            "kind": self.kind.value,
+            "summary": self.summary,
+            "tags": list(self.tags),
+            "formulation": self.formulation,
+            "design_variable_type": self.design_variable_type,
+            "objective_mode": self.objective_mode,
+            "constraint_nature": self.constraint_nature,
+            "bounds_summary": self.bounds_summary,
+            "capabilities": list(self.capabilities),
+            "study_suitability": list(self.study_suitability),
+        }
+
+
 KNOWN_PROBLEM_CAPABILITIES = frozenset(
     {
         "statement-markdown",

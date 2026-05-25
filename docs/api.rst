@@ -20,6 +20,7 @@ The top-level package exports a small curated public API:
 - ``OptimizationProblem``
 - ``Problem``
 - ``ProblemAsset``
+- ``ProblemCatalogSummary``
 - ``ProblemEvaluationError``
 - ``ProblemKind``
 - ``ProblemMetadata``
@@ -29,5 +30,6 @@ The top-level package exports a small curated public API:
 - ``get_ideation_catalog``
 - ``get_problem``
 - ``list_problems``
+- ``search_problem_summaries``
 
 See :doc:`reference/index` for the module-level reference pages.

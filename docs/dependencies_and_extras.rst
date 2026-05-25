@@ -65,6 +65,8 @@ Recommended install profiles:
 - structural grammar studies: ``pip install -e ".[grammar]"``
 - battery studies: ``pip install -e ".[battery]"``
 - external-tool workflows: ``pip install -e ".[mcp,cad]"``
+- DRAG/DERP agent workflows:
+  ``pip install "design-research-agents[mcp,gemini]" "design-research-problems[mcp]"``
 - broad optional-toolkit install: ``pip install -e ".[all]"``
 - full local validation environment: ``make dev-full``
 

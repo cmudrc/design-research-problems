@@ -14,7 +14,15 @@ from ._decision import (
 )
 from ._grammar import GrammarProblem, GrammarTransition
 from ._mcp_problem import MCPProblem
-from ._metadata import Citation, ProblemAsset, ProblemBenchmarkCard, ProblemKind, ProblemMetadata, ProblemTaxonomy
+from ._metadata import (
+    Citation,
+    ProblemAsset,
+    ProblemBenchmarkCard,
+    ProblemCatalogSummary,
+    ProblemKind,
+    ProblemMetadata,
+    ProblemTaxonomy,
+)
 from ._optimization import OptimizationEvaluation, OptimizationProblem
 from ._problem import Problem
 from ._text import TextProblem
@@ -39,6 +47,7 @@ __all__ = [
     "Problem",
     "ProblemAsset",
     "ProblemBenchmarkCard",
+    "ProblemCatalogSummary",
     "ProblemKind",
     "ProblemMetadata",
     "ProblemTaxonomy",

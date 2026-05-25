@@ -96,6 +96,44 @@ class LocalSearchResult:
     """Number of objective evaluations performed."""
 
 
+def _recommended_solver_family(
+    *,
+    variable_domain: str | None,
+    constraint_nature: str | None,
+    equality_constraints: int,
+    inequality_constraints: int,
+    is_dynamic: bool,
+) -> str:
+    """Return a compact solver-family hint from catalog taxonomy.
+
+    Args:
+        variable_domain: Taxonomy variable-domain label.
+        constraint_nature: Taxonomy constraint label.
+        equality_constraints: Number of equality constraints.
+        inequality_constraints: Number of inequality constraints.
+        is_dynamic: Whether the problem changes during evaluation.
+
+    Returns:
+        Human-readable solver-family hint for routing agents.
+    """
+    domain = (variable_domain or "").lower()
+    constraint_label = (constraint_nature or "").lower()
+    has_explicit_constraints = equality_constraints > 0 or inequality_constraints > 0
+    has_hard_constraints = has_explicit_constraints or "hard" in constraint_label
+
+    if is_dynamic:
+        return "dynamic or evaluation-aware optimization; avoid assuming a stationary objective"
+    if domain == "continuous" and has_hard_constraints:
+        return "constrained continuous optimizer such as SLSQP or trust-constr"
+    if domain == "continuous":
+        return "bounded continuous optimizer or deterministic local search"
+    if domain == "discrete":
+        return "discrete or combinatorial optimizer; preserve integrality explicitly"
+    if domain == "mixed":
+        return "mixed-domain optimizer or decomposition; preserve discrete variables explicitly"
+    return "inspect metadata and problem API before selecting a solver"
+
+
 def bounded_pattern_search(
     objective: Callable[[NDArray[numpy.float64]], float],
     lower_bounds: NDArray[numpy.float64],
@@ -181,6 +219,43 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
         )
         self.constraints: list[ConstraintDefinition] = []
 
+    def solver_hints(self) -> dict[str, object]:
+        """Return compact optimization hints for solver selection.
+
+        The hints summarize machine-readable bounds, variable domain, and
+        constraint counts so an agent does not have to infer solver class from
+        prose in the design brief.
+
+        Returns:
+            JSON-compatible solver-selection hints.
+        """
+        taxonomy = self.metadata.taxonomy
+        equality_constraints = sum(1 for constraint in self.constraints if constraint.kind == "eq")
+        inequality_constraints = sum(1 for constraint in self.constraints if constraint.kind == "ineq")
+        benchmark_card = self.metadata.benchmark_card
+        return {
+            "problem_id": self.metadata.problem_id,
+            "problem_kind": self.metadata.kind.value,
+            "variable_count": int(self.bounds.lb.shape[0]),
+            "variable_domain": taxonomy.design_variable_type,
+            "lower_bounds": to_json_value(self.bounds.lb),
+            "upper_bounds": to_json_value(self.bounds.ub),
+            "bounds_summary": taxonomy.bounds_summary,
+            "objective_mode": taxonomy.objective_mode,
+            "constraint_nature": taxonomy.constraint_nature,
+            "equality_constraint_count": equality_constraints,
+            "inequality_constraint_count": inequality_constraints,
+            "is_dynamic": taxonomy.is_dynamic,
+            "baseline_solver_role": None if benchmark_card is None else benchmark_card.solver_role,
+            "recommended_solver_family": _recommended_solver_family(
+                variable_domain=taxonomy.design_variable_type,
+                constraint_nature=taxonomy.constraint_nature,
+                equality_constraints=equality_constraints,
+                inequality_constraints=inequality_constraints,
+                is_dynamic=taxonomy.is_dynamic,
+            ),
+        }
+
     def evaluate(self, variables: NDArray[numpy.float64]) -> OptimizationEvaluation:
         """Evaluate one candidate vector without invoking the solver.
 
@@ -260,11 +335,25 @@ class OptimizationProblem(ComputableProblem[NDArray[numpy.float64], Optimization
                 "report": report,
             }
 
+        def solver_hints() -> dict[str, object]:
+            """Return variable-domain and constraint hints for solver selection.
+
+            Returns:
+                MCP-ready solver-selection hints.
+            """
+            return self.solver_hints()
+
         server.add_tool(
             evaluate_tool,
             name="evaluate",
             title="Evaluate Design",
             description="Evaluate a candidate vector and return feasibility/objective metrics.",
+        )
+        server.add_tool(
+            solver_hints,
+            name="solver_hints",
+            title="Get Solver Hints",
+            description="Return variable-domain, bounds, and constraint hints for choosing a solver.",
         )
         server.add_tool(
             submit_final,
