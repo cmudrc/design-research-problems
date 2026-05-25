@@ -3,6 +3,11 @@ Optimization Problems
 
 Optimization problems expose typed bounds, solver-independent constraints, and
 problem-specific representative baseline `solve()` implementations.
+They also expose `solver_hints()` for agent-facing solver selection. The hint
+payload includes variable domain, numeric bounds, constraint counts, objective
+mode, and a compact solver-family recommendation, and the same payload is
+available through the `solver_hints` tool when an optimization problem is served
+over MCP.
 
 The smooth continuous packaged benchmarks in this family continue to use SciPy
 baselines.

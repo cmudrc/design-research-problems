@@ -11,7 +11,7 @@ from design_research_problems._catalog._manifest import ProblemManifest
 from design_research_problems._exceptions import ProblemEvaluationError
 from design_research_problems.problems import MCPProblem, Problem, ProblemKind, TextProblem
 from design_research_problems.problems._decision import load_decision_problem
-from design_research_problems.problems._metadata import ProblemMetadata
+from design_research_problems.problems._metadata import ProblemCatalogSummary, ProblemMetadata
 
 if TYPE_CHECKING:
     from design_research_problems.problems import (
@@ -287,6 +287,40 @@ class ProblemRegistry:
             matches.append(metadata)
         return tuple(matches)
 
+    def summaries(
+        self,
+        tags: tuple[str, ...] = (),
+        text: str = "",
+        feature_flags: tuple[str, ...] = (),
+        kind: ProblemKind | None = None,
+        capabilities: tuple[str, ...] = (),
+        study_suitability: tuple[str, ...] = (),
+    ) -> tuple[ProblemCatalogSummary, ...]:
+        """Return compact search results for agent-facing problem selection.
+
+        Args:
+            tags: Tags that must all be present on a matching entry.
+            text: Case-insensitive free-text search term.
+            feature_flags: Feature flags that must all be present on a matching entry.
+            kind: Optional problem-family filter.
+            capabilities: Capability flags that must all be present.
+            study_suitability: Study-suitability flags that must all be present.
+
+        Returns:
+            Compact summaries for matching entries in deterministic order.
+        """
+        return tuple(
+            ProblemCatalogSummary.from_metadata(metadata)
+            for metadata in self.search(
+                tags=tags,
+                text=text,
+                feature_flags=feature_flags,
+                kind=kind,
+                capabilities=capabilities,
+                study_suitability=study_suitability,
+            )
+        )
+
     @overload
     def get(
         self, problem_id: Literal["battery_18650_t1_rectangular_surrogate_grammar"]
@@ -489,6 +523,20 @@ class ProblemRegistry:
 _DEFAULT_REGISTRY = ProblemRegistry()
 
 
+def _coerce_problem_kind(kind: ProblemKind | str | None) -> ProblemKind | None:
+    """Normalize an optional problem-kind filter.
+
+    Args:
+        kind: ProblemKind value, string value, or ``None``.
+
+    Returns:
+        Normalized kind or ``None``.
+    """
+    if kind is None or isinstance(kind, ProblemKind):
+        return kind
+    return ProblemKind(kind.strip().lower())
+
+
 def list_problems() -> tuple[str, ...]:
     """Return all packaged problem IDs.
 
@@ -496,6 +544,46 @@ def list_problems() -> tuple[str, ...]:
         Stable problem IDs in sorted order.
     """
     return tuple(metadata.problem_id for metadata in _DEFAULT_REGISTRY.list())
+
+
+def search_problem_summaries(
+    *,
+    tags: tuple[str, ...] = (),
+    text: str = "",
+    feature_flags: tuple[str, ...] = (),
+    kind: ProblemKind | str | None = None,
+    capabilities: tuple[str, ...] = (),
+    study_suitability: tuple[str, ...] = (),
+) -> tuple[ProblemCatalogSummary, ...]:
+    """Search the packaged catalog and return compact problem summaries.
+
+    This is the agent-facing counterpart to loading full briefs with
+    ``get_problem(...).render_brief()``. It keeps context windows small while
+    still exposing problem IDs, titles, kinds, taxonomy, tags, and capability
+    flags needed for routing.
+
+    Args:
+        tags: Tags that must all be present on a matching entry.
+        text: Case-insensitive free-text search term.
+        feature_flags: Feature flags that must all be present on a matching entry.
+        kind: Optional problem-family filter as a ``ProblemKind`` or string value.
+        capabilities: Capability flags that must all be present.
+        study_suitability: Study-suitability flags that must all be present.
+
+    Returns:
+        Compact summaries for matching entries in deterministic order.
+
+    Raises:
+        ValueError: If ``kind`` is a string that is not a known problem kind.
+    """
+    return _DEFAULT_REGISTRY.summaries(
+        tags=tags,
+        text=text,
+        feature_flags=feature_flags,
+        kind=_coerce_problem_kind(kind),
+        capabilities=capabilities,
+        study_suitability=study_suitability,
+    )
 
 
 @overload

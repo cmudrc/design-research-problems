@@ -12,6 +12,7 @@ EXPECTED_PUBLIC_API = [
     "ComputableProblem",
     "ProblemKind",
     "ProblemMetadata",
+    "ProblemCatalogSummary",
     "ProblemTaxonomy",
     "Citation",
     "ProblemAsset",
@@ -35,6 +36,7 @@ EXPECTED_PUBLIC_API = [
     "get_problem",
     "get_problem_as",
     "list_problems",
+    "search_problem_summaries",
     "get_ideation_catalog",
     "integration",
 ]
