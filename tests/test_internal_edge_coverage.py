@@ -939,14 +939,20 @@ def test_battery_circuit_validation_and_direct_trace_edges() -> None:
     assert analysis.topology_kind == "series_parallel"
     assert battery_circuit._validate_pybamm_direct_state(valid, analysis) is None
     assert battery_circuit._validate_pybamm_direct_state(replace(valid, cells=()), analysis) is not None
-    assert battery_circuit._validate_pybamm_direct_state(
-        replace(valid, connections=(battery_circuit.BatteryConnection(0, 0, 1, ideal=False),)),
-        analysis,
-    ) is not None
-    assert battery_circuit._validate_pybamm_direct_state(
-        valid,
-        battery_circuit.BatteryTopologyAnalysis("general", None, None, None),
-    ) is not None
+    assert (
+        battery_circuit._validate_pybamm_direct_state(
+            replace(valid, connections=(battery_circuit.BatteryConnection(0, 0, 1, ideal=False),)),
+            analysis,
+        )
+        is not None
+    )
+    assert (
+        battery_circuit._validate_pybamm_direct_state(
+            valid,
+            battery_circuit.BatteryTopologyAnalysis("general", None, None, None),
+        )
+        is not None
+    )
 
     sample_times = numpy.asarray([0.0, 1.0])
 
@@ -1136,13 +1142,16 @@ def test_battery_cell_model_config_and_dynamic_helper_edges() -> None:
     assert battery_cell_model.interpolate_cell_model(model, 2.0)[0] == pytest.approx(4.0)
     assert battery_cell_model.interpolate_cell_model(model, 0.5)[0] == pytest.approx(3.5)
     assert battery_cell_model._interpolate_temperature_lookup((), (), 0.5, temperature_c=25.0, default=9.0) == 9.0
-    assert battery_cell_model._interpolate_temperature_lookup(
-        (25.0,),
-        (),
-        0.5,
-        temperature_c=25.0,
-        default=9.0,
-    ) == 9.0
+    assert (
+        battery_cell_model._interpolate_temperature_lookup(
+            (25.0,),
+            (),
+            0.5,
+            temperature_c=25.0,
+            default=9.0,
+        )
+        == 9.0
+    )
 
 
 def test_battery_cell_model_two_rc_and_dynamic_paths(monkeypatch: pytest.MonkeyPatch) -> None:
