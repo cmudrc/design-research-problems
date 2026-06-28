@@ -105,8 +105,9 @@ for runnable examples across all problem families.
 See the [published documentation](https://cmudrc.github.io/design-research-problems/)
 for quickstart, problem-family guides, generated catalog pages, and API reference.
 
-Opening the repo in VS Code? Start with the
-[VS Code setup guide](https://cmudrc.github.io/design-research-problems/vscode_start.html).
+Using VS Code? Start with the
+[VS Code example guide](https://cmudrc.github.io/design-research-problems/vscode_start.html)
+for a PyPI install path and source checkout example path.
 
 Build docs locally with:
 

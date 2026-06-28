@@ -8,9 +8,9 @@ source .venv/bin/activate
 make dev
 ```
 
-If you are opening the project in VS Code, follow
-`docs/vscode_start.rst` for interpreter selection, optional extras, first
-checks, and troubleshooting.
+If you are opening the project in VS Code, follow `docs/vscode_start.rst` for
+the PyPI install path, source checkout path, interpreter selection, optional
+extras, first checks, and troubleshooting.
 
 Optional integration setup for problem families that require external backends:
 

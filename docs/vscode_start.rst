@@ -1,8 +1,13 @@
-VS Code Start
-=============
+Run An Example In VS Code
+=========================
 
-Use this path when opening ``design-research-problems`` in VS Code for the
-first time. The commands are repo-local and assume Python 3.12 or newer.
+Use this page when you want to try ``design-research-problems`` in VS Code.
+Choose the installed-package path for a first user workflow, or the source
+checkout path when you want to run the repository's checked-in examples and
+development checks.
+
+The checked-in ``examples/`` directory lives in the repository source. Do not
+assume those files are present inside the PyPI wheel.
 
 Requirements
 ------------
@@ -10,75 +15,31 @@ Requirements
 - Python 3.12 or newer. Maintainer workflows target the version in
   ``.python-version``.
 - VS Code with the Python extension.
-- ``make`` available in the integrated terminal.
-- Optional: ``uv`` for faster virtual environment and package installs.
+- A VS Code integrated terminal.
 
-Open the Repository
--------------------
+Installed Package From PyPI
+---------------------------
 
-Open the repository root folder in VS Code, not the parent ecosystem folder. The
-root should contain ``pyproject.toml``, ``Makefile``, ``src/``, ``tests/``, and
-``examples/``.
+Open an empty folder in VS Code, then create and activate a virtual
+environment from ``Terminal > New Terminal``.
 
-Create an Environment
----------------------
-
-Standard library setup:
+On macOS or Linux:
 
 .. code-block:: bash
 
    python -m venv .venv
    source .venv/bin/activate
+   python -m pip install --upgrade pip
+   python -m pip install design-research-problems
 
-On Windows PowerShell, use:
+On Windows PowerShell:
 
 .. code-block:: powershell
 
    py -3.12 -m venv .venv
-   .venv\Scripts\Activate.ps1
-
-With ``uv``:
-
-.. code-block:: bash
-
-   uv venv --python 3.12
-   source .venv/bin/activate
-
-Install Development Dependencies
---------------------------------
-
-Use the maintainer shortcut:
-
-.. code-block:: bash
-
-   make dev
-
-Equivalent ``pip`` command:
-
-.. code-block:: bash
-
-   python -m pip install --upgrade pip setuptools wheel
-   python -m pip install -e ".[dev]"
-
-Equivalent ``uv`` command:
-
-.. code-block:: bash
-
-   uv pip install -e ".[dev]"
-
-Install optional extras only when the problem family or backend needs them:
-
-.. code-block:: bash
-
-   python -m pip install -e ".[grammar]"
-   python -m pip install -e ".[battery]"
-   python -m pip install -e ".[mcp,cad]"
-   python -m pip install -e ".[solvers,pandas]"
-
-Use ``make dev-full`` when you need the broadest local validation environment.
-
-Select the VS Code Interpreter
-------------------------------
+   .\.venv\Scripts\Activate.ps1
+   python -m pip install --upgrade pip
+   python -m pip install design-research-problems
 
 Run ``Python: Select Interpreter`` from the command palette and choose the
 interpreter inside ``.venv``. If VS Code does not list it, enter the interpreter
@@ -87,8 +48,53 @@ path manually:
 - macOS/Linux: ``.venv/bin/python``
 - Windows: ``.venv\Scripts\python.exe``
 
-First Checks
-------------
+Create ``problems_example.py`` in the workspace folder:
+
+.. code-block:: python
+
+   import design_research_problems as derp
+
+   print(f"Catalog size: {len(derp.list_problems())}")
+   problem = derp.get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
+   print(problem.render_brief(include_citation=False))
+
+Run the file with VS Code's ``Run Python File`` action, or run:
+
+.. code-block:: bash
+
+   python problems_example.py
+
+Source Checkout For Repository Examples
+---------------------------------------
+
+Use this path when you want the checked-in examples, docs, tests, and optional
+development tooling.
+
+.. code-block:: bash
+
+   git clone https://github.com/cmudrc/design-research-problems.git
+   cd design-research-problems
+   python -m venv .venv
+   source .venv/bin/activate
+   python -m pip install --upgrade pip setuptools wheel
+   python -m pip install -e ".[dev]"
+
+Equivalent maintainer shortcut:
+
+.. code-block:: bash
+
+   make dev
+
+Run the compact deterministic example path from the integrated terminal:
+
+.. code-block:: bash
+
+   make examples-smoke
+   python examples/catalog/list_and_load.py
+   python examples/catalog/public_api_tour.py
+
+First Development Checks
+------------------------
 
 Run the checks from VS Code's integrated terminal:
 
@@ -101,35 +107,21 @@ Run the checks from VS Code's integrated terminal:
 ``make qa`` runs linting, formatting checks, type checks, and tests. Run
 ``make coverage`` before merge when changing tested behavior.
 
-Problem Families And Optional Backends
---------------------------------------
+Optional Backends
+-----------------
 
 The base install covers text, decision, catalog, and SciPy-backed optimization
 workflows. Install optional extras only for workflows that need them:
 
-- ``grammar`` for truss-oriented grammar and structural workflows.
-- ``battery`` for battery grammar and battery optimization workflows.
-- ``mcp,cad`` for MCP-backed CAD task workflows.
-- ``solvers,pandas`` for external optimizer backends and tabular exports.
-
-External simulators and solver toolchains should stay out of the default setup
-unless the issue or example explicitly requires them.
-
-Deterministic Examples
-----------------------
-
-Run the compact deterministic example path from the integrated terminal:
-
 .. code-block:: bash
 
-   make examples-smoke
+   python -m pip install -e ".[grammar]"
+   python -m pip install -e ".[battery]"
+   python -m pip install -e ".[mcp,cad]"
+   python -m pip install -e ".[solvers,pandas]"
 
-To run catalog examples directly:
-
-.. code-block:: bash
-
-   PYTHONPATH=src python examples/catalog/list_and_load.py
-   PYTHONPATH=src python examples/catalog/public_api_tour.py
+Use ``make dev-full`` only when you need the broadest local validation
+environment.
 
 Troubleshooting
 ---------------
@@ -138,8 +130,8 @@ Troubleshooting
   interpreter and reload the window.
 - If ``make`` uses the wrong Python, activate ``.venv`` in the terminal or run
   ``PYTHON=.venv/bin/python make test``.
-- If Windows activation is blocked, enable script execution for the current
-  user or use the VS Code Python extension's environment activation.
+- If Windows activation is blocked, switch the terminal profile to Command
+  Prompt and run ``.\.venv\Scripts\activate.bat``.
 - If an optional backend import is missing, install the matching family extra
   rather than ``all`` unless you need broad validation coverage.
 - Avoid committing generated runtime output under ``artifacts/``,
