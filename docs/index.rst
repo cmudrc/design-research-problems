@@ -80,6 +80,7 @@ a stable problem-research pipeline.
 
 - :doc:`quickstart`
 - :doc:`installation`
+- :doc:`vscode_start`
 - :doc:`concepts`
 - :doc:`catalog_guide`
 - :doc:`typical_workflow`
@@ -149,6 +150,7 @@ Start Here
 
    quickstart
    installation
+   vscode_start
    concepts
    catalog_guide
    typical_workflow
