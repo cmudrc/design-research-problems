@@ -555,7 +555,6 @@ def parse_structured_decision_payload(parameters: Mapping[str, object]) -> _Pars
 
     variable_symbols = {spec.symbol for spec in decision_variable_specs}
     factor_keys = {factor.key for factor in option_factors}
-    choice_keys = {benchmark.key for benchmark in choice_benchmarks}
     symbolic_names = variable_symbols | factor_keys
     if choice_benchmarks:
         symbolic_names.add("material")
@@ -614,11 +613,6 @@ def parse_structured_decision_payload(parameters: Mapping[str, object]) -> _Pars
     for profile in competitor_profiles:
         if set(profile.values) != factor_key_set or len(profile.values) != len(ordered_factor_keys):
             raise ValueError(f"Decision profile {profile.name!r} must include exactly the option factor keys.")
-    if choice_benchmarks and response_count <= 0:
-        raise ValueError("choice_options require a positive response_count.")
-    if len(choice_keys) != len(choice_benchmarks):
-        raise ValueError("choice_options contain duplicate keys.")
-
     return _ParsedDecisionPayload(
         decision_variable_specs=decision_variable_specs,
         option_factors=option_factors,

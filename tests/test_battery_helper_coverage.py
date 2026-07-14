@@ -7,9 +7,11 @@ import numpy
 import pytest
 
 from design_research_problems._catalog._manifest import ProblemManifest
+from design_research_problems._exceptions import MissingOptionalDependencyError
 from design_research_problems.problems import _battery_adapters as battery_adapters
 from design_research_problems.problems import _battery_problem_config as battery_problem_config
 from design_research_problems.problems import _battery_tier_problems as battery_tier_problems
+from design_research_problems.problems._domains import battery_cell_model as cell_model
 from design_research_problems.problems._domains.battery_benchmark import BatteryEvaluationMode
 from design_research_problems.problems._domains.battery_cell_model import BatteryBackendConfig, BatteryThermalPriors
 from design_research_problems.problems._domains.battery_core import (
@@ -137,6 +139,176 @@ def _fake_circuit_evaluation(**overrides: object) -> SimpleNamespace:
     }
     values.update(overrides)
     return SimpleNamespace(**values)
+
+
+def test_battery_cell_parameter_helpers_cover_backend_shape_variations() -> None:
+    assert cell_model.battery_backend_config_from_mapping(None).cell_model_mode == "auto"
+    with pytest.raises(ValueError, match="must be a mapping"):
+        cell_model.battery_backend_config_from_mapping("invalid")
+
+    with pytest.raises(MissingOptionalDependencyError, match="ParameterValues support"):
+        cell_model._load_named_parameter_values(pybamm_module=object(), parameter_set="missing")
+
+    failing_module = SimpleNamespace(ParameterValues=lambda _name: (_ for _ in ()).throw(RuntimeError("missing")))
+    with pytest.raises(MissingOptionalDependencyError, match="could not be loaded"):
+        cell_model._load_named_parameter_values(pybamm_module=failing_module, parameter_set="missing")
+
+    copied = object()
+    source = SimpleNamespace(copy=lambda: copied)
+    assert cell_model._copy_parameter_values(source) is copied
+    assert cell_model._copy_parameter_values(copied) is copied
+
+    mutable: dict[str, float] = {}
+    cell_model._try_set_parameter_value(mutable, "value", 2.0)
+    assert mutable["value"] == 2.0
+
+    class _FallbackMutable(dict[str, float]):
+        def update(self, *_args: object, **_kwargs: object) -> None:
+            raise RuntimeError("unsupported")
+
+    fallback_mutable = _FallbackMutable()
+    cell_model._try_set_parameter_value(fallback_mutable, "value", 3.0)
+    assert fallback_mutable["value"] == 3.0
+    cell_model._try_set_parameter_value(object(), "value", 4.0)
+
+
+def test_battery_cell_mapping_and_parameter_function_fallbacks() -> None:
+    assert cell_model._mapping_get({"key": 1}, "key") == 1
+
+    class _ContainsOnly:
+        def __contains__(self, key: str) -> bool:
+            return key == "key"
+
+        def __getitem__(self, key: str) -> int:
+            assert key == "key"
+            return 2
+
+    assert cell_model._mapping_get(_ContainsOnly(), "key") == 2
+    assert cell_model._mapping_get(object(), "key", 3) == 3
+
+    class _BrokenContains:
+        def __contains__(self, _key: str) -> bool:
+            raise RuntimeError("broken")
+
+    assert cell_model._mapping_get(_BrokenContains(), "key", 4) == 4
+
+    calls: list[tuple[object, ...]] = []
+
+    def _one_argument(*args: object) -> float:
+        calls.append(args)
+        if len(args) != 1:
+            raise TypeError
+        return 5.0
+
+    assert (
+        cell_model._evaluate_parameter_function(
+            parameter_values={},
+            function_or_value=_one_argument,
+            ambient_temperature_k=298.15,
+            soc=0.5,
+            default=1.0,
+        )
+        == 5.0
+    )
+    assert len(calls) == 3
+
+    def _always_fails(*_args: object) -> float:
+        raise RuntimeError("cannot evaluate")
+
+    assert (
+        cell_model._evaluate_parameter_function(
+            parameter_values={},
+            function_or_value=_always_fails,
+            ambient_temperature_k=298.15,
+            soc=0.5,
+            default=1.0,
+        )
+        == 1.0
+    )
+    with pytest.raises(MissingOptionalDependencyError, match="could not be evaluated"):
+        cell_model._evaluate_parameter_function(
+            parameter_values={},
+            function_or_value=_always_fails,
+            ambient_temperature_k=298.15,
+            soc=0.5,
+            default=1.0,
+            strict=True,
+            parameter_name="R0",
+        )
+
+    assert (
+        cell_model._evaluate_parameter_function(
+            parameter_values={},
+            function_or_value=None,
+            ambient_temperature_k=298.15,
+            soc=0.5,
+            default=2.0,
+        )
+        == 2.0
+    )
+    with pytest.raises(MissingOptionalDependencyError, match="do not expose"):
+        cell_model._evaluate_parameter_function(
+            parameter_values={},
+            function_or_value=None,
+            ambient_temperature_k=298.15,
+            soc=0.5,
+            default=2.0,
+            strict=True,
+            parameter_name="R1",
+        )
+
+    evaluator = SimpleNamespace(evaluate=lambda _value: (_ for _ in ()).throw(RuntimeError("bad")))
+    assert (
+        cell_model._evaluate_parameter_function(
+            parameter_values=evaluator,
+            function_or_value=object(),
+            ambient_temperature_k=298.15,
+            soc=0.5,
+            default=3.0,
+        )
+        == 3.0
+    )
+    with pytest.raises(MissingOptionalDependencyError, match="could not be evaluated"):
+        cell_model._evaluate_parameter_function(
+            parameter_values=evaluator,
+            function_or_value=object(),
+            ambient_temperature_k=298.15,
+            soc=0.5,
+            default=3.0,
+            strict=True,
+            parameter_name="scalar",
+        )
+
+
+def test_battery_cell_interpolation_and_parameterization_boundaries() -> None:
+    priors = _thermal_priors()
+    assert cell_model.interpolate_total_resistance(priors, -1.0) == pytest.approx(0.05)
+    assert cell_model.interpolate_total_resistance(priors, 2.0) == pytest.approx(0.05)
+    assert cell_model.interpolate_total_resistance(priors, 0.5) == pytest.approx(0.05)
+
+    assert cell_model._interpolate_temperature_lookup((), (), 0.5, temperature_c=25, default=7) == 7.0
+    assert (
+        cell_model._interpolate_temperature_lookup(
+            (10.0, 20.0),
+            ((1.0,),),
+            0.5,
+            temperature_c=15,
+            default=8,
+        )
+        == 8.0
+    )
+
+    assert cell_model._parse_parameterization({"parameterization": " FAST "}).preset == "fast"
+    with pytest.raises(ValueError, match="mapping or string"):
+        cell_model._parse_parameterization({"parameterization": 2})
+    with pytest.raises(ValueError, match="Unsupported battery parameterization"):
+        cell_model._normalize_parameterization(cell_model.BatteryParameterization(preset="invalid"))
+    normalized = cell_model._normalize_parameterization(cell_model.BatteryParameterization(parameter_set=" "))
+    assert normalized.parameter_set is None
+    with pytest.raises(ValueError, match="must be a string"):
+        cell_model._coerce_string(2, field_name="field")
+    with pytest.raises(ValueError, match="must not be empty"):
+        cell_model._coerce_string(" ", field_name="field")
 
 
 def test_battery_problem_config_helpers_cover_defaults_and_backend_parsing() -> None:

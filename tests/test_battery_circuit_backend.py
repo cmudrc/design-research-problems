@@ -21,6 +21,7 @@ from design_research_problems.problems._domains.battery_circuit import (
     BatteryConnection,
     analyze_battery_topology,
     evaluate_battery_circuit,
+    validate_battery_circuit_state,
 )
 from design_research_problems.problems._domains.battery_layout import (
     CELL_SPEC_18650,
@@ -177,6 +178,70 @@ def _single_cell_state() -> BatteryCircuitState:
         pack_positive_terminal_id=1,
         pack_negative_terminal_id=0,
     )
+
+
+def test_circuit_validation_reports_each_structural_input_error() -> None:
+    requirements = _relaxed_requirements(target_voltage_v=3.7, minimum_capacity_ah=1.0, minimum_current_a=1.0)
+    valid = _single_cell_state()
+    cell = valid.cells[0]
+
+    cases = [
+        (replace(valid, cells=()), "At least one battery cell"),
+        (replace(valid, cells=(cell, replace(cell, x=1))), "Cell identifiers must be unique"),
+        (
+            replace(valid, cells=(cell, replace(cell, cell_id=1, x=1))),
+            "Terminal identifiers must be unique",
+        ),
+        (replace(valid, cells=(replace(cell, x=999),)), "outside the legal grid envelope"),
+        (
+            replace(
+                valid,
+                cells=(cell, replace(cell, cell_id=1, positive_terminal_id=3, negative_terminal_id=2)),
+            ),
+            "Duplicate physical coordinates",
+        ),
+        (replace(valid, pack_positive_terminal_id=0), "Pack positive and negative terminals must be distinct"),
+        (replace(valid, pack_positive_terminal_id=999), "Pack terminals must reference existing"),
+    ]
+
+    base_connection = BatteryConnection(connection_id=0, from_terminal_id=0, to_terminal_id=1)
+    two_cell = _two_cell_series_state()
+    cases.extend(
+        [
+            (
+                replace(
+                    two_cell,
+                    connections=(two_cell.connections[0], replace(two_cell.connections[0], ideal=False)),
+                ),
+                "Connection identifiers must be unique",
+            ),
+            (replace(valid, connections=(replace(base_connection, to_terminal_id=0),)), "join two distinct terminals"),
+            (replace(valid, connections=(replace(base_connection, to_terminal_id=999),)), "reference existing"),
+            (replace(valid, connections=(replace(base_connection, resistance_ohm=0),)), "positive resistance"),
+            (
+                replace(
+                    valid,
+                    connections=(base_connection, replace(base_connection, connection_id=1, ideal=True)),
+                ),
+                "Duplicate direct connections",
+            ),
+            (
+                replace(
+                    two_cell,
+                    connections=(
+                        *two_cell.connections,
+                        BatteryConnection(connection_id=1, from_terminal_id=2, to_terminal_id=3),
+                    ),
+                ),
+                "cell cannot have its terminals shorted",
+            ),
+        ]
+    )
+
+    for state, expected in cases:
+        reason = validate_battery_circuit_state(state, requirements)
+        assert reason is not None
+        assert expected in reason
 
 
 def _two_cell_series_state() -> BatteryCircuitState:
@@ -1184,6 +1249,130 @@ def test_two_rc_trace_residuals_accept_tuple_voltage_trace() -> None:
     assert numpy.allclose(residuals, 0.0)
 
 
+def test_two_rc_identification_adapter_builds_and_fits_traces(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
+
+    class _Solution:
+        t = numpy.array([0.0, 2.0])
+
+        def __getitem__(self, name: str) -> object:
+            value = 1.5 if name == "Current [A]" else 3.8
+            return lambda times: numpy.full(numpy.asarray(times).shape, value)
+
+    class _Simulation:
+        def __init__(self, model: object, **kwargs: object) -> None:
+            del model, kwargs
+
+        def solve(self, *, initial_soc: float) -> _Solution:
+            assert initial_soc in battery_cell_model._TWO_RC_IDENTIFICATION_SOC_GRID
+            return _Solution()
+
+    defaults = {
+        "Nominal cell capacity [A.h]": 2.5,
+        "Initial temperature [K]": 298.15,
+    }
+    fake_pybamm = SimpleNamespace(
+        lithium_ion=SimpleNamespace(SPM=lambda: SimpleNamespace(default_parameter_values=dict(defaults))),
+        Experiment=lambda steps: tuple(steps),
+        Simulation=_Simulation,
+    )
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_pybamm)
+
+    short_steps = battery_cell_model._build_two_rc_identification_experiment_steps(include_long_rest=False)
+    long_steps = battery_cell_model._build_two_rc_identification_experiment_steps(include_long_rest=True)
+    assert len(short_steps) == 8
+    assert long_steps[-1] == "Rest for 300 seconds"
+
+    traces = battery_cell_model._generate_pybamm_two_rc_identification_traces(resolved_parameter_set=None)
+    assert len(traces) == 15
+    assert traces[0].time_s == (0.0, 1.0, 2.0)
+    assert traces[0].current_a == (1.5, 1.5, 1.5)
+
+    monkeypatch.setattr(
+        battery_cell_model,
+        "_load_named_parameter_values",
+        lambda **kwargs: dict(defaults),
+    )
+    named_traces = battery_cell_model._generate_pybamm_two_rc_identification_traces(resolved_parameter_set="test-set")
+    assert len(named_traces) == len(traces)
+
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: SimpleNamespace())
+    with pytest.raises(MissingOptionalDependencyError, match=r"lithium_ion\.SPM"):
+        battery_cell_model._generate_pybamm_two_rc_identification_traces(resolved_parameter_set=None)
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_pybamm)
+
+    fitted = SimpleNamespace(success=True, x=numpy.array([0.01, 0.02, 8.0, 0.03, 120.0]))
+    monkeypatch.setattr("scipy.optimize.least_squares", lambda *args, **kwargs: fitted)
+    result = battery_cell_model._fit_two_rc_trace(
+        traces[0],
+        parameter_values=defaults,
+        resistance_scale=2.0,
+        open_circuit_voltage_v=tuple(4.0 for _ in battery_cell_model._TWO_RC_REFERENCE_SOC_GRID),
+    )
+    assert result.series_resistance_ohm == pytest.approx(0.02)
+    assert result.transient_capacitance_f == pytest.approx(200.0)
+    assert result.secondary_transient_capacitance_f == pytest.approx(2000.0)
+
+    monkeypatch.setattr(
+        "scipy.optimize.least_squares",
+        lambda *args, **kwargs: SimpleNamespace(success=False, x=fitted.x),
+    )
+    with pytest.raises(MissingOptionalDependencyError, match="did not converge"):
+        battery_cell_model._fit_two_rc_trace(
+            traces[0],
+            parameter_values=defaults,
+            resistance_scale=1.0,
+            open_circuit_voltage_v=tuple(4.0 for _ in battery_cell_model._TWO_RC_REFERENCE_SOC_GRID),
+        )
+
+
+def test_two_rc_ocv_and_dynamic_interpolation_adapters(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems._domains import battery_cell_model as battery_cell_model
+
+    direct = battery_cell_model._build_reference_ocv_lookup(
+        parameter_values={"Open-circuit voltage [V]": lambda temperature_k, current_a, soc: 3.0 + soc},
+        resolved_parameter_set=None,
+    )
+    assert direct[0] == pytest.approx(3.0)
+    assert direct[-1] == pytest.approx(4.0)
+
+    class _Solution:
+        def __getitem__(self, name: str) -> object:
+            assert name == "Voltage [V]"
+            return lambda _time: 3.75
+
+    fake_pybamm = SimpleNamespace(
+        lithium_ion=SimpleNamespace(
+            SPM=lambda: SimpleNamespace(default_parameter_values={"Initial temperature [K]": 298.15})
+        ),
+        Experiment=lambda steps: tuple(steps),
+        Simulation=lambda *args, **kwargs: SimpleNamespace(solve=lambda **solve_kwargs: _Solution()),
+    )
+    monkeypatch.setattr(battery_cell_model, "import_pybamm", lambda: fake_pybamm)
+    fallback = battery_cell_model._build_reference_ocv_lookup(parameter_values={}, resolved_parameter_set=None)
+    assert fallback == pytest.approx((3.75,) * 11)
+
+    model = replace(
+        _static_two_rc_cell_model(),
+        dynamic_parameters=battery_cell_model._BatteryCellDynamicParameters(
+            parameter_values={},
+            open_circuit_voltage_fn=lambda temperature_k, current_a, soc: 3.0 + soc,
+            resistance_scale=2.0,
+            resistance_normalization=0.5,
+            capacitance_normalization=2.0,
+            secondary_capacitance_normalization=2.0,
+            temperature_grid_c=(15.0, 35.0),
+            series_resistance_by_temperature_ohm=((0.02,) * 11, (0.04,) * 11),
+            transient_resistance_by_temperature_ohm=((0.03,) * 11, (0.05,) * 11),
+            transient_capacitance_by_temperature_f=((100.0,) * 11, (200.0,) * 11),
+            secondary_transient_resistance_by_temperature_ohm=((0.01,) * 11, (0.03,) * 11),
+            secondary_transient_capacitance_by_temperature_f=((800.0,) * 11, (1200.0,) * 11),
+        ),
+    )
+    interpolated = battery_cell_model.interpolate_cell_model(model, 0.5, temperature_c=25.0)
+    assert interpolated == pytest.approx((3.5, 0.03, 0.04, 37.5, 0.02, 250.0))
+
+
 def test_evaluate_battery_circuit_uses_pybamm_direct_path(monkeypatch: pytest.MonkeyPatch) -> None:
     from design_research_problems.problems._domains import battery_circuit as battery_circuit
 
@@ -1236,6 +1425,94 @@ def test_evaluate_battery_circuit_uses_pybamm_direct_path(monkeypatch: pytest.Mo
     assert evaluation.cell_model_source == "pybamm_spm_direct"
     assert evaluation.cell_model_parameter_set == "Marquis2019"
     assert evaluation.pack_terminal_voltage_end == pytest.approx(7.8)
+
+
+def test_pybamm_direct_adapter_runs_without_the_optional_solver(monkeypatch: pytest.MonkeyPatch) -> None:
+    from design_research_problems.problems._domains import battery_circuit as battery_circuit
+
+    class _Solution:
+        t = numpy.array([0.0, 1.0])
+        termination = "final time"
+
+        def __getitem__(self, name: str) -> object:
+            if name == "Voltage [V]":
+                return lambda times: numpy.full(numpy.asarray(times).shape, 3.9)
+            if name == "Volume-averaged cell temperature [K]":
+                return lambda times: numpy.full((len(numpy.asarray(times)), 2), 300.15)
+            if name == "Irreversible electrochemical heating [W]":
+                return lambda times: numpy.full(numpy.asarray(times).shape, 0.2)
+            raise KeyError(name)
+
+    model_options: list[object] = []
+
+    def _spm(*, options: object = None) -> object:
+        model_options.append(options)
+        return object()
+
+    fake_pybamm = SimpleNamespace(
+        lithium_ion=SimpleNamespace(SPM=_spm),
+        Experiment=lambda steps: tuple(steps),
+        Simulation=lambda *args, **kwargs: SimpleNamespace(solve=lambda **solve_kwargs: _Solution()),
+    )
+    monkeypatch.setattr(battery_circuit, "import_pybamm", lambda: fake_pybamm)
+    monkeypatch.setattr(
+        battery_circuit,
+        "_load_lithium_ion_parameter_values",
+        lambda **kwargs: ({}, 1.0, 298.15),
+    )
+
+    state = _single_cell_state()
+    requirements = _relaxed_requirements(
+        target_voltage_v=3.7,
+        minimum_capacity_ah=1.0 / 3600.0,
+        minimum_current_a=1.0,
+    )
+    result, source, parameter_set = battery_circuit._simulate_battery_circuit_pybamm_direct(
+        state,
+        requirements,
+        analyze_battery_topology(state),
+        simulate_to_failure=False,
+        backend_config=BatteryBackendConfig(
+            parameterization=BatteryParameterization(parameter_set="test-set"),
+            thermal_mode="lumped",
+        ),
+    )
+    assert source == "pybamm_spm_direct"
+    assert parameter_set == "test-set"
+    assert result.is_feasible is True
+    assert result.pack_terminal_voltage_end == pytest.approx(3.9)
+    assert result.end_cell_temperature_c == pytest.approx(27.0)
+    assert result.cumulative_cell_heat_j == pytest.approx(0.2)
+    assert model_options == [{"thermal": "lumped"}]
+
+    with pytest.raises(ValueError, match="does not support thermal_mode"):
+        battery_circuit._simulate_battery_circuit_pybamm_direct(
+            state,
+            requirements,
+            analyze_battery_topology(state),
+            simulate_to_failure=False,
+            backend_config=BatteryBackendConfig(thermal_mode="x-full"),
+        )
+
+
+def test_pybamm_direct_helpers_report_unsupported_states_and_missing_traces() -> None:
+    from design_research_problems.problems._domains import battery_circuit as battery_circuit
+
+    state = _single_cell_state()
+    analysis = analyze_battery_topology(state)
+    unsupported = SimpleNamespace(topology_kind="custom", series_count=None, parallel_count=None)
+    assert "series-parallel" in battery_circuit._validate_pybamm_direct_state(state, unsupported)
+    assert "at least one active cell" in battery_circuit._validate_pybamm_direct_state(
+        replace(state, cells=()), analysis
+    )
+
+    sample_times = numpy.array([0.0, 1.0])
+    with pytest.raises(KeyError, match="temperature variable"):
+        battery_circuit._load_pybamm_direct_temperature_trace_c({}, sample_times)
+    assert numpy.array_equal(
+        battery_circuit._load_pybamm_direct_heat_trace_w({}, sample_times),
+        numpy.zeros(2),
+    )
 
 
 def test_pybamm_direct_rejects_nonideal_interconnect_topologies() -> None:

@@ -2,7 +2,7 @@
 [![CI](https://github.com/cmudrc/design-research-problems/actions/workflows/ci.yml/badge.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/ci.yml)
 [![Coverage](https://raw.githubusercontent.com/cmudrc/design-research-problems/HEAD/.github/badges/coverage.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/ci.yml)
 [![Examples Passing](https://raw.githubusercontent.com/cmudrc/design-research-problems/HEAD/.github/badges/examples-passing.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/examples.yml)
-[![Public API In Examples](https://raw.githubusercontent.com/cmudrc/design-research-problems/HEAD/.github/badges/examples-api-coverage.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/examples.yml)
+[![API in Examples](https://raw.githubusercontent.com/cmudrc/design-research-problems/HEAD/.github/badges/examples-api-coverage.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/examples.yml)
 [![Docs](https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml/badge.svg)](https://github.com/cmudrc/design-research-problems/actions/workflows/docs-pages.yml)
 [![PyPI Version](https://img.shields.io/pypi/v/design-research-problems.svg)](https://pypi.org/project/design-research-problems/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/design-research-problems.svg)](https://pypi.org/project/design-research-problems/)
@@ -10,6 +10,14 @@
 `design-research-problems` is a compact library and compendium of design research
 problems. It packages canonical research prompts, optimization benchmarks, and
 discrete grammar-style problems behind a small, typed Python API.
+
+## Quality Signals
+
+- **Coverage** reports total line coverage for the default deterministic test suite; CI requires at least 95%.
+- **Examples Passing** reports checked-in example scripts that execute successfully in the examples workflow.
+- **API in Examples** reports curated top-level `__all__` exports referenced by runnable examples. `N/N` means every supported top-level export appears in at least one example, and CI requires 100%.
+
+Run `make coverage`, `make examples-test`, and `make examples-coverage` to reproduce these checks locally.
 
 ## Overview
 

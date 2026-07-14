@@ -16,7 +16,7 @@ def main() -> None:
 
     example_files = sorted(ROOT.glob("examples/**/*.py"))
     combined_source = "\n".join(path.read_text(encoding="utf-8") for path in example_files)
-    public_api = {name for name in drp.__all__ if name != "__version__"}
+    public_api = set(drp.__all__)
     used = sorted(name for name in public_api if name in combined_source)
     example_count = len(example_files)
     covered_exports = len(used)

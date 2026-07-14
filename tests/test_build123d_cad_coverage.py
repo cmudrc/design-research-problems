@@ -53,6 +53,11 @@ def test_geometry_helpers_return_deterministic_layouts() -> None:
     assert cad._flange_hole_centers_z(cad.MountingBracketSpec(flange_hole_count=0)) == []
     assert cad._fillet_candidates_mm(0.0) == []
     assert cad._fillet_candidates_mm(1.0) == [1.0, 0.5]
+    assert cad._base_hole_centers_xy(cad.MountingBracketSpec(base_hole_count=1)) == [(0.0, 0.0)]
+    assert len(cad._base_hole_centers_xy(cad.MountingBracketSpec(base_hole_count=2))) == 2
+    assert len(cad._flange_hole_centers_z(cad.MountingBracketSpec(flange_hole_count=1))) == 1
+    assert len(cad._flange_hole_centers_z(cad.MountingBracketSpec(flange_hole_count=3))) == 3
+    assert cad._fillet_candidates_mm(0.75) == [0.75, 0.5]
 
 
 def test_render_build123d_script_embeds_parameter_values() -> None:
@@ -134,6 +139,37 @@ def test_evaluate_scripted_part_validates_preconditions_and_output(monkeypatch: 
         cad.evaluate_scripted_part("raise ValueError('boom')")
 
 
+@pytest.mark.parametrize(
+    "script",
+    [
+        "import os",
+        "from . import Box",
+        "from os import path",
+        "from build123d import *",
+        "open('file.txt')",
+        "object.__subclasses__()",
+        "value = object.__class__",
+        "value = __builtins__",
+        "global value",
+    ],
+)
+def test_script_validator_rejects_unsafe_python_features(script: str) -> None:
+    with pytest.raises(ValueError):
+        cad._validate_build123d_script(script)
+
+
+def test_script_validator_and_import_hook_report_syntax_and_import_errors() -> None:
+    with pytest.raises(ValueError, match="invalid Python syntax"):
+        cad._validate_build123d_script("if:")
+    with pytest.raises(ImportError, match="Relative imports"):
+        cad._safe_script_import("build123d", level=1)
+    with pytest.raises(ImportError, match="is not allowed"):
+        cad._safe_script_import("os")
+    assert cad._safe_script_import("math") is not None
+    assert "line 1" in str(cad._script_restriction_error("restricted", cad.ast.parse("x = 1").body[0]))
+    assert str(cad._script_restriction_error("restricted")) == "restricted"
+
+
 def test_build123d_bracket_volume_raises_when_dependency_missing(monkeypatch: pytest.MonkeyPatch) -> None:
     def _raise_import(_name: str) -> object:
         raise ImportError("missing")
@@ -141,6 +177,35 @@ def test_build123d_bracket_volume_raises_when_dependency_missing(monkeypatch: py
     monkeypatch.setattr(cad, "import_module", _raise_import)
     with pytest.raises(RuntimeError, match="build123d is not installed"):
         cad._build123d_bracket_volume_mm3(cad.MountingBracketSpec())
+
+
+def test_build123d_bracket_volume_with_optional_backend() -> None:
+    pytest.importorskip("build123d")
+
+    volume, applied_fillet, warning = cad._build123d_bracket_volume_mm3(cad.MountingBracketSpec())
+
+    assert volume > 0.0
+    assert applied_fillet is not None
+    assert applied_fillet > 0.0
+    assert warning is None or "applied feasible" in warning
+
+
+def test_scripted_part_wraps_shape_metric_failures(monkeypatch: pytest.MonkeyPatch) -> None:
+    shape = SimpleNamespace(
+        volume=1.0,
+        area=1.0,
+        bounding_box=lambda: (_ for _ in ()).throw(RuntimeError("no bounding box")),
+        is_valid=lambda: True,
+    )
+    monkeypatch.setattr(cad, "build123d_available", lambda: True)
+    monkeypatch.setattr(
+        cad,
+        "_script_build123d_namespace",
+        lambda: {"__builtins__": {}, "shape": shape},
+    )
+
+    with pytest.raises(ValueError, match="Could not compute shape metrics"):
+        cad.evaluate_scripted_part("result = shape")
 
 
 def test_bracket_report_handles_backend_available_and_unavailable(monkeypatch: pytest.MonkeyPatch) -> None:

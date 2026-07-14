@@ -34,6 +34,12 @@ make docs-check
 make ci
 ```
 
+## Quality Gates
+
+- `make coverage` enforces at least 95% total line coverage for the default deterministic suite.
+- `make examples-test` executes the checked-in runnable examples.
+- `make examples-coverage` requires every curated top-level `__all__` export to appear in at least one runnable example.
+
 Optional but useful:
 
 ```bash

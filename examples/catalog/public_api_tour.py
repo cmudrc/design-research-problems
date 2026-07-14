@@ -11,6 +11,8 @@ def main() -> None:
     """Load one example from each family and print typed public-API touchpoints."""
     registry = derp.ProblemRegistry()
     catalog: derp.IdeationCatalog = derp.get_ideation_catalog()
+    summaries: tuple[derp.ProblemCatalogSummary, ...] = derp.search_problem_summaries(text="battery")[:2]
+    integration_module = derp.integration
 
     text_problem = derp.get_problem("ideation_peanut_shelling_fu_cagan_kotovsky_2010")
     typed_text_problem = derp.get_problem_as(
@@ -73,6 +75,9 @@ def main() -> None:
     handled_optional_error = derp.MissingOptionalDependencyError.__name__
 
     print("problem-count", len(derp.list_problems()))
+    print("package-version", derp.__version__)
+    print("search-results", [summary.problem_id for summary in summaries])
+    print("integration-module", integration_module.__name__)
     print("kind-count", len(kinds), sorted(kind.value for kind in kinds))
     print("loaded-types", [type(problem).__name__ for problem in loaded_problems])
     print("computable-count", computable_count)
