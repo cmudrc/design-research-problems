@@ -28,6 +28,36 @@ class _DummyShape:
         return True
 
 
+class _NullContext:
+    """Context manager used by the in-memory Build123d protocol double."""
+
+    def __init__(self, *_args: object) -> None:
+        pass
+
+    def __enter__(self) -> _NullContext:
+        return self
+
+    def __exit__(self, *_args: object) -> None:
+        return None
+
+
+class _BracketEdge:
+    """Edge double positioned at the bracket's internal corner."""
+
+    def center(self) -> SimpleNamespace:
+        return SimpleNamespace(Y=-14.0, Z=6.0)
+
+
+class _BracketPart(_NullContext):
+    """BuildPart double exposing the subset consumed by the adapter."""
+
+    def __init__(self) -> None:
+        self.part = SimpleNamespace(volume=41_000.0)
+
+    def edges(self) -> list[_BracketEdge]:
+        return [_BracketEdge()]
+
+
 def test_normalize_mounting_bracket_spec_validates_inputs() -> None:
     spec = cad.MountingBracketSpec()
     assert cad.normalize_mounting_bracket_spec(spec) is spec
@@ -177,6 +207,44 @@ def test_build123d_bracket_volume_raises_when_dependency_missing(monkeypatch: py
     monkeypatch.setattr(cad, "import_module", _raise_import)
     with pytest.raises(RuntimeError, match="build123d is not installed"):
         cad._build123d_bracket_volume_mm3(cad.MountingBracketSpec())
+
+
+def test_build123d_bracket_volume_uses_backend_protocol(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Bracket construction should use the documented Build123d primitive protocol."""
+    primitive_calls: list[tuple[str, tuple[object, ...], dict[str, object]]] = []
+    fillet_radii: list[float] = []
+
+    def _record_primitive(name: str):
+        def _primitive(*args: object, **kwargs: object) -> None:
+            primitive_calls.append((name, args, kwargs))
+
+        return _primitive
+
+    def _fillet(_edges: object, radius: float) -> None:
+        fillet_radii.append(radius)
+        if len(fillet_radii) == 1:
+            raise ValueError("requested radius is infeasible")
+
+    fake_module = SimpleNamespace(
+        BuildPart=_BracketPart,
+        Box=_record_primitive("box"),
+        Cylinder=_record_primitive("cylinder"),
+        Locations=_NullContext,
+        Location=lambda *args: args,
+        fillet=_fillet,
+        Align=SimpleNamespace(CENTER="center", MIN="min"),
+        Mode=SimpleNamespace(SUBTRACT="subtract"),
+    )
+    monkeypatch.setattr(cad, "import_module", lambda _name: fake_module)
+
+    volume, applied_fillet, warning = cad._build123d_bracket_volume_mm3(cad.MountingBracketSpec())
+
+    assert volume == pytest.approx(41_000.0)
+    assert applied_fillet == pytest.approx(3.5)
+    assert warning == "Requested 4 mm fillet; applied feasible 3.5 mm."
+    assert [call[0] for call in primitive_calls].count("box") == 2
+    assert [call[0] for call in primitive_calls].count("cylinder") == 6
+    assert fillet_radii == [4.0, 3.5]
 
 
 def test_build123d_bracket_volume_with_optional_backend() -> None:
