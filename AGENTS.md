@@ -67,39 +67,19 @@ merging.
 - Keep the base install lean and avoid introducing optional-dependency behavior
   into default test paths.
 
-## Release Naming
+## Release Planning
 
-- Theme: endangered species.
-- Monthly work-cycle names are shared across milestone titles, release PR
-  titles, and release branches.
-- Name the cycle for the month the work is done, not the later drop month.
-  - Milestone title / PR title: `{base name} - {Work month YYYY}`
-  - Release branch: slugified full title, for example
-    `monarch-maze-april-2026`
-- Milestone due dates should land in the first week of the following month.
-- Milestone descriptions must use:
-  - `Work month: {Month YYYY}.`
-  - `Theme source: <url>`
-- Release PR bodies must repeat the same `Theme source:` link used on the
-  milestone and refer to the same work month named in the title.
-- Never reuse an exact base name or the same primary subject across any work
-  month or any of the four design-research module repos unless all four
-  `AGENTS.md` files are intentionally updated together.
-- Before adding a new release name, check the `Release Naming` tables in all
-  four repos to avoid repeats.
-
-| Work month | Target drop | Base name | Source subject |
-| --- | --- | --- | --- |
-| March 2026 | April 1, 2026 | Axolotl Array | Axolotl |
-| April 2026 | May 1, 2026 | Monarch Maze | Monarch butterfly |
-| May 2026 | June 1, 2026 | Jaguar Junction | Jaguar |
-| June 2026 | July 1, 2026 | Saola Sandbox | Saola |
-| July 2026 | August 1, 2026 | Orangutan Obstacle | Orangutan |
-| August 2026 | September 1, 2026 | Numbat Nexus | Numbat |
-| September 2026 | October 1, 2026 | Dhole Dilemma | Dhole |
-| October 2026 | November 1, 2026 | Kakapo Knot | Kakapo |
-| November 2026 | December 1, 2026 | Vaquita Vault | Vaquita |
-| December 2026 | January 1, 2027 | Pangolin Puzzle | Pangolin |
+- Do not create monthly milestone naming tables, themed release PR names, or
+  calendar release branches as default maintenance.
+- Prefer small issue/PR-scoped planning and package version releases driven by
+  user-facing changes.
+- Use GitHub milestones only for explicit, short-lived initiatives with an
+  active owner; they are optional scheduling aids, not release gates.
+- Name release branches and release PRs for the version or concrete change set
+  they contain.
+- When publishing, update package metadata, docs, examples, and GitHub
+  Releases/PyPI notes as needed. Do not add README callouts that point to
+  monthly milestones.
 ## Keep This File Up To Date
 
 Update this file whenever contributor workflow changes, especially when setup
