@@ -7,13 +7,6 @@
 [![PyPI Version](https://img.shields.io/pypi/v/design-research-problems.svg)](https://pypi.org/project/design-research-problems/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/design-research-problems.svg)](https://pypi.org/project/design-research-problems/)
 
-<!-- release-callout:start -->
-> [!IMPORTANT]
-> Current monthly release: [Jaguar Junction - May 2026](https://github.com/cmudrc/design-research-problems/milestone/3)  
-> Due: June 1, 2026  
-> Tracks: May 2026 work
-<!-- release-callout:end -->
-
 `design-research-problems` is a compact library and compendium of design research
 problems. It packages canonical research prompts, optimization benchmarks, and
 discrete grammar-style problems behind a small, typed Python API.
