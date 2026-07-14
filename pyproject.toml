@@ -79,6 +79,7 @@ where = ["src"]
 [tool.setuptools.package-data]
 design_research_problems = [
   "py.typed",
+  "*.pyi",
   "_assets/catalog/*/*.toml",
   "_assets/catalog/*/*.bib",
   "_assets/catalog/*/*/*.toml",
