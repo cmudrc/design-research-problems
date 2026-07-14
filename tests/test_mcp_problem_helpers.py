@@ -93,6 +93,23 @@ def test_parse_mcp_stdio_parameters_validates_bad_inputs(
         parse_mcp_stdio_parameters(parameters)
 
 
+def test_mcp_subprocess_environment_inherits_parent_values(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("DERP_PARENT_VALUE", "from-parent")
+
+    environment = mcp_problem_module._merged_subprocess_env(
+        {
+            "DERP_CHILD_VALUE": "from-problem",
+            "DERP_PARENT_VALUE": "overridden",
+        }
+    )
+
+    assert environment["DERP_CHILD_VALUE"] == "from-problem"
+    assert environment["DERP_PARENT_VALUE"] == "overridden"
+    assert "PATH" in environment
+
+
 def test_proxy_signature_and_annotation_helpers_cover_schema_edges() -> None:
     signature = _proxy_signature(
         tool_name="echo",

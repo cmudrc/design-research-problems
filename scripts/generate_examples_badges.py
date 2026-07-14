@@ -61,7 +61,7 @@ def _render_badge(label: str, message: str, color: str) -> str:
     total_width = label_width + message_width
     label_x = label_width / 2
     message_x = label_width + (message_width / 2)
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" 
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}"
     height="20" role="img" aria-label="{label}: {message}">
   <linearGradient id="g" x2="0" y2="100%">
     <stop offset="0" stop-color="#fff" stop-opacity=".7"/>
@@ -122,7 +122,7 @@ def main() -> None:
     api_coverage_percent = round((covered_exports / total_exports) * 100.0) if total_exports else 100
     API_BADGE.write_text(
         _render_badge(
-            "Example API Coverage",
+            "API in Examples",
             f"{covered_exports}/{total_exports}",
             _pick_color(api_coverage_percent),
         ),

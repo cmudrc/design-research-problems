@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import os
 import sys
 from collections.abc import Mapping, Sequence
 from contextlib import AsyncExitStack
@@ -52,6 +53,11 @@ def _resolve_stdio_command(command: str) -> str:
     if command == "__python_executable__":
         return sys.executable
     return command
+
+
+def _merged_subprocess_env(overrides: Mapping[str, str]) -> dict[str, str]:
+    """Return the inherited environment with problem-specific overrides."""
+    return {**os.environ, **overrides}
 
 
 def parse_mcp_stdio_parameters(parameters: Mapping[str, object]) -> MCPStdioConfig:
@@ -203,7 +209,7 @@ class _LoopBoundUpstreamSession:
                 command=self._stdio_config.command,
                 args=list(self._stdio_config.args),
                 cwd=self._stdio_config.cwd,
-                env=dict(self._stdio_config.env) if self._stdio_config.env else None,
+                env=_merged_subprocess_env(self._stdio_config.env),
             )
 
             exit_stack = AsyncExitStack()
@@ -466,7 +472,7 @@ class MCPProblem(Problem):
             command=self._stdio_config.command,
             args=list(self._stdio_config.args),
             cwd=self._stdio_config.cwd,
-            env=dict(self._stdio_config.env) if self._stdio_config.env else None,
+            env=_merged_subprocess_env(self._stdio_config.env),
         )
 
         async def _discover() -> tuple[MCPTool, ...]:

@@ -676,8 +676,6 @@ def validate_battery_circuit_state(
         return "Terminal identifiers must be unique."
 
     for cell in state.cells:
-        if cell.negative_terminal_id == cell.positive_terminal_id:
-            return "A cell cannot reuse the same terminal id for both polarities."
         if not coordinate_is_in_bounds((cell.x, cell.y, cell.z), requirements):
             return "A cell lies outside the legal grid envelope."
 

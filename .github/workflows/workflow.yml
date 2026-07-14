@@ -1,58 +1,97 @@
 name: Publish
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [published]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the validated artifacts to PyPI
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
 
+concurrency:
+  group: publish-${{ github.event.release.tag_name || github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
-    name: Build distributions
+    name: Build and validate distributions
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Check out release source
+        uses: actions/checkout@v5
+
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
-      - name: Verify tag matches package version
+
+      - name: Verify publishing tag matches package version
         env:
-          GITHUB_REF_TYPE: ${{ github.ref_type }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
+          EVENT_NAME: ${{ github.event_name }}
+          MANUAL_PUBLISH: ${{ inputs.publish }}
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           python - <<'PY'
           import os
           import pathlib
           import tomllib
 
-          version = tomllib.loads(pathlib.Path("pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
-          if os.environ["GITHUB_REF_TYPE"] == "tag":
-              expected = f"v{version}"
-              actual = os.environ["GITHUB_REF_NAME"]
-              if actual != expected:
-                  raise SystemExit(f"Tag {actual!r} does not match pyproject version {expected!r}.")
-          print(f"Preparing release for design-research-problems {version}.")
+          package_name = "design-research-problems"
+          project = tomllib.loads(
+              pathlib.Path("pyproject.toml").read_text(encoding="utf-8")
+          )["project"]
+          expected_tag = f"v{project['version']}"
+          event_name = os.environ["EVENT_NAME"]
+          manual_publish = os.environ.get("MANUAL_PUBLISH", "").lower() == "true"
+
+          if event_name == "release":
+              actual_tag = os.environ["RELEASE_TAG"]
+          elif manual_publish:
+              if os.environ["REF_TYPE"] != "tag":
+                  raise SystemExit(
+                      "Manual publishing must be dispatched from the release tag, "
+                      f"not {os.environ['REF_TYPE']} {os.environ['REF_NAME']!r}."
+                  )
+              actual_tag = os.environ["REF_NAME"]
+          else:
+              actual_tag = None
+
+          if actual_tag is not None and actual_tag != expected_tag:
+              raise SystemExit(
+                  f"Tag {actual_tag!r} does not match package version {expected_tag!r}."
+              )
+
+          mode = "publish" if actual_tag is not None else "build-only"
+          print(f"Preparing {package_name} {project['version']} ({mode}).")
           PY
-      - name: Install build tools
+
+      - name: Install release tooling
         run: python -m pip install --upgrade pip build twine
-      - name: Build distribution artifacts
+
+      - name: Build and validate distribution artifacts
         run: make release-check
+
       - name: Upload distribution artifacts
         uses: actions/upload-artifact@v4
         with:
           name: python-package-distributions
           path: dist/*
+          if-no-files-found: error
 
   publish:
-    name: Publish to PyPI
+    name: Publish distributions to PyPI
     needs: build
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'release' || inputs.publish == true
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -60,12 +99,14 @@ jobs:
     permissions:
       contents: read
       id-token: write
+
     steps:
       - name: Download distribution artifacts
         uses: actions/download-artifact@v4
         with:
           name: python-package-distributions
           path: dist
+
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:

@@ -7,14 +7,14 @@ SPHINX ?= $(PYTHON) -m sphinx
 BUILD ?= $(PYTHON) -m build
 TWINE ?= $(PYTHON) -m twine
 TRUSSME_SPEC ?= trussme>=0.1.0
-COVERAGE_MIN ?= 90
+COVERAGE_MIN ?= 95
 COVERAGE_MINIMUM ?= $(COVERAGE_MIN)
 FULL_EXTRAS ?= dev,battery,grammar,mcp,cad,pandas,solvers
 
 .PHONY: help check-python dev install-dev \
 	lint fmt fmt-check type test qa coverage release-check \
 	docstrings-check \
-	examples-smoke examples-test examples-metrics \
+	examples-smoke examples-test examples-coverage examples-metrics \
 	docs docs-build docs-check docs-linkcheck \
 	install-trussme install-pybamm dev-truss dev-battery dev-full \
 	test-trussme test-full \
@@ -31,6 +31,7 @@ help:
 	@echo "  test                 Run the default pytest suite."
 	@echo "  test-trussme         Run tests that require an installed trussme package."
 	@echo "  test-full            Run full pytest suite and examples smoke checks."
+	@echo "  examples-coverage    Require every public API export to appear in an example."
 	@echo "  release-check        Build sdist/wheel and run twine metadata checks."
 	@echo "  docstrings-check     Enforce Google-style docstring policy."
 	@echo "  ci                   Run the main local CI checks."
@@ -84,6 +85,9 @@ examples-metrics: check-python examples-test
 	$(PYTHON) scripts/generate_examples_metrics.py
 	$(PYTHON) scripts/generate_examples_badges.py
 
+examples-coverage: examples-metrics
+	$(PYTHON) scripts/check_example_api_coverage.py --minimum 100
+
 docs-build: check-python
 	$(PYTHON) scripts/generate_example_docs.py
 	$(PYTHON) scripts/generate_problem_catalog_docs.py
@@ -120,7 +124,7 @@ test-full: check-python
 	PYTHONPATH=src $(PYTEST) -q -rs
 	PYTHONPATH=src $(PYTEST) -m examples_smoke -q
 
-ci: qa coverage docstrings-check docs-check examples-smoke release-check
+ci: qa coverage docstrings-check docs-check examples-smoke examples-coverage release-check
 
 clean:
 	rm -rf .coverage .mypy_cache .pytest_cache .ruff_cache artifacts build dist docs/_build src/design_research_problems.egg-info

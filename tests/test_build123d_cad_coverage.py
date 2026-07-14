@@ -28,6 +28,36 @@ class _DummyShape:
         return True
 
 
+class _NullContext:
+    """Context manager used by the in-memory Build123d protocol double."""
+
+    def __init__(self, *_args: object) -> None:
+        pass
+
+    def __enter__(self) -> _NullContext:
+        return self
+
+    def __exit__(self, *_args: object) -> None:
+        return None
+
+
+class _BracketEdge:
+    """Edge double positioned at the bracket's internal corner."""
+
+    def center(self) -> SimpleNamespace:
+        return SimpleNamespace(Y=-14.0, Z=6.0)
+
+
+class _BracketPart(_NullContext):
+    """BuildPart double exposing the subset consumed by the adapter."""
+
+    def __init__(self) -> None:
+        self.part = SimpleNamespace(volume=41_000.0)
+
+    def edges(self) -> list[_BracketEdge]:
+        return [_BracketEdge()]
+
+
 def test_normalize_mounting_bracket_spec_validates_inputs() -> None:
     spec = cad.MountingBracketSpec()
     assert cad.normalize_mounting_bracket_spec(spec) is spec
@@ -53,6 +83,11 @@ def test_geometry_helpers_return_deterministic_layouts() -> None:
     assert cad._flange_hole_centers_z(cad.MountingBracketSpec(flange_hole_count=0)) == []
     assert cad._fillet_candidates_mm(0.0) == []
     assert cad._fillet_candidates_mm(1.0) == [1.0, 0.5]
+    assert cad._base_hole_centers_xy(cad.MountingBracketSpec(base_hole_count=1)) == [(0.0, 0.0)]
+    assert len(cad._base_hole_centers_xy(cad.MountingBracketSpec(base_hole_count=2))) == 2
+    assert len(cad._flange_hole_centers_z(cad.MountingBracketSpec(flange_hole_count=1))) == 1
+    assert len(cad._flange_hole_centers_z(cad.MountingBracketSpec(flange_hole_count=3))) == 3
+    assert cad._fillet_candidates_mm(0.75) == [0.75, 0.5]
 
 
 def test_render_build123d_script_embeds_parameter_values() -> None:
@@ -134,6 +169,37 @@ def test_evaluate_scripted_part_validates_preconditions_and_output(monkeypatch: 
         cad.evaluate_scripted_part("raise ValueError('boom')")
 
 
+@pytest.mark.parametrize(
+    "script",
+    [
+        "import os",
+        "from . import Box",
+        "from os import path",
+        "from build123d import *",
+        "open('file.txt')",
+        "object.__subclasses__()",
+        "value = object.__class__",
+        "value = __builtins__",
+        "global value",
+    ],
+)
+def test_script_validator_rejects_unsafe_python_features(script: str) -> None:
+    with pytest.raises(ValueError):
+        cad._validate_build123d_script(script)
+
+
+def test_script_validator_and_import_hook_report_syntax_and_import_errors() -> None:
+    with pytest.raises(ValueError, match="invalid Python syntax"):
+        cad._validate_build123d_script("if:")
+    with pytest.raises(ImportError, match="Relative imports"):
+        cad._safe_script_import("build123d", level=1)
+    with pytest.raises(ImportError, match="is not allowed"):
+        cad._safe_script_import("os")
+    assert cad._safe_script_import("math") is not None
+    assert "line 1" in str(cad._script_restriction_error("restricted", cad.ast.parse("x = 1").body[0]))
+    assert str(cad._script_restriction_error("restricted")) == "restricted"
+
+
 def test_build123d_bracket_volume_raises_when_dependency_missing(monkeypatch: pytest.MonkeyPatch) -> None:
     def _raise_import(_name: str) -> object:
         raise ImportError("missing")
@@ -141,6 +207,73 @@ def test_build123d_bracket_volume_raises_when_dependency_missing(monkeypatch: py
     monkeypatch.setattr(cad, "import_module", _raise_import)
     with pytest.raises(RuntimeError, match="build123d is not installed"):
         cad._build123d_bracket_volume_mm3(cad.MountingBracketSpec())
+
+
+def test_build123d_bracket_volume_uses_backend_protocol(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Bracket construction should use the documented Build123d primitive protocol."""
+    primitive_calls: list[tuple[str, tuple[object, ...], dict[str, object]]] = []
+    fillet_radii: list[float] = []
+
+    def _record_primitive(name: str):
+        def _primitive(*args: object, **kwargs: object) -> None:
+            primitive_calls.append((name, args, kwargs))
+
+        return _primitive
+
+    def _fillet(_edges: object, radius: float) -> None:
+        fillet_radii.append(radius)
+        if len(fillet_radii) == 1:
+            raise ValueError("requested radius is infeasible")
+
+    fake_module = SimpleNamespace(
+        BuildPart=_BracketPart,
+        Box=_record_primitive("box"),
+        Cylinder=_record_primitive("cylinder"),
+        Locations=_NullContext,
+        Location=lambda *args: args,
+        fillet=_fillet,
+        Align=SimpleNamespace(CENTER="center", MIN="min"),
+        Mode=SimpleNamespace(SUBTRACT="subtract"),
+    )
+    monkeypatch.setattr(cad, "import_module", lambda _name: fake_module)
+
+    volume, applied_fillet, warning = cad._build123d_bracket_volume_mm3(cad.MountingBracketSpec())
+
+    assert volume == pytest.approx(41_000.0)
+    assert applied_fillet == pytest.approx(3.5)
+    assert warning == "Requested 4 mm fillet; applied feasible 3.5 mm."
+    assert [call[0] for call in primitive_calls].count("box") == 2
+    assert [call[0] for call in primitive_calls].count("cylinder") == 6
+    assert fillet_radii == [4.0, 3.5]
+
+
+def test_build123d_bracket_volume_with_optional_backend() -> None:
+    pytest.importorskip("build123d")
+
+    volume, applied_fillet, warning = cad._build123d_bracket_volume_mm3(cad.MountingBracketSpec())
+
+    assert volume > 0.0
+    assert applied_fillet is not None
+    assert applied_fillet > 0.0
+    assert warning is None or "applied feasible" in warning
+
+
+def test_scripted_part_wraps_shape_metric_failures(monkeypatch: pytest.MonkeyPatch) -> None:
+    shape = SimpleNamespace(
+        volume=1.0,
+        area=1.0,
+        bounding_box=lambda: (_ for _ in ()).throw(RuntimeError("no bounding box")),
+        is_valid=lambda: True,
+    )
+    monkeypatch.setattr(cad, "build123d_available", lambda: True)
+    monkeypatch.setattr(
+        cad,
+        "_script_build123d_namespace",
+        lambda: {"__builtins__": {}, "shape": shape},
+    )
+
+    with pytest.raises(ValueError, match="Could not compute shape metrics"):
+        cad.evaluate_scripted_part("result = shape")
 
 
 def test_bracket_report_handles_backend_available_and_unavailable(monkeypatch: pytest.MonkeyPatch) -> None:

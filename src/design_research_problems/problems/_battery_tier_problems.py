@@ -210,67 +210,13 @@ class Battery18650Tier1SeriesParallelOptimizationProblem(BatteryGridSizingProble
             float(self.requirements.minimum_current_a) if load_current_a is None else float(load_current_a)
         )
 
-    @classmethod
-    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650Tier1SeriesParallelOptimizationProblem:
-        """Construct one tier-1 optimizer from manifest data."""
-        parameters = manifest.parameters
-        return cls(
-            metadata=manifest.metadata,
-            statement_markdown=manifest.statement_markdown,
-            resource_bundle=cls.resource_bundle_from_manifest(manifest),
-            requirements=parse_battery_requirements(manifest),
-            backend_config=parse_battery_backend_config(manifest),
-            objective_weights=BatteryObjectiveWeights.from_mapping(
-                parameters.get("objective_weights"),
-                default_volume=0.20,
-                default_cost=0.65,
-                default_temperature=0.15,
-            ),
-            cooling_coefficient_w_per_m2k=float(
-                cast(float, parameters.get("cooling_coefficient_w_per_m2k", _DEFAULT_COOLING_COEFFICIENT))
-            ),
-            passive_cooling_w_per_k=float(
-                cast(float, parameters.get("passive_cooling_w_per_k", _DEFAULT_PASSIVE_COOLING))
-            ),
-            ambient_temperature_c=float(
-                cast(float, parameters.get("ambient_temperature_c", _DEFAULT_AMBIENT_TEMPERATURE_C))
-            ),
-            maximum_temperature_c=float(
-                cast(float, parameters.get("maximum_temperature_c", _DEFAULT_MAX_TEMPERATURE_C))
-            ),
-            load_current_a=cast(float | None, parameters.get("load_current_a")),
-        )
-
     def _connection_count(self, series_count: int, parallel_count: int) -> int:
         """Return canonical connection count for rectangular ``SxP`` bus wiring."""
         return max(0, series_count + 1) * max(0, parallel_count - 1)
 
     def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
-        """Return tier-1 metrics for one candidate vector."""
-        evaluation = self._evaluation_from_variables(variables)
-        state = self.decode_candidate(variables)
-        peak_temperature = _thermal_peak_temperature_c(
-            cell_count=evaluation.cell_count,
-            parallel_equivalent=float(state.parallel_count),
-            surface_area_mm2=evaluation.surface_area,
-            load_current_a=self.load_current_a,
-            cooling_coefficient_w_per_m2k=self.cooling_coefficient_w_per_m2k,
-            passive_cooling_w_per_k=self.passive_cooling_w_per_k,
-            ambient_temperature_c=self.ambient_temperature_c,
-        )
-        return BatteryTierMetrics(
-            cell_count=float(evaluation.cell_count),
-            connection_count=float(self._connection_count(state.series_count, state.parallel_count)),
-            cost_usd=float(evaluation.design_cost),
-            design_volume_mm3=float(evaluation.design_volume),
-            max_temperature_c=peak_temperature,
-            voltage_v=float(evaluation.design_voltage),
-            capacity_ah=float(evaluation.design_capacity),
-            current_limit_a=float(evaluation.analytic_current_limit),
-            min_clearance_mm=float(MIN_SPACING_MM),
-            is_feasible=bool(evaluation.is_feasible),
-            failure_reason=evaluation.failure_reason,
-        )
+        """Return tier-specific metrics implemented by concrete Tier 1 variants."""
+        raise NotImplementedError
 
     def objective_components(self, variables: NDArray[numpy.float64]) -> dict[str, float]:
         """Return the shared battery metric contract for one candidate."""
@@ -718,38 +664,6 @@ class Battery18650Tier3TopologyOptimizationProblem(_TierOrientedOptimizationBase
             ConstraintDefinition(kind="ineq", evaluate=self._stage_completeness_margin),
         ]
 
-    @classmethod
-    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650Tier3TopologyOptimizationProblem:
-        """Construct one tier-3 optimizer from manifest data."""
-        parameters = manifest.parameters
-        return cls(
-            metadata=manifest.metadata,
-            statement_markdown=manifest.statement_markdown,
-            resource_bundle=cls.resource_bundle_from_manifest(manifest),
-            requirements=parse_battery_requirements(manifest),
-            max_cell_count=int(cast(int, parameters.get("max_cell_count", 24))),
-            minimum_spacing_mm=float(cast(float, parameters.get("minimum_spacing_mm", MIN_SPACING_MM))),
-            objective_weights=BatteryObjectiveWeights.from_mapping(
-                parameters.get("objective_weights"),
-                default_volume=0.40,
-                default_cost=0.30,
-                default_temperature=0.30,
-            ),
-            cooling_coefficient_w_per_m2k=float(
-                cast(float, parameters.get("cooling_coefficient_w_per_m2k", _DEFAULT_COOLING_COEFFICIENT))
-            ),
-            passive_cooling_w_per_k=float(
-                cast(float, parameters.get("passive_cooling_w_per_k", _DEFAULT_PASSIVE_COOLING))
-            ),
-            ambient_temperature_c=float(
-                cast(float, parameters.get("ambient_temperature_c", _DEFAULT_AMBIENT_TEMPERATURE_C))
-            ),
-            maximum_temperature_c=float(
-                cast(float, parameters.get("maximum_temperature_c", _DEFAULT_MAX_TEMPERATURE_C))
-            ),
-            load_current_a=cast(float | None, parameters.get("load_current_a")),
-        )
-
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
         """Return deterministic or seeded tier-3 initial candidate."""
         baseline_series = max(1, round(self.requirements.target_voltage_v / CELL_SPEC_18650.nominal_voltage_v))
@@ -805,44 +719,6 @@ class Battery18650Tier3TopologyOptimizationProblem(_TierOrientedOptimizationBase
             target = 6 * index
             pose_values[target : target + 6] = normalized[source : source + 6]
         return (decoded.cell_count, pose_values)
-
-    def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
-        normalized = self._normalize_vector(variables)
-        decoded = self._decode(normalized)
-        active_count, pose_values = self._active_count_and_pose_variables(normalized)
-        helper = self._pose_helper_evaluation(active_cell_count=active_count, pose_variables=pose_values)
-        min_stage_population = min(decoded.stage_counts, default=0)
-        voltage_v = float(decoded.series_count) * CELL_SPEC_18650.nominal_voltage_v
-        capacity_ah = float(min_stage_population) * CELL_SPEC_18650.nominal_capacity_ah
-        current_limit_a = (
-            float(min_stage_population) * CELL_SPEC_18650.nominal_capacity_ah * CELL_SPEC_18650.max_discharge_rate_c
-        )
-        connection_count = float(
-            sum(max(0, count - 1) for count in decoded.stage_counts) + max(0, decoded.series_count - 1)
-        )
-        max_temperature_c = _thermal_peak_temperature_c(
-            cell_count=decoded.cell_count,
-            parallel_equivalent=float(max(min_stage_population, 1)),
-            surface_area_mm2=float(helper.surface_area_mm2),
-            load_current_a=self.load_current_a,
-            cooling_coefficient_w_per_m2k=self.cooling_coefficient_w_per_m2k,
-            passive_cooling_w_per_k=self.passive_cooling_w_per_k,
-            ambient_temperature_c=self.ambient_temperature_c,
-        )
-        failure_reason = None if min_stage_population > 0 else "At least one series stage is empty."
-        return BatteryTierMetrics(
-            cell_count=float(decoded.cell_count),
-            connection_count=connection_count,
-            cost_usd=float(decoded.cell_count) * CELL_SPEC_18650.unit_cost_usd,
-            design_volume_mm3=float(helper.design_volume_mm3),
-            max_temperature_c=max_temperature_c,
-            voltage_v=voltage_v,
-            capacity_ah=capacity_ah,
-            current_limit_a=current_limit_a,
-            min_clearance_mm=float(helper.minimum_surface_clearance_mm),
-            is_feasible=failure_reason is None,
-            failure_reason=failure_reason,
-        )
 
     def _stage_completeness_margin(self, variables: NDArray[numpy.float64]) -> float:
         return float(min(self._decode(variables).stage_counts, default=0))
@@ -964,57 +840,6 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
     def _thermal_priors(self, value: BatteryThermalPriors | None) -> None:
         """Override the cached thermal priors, primarily for tests."""
         self._thermal_priors_cache = value
-
-    @classmethod
-    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650Tier4ThermalOptimizationProblem:
-        """Construct one tier-4 optimizer from manifest data."""
-        parameters = manifest.parameters
-        cooling_bounds = cast(
-            dict[str, float], parameters.get("cooling_coefficient_bounds", {"lower": 5.0, "upper": 50.0})
-        )
-        passive_bounds = cast(dict[str, float], parameters.get("passive_cooling_bounds", {"lower": 0.1, "upper": 10.0}))
-        ambient_bounds = cast(
-            dict[str, float], parameters.get("ambient_temperature_bounds", {"lower": 5.0, "upper": 45.0})
-        )
-        return cls(
-            metadata=manifest.metadata,
-            statement_markdown=manifest.statement_markdown,
-            resource_bundle=cls.resource_bundle_from_manifest(manifest),
-            requirements=parse_battery_requirements(manifest),
-            max_cell_count=int(cast(int, parameters.get("max_cell_count", 24))),
-            minimum_spacing_mm=float(cast(float, parameters.get("minimum_spacing_mm", MIN_SPACING_MM))),
-            objective_weights=BatteryObjectiveWeights.from_mapping(
-                parameters.get("objective_weights"),
-                default_volume=0.35,
-                default_cost=0.25,
-                default_temperature=0.40,
-            ),
-            cooling_coefficient_bounds=(
-                float(cooling_bounds.get("lower", 5.0)),
-                float(cooling_bounds.get("upper", 50.0)),
-            ),
-            passive_cooling_bounds=(
-                float(passive_bounds.get("lower", 0.1)),
-                float(passive_bounds.get("upper", 10.0)),
-            ),
-            ambient_temperature_bounds=(
-                float(ambient_bounds.get("lower", 5.0)),
-                float(ambient_bounds.get("upper", 45.0)),
-            ),
-            thermal_model=str(cast(str, parameters.get("thermal_model", _DEFAULT_THERMAL_MODEL))),
-            thermal_neighbor_clearance_mm=float(cast(float, parameters.get("thermal_neighbor_clearance_mm", 8.0))),
-            thermal_contact_decay_mm=float(cast(float, parameters.get("thermal_contact_decay_mm", 2.0))),
-            thermal_contact_resistance_k_per_w=float(
-                cast(float, parameters.get("thermal_contact_resistance_k_per_w", 2.5))
-            ),
-            thermal_flow_shadowing_factor=float(cast(float, parameters.get("thermal_flow_shadowing_factor", 0.25))),
-            thermal_airflow_axis=str(cast(str, parameters.get("thermal_airflow_axis", "x"))),
-            thermal_reference_soc=float(cast(float, parameters.get("thermal_reference_soc", 0.5))),
-            maximum_temperature_c=float(
-                cast(float, parameters.get("maximum_temperature_c", _DEFAULT_MAX_TEMPERATURE_C))
-            ),
-            load_current_a=cast(float | None, parameters.get("load_current_a")),
-        )
 
     def generate_initial_solution(self, seed: int | None = None) -> NDArray[numpy.float64]:
         """Return deterministic or seeded tier-4 initial candidate."""
@@ -1327,44 +1152,6 @@ class Battery18650Tier4ThermalOptimizationProblem(Battery18650Tier3TopologyOptim
             "coolant_temperature_c": diagnostics.coolant_temperature_c,
             "max_core_surface_delta_c": diagnostics.max_core_surface_delta_c,
         }
-
-    def _metrics_from_variables(self, variables: NDArray[numpy.float64]) -> BatteryTierMetrics:
-        normalized = self._normalize_vector(variables)
-        if normalized.shape[0] != self.bounds.lb.shape[0]:
-            raise ValueError("Tier-4 metric evaluation requires the full tier-4 design vector.")
-        base_vector = normalized[:-3]
-        base_metrics = super()._metrics_from_variables(base_vector)
-        cooling_coefficient, passive_cooling, ambient_temperature = self._thermal_parameters_from_variables(normalized)
-        active_count, pose_values = super()._active_count_and_pose_variables(base_vector)
-        pose_eval = self._pose_helper_evaluation(active_cell_count=active_count, pose_variables=pose_values)
-        decoded = super()._decode(base_vector)
-        thermal_solution = self._solve_thermal_network(
-            decoded=decoded,
-            pose_evaluation=pose_eval,
-            cooling_coefficient_w_per_m2k=cooling_coefficient,
-            passive_cooling_w_per_k=passive_cooling,
-            ambient_temperature_c=ambient_temperature,
-        )
-        self._latest_thermal_diagnostics = Tier4ThermalDiagnostics(
-            thermal_model=self.thermal_model,
-            max_core_temperature_c=thermal_solution.max_core_temperature_c,
-            max_surface_temperature_c=thermal_solution.max_surface_temperature_c,
-            coolant_temperature_c=thermal_solution.coolant_temperature_c,
-            max_core_surface_delta_c=thermal_solution.max_core_surface_delta_c,
-        )
-        return BatteryTierMetrics(
-            cell_count=base_metrics.cell_count,
-            connection_count=base_metrics.connection_count,
-            cost_usd=base_metrics.cost_usd,
-            design_volume_mm3=base_metrics.design_volume_mm3,
-            max_temperature_c=thermal_solution.max_core_temperature_c,
-            voltage_v=base_metrics.voltage_v,
-            capacity_ah=base_metrics.capacity_ah,
-            current_limit_a=base_metrics.current_limit_a,
-            min_clearance_mm=base_metrics.min_clearance_mm,
-            is_feasible=base_metrics.failure_reason is None,
-            failure_reason=base_metrics.failure_reason,
-        )
 
 
 class _ProjectedTier3CircuitEvaluationMixin:
@@ -2024,9 +1811,6 @@ class Battery18650T3ATopologySurrogateOptimizationProblem(
             ),
         )
 
-    def _surrogate_parallel_equivalent(self, decoded: Tier3DecodedCandidate) -> float:
-        return _stage_parallel_equivalent(decoded.stage_counts, self.imbalance_model)
-
     def _thermal_config(self) -> BatteryThermalPromotionConfig:
         return _battery_thermal_config(
             cooling_coefficient_w_per_m2k=self.cooling_coefficient_w_per_m2k,
@@ -2270,14 +2054,6 @@ class Battery18650T4ThermalHybridOptimizationProblem(
     def _load_thermal_priors(self) -> BatteryThermalPriors:
         """Return the backend-aware thermal-prior bundle for this problem instance."""
         return load_battery_thermal_priors(self.backend_config)
-
-    def _analytic_thermal_defaults(self) -> tuple[float, float, float]:
-        """Return the canonical thermal proxy inputs for analytic surrogate scoring."""
-        return (
-            float(self.cooling_coefficient_w_per_m2k),
-            float(self.passive_cooling_w_per_k),
-            float(self.ambient_temperature_c),
-        )
 
     @classmethod
     def from_manifest(cls, manifest: ProblemManifest) -> Battery18650T4ThermalHybridOptimizationProblem:

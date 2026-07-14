@@ -117,9 +117,14 @@ def test_optimization_problem_to_mcp_server_exposes_evaluate_and_submit_final(
 
     server = problem.to_mcp_server()
     assert "problem://design-brief" in _resource_uris(server)
-    assert {"evaluate", "submit_final"}.issubset(_tool_names(server))
+    assert {"evaluate", "solver_hints", "submit_final"}.issubset(_tool_names(server))
 
     candidate = problem.generate_initial_solution(seed=3).tolist()
+    hints = _call_tool_json(server, "solver_hints", {})
+    assert hints["variable_domain"] == "continuous"
+    assert hints["equality_constraint_count"] == 1
+    assert hints["recommended_solver_family"] == "constrained continuous optimizer such as SLSQP or trust-constr"
+
     report = _call_tool_json(server, "evaluate", {"x": candidate})
     assert report["evaluation"]["is_feasible"] is True
     assert report["objective_components"]["sum"] == pytest.approx(sum(candidate))

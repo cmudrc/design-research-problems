@@ -51,11 +51,7 @@ from design_research_problems.problems._domains.battery_cell_model import (
     BatteryBackendConfig,
 )
 from design_research_problems.problems._domains.battery_circuit import BatteryCircuitState
-from design_research_problems.problems._domains.battery_layout import (
-    CELL_SPEC_18650,
-    MIN_SPACING_MM,
-    BatteryRequirements,
-)
+from design_research_problems.problems._domains.battery_layout import BatteryRequirements
 from design_research_problems.problems._domains.battery_series_parallel import SeriesParallelBatteryState
 from design_research_problems.problems._domains.battery_tier_metrics import (
     BatteryTierMetrics,
@@ -109,91 +105,11 @@ class _VectorGrammarConfig:
 
 
 class Battery18650Tier1SeriesParallelGrammarProblem(BatteryPack18650SeriesParallelProblem):
-    """Tier-1 grammar: constrained rectangular ``SxP`` edits."""
-
-    @classmethod
-    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650Tier1SeriesParallelGrammarProblem:
-        """Build tier-1 grammar from manifest data."""
-        return cls(
-            metadata=manifest.metadata,
-            statement_markdown=manifest.statement_markdown,
-            resource_bundle=cls.resource_bundle_from_manifest(manifest),
-            requirements=parse_battery_requirements(manifest),
-            backend_config=parse_battery_backend_config(manifest),
-        )
-
-    def evaluate(self, state: object) -> BatteryTierMetrics:  # type: ignore[override]
-        """Evaluate one tier-1 state and return the shared metric contract."""
-        evaluation = super().evaluate(state)
-        parallel_count = max(1, int(evaluation.parallel_count))
-        series_count = max(1, int(evaluation.series_count))
-        connection_count = float(max(0, series_count + 1) * max(0, parallel_count - 1))
-        per_cell_current = self.requirements.minimum_current_a / float(parallel_count)
-        total_heat_w = float(evaluation.cell_count) * (per_cell_current**2) * CELL_SPEC_18650.internal_resistance_ohm
-        cooling_conductance = 1.0 + (18.0 * float(evaluation.surface_area) * 1.0e-6)
-        max_temperature_c = 25.0 + (total_heat_w / max(cooling_conductance, 1.0e-9))
-        return BatteryTierMetrics(
-            cell_count=float(evaluation.cell_count),
-            connection_count=connection_count,
-            cost_usd=float(evaluation.design_cost),
-            design_volume_mm3=float(evaluation.design_volume),
-            max_temperature_c=max_temperature_c,
-            voltage_v=float(evaluation.design_voltage),
-            capacity_ah=float(evaluation.design_capacity),
-            current_limit_a=float(evaluation.analytic_current_limit),
-            min_clearance_mm=float(MIN_SPACING_MM),
-            is_feasible=bool(evaluation.is_feasible),
-            failure_reason=evaluation.failure_reason,
-        )
+    """Shared rectangular-edit behavior for concrete tier-1 grammars."""
 
 
 class Battery18650Tier3TopologyGrammarProblem(BatteryPack18650OpenEndedProblem):
-    """Tier-3 grammar: explicit circuit topology edits with variable cell count."""
-
-    @classmethod
-    def from_manifest(cls, manifest: ProblemManifest) -> Battery18650Tier3TopologyGrammarProblem:
-        """Build tier-3 grammar from manifest data."""
-        return cls(
-            metadata=manifest.metadata,
-            statement_markdown=manifest.statement_markdown,
-            resource_bundle=cls.resource_bundle_from_manifest(manifest),
-            requirements=parse_battery_requirements(manifest),
-            max_cell_count=int(cast(int, manifest.parameters.get("max_cell_count", 24))),
-            backend_config=parse_battery_backend_config(manifest),
-        )
-
-    def evaluate(self, state: object) -> BatteryTierMetrics:  # type: ignore[override]
-        """Evaluate one tier-3 state and return the shared metric contract."""
-        evaluation = super().evaluate(state)
-        delivered_capacity = (
-            0.0 if evaluation.delivered_capacity_ah is None else float(evaluation.delivered_capacity_ah)
-        )
-        nominal_voltage = float(evaluation.pack_nominal_voltage)
-        max_cell_current = 0.0 if evaluation.max_cell_current_a is None else float(evaluation.max_cell_current_a)
-        parallel_equivalent = max(delivered_capacity / max(CELL_SPEC_18650.nominal_capacity_ah, 1.0e-9), 1.0)
-        total_heat_w = (
-            float(evaluation.cell_count)
-            * ((self.requirements.minimum_current_a / parallel_equivalent) ** 2)
-            * CELL_SPEC_18650.internal_resistance_ohm
-        )
-        cooling_conductance = 1.0 + (18.0 * float(evaluation.surface_area) * 1.0e-6)
-        max_temperature_c = 25.0 + (total_heat_w / max(cooling_conductance, 1.0e-9))
-        min_clearance = MIN_SPACING_MM if evaluation.is_feasible else -MIN_SPACING_MM
-        return BatteryTierMetrics(
-            cell_count=float(evaluation.cell_count),
-            connection_count=float(evaluation.connection_count),
-            cost_usd=float(evaluation.design_cost),
-            design_volume_mm3=float(evaluation.design_volume),
-            max_temperature_c=max_temperature_c,
-            voltage_v=nominal_voltage,
-            capacity_ah=delivered_capacity,
-            current_limit_a=max(
-                max_cell_current, self.requirements.minimum_current_a if evaluation.is_feasible else 0.0
-            ),
-            min_clearance_mm=float(min_clearance),
-            is_feasible=bool(evaluation.is_feasible),
-            failure_reason=evaluation.failure_reason,
-        )
+    """Shared explicit-netlist editing behavior for concrete tier-3 grammars."""
 
 
 class Battery18650Tier2LayoutGrammarProblem(GrammarProblem[tuple[float, ...], BatteryTierMetrics]):

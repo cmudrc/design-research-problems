@@ -22,10 +22,12 @@ from design_research_problems import (
     OptimizationEvaluation,
     OptimizationProblem,
     Problem,
+    ProblemCatalogSummary,
     ProblemEvaluationError,
     ProblemKind,
     get_problem,
     list_problems,
+    search_problem_summaries,
 )
 from design_research_problems.problems import DecisionOption
 from design_research_problems.problems._domains.battery_cell_model import BatteryBackendConfig, BatteryCellModel
@@ -458,6 +460,28 @@ def test_registry_search_filters_by_feature_flags() -> None:
         "ideation_remote_village_rainwater_access",
         "ideation_snow_transport_for_novices",
     ]
+
+
+def test_registry_exposes_compact_problem_summaries_for_agent_selection() -> None:
+    from design_research_problems import ProblemRegistry
+
+    registry = ProblemRegistry()
+    summaries = registry.summaries(text="pill", kind=ProblemKind.OPTIMIZATION)
+
+    assert summaries
+    assert all(isinstance(summary, ProblemCatalogSummary) for summary in summaries)
+    pill_summary = next(summary for summary in summaries if summary.problem_id == "pill_capsule_min_area")
+    assert pill_summary.kind is ProblemKind.OPTIMIZATION
+    assert pill_summary.design_variable_type == "continuous"
+    assert pill_summary.bounds_summary == "radius and length bounded on [0, 1]"
+    assert "baseline-solver" in pill_summary.capabilities
+    assert pill_summary.to_dict()["kind"] == "optimization"
+    assert "statement" not in pill_summary.to_dict()
+
+    top_level_summaries = search_problem_summaries(text="peanut", kind="text")
+    top_level_ids = [summary.problem_id for summary in top_level_summaries]
+    assert "ideation_peanut_shelling" in top_level_ids
+    assert "ideation_peanut_shelling_fu_cagan_kotovsky_2010" in top_level_ids
 
 
 def test_pill_helpers_return_expected_positive_values() -> None:
@@ -939,6 +963,21 @@ def test_pill_problem_evaluate_returns_standardized_optimization_evaluation() ->
     assert evaluation.total_constraint_violation == pytest.approx(problem.constraint_violation(candidate))
     assert evaluation.max_constraint_violation == pytest.approx(problem.max_constraint_violation(candidate))
     assert evaluation.is_feasible is True
+
+
+def test_pill_problem_exposes_solver_hints_without_parsing_brief_prose() -> None:
+    problem = get_problem("pill_capsule_min_area")
+    hints = problem.solver_hints()
+
+    assert hints["problem_id"] == "pill_capsule_min_area"
+    assert hints["problem_kind"] == "optimization"
+    assert hints["variable_count"] == 2
+    assert hints["variable_domain"] == "continuous"
+    assert hints["lower_bounds"] == [0.0, 0.0]
+    assert hints["upper_bounds"] == [1.0, 1.0]
+    assert hints["equality_constraint_count"] == 1
+    assert hints["inequality_constraint_count"] == 0
+    assert hints["recommended_solver_family"] == "constrained continuous optimizer such as SLSQP or trust-constr"
 
 
 def test_pill_problem_seeded_initial_solution_stays_within_bounds() -> None:

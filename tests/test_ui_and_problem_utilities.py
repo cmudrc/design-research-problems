@@ -191,12 +191,13 @@ def test_problem_helpers_mcp_json_optional_and_assets_cover_edge_paths(
     monkeypatch.setattr(problem_module, "create_fastmcp_server", lambda *args, **kwargs: fake_server)
     monkeypatch.setattr(problem_module, "register_design_brief_resource", lambda *args, **kwargs: None)
 
-    problem = Problem(metadata=_metadata(), statement_markdown="# Different Title")
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
-        assert problem._starts_with_h1("# Different Title") is True
+        mismatched_problem = Problem(metadata=_metadata(), statement_markdown="# Different Title")
+        assert mismatched_problem._starts_with_h1("# Different Title") is True
     assert any("does not match metadata title" in str(warning.message) for warning in caught)
 
+    problem = Problem(metadata=_metadata(), statement_markdown="# Utility Problem")
     server = problem.to_mcp_server()
     submit_func = next(func for func, kwargs in server.tools if kwargs["name"] == "submit_final")
     with pytest.raises(ValueError, match="non-empty string"):
@@ -288,7 +289,8 @@ def test_gui_helpers_cover_lazy_exports_launcher_and_layout(monkeypatch: pytest.
     monkeypatch.setitem(sys.modules, "design_research_problems.gui.iot_home_cooling_tk", app_module)
     monkeypatch.setattr(sys, "argv", ["launcher", "--app", "iot"])
 
-    runpy.run_module("design_research_problems.gui._launcher", run_name="__main__")
+    with pytest.warns(RuntimeWarning, match="found in sys.modules"):
+        runpy.run_module("design_research_problems.gui._launcher", run_name="__main__")
 
     assert ("geometry", "1250x760") in launcher_events
     assert any(event[0] == "mainloop" for event in launcher_events)
