@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``ideation_control_it_interface_controller``
-   * - Problem Family
+   * - Problem Kind
      - text
    * - Implementation
      - ``TextProblem``

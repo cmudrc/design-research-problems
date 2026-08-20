@@ -55,9 +55,11 @@ edits and deterministic `mass_kg` plus `min_fos` structural evaluation.
 
 Optional evaluators:
 
-- It is not required for the base install.
-- `trussme` is available as the `grammar` extra.
-- `pybamm` is available as the `battery` extra and is required for explicit-circuit,
-  hybrid-thermal, and fast-charge battery evaluation paths.
-- Optional/full CI installs `pybamm` for battery-fidelity verification.
-- It is required for real planar and 3D truss grammar evaluation.
+- The base install supports generic grammar transitions and
+  analytic-surrogate battery paths without `trussme` or PyBaMM.
+- `trussme` is optional for the base install, available through the `grammar`
+  extra, and required for real planar and 3D truss structural evaluation.
+- PyBaMM is optional for the base install and available through the `battery`
+  extra. It is required when a study selects a PyBaMM-backed battery-fidelity
+  mode.
+- Optional/full CI installs PyBaMM for battery-fidelity verification.

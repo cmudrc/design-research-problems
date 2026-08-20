@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``ideation_out_of_reach_book_retrieval_cardoso_badke_schaub_2011``
-   * - Problem Family
+   * - Problem Kind
      - text
    * - Implementation
      - ``TextProblem``

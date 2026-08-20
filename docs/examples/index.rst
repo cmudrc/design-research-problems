@@ -3,8 +3,8 @@ Examples
 
 The examples in this repository are runnable research-oriented scripts. They are
 designed to show not only API usage, but how the library fits into realistic
-experimental workflows. Each example lists dependencies, expected scope, and
-the primary concept it demonstrates.
+experimental workflows. The featured examples below list dependencies,
+expected scope, and the primary concept they demonstrate.
 
 Featured Examples
 -----------------

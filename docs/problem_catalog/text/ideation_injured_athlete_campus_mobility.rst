@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``ideation_injured_athlete_campus_mobility``
-   * - Problem Family
+   * - Problem Kind
      - text
    * - Implementation
      - ``TextProblem``

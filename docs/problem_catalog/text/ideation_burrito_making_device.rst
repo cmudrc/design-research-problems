@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``ideation_burrito_making_device``
-   * - Problem Family
+   * - Problem Kind
      - text
    * - Implementation
      - ``TextProblem``

@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``ideation_hoist_chain_spill_prevention``
-   * - Problem Family
+   * - Problem Kind
      - text
    * - Implementation
      - ``TextProblem``

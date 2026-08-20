@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``decision_mseval_kitchen_utensil_grip_corrosion_resistant``
-   * - Problem Family
+   * - Problem Kind
      - decision
    * - Implementation
      - ``design_research_problems.problems.decision._mseval:MSEvalEmpiricalChoiceProblem``

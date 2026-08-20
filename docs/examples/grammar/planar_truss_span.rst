@@ -25,6 +25,6 @@ Expected Results
 
 .. code-block:: bash
 
-   PYTHONPATH=src python3 examples/grammar/planar_truss_span.py
+   PYTHONPATH=src python examples/grammar/planar_truss_span.py
 
-Run the command shown below from repository root. Output should summarize the problem setup, a baseline solution, or diagnostic values relevant to this example.
+Run the command shown above from repository root. Output should summarize the problem setup, a baseline solution, or diagnostic values relevant to this example.

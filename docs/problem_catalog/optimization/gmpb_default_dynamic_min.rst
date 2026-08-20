@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``gmpb_default_dynamic_min``
-   * - Problem Family
+   * - Problem Kind
      - optimization
    * - Implementation
      - ``design_research_problems.problems.optimization._gmpb:GMPBOptimizationProblem``

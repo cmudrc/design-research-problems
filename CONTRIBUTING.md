@@ -12,11 +12,11 @@ If you are opening the project in VS Code, follow `docs/vscode_start.rst` for
 the PyPI install path, source checkout path, interpreter selection, optional
 extras, first checks, and troubleshooting.
 
-Optional integration setup for problem families that require external backends:
+Optional evaluator/backend setup for selected high-fidelity modes:
 
 ```bash
-make install-trussme   # truss grammar + truss optimization families
-make install-pybamm    # battery grammar + battery optimization families
+make install-trussme   # real planar/3D truss structural evaluation
+make install-pybamm    # PyBaMM-backed battery fidelity modes
 make dev-full          # install dev + all optional extras
 ```
 
@@ -43,8 +43,14 @@ make type
 make docstrings-check
 make test
 make docs-check
+make docs-build       # when public documentation or docstrings change
+make docs-linkcheck   # when links or navigation change
 make ci
 ```
+
+`make ci` includes generated-document consistency but not the strict Sphinx
+build or external link check, so run the conditional documentation gates shown
+above when the change touches those surfaces.
 
 ## Quality Gates
 

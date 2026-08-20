@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``decision_mseval_spacecraft_component_resistant_to_heat``
-   * - Problem Family
+   * - Problem Kind
      - decision
    * - Implementation
      - ``design_research_problems.problems.decision._mseval:MSEvalEmpiricalChoiceProblem``

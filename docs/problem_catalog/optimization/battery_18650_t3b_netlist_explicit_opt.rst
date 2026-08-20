@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``battery_18650_t3b_netlist_explicit_opt``
-   * - Problem Family
+   * - Problem Kind
      - optimization
    * - Implementation
      - ``design_research_problems.problems.optimization._battery_open_ended:Battery18650T3BNetlistExplicitOptimizationProblem``

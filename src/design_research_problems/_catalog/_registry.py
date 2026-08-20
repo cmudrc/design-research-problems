@@ -171,7 +171,7 @@ class ProblemRegistry:
         """Return metadata entries with the requested kind.
 
         Args:
-            kind: Problem family to filter for.
+            kind: Problem kind to filter for.
 
         Returns:
             Matching metadata entries.
@@ -230,7 +230,7 @@ class ProblemRegistry:
         return manifest.metadata.study_suitability
 
     def kind_feature_flags(self) -> dict[ProblemKind, tuple[str, ...]]:
-        """Return aggregated feature flags for each problem family.
+        """Return aggregated feature flags for each problem kind.
 
         Returns:
             Mapping of problem kinds to the union of feature flags across that family.
@@ -255,7 +255,7 @@ class ProblemRegistry:
             tags: Tags that must all be present on a matching entry.
             text: Case-insensitive free-text search term.
             feature_flags: Feature flags that must all be present on a matching entry.
-            kind: Optional problem-family filter.
+            kind: Optional problem-kind filter.
             capabilities: Capability flags that must all be present.
             study_suitability: Study-suitability flags that must all be present.
 
@@ -302,7 +302,7 @@ class ProblemRegistry:
             tags: Tags that must all be present on a matching entry.
             text: Case-insensitive free-text search term.
             feature_flags: Feature flags that must all be present on a matching entry.
-            kind: Optional problem-family filter.
+            kind: Optional problem-kind filter.
             capabilities: Capability flags that must all be present.
             study_suitability: Study-suitability flags that must all be present.
 
@@ -566,7 +566,7 @@ def search_problem_summaries(
         tags: Tags that must all be present on a matching entry.
         text: Case-insensitive free-text search term.
         feature_flags: Feature flags that must all be present on a matching entry.
-        kind: Optional problem-family filter as a ``ProblemKind`` or string value.
+        kind: Optional problem-kind filter as a ``ProblemKind`` or string value.
         capabilities: Capability flags that must all be present.
         study_suitability: Study-suitability flags that must all be present.
 

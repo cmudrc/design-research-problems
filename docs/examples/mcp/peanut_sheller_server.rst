@@ -25,6 +25,6 @@ Expected Results
 
 .. code-block:: bash
 
-   PYTHONPATH=src python3 examples/mcp/peanut_sheller_server.py
+   PYTHONPATH=src python examples/mcp/peanut_sheller_server.py
 
-Run the command shown below from repository root. Output should summarize the problem setup, a baseline solution, or diagnostic values relevant to this example.
+Run the command shown above from repository root. Output should summarize the problem setup, a baseline solution, or diagnostic values relevant to this example.

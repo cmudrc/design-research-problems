@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``planar_roof_truss_seven_point_asymmetric``
-   * - Problem Family
+   * - Problem Kind
      - grammar
    * - Implementation
      - ``design_research_problems.problems.grammar._planar_truss:PlanarTrussSpanProblem``

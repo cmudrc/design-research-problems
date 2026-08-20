@@ -15,11 +15,41 @@ downstream study-generation code may rely on:
 - ``problem_id``: Stable catalog identifier.
 - ``title``: User-facing display title.
 - ``summary``: Short one-paragraph problem description.
-- ``kind``: High-level family label from :class:`design_research_problems.problems.ProblemKind`.
+- ``kind``: Canonical problem-kind label from
+  :class:`design_research_problems.problems.ProblemKind`.
 - ``capabilities``: Controlled-vocabulary implementation and packaging flags.
 - ``study_suitability``: Controlled-vocabulary study-use flags.
 - ``feature_flags``: Sorted union of ``capabilities`` and ``study_suitability``.
 - ``implementation``: Optional ``module:attribute`` import path when a public executable binding exists.
+
+Family Compatibility Mapping
+----------------------------
+
+One canonical value is exposed through parallel integration fields and then
+copied into the Experiments packet and run artifact:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Boundary
+     - Field
+     - Value
+   * - Packaged problem metadata
+     - ``ProblemMetadata.kind``
+     - A ``ProblemKind`` enum
+   * - Problems integration metadata
+     - ``ProblemBinding.metadata["problem_kind"]``
+     - A parallel metadata alias containing the enum's string value
+   * - Problems integration binding
+     - ``ProblemBinding.family``
+     - The primary field copied by the Experiments adapter
+   * - Experiments packet and run artifact
+     - ``ProblemPacket.family`` / ``problem_family``
+     - The string copied from ``ProblemBinding.family``
+
+The allowed values are ``text``, ``decision``, ``optimization``, ``grammar``,
+and ``mcp``. Ideation prompts use ``text``; ``ideation`` remains a catalog tag
+and must not replace the canonical kind value at these boundaries.
 
 Initial Use Cases
 -----------------

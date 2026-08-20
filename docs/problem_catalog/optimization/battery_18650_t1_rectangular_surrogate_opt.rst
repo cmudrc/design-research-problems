@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``battery_18650_t1_rectangular_surrogate_opt``
-   * - Problem Family
+   * - Problem Kind
      - optimization
    * - Implementation
      - ``design_research_problems.problems.optimization._battery_tiers:Battery18650T1RectangularSurrogateOptimizationProblem``

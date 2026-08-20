@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``decision_laptop_design_profit_maximization``
-   * - Problem Family
+   * - Problem Kind
      - decision
    * - Implementation
      - ``DecisionProblem``

@@ -60,4 +60,4 @@ Install the MCP extra first when the optional dependency is not already present:
 
 .. code-block:: bash
 
-   pip install "design-research-problems[mcp]"
+   python -m pip install "design-research-problems[mcp]"

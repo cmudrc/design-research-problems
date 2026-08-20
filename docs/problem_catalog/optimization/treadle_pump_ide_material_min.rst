@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``treadle_pump_ide_material_min``
-   * - Problem Family
+   * - Problem Kind
      - optimization
    * - Implementation
      - ``design_research_problems.problems.optimization._ide_treadle:IDETreadlePumpMaterialMin``

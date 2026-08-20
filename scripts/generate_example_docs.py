@@ -187,7 +187,7 @@ def _derive_sections_from_docstring(doc_text: str) -> dict[str, str]:
         "The full script is included below for direct inspection."
     )
     expected = (
-        "Run the command shown below from repository root. Output should summarize the problem setup, "
+        "Run the command shown above from repository root. Output should summarize the problem setup, "
         "a baseline solution, or diagnostic values relevant to this example."
     )
 
@@ -359,7 +359,7 @@ def _render_optional_section(*, heading: str, body: str | None, prelude: list[st
 
 def _render_example_page(spec: ExampleDocSpec) -> str:
     """Render one example page as RST."""
-    run_command = f"PYTHONPATH=src python3 {spec.rel_path}"
+    run_command = f"PYTHONPATH=src python {spec.rel_path}"
     include_path = f"../../../{spec.rel_path}"
 
     introduction = spec.sections["Introduction"]
@@ -478,8 +478,8 @@ def _render_examples_index(categories: list[str]) -> str:
         "",
         "The examples in this repository are runnable research-oriented scripts. They are",
         "designed to show not only API usage, but how the library fits into realistic",
-        "experimental workflows. Each example lists dependencies, expected scope, and",
-        "the primary concept it demonstrates.",
+        "experimental workflows. The featured examples below list dependencies,",
+        "expected scope, and the primary concept they demonstrate.",
         "",
         "Featured Examples",
         "-----------------",

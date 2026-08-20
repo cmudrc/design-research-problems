@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``truss_analysis_program_design``
-   * - Problem Family
+   * - Problem Kind
      - grammar
    * - Implementation
      - ``design_research_problems.problems.grammar._truss_ap:TrussAPGrammarProblem``

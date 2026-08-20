@@ -138,14 +138,14 @@ def main(argv: list[str] | None = None) -> int:
             serve_stdio()
         except (derp.MissingOptionalDependencyError, ModuleNotFoundError) as exc:
             print(exc)
-            print("Install the optional MCP dependency with: pip install design-research-problems[mcp]")
+            print('Install the optional MCP dependency with: python -m pip install "design-research-problems[mcp]"')
         return 0
 
     try:
         summary = asyncio.run(run_roundtrip())
     except (derp.MissingOptionalDependencyError, ModuleNotFoundError) as exc:
         print(exc)
-        print("Install the optional MCP dependency with: pip install design-research-problems[mcp]")
+        print('Install the optional MCP dependency with: python -m pip install "design-research-problems[mcp]"')
         return 0
 
     print("Problem id:", summary["problem_id"])

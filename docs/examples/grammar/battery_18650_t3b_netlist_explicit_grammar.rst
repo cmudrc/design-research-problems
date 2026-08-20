@@ -25,6 +25,6 @@ Expected Results
 
 .. code-block:: bash
 
-   PYTHONPATH=src python3 examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py
+   PYTHONPATH=src python examples/grammar/battery_18650_t3b_netlist_explicit_grammar.py
 
-Run the command shown below from repository root. Output should summarize the problem setup, a baseline solution, or diagnostic values relevant to this example.
+Run the command shown above from repository root. Output should summarize the problem setup, a baseline solution, or diagnostic values relevant to this example.

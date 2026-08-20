@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``battery_18650_t3b_netlist_explicit_grammar``
-   * - Problem Family
+   * - Problem Kind
      - grammar
    * - Implementation
      - ``design_research_problems.problems.grammar._battery_tiers:Battery18650T3BNetlistExplicitGrammarProblem``

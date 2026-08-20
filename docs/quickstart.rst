@@ -4,12 +4,23 @@ Quickstart
 This example shows the shortest meaningful path through
 ``design-research-problems``.
 
+Requires Python 3.12+.
+
+.. note::
+
+   For an editor-first setup, interpreter selection, and debugging flow, see
+   :doc:`vscode_start`.
+
 1. Install
 ----------
 
 .. code-block:: bash
 
-   pip install design-research-problems
+   python -m pip install design-research-problems
+
+On Windows, if ``python`` resolves to an older interpreter, use
+``py -3.12 -m pip install design-research-problems`` and
+``py -3.12 -m venv .venv``.
 
 Or install from source:
 
@@ -20,7 +31,7 @@ Or install from source:
    python -m venv .venv
    source .venv/bin/activate
    python -m pip install --upgrade pip
-   pip install -e .
+   python -m pip install -e .
 
 2. Minimal Runnable Example
 ---------------------------
@@ -59,11 +70,16 @@ variable domain, constraint counts, and a solver-family hint directly.
 - :doc:`typical_workflow`
 - :doc:`problems/index`
 - :doc:`examples/index`
+- :doc:`api`
 
 Ecosystem Note
 --------------
 
-In a typical study, ``design-research-agents`` provides executable
+In a typical study, `design-research-agents
+<https://cmudrc.github.io/design-research-agents/>`_ provides executable
 participants, ``design-research-problems`` supplies the task,
-``design-research-experiments`` defines the study structure, and
-``design-research-analysis`` interprets the resulting records.
+`design-research-experiments
+<https://cmudrc.github.io/design-research-experiments/>`_ defines and
+orchestrates the study, and `design-research-analysis
+<https://cmudrc.github.io/design-research-analysis/>`_ interprets the resulting
+records.

@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``wind_farm_grid_qkp_power_max``
-   * - Problem Family
+   * - Problem Kind
      - optimization
    * - Implementation
      - ``design_research_problems.problems.optimization._wind_farm_layout:WindFarmLayoutOptimizationProblem``

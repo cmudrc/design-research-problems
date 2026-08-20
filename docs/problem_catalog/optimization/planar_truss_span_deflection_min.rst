@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``planar_truss_span_deflection_min``
-   * - Problem Family
+   * - Problem Kind
      - optimization
    * - Implementation
      - ``design_research_problems.problems.optimization._truss_topology:PlanarTrussEngineeringOptimizationProblem``

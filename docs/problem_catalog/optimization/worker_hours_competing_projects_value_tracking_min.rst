@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``worker_hours_competing_projects_value_tracking_min``
-   * - Problem Family
+   * - Problem Kind
      - optimization
    * - Implementation
      - ``design_research_problems.problems.optimization._worker_hours_allocation:CompetingProjectsWorkerHoursProblem``

@@ -28,6 +28,13 @@ FAMILY_DESCRIPTIONS = {
     "grammar": "This page lists all packaged grammar problems and their initial transition structure.",
     "mcp": "This page lists all packaged MCP-backed problems and upstream proxy launch settings.",
 }
+PROBLEM_KIND_LABELS = {
+    "text": "text",
+    "decision": "decision",
+    "optimization": "optimization",
+    "grammar": "grammar",
+    "mcp": "MCP",
+}
 STATEMENT_HEADING_CHARS = ("~", "^", '"', "'", "+", "*")
 INLINE_CODE_RE = re.compile(r"(?<!`)`([^`]+)`(?!`)")
 MARKDOWN_HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
@@ -327,7 +334,7 @@ def _render_common_sections(metadata: Any, problem: Problem) -> list[str]:
     implementation = f"``{metadata.implementation}``" if metadata.implementation else f"``{type(problem).__name__}``"
     quick_facts_rows = [
         ("Problem ID", f"``{metadata.problem_id}``"),
-        ("Problem Family", metadata.kind.value),
+        ("Problem Kind", PROBLEM_KIND_LABELS[metadata.kind.value]),
         ("Implementation", implementation),
         (
             "Capabilities",
@@ -465,7 +472,7 @@ def _render_detail_page(metadata: Any, manifest: Any, problem: Problem) -> str:
         "",
         _normalize_inline_code(metadata.summary),
         "",
-        f"See :doc:`../{metadata.kind.value}` for the {metadata.kind.value} family index.",
+        f"See :doc:`../{metadata.kind.value}` for the {PROBLEM_KIND_LABELS[metadata.kind.value]} family index.",
         "",
         *_render_common_sections(metadata, problem),
     ]
@@ -863,12 +870,16 @@ def _render_family_page(kind: str, entries: Sequence[dict[str, object]]) -> str:
         Full reStructuredText content for the family page.
     """
     title = FAMILY_TITLES[kind]
+    count = len(entries)
+    count_verb = "is" if count == 1 else "are"
+    problem_noun = "problem" if count == 1 else "problems"
     lines = [
         AUTO_COMMENT,
         "",
         _heading(title, "=").rstrip(),
         "",
-        f"{FAMILY_DESCRIPTIONS[kind]} There are currently {len(entries)} packaged {kind} problems.",
+        f"{FAMILY_DESCRIPTIONS[kind]} There {count_verb} currently "
+        f"{count} packaged {PROBLEM_KIND_LABELS[kind]} {problem_noun}.",
         "",
         f"For the conceptual overview, see :doc:`../problems/{kind}`.",
         "",
@@ -899,13 +910,8 @@ def _render_catalog_index(grouped: Mapping[str, Sequence[dict[str, object]]], to
         Full reStructuredText content for the landing page.
     """
     family_order = tuple(kind.value for kind in ProblemKind)
-    family_labels = {
-        "text": "Text",
-        "decision": "Decision",
-        "optimization": "Optimization",
-        "grammar": "Grammar",
-        "mcp": "MCP",
-    }
+    family_labels = {kind: label.title() for kind, label in PROBLEM_KIND_LABELS.items()}
+    family_labels["mcp"] = PROBLEM_KIND_LABELS["mcp"]
 
     lines = [
         AUTO_COMMENT,

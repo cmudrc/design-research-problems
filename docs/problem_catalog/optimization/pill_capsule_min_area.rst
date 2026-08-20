@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``pill_capsule_min_area``
-   * - Problem Family
+   * - Problem Kind
      - optimization
    * - Implementation
      - ``design_research_problems.problems.optimization._pill:PillCapsuleMinArea``

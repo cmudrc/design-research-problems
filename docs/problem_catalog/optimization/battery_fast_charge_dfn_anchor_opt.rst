@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``battery_fast_charge_dfn_anchor_opt``
-   * - Problem Family
+   * - Problem Kind
      - optimization
    * - Implementation
      - ``design_research_problems.problems.optimization._battery_fast_charge:BatteryFastChargeDFNAnchorOptimizationProblem``

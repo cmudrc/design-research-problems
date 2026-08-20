@@ -183,7 +183,7 @@ def main() -> int:
         summary = asyncio.run(run_summary(server))
     except (derp.MissingOptionalDependencyError, ModuleNotFoundError) as exc:
         print(exc)
-        print("Install the optional MCP dependency with: pip install design-research-problems[mcp]")
+        print('Install the optional MCP dependency with: python -m pip install "design-research-problems[mcp]"')
         return 0
     except (FileNotFoundError, RuntimeError) as exc:
         print(f"build123d backend startup failed: {exc}")

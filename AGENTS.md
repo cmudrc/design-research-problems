@@ -2,8 +2,9 @@
 
 ## Purpose
 
-This repository is a Python 3.12+ compendium of design research problems across
-text, decision, optimization, grammar-based, and MCP-facing workflows. Keep
+This repository is the Python 3.12+ benchmark-task layer in the
+CMU Design Research Collective design-research ecosystem. It spans text,
+decision, optimization, grammar-based, and MCP-facing workflows. Keep
 changes focused, preserve deterministic behavior in packaged problem
 evaluations, and prefer reusable catalog-backed implementations over one-off ad
 hoc assets.

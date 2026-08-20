@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``decision_mseval_kitchen_utensil_grip_high_strength``
-   * - Problem Family
+   * - Problem Kind
      - decision
    * - Implementation
      - ``design_research_problems.problems.decision._mseval:MSEvalEmpiricalChoiceProblem``

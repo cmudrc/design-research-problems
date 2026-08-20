@@ -23,16 +23,25 @@ Generate candidate solutions, enumerate transitions, or call evaluators.
 Record solution state, metrics, and any domain-specific outputs needed for
 comparison or reporting.
 
-5. Connect to the next library
+5. Compose the ecosystem seams
 ------------------------------
 
-Pass problem references to ``design-research-agents`` for execution and to
-``design-research-experiments`` for controlled study orchestration.
+Let `design-research-experiments
+<https://cmudrc.github.io/design-research-experiments/>`_ resolve the packaged
+problem through ``design_research_problems.integration``, invoke participants
+from `design-research-agents
+<https://cmudrc.github.io/design-research-agents/>`_, and preserve the problem
+metadata for `design-research-analysis
+<https://cmudrc.github.io/design-research-analysis/>`_. The experiments layer
+owns cross-package orchestration; this package owns problem resolution and
+evaluation.
 
 Dependency Caveats
 ------------------
 
-Some families are lightweight (for example text and decision), while others
-require optional extras (for example grammar, battery, or CAD/MCP workflows).
-Plan installation profiles per study protocol rather than installing every extra
-by default.
+The base install supports text and decision problems, generic grammar
+transitions, and analytic-surrogate battery paths. Install ``grammar`` for
+``trussme``-backed planar or 3D truss structural evaluation, ``battery`` for
+PyBaMM-backed battery-fidelity modes, and the relevant ``mcp`` or ``cad`` extra
+for external-tool workflows. Plan installation profiles per study protocol
+rather than installing every extra by default.

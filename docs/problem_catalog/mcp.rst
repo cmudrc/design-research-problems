@@ -3,7 +3,7 @@
 MCP Problem Catalog
 ===================
 
-This page lists all packaged MCP-backed problems and upstream proxy launch settings. There are currently 1 packaged mcp problems.
+This page lists all packaged MCP-backed problems and upstream proxy launch settings. There is currently 1 packaged MCP problem.
 
 For the conceptual overview, see :doc:`../problems/mcp`.
 

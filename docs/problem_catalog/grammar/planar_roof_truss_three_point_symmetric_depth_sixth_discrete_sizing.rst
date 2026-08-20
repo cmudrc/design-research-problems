@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``planar_roof_truss_three_point_symmetric_depth_sixth_discrete_sizing``
-   * - Problem Family
+   * - Problem Kind
      - grammar
    * - Implementation
      - ``design_research_problems.problems.grammar._planar_truss:PlanarTrussSpanProblem``

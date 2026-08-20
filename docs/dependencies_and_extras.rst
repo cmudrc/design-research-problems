@@ -6,7 +6,7 @@ Core Install
 
 .. code-block:: bash
 
-   pip install design-research-problems
+   python -m pip install design-research-problems
 
 Editable contributor setup:
 
@@ -17,13 +17,27 @@ Editable contributor setup:
    python -m venv .venv
    source .venv/bin/activate
    python -m pip install --upgrade pip
-   pip install -e ".[dev]"
+   python -m pip install -e ".[dev]"
 
 Or use:
 
 .. code-block:: bash
 
    make dev
+
+Maintainer Release Baseline
+---------------------------
+
+1. Use Python ``3.12`` from ``.python-version``.
+2. Install maintainer dependencies with ``make dev``.
+3. Run the automated CI baseline with ``make ci``.
+4. Build the public documentation with ``make docs-build``.
+5. When links or navigation changed, run ``make docs-linkcheck``.
+6. Build and validate distributions with ``make release-check``.
+7. Commit the reviewed release metadata and documentation, then tag and publish.
+
+``make release-check`` builds the source distribution and wheel and runs
+``twine check`` against both artifacts.
 
 Extras Matrix
 -------------
@@ -34,9 +48,9 @@ Extras Matrix
    * - Extra
      - Purpose
    * - ``grammar``
-     - Truss-oriented grammar and structural workflows
+     - ``trussme``-backed planar and 3D truss structural evaluation
    * - ``battery``
-     - Battery grammar and battery optimization workflows
+     - PyBaMM-backed battery-fidelity modes
    * - ``mcp``
      - MCP-backed task workflows
    * - ``cad``
@@ -50,10 +64,12 @@ Extras Matrix
    * - ``dev``
      - Contributor tooling
 
-Text and decision families are suitable for lightweight setups. Grammar and
-battery families are more infrastructure-sensitive because they depend on
-domain-specific toolchains. MCP and CAD tasks are best when your study must
-interact with an external execution environment.
+The base install supports text and decision problems, generic grammar
+transitions, and analytic-surrogate battery paths. Add ``grammar`` when a study
+uses ``trussme`` for real planar or 3D truss structural evaluation. Add
+``battery`` when a protocol selects PyBaMM-backed battery-fidelity modes. MCP
+and CAD tasks are best when your study must interact with an external execution
+environment.
 
 Optimization primitives ship in the base install through SciPy, so there is no
 separate ``opt`` extra. Use ``solvers`` for external search backends and
@@ -62,12 +78,19 @@ separate ``opt`` extra. Use ``solvers`` for external search backends and
 Recommended install profiles:
 
 - lightweight catalog and text studies: base install only
-- structural grammar studies: ``pip install -e ".[grammar]"``
-- battery studies: ``pip install -e ".[battery]"``
-- external-tool workflows: ``pip install -e ".[mcp,cad]"``
+- ``trussme``-backed planar or 3D truss evaluation:
+  ``python -m pip install "design-research-problems[grammar]"``
+- PyBaMM-backed battery-fidelity studies:
+  ``python -m pip install "design-research-problems[battery]"``
+- external-tool workflows:
+  ``python -m pip install "design-research-problems[mcp,cad]"``
 - DRAG/DERP agent workflows:
-  ``pip install "design-research-agents[mcp,gemini]" "design-research-problems[mcp]"``
-- broad optional-toolkit install: ``pip install -e ".[all]"``
+  ``python -m pip install "design-research-agents[mcp]" "design-research-problems[mcp]"``
+- broad optional-toolkit install:
+  ``python -m pip install "design-research-problems[all]"``
 - full local validation environment: ``make dev-full``
+
+From a source checkout, replace ``design-research-problems`` with ``.`` and
+add ``-e``. Add ``dev`` only when you also need contributor tooling.
 
 Release validation is exposed via ``make release-check``.

@@ -1,8 +1,10 @@
 Problems
 ========
 
-Problem families are the conceptual center of this package. Each family aligns
-with a different kind of design-research question.
+The five public family guides correspond one-to-one with the canonical
+``ProblemKind`` values: ``text``, ``decision``, ``optimization``, ``grammar``,
+and ``mcp``. “Problem kind” is the serialized taxonomy; “family” describes the
+related classes and guide pages.
 
 Family Guide
 ------------
@@ -49,13 +51,24 @@ Family Pages
 .. toctree::
    :maxdepth: 1
 
-   ideation
    text
    decision
    optimization
    grammar
-   battery_ladder
    mcp
+
+Cross-Cutting Catalog Guides
+----------------------------
+
+Ideation is a curated catalog subset of the ``text`` family, while the battery
+ladder spans grammar and optimization representations. Neither is an additional
+``ProblemKind``.
+
+.. toctree::
+   :maxdepth: 1
+
+   ideation
+   battery_ladder
 
 For the complete generated problem-by-problem inventory, see
 :doc:`../problem_catalog/index`.

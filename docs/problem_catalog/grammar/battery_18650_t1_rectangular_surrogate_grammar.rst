@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``battery_18650_t1_rectangular_surrogate_grammar``
-   * - Problem Family
+   * - Problem Kind
      - grammar
    * - Implementation
      - ``design_research_problems.problems.grammar._battery_tiers:Battery18650T1RectangularSurrogateGrammarProblem``

@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``moneymaker_hip_pump_cost_min``
-   * - Problem Family
+   * - Problem Kind
      - optimization
    * - Implementation
      - ``design_research_problems.problems.optimization._moneymaker:MoneyMakerHipPumpProblem``

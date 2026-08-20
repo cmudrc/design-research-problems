@@ -33,20 +33,23 @@ Shared Module Baseline
      - Coverage badge stays synchronized with the enforced repo quality floor.
    * - Example docs generation
      - ``scripts/generate_example_docs.py``
-     - ``examples.yml``
+     - ``docs-pages.yml`` and ``ci.yml``
      - Checked-in examples remain represented in the published docs.
    * - Example reporting
      - ``scripts/generate_examples_metrics.py`` and ``scripts/generate_examples_badges.py``
-     - ``examples.yml``
+     - ``ci.yml``
      - Example pass/fail and public-API coverage badges use the shared family format.
 
 Workflow Responsibilities
 -------------------------
 
-- ``ci.yml`` owns lint, type, test, docs-consistency, docstring, and coverage-oriented checks.
-- ``examples.yml`` owns example execution, generated example docs, and example-derived badge metrics.
-- ``docs-pages.yml`` owns the published docs build.
-- ``workflow.yml`` remains the aggregate maintainer workflow entry point.
+- ``ci.yml`` owns lint, type, test, generated-doc consistency, docstring,
+  coverage, and example-derived badge metrics.
+- ``examples.yml`` owns the standalone full example-execution check.
+- ``docs-pages.yml`` owns generated-doc checks, the strict published docs build,
+  and link checking.
+- ``workflow.yml`` owns release builds and authorized PyPI publishing; it is not
+  an aggregate validation workflow.
 
 Problem-Catalog-Specific Automation
 -----------------------------------

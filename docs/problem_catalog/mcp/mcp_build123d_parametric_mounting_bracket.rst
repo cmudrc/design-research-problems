@@ -5,7 +5,7 @@ Build123d scripted mounting bracket design problem
 
 An MCP-ingested CAD design brief backed by a package-owned Build123d server where the agent writes and evaluates Build123d scripts.
 
-See :doc:`../mcp` for the mcp family index.
+See :doc:`../mcp` for the MCP family index.
 
 Quick Facts
 -----------
@@ -18,8 +18,8 @@ Quick Facts
      - Value
    * - Problem ID
      - ``mcp_build123d_parametric_mounting_bracket``
-   * - Problem Family
-     - mcp
+   * - Problem Kind
+     - MCP
    * - Implementation
      - ``MCPProblem``
    * - Capabilities

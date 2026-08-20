@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``space_truss_span_mass_min``
-   * - Problem Family
+   * - Problem Kind
      - optimization
    * - Implementation
      - ``design_research_problems.problems.optimization._truss_topology:SpaceTrussEngineeringOptimizationProblem``

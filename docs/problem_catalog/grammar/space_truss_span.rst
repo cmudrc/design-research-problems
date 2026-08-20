@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``space_truss_span``
-   * - Problem Family
+   * - Problem Kind
      - grammar
    * - Implementation
      - ``design_research_problems.problems.grammar._space_truss:SpaceTrussSpanProblem``

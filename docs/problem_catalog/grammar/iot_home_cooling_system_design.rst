@@ -18,7 +18,7 @@ Quick Facts
      - Value
    * - Problem ID
      - ``iot_home_cooling_system_design``
-   * - Problem Family
+   * - Problem Kind
      - grammar
    * - Implementation
      - ``design_research_problems.problems.grammar._iot_home:IoTHomeCoolingGrammarProblem``

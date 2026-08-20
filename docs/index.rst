@@ -1,15 +1,15 @@
 design-research-problems
 ========================
 
-A library of benchmark tasks for design research.
+The benchmark-task layer for reproducible design research.
 
 What This Library Does
 ----------------------
 
-``design-research-problems`` provides structured design tasks spanning
-ideation, decision-making, optimization, grammar-based design exploration, and
-MCP-backed workflows. It is built for recurring research workflows where clear
-metadata, reusable evaluation contracts, and domain fidelity all matter.
+``design-research-problems`` owns structured task definitions, metadata,
+statements, evaluators, and packaged assets across five ``ProblemKind`` values:
+text, decision, optimization, grammar, and MCP. The ideation catalog is a
+curated subset of the text family.
 
 Stable problem metadata, packaged statements, and explicit family APIs are core
 features. They make benchmarks easier to compare across agents, experiments,
@@ -60,7 +60,8 @@ to reproduce these checks locally.
 Highlights
 ----------
 
-- Packaged benchmark families for ideation, decision, optimization, grammar, and MCP-backed workflows
+- Packaged benchmark families for text, decision, optimization, grammar, and MCP-backed workflows
+- A linked ideation metadata catalog within the text family
 - Stable problem metadata and reusable family-specific APIs
 - A study-facing integration seam in ``design_research_problems.integration`` for orchestration layers
 - Explicit downstream metadata and evaluation contracts for experiments and analysis
@@ -72,9 +73,9 @@ Typical Workflow
 
 1. Start from a family API or a catalog entry point.
 2. Load a packaged problem and inspect its metadata, statement, and structured inputs.
-3. Hand the problem to agents or experiments through
-   ``design_research_problems.integration.resolve_problem_binding(...)`` while
-   preserving benchmark metadata.
+3. Let the experiments layer resolve the problem through
+   ``design_research_problems.integration.resolve_problem_binding(...)``, invoke
+   an agent, and preserve benchmark metadata.
 4. Capture outputs against the downstream metadata contract for comparison.
 5. Rejoin benchmark context in downstream analysis and reporting.
 
@@ -82,9 +83,9 @@ Typical Workflow
 
    .. note::
 
-      **Start with** :doc:`catalog_guide` if you are browsing the problem space,
-      or :doc:`quickstart` if you already know you want to load one packaged
-      problem and enter the API quickly.
+      **New here?** Follow :doc:`guides` for the shared install → quickstart →
+      concepts/workflow → examples → API path. Use :doc:`catalog_guide` when
+      you are ready to choose among packaged tasks.
 
 Guides
 ------
@@ -92,15 +93,11 @@ Guides
 Learn the family model, setup flow, and benchmark-selection patterns that shape
 a stable problem-research pipeline.
 
-- :doc:`quickstart`
+- :doc:`guides`
 - :doc:`installation`
-- :doc:`vscode_start`
+- :doc:`quickstart`
 - :doc:`concepts`
-- :doc:`catalog_guide`
 - :doc:`typical_workflow`
-- :doc:`downstream_metadata_contract`
-- :doc:`problems/index`
-- :doc:`problem_catalog/index`
 
 Examples
 --------
@@ -116,29 +113,32 @@ Reference
 Look up the stable import surface, rendered catalog entry points, and optional
 dependency guidance for the packaged benchmark families.
 
-- :doc:`api`
 - :doc:`reference/index`
-- :doc:`dependencies_and_extras`
-- :doc:`automation_baseline`
 
 Integration With The Ecosystem
 ------------------------------
 
-The Design Research Collective maintains a modular ecosystem of libraries for
-studying human and AI design behavior.
+The CMU Design Research Collective design-research ecosystem is a modular set of
+libraries for studying human and AI design behavior.
 
-- **design-research-agents** implements AI participants, workflows, and tool-using reasoning patterns.
-- **design-research-problems** provides benchmark design tasks, prompts, grammars, and evaluators.
-- **design-research-analysis** analyzes the traces, event tables, and outcomes generated during studies.
-- **design-research-experiments** sits above the stack as the study-design and orchestration layer, defining hypotheses, factors, conditions, replications, and artifact flows across agents, problems, and analysis.
+- `design-research-agents <https://cmudrc.github.io/design-research-agents/>`_ owns executable AI participants, workflows, and tool-using reasoning patterns.
+- **design-research-problems** (this package) owns benchmark tasks, prompts, grammars, metadata, and evaluators.
+- `design-research-experiments <https://cmudrc.github.io/design-research-experiments/>`_
+  owns study design and coordinates artifact flows across packages.
+- `design-research-analysis <https://cmudrc.github.io/design-research-analysis/>`_ validates and analyzes the resulting traces, event tables, and outcomes.
 
 Together these libraries support end-to-end design research pipelines, from
 study design through execution and interpretation.
 
+The figure shows two complementary views: control responsibility and runtime
+artifact flow. Neither view is a package-install order. See the umbrella
+`compatibility matrix <https://cmudrc.github.io/design-research/compatibility.html>`_
+for the component versions tested together.
+
 .. container:: drc-home-ecosystem
 
    .. image:: _static/ecosystem-platform.svg
-      :alt: Ecosystem diagram showing experiments above agents, problems, and analysis.
+      :alt: Two-view diagram showing the control topology and runtime data flow across Problems, Agents, Experiments, and Analysis.
       :class: dark-light drc-ecosystem-figure
       :width: 100%
       :align: center
@@ -146,15 +146,14 @@ study design through execution and interpretation.
 Start Here
 ----------
 
-- :doc:`quickstart`
 - :doc:`installation`
-- :doc:`catalog_guide`
+- :doc:`quickstart`
 - :doc:`concepts`
 - :doc:`typical_workflow`
-- :doc:`downstream_metadata_contract`
 - :doc:`examples/index`
-- :doc:`problem_catalog/index`
 - :doc:`api`
+- :doc:`guides`
+- :doc:`problem_catalog/index`
 - `CONTRIBUTING.md <https://github.com/cmudrc/design-research-problems/blob/HEAD/CONTRIBUTING.md>`_
 
 .. toctree::
@@ -162,13 +161,13 @@ Start Here
    :caption: Guides
    :hidden:
 
-   quickstart
-   installation
-   vscode_start
-   concepts
-   catalog_guide
-   typical_workflow
-   downstream_metadata_contract
+   guides
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Problems and Catalog
+   :hidden:
+
    problems/index
    problem_catalog/index
 
@@ -184,14 +183,12 @@ Start Here
    :caption: Reference
    :hidden:
 
-   api
    reference/index
-   dependencies_and_extras
-   automation_baseline
 
 .. toctree::
    :maxdepth: 1
    :caption: Development
    :hidden:
 
+   automation_baseline
    CONTRIBUTING.md <https://github.com/cmudrc/design-research-problems/blob/HEAD/CONTRIBUTING.md>

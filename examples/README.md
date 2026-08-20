@@ -3,6 +3,7 @@
 Some examples print install hints when an optional extra is missing.
 
 - `catalog/list_and_load.py`: list the packaged catalog and load each seed problem.
+- `catalog/public_api_tour.py`: exercise every curated top-level public export.
 - `catalog/ideation_catalog.py`: inspect prompt, variant, family, and study counts.
 - `catalog/ideation_dataframe.py`: export prompt rows to pandas when the optional extra is installed.
 - `catalog/ideation_exports.py`: preview JSON and CSV prompt-index exports.

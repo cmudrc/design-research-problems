@@ -1,8 +1,8 @@
 Ideation Catalog
 ================
 
-The ideation catalog packages four linked tables for prompt-based human-subjects
-research:
+The ideation catalog is a curated subset of the ``text`` problem kind. It
+packages four linked tables for prompt-based human-subjects research:
 
 - canonical prompt records,
 - source-specific prompt variants,
@@ -12,6 +12,12 @@ research:
 Use ``get_ideation_catalog()`` to inspect the
 machine-readable catalog, search prompts, and export JSON, CSV, or optional
 ``pandas`` DataFrames.
+
+``ideation`` is a catalog tag and study-selection concept, not a sixth
+``ProblemKind``. Ideation entries keep the value ``text`` in both downstream
+compatibility paths: the ``ProblemBinding.family``/``ProblemPacket.family``
+path exported as ``problem_family``, and the parallel ``problem_kind`` metadata
+alias.
 
 Evidence Tiers
 --------------

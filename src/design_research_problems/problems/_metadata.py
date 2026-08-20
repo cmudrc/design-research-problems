@@ -7,7 +7,7 @@ from enum import StrEnum
 
 
 class ProblemKind(StrEnum):
-    """Supported high-level problem families."""
+    """Supported high-level problem kinds."""
 
     TEXT = "text"
     DECISION = "decision"
@@ -140,7 +140,7 @@ class ProblemMetadata:
     summary: str
     """Short one-paragraph description."""
     kind: ProblemKind
-    """High-level problem family."""
+    """Canonical high-level problem kind."""
     taxonomy: ProblemTaxonomy
     """Shared descriptive taxonomy."""
     citations: tuple[Citation, ...]
@@ -187,7 +187,7 @@ class ProblemCatalogSummary:
     title: str
     """Display title shown to users."""
     kind: ProblemKind
-    """High-level problem family."""
+    """Canonical high-level problem kind."""
     summary: str
     """Short one-paragraph problem description."""
     tags: tuple[str, ...]
