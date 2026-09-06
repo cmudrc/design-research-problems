@@ -21,6 +21,7 @@ Catalog and Integration Guides
 - :doc:`problems/index` explains the five public problem kinds.
 - :doc:`problem_catalog/index` is the generated problem-by-problem inventory.
 - :doc:`downstream_metadata_contract` defines the orchestration compatibility mapping.
+- :doc:`paper_contributions` exports citation-backed problem context for paper drafting.
 - :doc:`vscode_start` provides an editor-first setup and debugging path.
 - :doc:`dependencies_and_extras` maps optional integrations to install profiles.
 
@@ -48,5 +49,6 @@ problem kind.
    typical_workflow
    catalog_guide
    downstream_metadata_contract
+   paper_contributions
    vscode_start
    dependencies_and_extras

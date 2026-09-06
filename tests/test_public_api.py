@@ -38,6 +38,8 @@ EXPECTED_PUBLIC_API = [
     "list_problems",
     "search_problem_summaries",
     "get_ideation_catalog",
+    "PAPER_CONTRIBUTION_VERSION",
+    "collect_problem_paper_contributions",
     "integration",
 ]
 
