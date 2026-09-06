@@ -39,6 +39,8 @@ _EXPORTS: Final[dict[str, str]] = {
     "list_problems": "design_research_problems._catalog:list_problems",
     "search_problem_summaries": "design_research_problems._catalog:search_problem_summaries",
     "get_ideation_catalog": "design_research_problems.ideation:get_ideation_catalog",
+    "PAPER_CONTRIBUTION_VERSION": "design_research_problems.paper:PAPER_CONTRIBUTION_VERSION",
+    "collect_problem_paper_contributions": "design_research_problems.paper:collect_problem_paper_contributions",
 }
 
 __all__ = ["__version__", *_EXPORTS.keys()]
