@@ -7,6 +7,7 @@ Some examples print install hints when an optional extra is missing.
 - `catalog/ideation_catalog.py`: inspect prompt, variant, family, and study counts.
 - `catalog/ideation_dataframe.py`: export prompt rows to pandas when the optional extra is installed.
 - `catalog/ideation_exports.py`: preview JSON and CSV prompt-index exports.
+- `catalog/paper_contributions.py`: export prompt lineage, references, and configured paper-draft support.
 - `decision/laptop_design.py`: inspect the laptop discrete option space and best-scoring design.
 - `decision/mseval_material_choice.py`: inspect one empirical MSEval material-choice benchmark.
 - `text/peanut_sheller_packet.py`: render the text prompt and citation packet.

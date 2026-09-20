@@ -22,6 +22,7 @@ The top-level package exports a small curated public API:
 - ``OptimizationProblem``
 - ``Problem``
 - ``ProblemAsset``
+- ``PAPER_CONTRIBUTION_VERSION``
 - ``ProblemCatalogSummary``
 - ``ProblemEvaluationError``
 - ``ProblemKind``
@@ -30,6 +31,7 @@ The top-level package exports a small curated public API:
 - ``ProblemTaxonomy``
 - ``TextProblem``
 - ``get_ideation_catalog``
+- ``collect_problem_paper_contributions``
 - ``get_problem``
 - ``get_problem_as``
 - ``list_problems``

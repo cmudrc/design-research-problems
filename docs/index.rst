@@ -65,6 +65,7 @@ Highlights
 - Stable problem metadata and reusable family-specific APIs
 - A study-facing integration seam in ``design_research_problems.integration`` for orchestration layers
 - Explicit downstream metadata and evaluation contracts for experiments and analysis
+- Citation-backed Background and Methods contributions for downstream paper drafts
 - Catalog entry points for browsing and loading packaged problems
 - Runnable examples spanning the major benchmark families
 
