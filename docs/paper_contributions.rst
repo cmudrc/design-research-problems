@@ -47,6 +47,11 @@ prompt, its source-specific variants, its family and ancestor lineage, and any
 study records that directly reference those variants. It does not broaden the
 selection to sibling prompts merely because they share a family.
 
+The prompt contribution includes the complete packaged Markdown statement,
+including its constraints and instructions. Its metadata retains that exact
+text as ``statement_markdown`` and labels the shorter ideation-catalog brief
+as ``catalog_summary``; the summary is not a substitute for the selected prompt.
+
 Non-Ideation Problems
 ---------------------
 

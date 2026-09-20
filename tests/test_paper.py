@@ -50,6 +50,20 @@ def test_provisional_reference_becomes_visible_reporting_gap() -> None:
     assert "source verification" in gaps[gap_id]["message"]
 
 
+def test_source_specific_prompt_preserves_the_full_packaged_statement() -> None:
+    problem_id = "ideation_peanut_shelling_fu_cagan_kotovsky_2010"
+    statement = drp.get_problem(problem_id).statement_markdown
+    packet = drp.collect_problem_paper_contributions(problem_id)
+    prompt = packet["contributions"][2]
+
+    assert prompt["metadata"]["statement_markdown"] == statement
+    assert statement in prompt["text"]
+    assert "50 kg (110 lbs) per hour" in prompt["text"]
+    assert "Electrical outlets are not available" in prompt["text"]
+    assert prompt["metadata"]["catalog_summary"] == "Design problem: Device to shell peanuts."
+    assert json.loads(json.dumps(packet)) == packet
+
+
 def test_non_ideation_problem_exports_general_background_and_methods() -> None:
     packet = drp.collect_problem_paper_contributions("decision_laptop_design_profit_maximization")
 
@@ -111,3 +125,8 @@ def test_every_problem_packet_has_stable_source_and_valid_json() -> None:
         assert packet["source"]["component_id"] == problem_id
         assert packet["contributions"]
         json.dumps(packet)
+        for contribution in packet["contributions"]:
+            if "prompt_id" in contribution["metadata"]:
+                statement = drp.get_problem(problem_id).statement_markdown
+                assert contribution["metadata"]["statement_markdown"] == statement
+                assert statement in contribution["text"]

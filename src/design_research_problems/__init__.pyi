@@ -15,6 +15,8 @@ from .ideation import IdeationPromptRecord as IdeationPromptRecord
 from .ideation import IdeationPromptVariant as IdeationPromptVariant
 from .ideation import IdeationStudy as IdeationStudy
 from .ideation import get_ideation_catalog as get_ideation_catalog
+from .paper import PAPER_CONTRIBUTION_VERSION as PAPER_CONTRIBUTION_VERSION
+from .paper import collect_problem_paper_contributions as collect_problem_paper_contributions
 from .problems import Citation as Citation
 from .problems import ComputableProblem as ComputableProblem
 from .problems import DecisionEvaluation as DecisionEvaluation

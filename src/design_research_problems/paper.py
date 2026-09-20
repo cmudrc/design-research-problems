@@ -38,7 +38,8 @@ def collect_problem_paper_contributions(problem_id: str) -> dict[str, Any]:
     Raises:
         KeyError: If ``problem_id`` is not in the packaged problem catalog.
     """
-    metadata = ProblemRegistry().get(problem_id).metadata
+    problem = ProblemRegistry().get(problem_id)
+    metadata = problem.metadata
     ideation = get_ideation_catalog()
     prompts = tuple(prompt for prompt in ideation.prompts if prompt.problem_id == problem_id)
     variants = _linked_variants(ideation, prompts, problem_id=problem_id)
@@ -57,7 +58,15 @@ def collect_problem_paper_contributions(problem_id: str) -> dict[str, Any]:
         _background_contribution(metadata, provenance=provenance),
         _methods_contribution(metadata, provenance=provenance),
     ]
-    contributions.extend(_ideation_contribution(prompt, ideation=ideation, provenance=provenance) for prompt in prompts)
+    contributions.extend(
+        _ideation_contribution(
+            prompt,
+            statement_markdown=problem.statement_markdown,
+            ideation=ideation,
+            provenance=provenance,
+        )
+        for prompt in prompts
+    )
 
     return {
         "schema_version": PAPER_CONTRIBUTION_VERSION,
@@ -258,6 +267,7 @@ def _methods_requirements(metadata: ProblemMetadata) -> list[str]:
 def _ideation_contribution(
     prompt: IdeationPromptRecord,
     *,
+    statement_markdown: str,
     ideation: IdeationCatalog,
     provenance: dict[str, Any],
 ) -> dict[str, Any]:
@@ -268,8 +278,8 @@ def _ideation_contribution(
         "section": "methods",
         "kind": "bullet",
         "text": (
-            f"The configured ideation prompt was {prompt.canonical_brief!r} "
-            f"({prompt.evidence_tier.value}; family {family.name!r})."
+            "The configured ideation prompt used the following packaged statement "
+            f"({prompt.evidence_tier.value}; family {family.name!r}):\n\n{statement_markdown}"
         ),
         "evidence_basis": "configured",
         "citation_keys": list(prompt.source_citation_keys),
@@ -278,6 +288,8 @@ def _ideation_contribution(
             **provenance,
             "prompt_id": prompt.prompt_id,
             "family_id": prompt.family_id,
+            "catalog_summary": prompt.canonical_brief,
+            "statement_markdown": statement_markdown,
             "evidence_tier": prompt.evidence_tier.value,
             "status": prompt.status,
             "variants": [

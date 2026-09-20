@@ -17,8 +17,10 @@ def test_lazy_top_level_exports_keep_concrete_types(
     source.write_text(
         """\
 from collections.abc import Callable
+from typing import Any, assert_type
 
 from design_research_problems import Problem, ProblemCatalogSummary, search_problem_summaries
+from design_research_problems import PAPER_CONTRIBUTION_VERSION, collect_problem_paper_contributions
 
 
 def accepts_problem(problem: Problem, summary: ProblemCatalogSummary) -> None:
@@ -26,6 +28,8 @@ def accepts_problem(problem: Problem, summary: ProblemCatalogSummary) -> None:
 
 
 search: Callable[..., tuple[ProblemCatalogSummary, ...]] = search_problem_summaries
+assert_type(PAPER_CONTRIBUTION_VERSION, str)
+assert_type(collect_problem_paper_contributions("ideation_peanut_shelling"), dict[str, Any])
 """,
         encoding="utf-8",
     )
