@@ -35,6 +35,15 @@ def test_catalog_example_runs() -> None:
 
 
 @pytest.mark.examples_smoke
+def test_paper_contributions_example_runs() -> None:
+    completed = _run_example("examples/catalog/paper_contributions.py")
+    assert completed.returncode == 0, completed.stderr
+    assert "Paper contribution contract: 0.1.0" in completed.stdout
+    assert "References: 3" in completed.stdout
+    assert "prompt:prompt_peanut_shelling" in completed.stdout
+
+
+@pytest.mark.examples_smoke
 def test_ideation_catalog_example_runs() -> None:
     completed = _run_example("examples/catalog/ideation_catalog.py")
     assert completed.returncode == 0, completed.stderr
